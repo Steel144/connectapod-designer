@@ -150,7 +150,16 @@ const GROUP_ICONS = Object.fromEntries(
   PANEL_GROUPS.map((g) => [g.key, getIcon(g.key, 20)])
 );
 
-export { MODULE_TYPES, GROUP_ICONS };
+const WALL_TYPES = [
+  { type: "wall-h-1", label: "Horizontal Wall (thin)", orientation: "horizontal", length: 8, thickness: 1 },
+  { type: "wall-h-2", label: "Horizontal Wall (medium)", orientation: "horizontal", length: 8, thickness: 2 },
+  { type: "wall-h-3", label: "Horizontal Wall (thick)", orientation: "horizontal", length: 8, thickness: 3 },
+  { type: "wall-v-1", label: "Vertical Wall (thin)", orientation: "vertical", length: 8, thickness: 1 },
+  { type: "wall-v-2", label: "Vertical Wall (medium)", orientation: "vertical", length: 8, thickness: 2 },
+  { type: "wall-v-3", label: "Vertical Wall (thick)", orientation: "vertical", length: 8, thickness: 3 },
+];
+
+export { MODULE_TYPES, GROUP_ICONS, WALL_TYPES };
 
 export default function ModulePanel({ onDragStart }) {
   const [openGroup, setOpenGroup] = useState(null);
