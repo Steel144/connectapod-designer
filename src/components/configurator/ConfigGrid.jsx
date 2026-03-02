@@ -270,7 +270,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
 
         {/* Live drag ghost — snapped to grid, no shadow */}
         {dragging && dragSnap && (
-          dragging.selectedIds.map((id) => {
+          Array.from(dragging.selectedIds).map((id) => {
             const mod = placedModules.find((m) => m.id === id);
             if (!mod) return null;
             const deltaX = Math.round((dragging.cursorX - (gridRef.current.getBoundingClientRect().left + dragging.mod.x * CELL_W + dragging.offsetX)) / CELL_W);
