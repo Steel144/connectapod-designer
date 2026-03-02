@@ -65,6 +65,16 @@ export default function Configurator() {
     );
   };
 
+  const handleRotate = (id) => {
+    setPlacedModules((prev) =>
+      prev.map((m) => {
+        if (m.id !== id) return m;
+        // Swap w and h to rotate 90°
+        return { ...m, w: m.h, h: m.w };
+      })
+    );
+  };
+
   const handleClear = () => setPlacedModules([]);
 
   const handleSave = (name) => {
