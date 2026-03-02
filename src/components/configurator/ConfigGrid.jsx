@@ -47,7 +47,19 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
     const rect = gridRef.current.getBoundingClientRect();
     const offsetX = e.clientX - rect.left - mod.x * CELL_W;
     const offsetY = e.clientY - rect.top - mod.y * CELL_H;
-    setDragging({ mod, offsetX, offsetY, cursorX: e.clientX, cursorY: e.clientY, isPlaced: true });
+    
+    // If clicking on a selected module, drag all selected; otherwise start selection
+    if (!selected.has(mod.id)) {
+      setSelected(new Set([mod.id]));
+    }
+    
+    setDragging({ mod, offsetX, offsetY, cursorX: e.clientX, cursorY: e.clientY, isPlaced: true, selectedIds: selected });
+  };
+
+  const startSelectionBox = (e) => {
+    if (e.button !== 0 || e.target !== gridRef.current) return;
+    const rect = gridRef.current.getBoundingClientRect();
+    setSelectionBox({ startX: e.clientX - rect.left, startY: e.clientY - rect.top, cursorX: e.clientX - rect.left, cursorY: e.clientY - rect.top });
   };
 
   const startDragNew = (e, mod) => {
