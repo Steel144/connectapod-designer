@@ -5,9 +5,9 @@ import { Button } from "@/components/ui/button";
 export default function SavedDesigns({ designs, onLoad, onDelete }) {
   if (designs.length === 0) {
     return (
-      <div className="text-center py-16 text-slate-400">
+      <div className="text-center py-16 text-gray-400">
         <p className="text-4xl mb-3">🏡</p>
-        <p className="font-medium text-slate-500">No saved designs yet</p>
+        <p className="font-medium text-gray-500">No saved designs yet</p>
         <p className="text-sm mt-1">Start building in the Configurator tab</p>
       </div>
     );
