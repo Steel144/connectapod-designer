@@ -96,7 +96,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove }) {
         {previewCells.map((c, i) => (
           <div
             key={`preview-${i}`}
-            className="absolute rounded-lg transition-all pointer-events-none"
+            className="absolute transition-all pointer-events-none"
             style={{
               left: c.x * CELL_SIZE + 2,
               top: c.y * CELL_SIZE + 2,
