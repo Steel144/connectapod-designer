@@ -83,21 +83,20 @@ export default function Configurator() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F7F8FC]">
+    <div className="min-h-screen bg-[#F5F5F3]">
       {/* Header */}
-      <div className="bg-white border-b border-slate-100 px-6 py-4 flex items-center justify-between">
+      <div className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 bg-slate-900 rounded-xl flex items-center justify-center text-white text-lg">🏠</div>
           <div>
-            <h1 className="text-lg font-bold text-slate-900 leading-tight">ModularHome</h1>
-            <p className="text-xs text-slate-400">Design your perfect home</p>
+            <h1 className="text-xl font-bold text-gray-900 leading-tight tracking-tight">connectapod</h1>
+            <p className="text-xs text-gray-500">Design your modular home</p>
           </div>
         </div>
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="bg-slate-100 rounded-xl h-9">
-            <TabsTrigger value="configure" className="rounded-lg text-xs h-7 px-4">Configurator</TabsTrigger>
-            <TabsTrigger value="saved" className="rounded-lg text-xs h-7 px-4">
-              My Designs {designs.length > 0 && <span className="ml-1.5 bg-slate-300 text-slate-700 rounded-full px-1.5 text-[10px]">{designs.length}</span>}
+          <TabsList className="bg-gray-100 rounded-none h-9">
+            <TabsTrigger value="configure" className="rounded-none text-xs h-7 px-4 data-[state=active]:bg-[#F15A22] data-[state=active]:text-white">Configurator</TabsTrigger>
+            <TabsTrigger value="saved" className="rounded-none text-xs h-7 px-4 data-[state=active]:bg-[#F15A22] data-[state=active]:text-white">
+              My Designs {designs.length > 0 && <span className="ml-1.5 bg-gray-300 text-gray-700 rounded-full px-1.5 text-[10px]">{designs.length}</span>}
             </TabsTrigger>
           </TabsList>
         </Tabs>
