@@ -128,14 +128,17 @@ const PANEL_GROUPS = [
 ];
 
 // All module types flat list — used by ConfigGrid for drop resolution
+// Convert metres to 600mm grid cells
+const mToCells = (m) => Math.round(m / 0.6);
+
 const MODULE_TYPES = PANEL_GROUPS.flatMap((group) =>
   group.items.map((item) => ({
     type: item.code,
     label: item.name,
     color: group.color,
     border: group.border,
-    w: 1,
-    h: 1,
+    w: mToCells(item.width),   // e.g. 3.0m → 5 cells
+    h: mToCells(item.depth),   // e.g. 4.8m → 8 cells
     sqm: item.sqm,
     price: group.price,
     groupKey: group.key,
