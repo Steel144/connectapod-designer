@@ -238,26 +238,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
           </div>
         )}
 
-        {/* Magnified preview on hover */}
-        {hoveredModId && placedModules.find(m => m.id === hoveredModId) && (
-          <div
-            className="fixed z-50 bg-white border-2 border-[#F15A22] shadow-xl rounded pointer-events-none"
-            style={{
-              width: "240px",
-              height: "240px",
-              top: "20px",
-              right: "20px",
-              padding: "8px",
-            }}
-          >
-            <div className="w-full h-full bg-gray-50 border border-gray-200 rounded overflow-hidden">
-              <FloorPlanSVG code={placedModules.find(m => m.id === hoveredModId).type} className="w-full h-full" />
-            </div>
-            <p className="text-xs font-semibold text-gray-700 text-center mt-2">
-              {placedModules.find(m => m.id === hoveredModId).label}
-            </p>
-          </div>
-        )}
+
       </div>
       <p className="text-xs text-slate-400 mt-2 text-center">
         Grid: {GRID_COLS}×{GRID_ROWS} cells · Snap: 600mm
