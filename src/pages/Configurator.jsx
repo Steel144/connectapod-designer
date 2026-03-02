@@ -121,7 +121,7 @@ export default function Configurator() {
           </div>
 
           {/* Right: Summary */}
-          <div className="lg:w-64 shrink-0 bg-white border-l border-slate-100 p-4 overflow-y-auto">
+          <div className="lg:w-64 shrink-0 bg-white border-l border-gray-200 p-4 overflow-y-auto">
             <DesignSummary
               placedModules={placedModules}
               onSave={() => setSaveModalOpen(true)}
