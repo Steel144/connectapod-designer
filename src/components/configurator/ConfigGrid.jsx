@@ -15,8 +15,8 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove })
 
   const getCellFromEvent = (e) => {
     const rect = gridRef.current.getBoundingClientRect();
-    const x = Math.floor((e.clientX - rect.left) / CELL_SIZE);
-    const y = Math.floor((e.clientY - rect.top) / CELL_SIZE);
+    const x = Math.floor((e.clientX - rect.left) / CELL_W);
+    const y = Math.floor((e.clientY - rect.top) / CELL_H);
     return { x, y };
   };
 
