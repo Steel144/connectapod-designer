@@ -373,7 +373,7 @@ function FloorPlanSVG({ code, className = "" }) {
       preserveAspectRatio="xMidYMid slice"
     >
       {/* Module outline */}
-      <rect x={4} y={4} width={W-8} height={H-8} fill="#F8F9FA" stroke={stroke} strokeWidth={wall} rx={0} />
+      <rect x={0} y={0} width={W} height={H} fill="#F8F9FA" stroke={stroke} strokeWidth={wall} rx={0} />
       {PlanComponent ? <PlanComponent /> : (
         <text x={W/2} y={H/2} textAnchor="middle" fontSize="7" fill={fixture} fontFamily="monospace">{code}</text>
       )}
