@@ -11,7 +11,7 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { BookOpen, FolderOpen, Save, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
 
-let idCounter = 1;
+const generateId = () => `mod-${Math.random().toString(36).substr(2, 9)}`;
 
 export default function Configurator() {
   const [placedModules, setPlacedModules] = useState([]);
