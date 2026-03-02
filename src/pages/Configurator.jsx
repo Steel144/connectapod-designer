@@ -94,6 +94,14 @@ export default function Configurator() {
             <p className="text-xs text-gray-500">Design your modular home</p>
           </div>
         </div>
+        <div className="flex items-center gap-4">
+          <Link
+            to={createPageUrl("Catalogue")}
+            className="text-xs text-gray-500 hover:text-[#F15A22] transition-colors"
+          >
+            View Catalogue
+          </Link>
+        </div>
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="bg-gray-100 rounded-none h-9">
             <TabsTrigger value="configure" className="rounded-none text-xs h-7 px-4 data-[state=active]:bg-[#F15A22] data-[state=active]:text-white">Configurator</TabsTrigger>
