@@ -154,9 +154,10 @@ export { MODULE_TYPES, GROUP_ICONS };
 
 export default function ModulePanel({ onDragStart }) {
   const [openGroup, setOpenGroup] = useState(null);
+  const [hoveredModule, setHoveredModule] = useState(null);
 
   return (
-    <div className="flex flex-col gap-1">
+    <div className="flex flex-col gap-1 relative">
       <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2">Modules</p>
 
       {PANEL_GROUPS.map((group) => {
