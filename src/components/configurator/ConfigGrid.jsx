@@ -4,7 +4,7 @@ import { MODULE_TYPES } from "./ModulePanel";
 
 const CELL_W = 120;
 const CELL_H = 192; // 120 * (4.8/3) to reflect 3x4.8m ratio
-const GRID_COLS = 3;
+const GRID_COLS = 15;
 const GRID_ROWS = 5;
 
 export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove }) {
