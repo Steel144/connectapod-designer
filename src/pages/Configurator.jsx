@@ -121,6 +121,7 @@ export default function Configurator() {
     saveMutation.mutate({
       name,
       grid: placedModules,
+      walls,
       totalSqm,
       estimatedPrice,
       moduleCount: placedModules.length,
