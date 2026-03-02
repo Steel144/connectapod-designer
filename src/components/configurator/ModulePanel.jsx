@@ -151,12 +151,8 @@ const GROUP_ICONS = Object.fromEntries(
 );
 
 const WALL_TYPES = [
-  { type: "wall-h-1", label: "Horizontal Wall (thin)", orientation: "horizontal", length: 8, thickness: 1 },
-  { type: "wall-h-2", label: "Horizontal Wall (medium)", orientation: "horizontal", length: 8, thickness: 2 },
-  { type: "wall-h-3", label: "Horizontal Wall (thick)", orientation: "horizontal", length: 8, thickness: 3 },
-  { type: "wall-v-1", label: "Vertical Wall (thin)", orientation: "vertical", length: 8, thickness: 1 },
-  { type: "wall-v-2", label: "Vertical Wall (medium)", orientation: "vertical", length: 8, thickness: 2 },
-  { type: "wall-v-3", label: "Vertical Wall (thick)", orientation: "vertical", length: 8, thickness: 3 },
+  { type: "wall-h", label: "Horizontal Wall (185mm)", orientation: "horizontal", length: 8, thickness: 0.31 },
+  { type: "wall-v", label: "Vertical Wall (185mm)", orientation: "vertical", length: 8, thickness: 0.31 },
 ];
 
 export { MODULE_TYPES, GROUP_ICONS, WALL_TYPES };
