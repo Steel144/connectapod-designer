@@ -1,6 +1,7 @@
 import React, { useState, useRef } from "react";
 import { X } from "lucide-react";
 import { MODULE_TYPES, GROUP_ICONS } from "./ModulePanel.jsx";
+import { FloorPlanSVG } from "./FloorPlanSVG.jsx";
 
 // 1 cell = 600mm
 const CELL_SIZE = 24; // px per 600mm cell
