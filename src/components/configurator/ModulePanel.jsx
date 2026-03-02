@@ -61,7 +61,7 @@ const MODULE_TYPES = [
   { type: "laundry", label: "Laundry", color: "#FDF0EB", border: "#F15A22", w: 1, h: 1, sqm: 14.4, price: 8000 },
 ];
 
-export { MODULE_TYPES };
+export { MODULE_TYPES, ICONS };
 
 export default function ModulePanel({ onDragStart }) {
   return (
