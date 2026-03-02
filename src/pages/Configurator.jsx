@@ -56,6 +56,12 @@ export default function Configurator() {
     setPlacedModules((prev) => prev.filter((m) => m.id !== id));
   };
 
+  const handleMove = (id, x, y) => {
+    setPlacedModules((prev) =>
+      prev.map((m) => (m.id === id ? { ...m, x, y } : m))
+    );
+  };
+
   const handleClear = () => setPlacedModules([]);
 
   const handleSave = (name) => {
