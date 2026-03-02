@@ -182,6 +182,8 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
             <div
               key={mod.id}
               onMouseDown={(e) => startDragPlaced(e, mod)}
+              onMouseEnter={() => setHoveredModId(mod.id)}
+              onMouseLeave={() => setHoveredModId(null)}
               className="absolute group cursor-grab active:cursor-grabbing"
               style={{
                 left: mod.x * CELL_W,
