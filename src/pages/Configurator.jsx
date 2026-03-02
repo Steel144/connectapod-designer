@@ -249,11 +249,15 @@ export default function Configurator() {
       {/* Floating right panel — Design summary */}
        {placedModules.length > 0 && (
          <div
-           className="absolute right-4 z-20 w-60"
-           style={{ top: "310px" }}
+           className="absolute z-20 w-60"
+           style={{ left: `${summaryPos.x}px`, top: `${summaryPos.y}px`, cursor: draggingSummary ? "grabbing" : "default" }}
          >
-          <div className="bg-white border border-gray-200 shadow-xl overflow-hidden">
-            <DesignSummary
+           <div className="bg-white border border-gray-200 shadow-xl overflow-hidden" onMouseDown={handleSummaryMouseDown}>
+             <div className="px-4 py-3 border-b border-gray-100 cursor-grab active:cursor-grabbing">
+               <p className="text-xs font-semibold text-gray-800">Design Summary</p>
+             </div>
+             <div className="p-4">
+               <DesignSummary
               placedModules={placedModules}
               onSave={() => setSaveModalOpen(true)}
               onClear={handleClear}
