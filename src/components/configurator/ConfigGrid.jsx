@@ -135,10 +135,10 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove })
             onDragEnd={() => { setDraggingPlaced(null); setDragOverCell(null); }}
             className="absolute flex flex-col items-center justify-center group cursor-grab active:cursor-grabbing transition-shadow hover:shadow-lg"
             style={{
-              left: mod.x * CELL_SIZE + 3,
-              top: mod.y * CELL_SIZE + 3,
-              width: mod.w * CELL_SIZE - 6,
-              height: mod.h * CELL_SIZE - 6,
+              left: mod.x * CELL_W + 3,
+              top: mod.y * CELL_H + 3,
+              width: mod.w * CELL_W - 6,
+              height: mod.h * CELL_H - 6,
               backgroundColor: mod.color,
               border: `2px solid ${mod.border}`,
               opacity: draggingPlaced?.id === mod.id ? 0.4 : 1,
