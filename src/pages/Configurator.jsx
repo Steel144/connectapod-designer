@@ -128,6 +128,22 @@ export default function Configurator() {
 
   const handleMouseUp = () => {
     setDraggingPanel(null);
+    setDraggingSummary(null);
+  };
+
+  const handleSummaryMouseDown = (e) => {
+    if (e.target.closest("button")) return;
+    const headerDiv = e.currentTarget.querySelector('[class*="border-b"]');
+    if (!headerDiv || !headerDiv.contains(e.target)) return;
+    setDraggingSummary({ startX: e.clientX, startY: e.clientY, summaryX: summaryPos.x, summaryY: summaryPos.y });
+  };
+
+  const handleSummaryMove = (e) => {
+    if (!draggingSummary) return;
+    setSummaryPos({
+      x: draggingSummary.summaryX + (e.clientX - draggingSummary.startX),
+      y: draggingSummary.summaryY + (e.clientY - draggingSummary.startY),
+    });
   };
 
   return (
