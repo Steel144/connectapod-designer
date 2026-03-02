@@ -69,8 +69,20 @@ export default function Configurator() {
     setPlacedModules((prev) =>
       prev.map((m) => {
         if (m.id !== id) return m;
-        // Swap w and h to rotate 90°
-        return { ...m, w: m.h, h: m.w };
+        const currentRotation = m.rotation || 0;
+        const newRotation = (currentRotation + 90) % 360;
+        // Swap w/h on 90° and 270° (odd quarter turns)
+        const shouldSwap = newRotation === 90 || newRotation === 270;
+        const baseW = m.baseW ?? m.w;
+        const baseH = m.baseH ?? m.h;
+        return {
+          ...m,
+          baseW,
+          baseH,
+          w: shouldSwap ? baseH : baseW,
+          h: shouldSwap ? baseW : baseH,
+          rotation: newRotation,
+        };
       })
     );
   };
