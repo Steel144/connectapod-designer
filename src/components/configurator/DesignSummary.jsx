@@ -35,7 +35,7 @@ export default function DesignSummary({ placedModules, onSave, onClear, isSaving
           {placedModules.map((m) => (
             <div key={m.id} className="flex items-center justify-between text-xs">
               <span className="flex items-center gap-1.5">
-                <span>{m.icon}</span>
+                <span className="flex items-center justify-center w-4 h-4" style={{transform:'scale(0.75)'}}>{ICONS[m.moduleType]}</span>
                 <span className="text-gray-600">{m.label}</span>
               </span>
               <span className="text-gray-400">${(m.price / 1000).toFixed(0)}k</span>
