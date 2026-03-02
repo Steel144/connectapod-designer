@@ -107,20 +107,21 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove })
         onDragOver={handleDragOver}
         onDragLeave={() => { setDragOverCell(null); }}
       >
-        {previewCells.map((c, i) => (
+        {activeMod && dragOverCell && (
           <div
-            key={`preview-${i}`}
             className="absolute pointer-events-none"
             style={{
-              left: c.x * CELL_W,
-              top: c.y * CELL_H,
-              width: CELL_W,
-              height: CELL_H,
-              backgroundColor: previewValid ? "rgba(241,90,34,0.15)" : "rgba(239,68,68,0.15)",
+              left: dragOverCell.x * CELL_W,
+              top: dragOverCell.y * CELL_H,
+              width: activeMod.w * CELL_W,
+              height: activeMod.h * CELL_H,
+              opacity: previewValid ? 0.85 : 0.4,
               border: `2px dashed ${previewValid ? "#F15A22" : "#EF4444"}`,
             }}
-          />
-        ))}
+          >
+            <FloorPlanSVG code={activeMod.type} className="w-full h-full" />
+          </div>
+        )}
 
         {placedModules.map((mod) => (
           <div
