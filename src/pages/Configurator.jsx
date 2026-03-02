@@ -109,6 +109,23 @@ export default function Configurator() {
     toast.success(`Loaded "${design.name}"`);
   };
 
+  const handlePanelMouseDown = (e) => {
+    if (e.target.closest("button") || e.target.closest("div[class*='overflow']")) return;
+    setDraggingPanel({ startX: e.clientX, startY: e.clientY, panelX: panelPos.x, panelY: panelPos.y });
+  };
+
+  const handleMouseMove = (e) => {
+    if (!draggingPanel) return;
+    setPanelPos({
+      x: draggingPanel.panelX + (e.clientX - draggingPanel.startX),
+      y: draggingPanel.panelY + (e.clientY - draggingPanel.startY),
+    });
+  };
+
+  const handleMouseUp = () => {
+    setDraggingPanel(null);
+  };
+
   return (
     <div className="w-screen h-screen bg-[#F0EFEd] overflow-hidden relative flex flex-col">
       {/* Top bar */}
