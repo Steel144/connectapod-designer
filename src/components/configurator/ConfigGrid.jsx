@@ -84,7 +84,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove })
     canPlace(activeMod, dragOverCell.x, dragOverCell.y, draggingPlaced?.id);
 
   return (
-    <div className="overflow-auto">
+    <div className="overflow-auto w-full h-full">
       <div
         ref={gridRef}
         className="relative select-none"
