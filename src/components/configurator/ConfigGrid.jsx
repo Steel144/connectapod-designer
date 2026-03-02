@@ -58,11 +58,58 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
     setDragging((d) => ({ ...d, cursorX: e.clientX, cursorY: e.clientY }));
   }, [dragging]);
 
+  // Snap to nearest placed module edge within SNAP_THRESHOLD cells
+  const SNAP_THRESHOLD = 2;
+
+  const magnetSnap = (mod, rawX, rawY, excludeId = null) => {
+    let snapX = rawX;
+    let snapY = rawY;
+
+    for (const other of placedModules) {
+      if (other.id === excludeId) continue;
+
+      // Horizontal snapping: right edge of other → left edge of mod
+      if (Math.abs(rawX - (other.x + other.w)) <= SNAP_THRESHOLD) {
+        const vertOverlap = rawY < other.y + other.h && rawY + mod.h > other.y;
+        if (vertOverlap) snapX = other.x + other.w;
+      }
+      // Horizontal snapping: left edge of mod aligns to left edge of other
+      if (Math.abs(rawX - other.x) <= SNAP_THRESHOLD) {
+        const vertOverlap = rawY < other.y + other.h && rawY + mod.h > other.y;
+        if (vertOverlap) snapX = other.x;
+      }
+      // Horizontal snapping: right edge of mod aligns to left edge of other
+      if (Math.abs((rawX + mod.w) - other.x) <= SNAP_THRESHOLD) {
+        const vertOverlap = rawY < other.y + other.h && rawY + mod.h > other.y;
+        if (vertOverlap) snapX = other.x - mod.w;
+      }
+
+      // Vertical snapping: bottom edge of other → top edge of mod
+      if (Math.abs(rawY - (other.y + other.h)) <= SNAP_THRESHOLD) {
+        const horizOverlap = snapX < other.x + other.w && snapX + mod.w > other.x;
+        if (horizOverlap) snapY = other.y + other.h;
+      }
+      // Vertical snapping: top edge of mod aligns to top edge of other
+      if (Math.abs(rawY - other.y) <= SNAP_THRESHOLD) {
+        const horizOverlap = snapX < other.x + other.w && snapX + mod.w > other.x;
+        if (horizOverlap) snapY = other.y;
+      }
+      // Vertical snapping: bottom edge of mod aligns to top edge of other
+      if (Math.abs((rawY + mod.h) - other.y) <= SNAP_THRESHOLD) {
+        const horizOverlap = snapX < other.x + other.w && snapX + mod.w > other.x;
+        if (horizOverlap) snapY = other.y - mod.h;
+      }
+    }
+
+    return { snapX, snapY };
+  };
+
   const onMouseUp = useCallback((e) => {
     if (!dragging) return;
-    const { x, y } = getCellFromClient(e.clientX, e.clientY);
-    const snapX = x - Math.floor(dragging.offsetX / CELL_W);
-    const snapY = y - Math.floor(dragging.offsetY / CELL_H);
+    const rect = gridRef.current.getBoundingClientRect();
+    const rawX = Math.round((dragging.cursorX - rect.left - dragging.offsetX) / CELL_W);
+    const rawY = Math.round((dragging.cursorY - rect.top - dragging.offsetY) / CELL_H);
+    const { snapX, snapY } = magnetSnap(dragging.mod, rawX, rawY, dragging.mod.id);
     if (dragging.isPlaced && canPlace(dragging.mod, snapX, snapY, dragging.mod.id)) {
       onMove(dragging.mod.id, snapX, snapY);
     }
