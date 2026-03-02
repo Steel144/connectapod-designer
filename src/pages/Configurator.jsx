@@ -258,14 +258,15 @@ export default function Configurator() {
              </div>
              <div className="p-4">
                <DesignSummary
-              placedModules={placedModules}
-              onSave={() => setSaveModalOpen(true)}
-              onClear={handleClear}
-              isSaving={saveMutation.isPending}
-            />
-          </div>
-        </div>
-      )}
+                 placedModules={placedModules}
+                 onSave={() => setSaveModalOpen(true)}
+                 onClear={handleClear}
+                 isSaving={saveMutation.isPending}
+               />
+               </div>
+               </div>
+               </div>
+               )}
 
       {/* Saved Designs overlay panel */}
       {showSaved && (
