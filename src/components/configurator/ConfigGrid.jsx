@@ -86,17 +86,17 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
 
       // Vertical snapping: bottom edge of other → top edge of mod
       if (Math.abs(rawY - (other.y + other.h)) <= SNAP_THRESHOLD) {
-        const horizOverlap = snapX < other.x + other.w && snapX + mod.w > other.x;
+        const horizOverlap = rawX < other.x + other.w && rawX + mod.w > other.x;
         if (horizOverlap) snapY = other.y + other.h;
       }
       // Vertical snapping: top edge of mod aligns to top edge of other
       if (Math.abs(rawY - other.y) <= SNAP_THRESHOLD) {
-        const horizOverlap = snapX < other.x + other.w && snapX + mod.w > other.x;
+        const horizOverlap = rawX < other.x + other.w && rawX + mod.w > other.x;
         if (horizOverlap) snapY = other.y;
       }
       // Vertical snapping: bottom edge of mod aligns to top edge of other
       if (Math.abs((rawY + mod.h) - other.y) <= SNAP_THRESHOLD) {
-        const horizOverlap = snapX < other.x + other.w && snapX + mod.w > other.x;
+        const horizOverlap = rawX < other.x + other.w && rawX + mod.w > other.x;
         if (horizOverlap) snapY = other.y - mod.h;
       }
     }
