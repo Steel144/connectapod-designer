@@ -263,10 +263,10 @@ export default function Configurator() {
                  onClear={handleClear}
                  isSaving={saveMutation.isPending}
                />
-               </div>
-               </div>
-               </div>
-               )}
+             </div>
+           </div>
+         </div>
+       )}
 
       {/* Saved Designs overlay panel */}
       {showSaved && (
