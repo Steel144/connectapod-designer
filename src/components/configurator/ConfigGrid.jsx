@@ -3,14 +3,14 @@ import { X } from "lucide-react";
 import { MODULE_TYPES, GROUP_ICONS } from "./ModulePanel.jsx";
 
 const CELL_W = 120;
-const CELL_H = 192; // 120 * (4.8/3) to reflect 3x4.8m ratio
+const CELL_H = 192;
 const GRID_COLS = 15;
 const GRID_ROWS = 5;
 
 export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove }) {
   const [dragOverCell, setDragOverCell] = useState(null);
-  const [draggingMod, setDraggingMod] = useState(null);       // from panel
-  const [draggingPlaced, setDraggingPlaced] = useState(null); // existing placed module
+  const [draggingMod, setDraggingMod] = useState(null);
+  const [draggingPlaced, setDraggingPlaced] = useState(null);
   const gridRef = useRef(null);
 
   const getCellFromEvent = (e) => {
@@ -45,12 +45,10 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove })
     const { x, y } = getCellFromEvent(e);
 
     if (draggingPlaced) {
-      // Moving an existing placed module
       if (canPlace(draggingPlaced, x, y, draggingPlaced.id)) {
         onMove(draggingPlaced.id, x, y);
       }
     } else {
-      // Dropping a new module from the panel
       const modType = e.dataTransfer.getData("moduleType");
       const mod = MODULE_TYPES.find((m) => m.type === modType);
       if (mod && canPlace(mod, x, y)) {
@@ -106,7 +104,6 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove })
         onDragOver={handleDragOver}
         onDragLeave={() => { setDragOverCell(null); }}
       >
-        {/* Drop preview */}
         {previewCells.map((c, i) => (
           <div
             key={`preview-${i}`}
@@ -122,7 +119,6 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove })
           />
         ))}
 
-        {/* Placed modules */}
         {placedModules.map((mod) => (
           <div
             key={mod.id}
