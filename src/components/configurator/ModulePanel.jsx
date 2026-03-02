@@ -1,14 +1,14 @@
 import React from "react";
 
 const MODULE_TYPES = [
-  { type: "living", label: "Living Room", icon: "🛋️", color: "#E8F4FD", border: "#93C5FD", w: 2, h: 2, sqm: 25, price: 18000 },
-  { type: "bedroom", label: "Bedroom", icon: "🛏️", color: "#F0FDF4", border: "#86EFAC", w: 2, h: 2, sqm: 18, price: 15000 },
-  { type: "kitchen", label: "Kitchen", icon: "🍳", color: "#FFF7ED", border: "#FCA5A5", w: 2, h: 1, sqm: 12, price: 22000 },
-  { type: "bathroom", label: "Bathroom", icon: "🚿", color: "#F5F3FF", border: "#C4B5FD", w: 1, h: 1, sqm: 8, price: 14000 },
-  { type: "office", label: "Home Office", icon: "💻", color: "#FFF1F2", border: "#FDA4AF", w: 1, h: 2, sqm: 12, price: 12000 },
-  { type: "garage", label: "Garage", icon: "🚗", color: "#F8FAFC", border: "#94A3B8", w: 2, h: 2, sqm: 20, price: 16000 },
-  { type: "studio", label: "Studio", icon: "🎨", color: "#FEFCE8", border: "#FDE047", w: 1, h: 1, sqm: 10, price: 10000 },
-  { type: "laundry", label: "Laundry", icon: "🧺", color: "#F0F9FF", border: "#7DD3FC", w: 1, h: 1, sqm: 6, price: 8000 },
+  { type: "living", label: "Living Room", icon: "🛋️", color: "#E8F4FD", border: "#93C5FD", w: 1, h: 1, sqm: 14.4, price: 18000 },
+  { type: "bedroom", label: "Bedroom", icon: "🛏️", color: "#F0FDF4", border: "#86EFAC", w: 1, h: 1, sqm: 14.4, price: 15000 },
+  { type: "kitchen", label: "Kitchen", icon: "🍳", color: "#FFF7ED", border: "#FCA5A5", w: 1, h: 1, sqm: 14.4, price: 22000 },
+  { type: "bathroom", label: "Bathroom", icon: "🚿", color: "#F5F3FF", border: "#C4B5FD", w: 1, h: 1, sqm: 14.4, price: 14000 },
+  { type: "office", label: "Home Office", icon: "💻", color: "#FFF1F2", border: "#FDA4AF", w: 1, h: 1, sqm: 14.4, price: 12000 },
+  { type: "garage", label: "Garage", icon: "🚗", color: "#F8FAFC", border: "#94A3B8", w: 1, h: 1, sqm: 14.4, price: 16000 },
+  { type: "studio", label: "Studio", icon: "🎨", color: "#FEFCE8", border: "#FDE047", w: 1, h: 1, sqm: 14.4, price: 10000 },
+  { type: "laundry", label: "Laundry", icon: "🧺", color: "#F0F9FF", border: "#7DD3FC", w: 1, h: 1, sqm: 14.4, price: 8000 },
 ];
 
 export { MODULE_TYPES };
