@@ -127,7 +127,12 @@ export default function Configurator() {
   };
 
   return (
-    <div className="w-screen h-screen bg-[#F0EFEd] overflow-hidden relative flex flex-col">
+    <div 
+      className="w-screen h-screen bg-[#F0EFEd] overflow-hidden relative flex flex-col"
+      onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}
+      onMouseLeave={handleMouseUp}
+    >
       {/* Top bar */}
       <div className="absolute top-0 left-0 right-0 z-30 flex items-center justify-between px-4 py-2.5 bg-white/80 backdrop-blur border-b border-gray-200">
         <div>
