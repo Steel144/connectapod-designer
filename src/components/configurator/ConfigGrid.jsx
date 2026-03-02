@@ -270,19 +270,40 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
 
         {/* Live drag ghost — snapped to grid, no shadow */}
         {dragging && dragSnap && (
-          <div
-            className="absolute pointer-events-none"
-            style={{
-              left: dragSnap.snapX * CELL_W,
-              top: dragSnap.snapY * CELL_H,
-              width: dragging.mod.w * CELL_W,
-              height: dragging.mod.h * CELL_H,
-            }}
-          >
-            <FloorPlanSVG code={dragging.mod.type} className="w-full h-full" />
-          </div>
+          dragging.selectedIds.map((id) => {
+            const mod = placedModules.find((m) => m.id === id);
+            if (!mod) return null;
+            const deltaX = Math.round((dragging.cursorX - (gridRef.current.getBoundingClientRect().left + dragging.mod.x * CELL_W + dragging.offsetX)) / CELL_W);
+            const deltaY = Math.round((dragging.cursorY - (gridRef.current.getBoundingClientRect().top + dragging.mod.y * CELL_H + dragging.offsetY)) / CELL_H);
+            return (
+              <div
+                key={id}
+                className="absolute pointer-events-none opacity-60"
+                style={{
+                  left: (mod.x + deltaX) * CELL_W,
+                  top: (mod.y + deltaY) * CELL_H,
+                  width: mod.w * CELL_W,
+                  height: mod.h * CELL_H,
+                }}
+              >
+                <FloorPlanSVG code={mod.type} className="w-full h-full" />
+              </div>
+            );
+          })
         )}
 
+        {/* Selection box */}
+        {selectionBox && (
+          <div
+            className="absolute pointer-events-none border-2 border-indigo-500 bg-indigo-50/30"
+            style={{
+              left: Math.min(selectionBox.startX, selectionBox.cursorX),
+              top: Math.min(selectionBox.startY, selectionBox.cursorY),
+              width: Math.abs(selectionBox.cursorX - selectionBox.startX),
+              height: Math.abs(selectionBox.cursorY - selectionBox.startY),
+            }}
+          />
+        )}
 
       </div>
       <p className="text-xs text-slate-400 mt-2 text-center">
