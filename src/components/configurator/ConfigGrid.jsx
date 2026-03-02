@@ -143,13 +143,19 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove })
               opacity: draggingPlaced?.id === mod.id ? 0.4 : 1,
             }}
           >
-            <span className="flex items-center justify-center">{GROUP_ICONS[mod.groupKey]}</span>
-            <span className="text-xs font-semibold text-slate-600 mt-1 text-center leading-tight px-1">{mod.label}</span>
+            {/* Floor plan SVG fills the module footprint */}
+            <div className="absolute inset-0 overflow-hidden">
+              <FloorPlanSVG code={mod.type} className="w-full h-full" />
+            </div>
+            {/* Label overlay at bottom */}
+            <span className="absolute bottom-0 left-0 right-0 text-[9px] font-semibold text-slate-700 text-center leading-tight px-0.5 py-0.5 bg-white/60 truncate">
+              {mod.label}
+            </span>
             <button
               onClick={() => onRemove(mod.id)}
-              className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity bg-white rounded-full p-0.5 shadow-sm hover:bg-red-50"
+              className="absolute top-0.5 right-0.5 opacity-0 group-hover:opacity-100 transition-opacity bg-white rounded-full p-0.5 shadow-sm hover:bg-red-50 z-10"
             >
-              <X size={12} className="text-red-400" />
+              <X size={10} className="text-red-400" />
             </button>
           </div>
         ))}
