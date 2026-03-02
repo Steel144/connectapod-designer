@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import { X } from "lucide-react";
-import { MODULE_TYPES, ICONS } from "./ModulePanel";
+import { MODULE_TYPES, ICONS } from "./ModulePanel.jsx";
 
 const CELL_W = 120;
 const CELL_H = 192; // 120 * (4.8/3) to reflect 3x4.8m ratio
