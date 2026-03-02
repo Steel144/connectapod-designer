@@ -74,7 +74,7 @@ export default function ModulePanel({ onDragStart }) {
           onDragStart={(e) => onDragStart(e, mod)}
           className="flex items-center gap-3 p-3 cursor-grab active:cursor-grabbing border border-gray-200 bg-white transition-all hover:shadow-md hover:border-[#F15A22]"
         >
-          <span className="text-xl">{mod.icon}</span>
+          <span className="flex items-center justify-center w-6 h-6">{ICONS[mod.type]}</span>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-semibold text-gray-800 leading-tight">{mod.label}</p>
             <p className="text-xs text-gray-400">3×4.8m · ${(mod.price / 1000).toFixed(0)}k</p>
