@@ -3,8 +3,8 @@ import { X } from "lucide-react";
 import { MODULE_TYPES } from "./ModulePanel";
 
 const CELL_SIZE = 64;
-const GRID_COLS = 3;
-const GRID_ROWS = 4.8;
+const GRID_COLS = 5;
+const GRID_ROWS = 8;
 
 export default function ConfigGrid({ placedModules, onPlace, onRemove }) {
   const [hoveredCell, setHoveredCell] = useState(null);
