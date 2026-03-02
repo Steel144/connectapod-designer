@@ -16,23 +16,22 @@ export { MODULE_TYPES };
 export default function ModulePanel({ onDragStart }) {
   return (
     <div className="flex flex-col gap-1">
-      <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-2">Modules</p>
+      <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2">Modules</p>
       {MODULE_TYPES.map((mod) => (
         <div
           key={mod.type}
           draggable
           onDragStart={(e) => onDragStart(e, mod)}
-          className="flex items-center gap-3 p-3 rounded-xl cursor-grab active:cursor-grabbing border transition-all hover:shadow-md hover:-translate-y-0.5"
-          style={{ backgroundColor: mod.color, borderColor: mod.border, borderWidth: 1.5 }}
+          className="flex items-center gap-3 p-3 cursor-grab active:cursor-grabbing border border-gray-200 bg-white transition-all hover:shadow-md hover:border-[#F15A22]"
         >
           <span className="text-xl">{mod.icon}</span>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-slate-700 leading-tight">{mod.label}</p>
-            <p className="text-xs text-slate-400">3×4.8m · ${(mod.price / 1000).toFixed(0)}k</p>
+            <p className="text-sm font-semibold text-gray-800 leading-tight">{mod.label}</p>
+            <p className="text-xs text-gray-400">3×4.8m · ${(mod.price / 1000).toFixed(0)}k</p>
           </div>
         </div>
       ))}
-      <p className="text-xs text-slate-400 mt-3 text-center">Drag modules onto the grid →</p>
+      <p className="text-xs text-gray-400 mt-3 text-center">Drag modules onto the grid →</p>
     </div>
   );
 }
