@@ -1,7 +1,7 @@
 import React from "react";
 import { Layers, DollarSign, Maximize2, Save, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { ICONS } from "./ModulePanel.jsx";
+import { GROUP_ICONS } from "./ModulePanel.jsx";
 
 export default function DesignSummary({ placedModules, onSave, onClear, isSaving }) {
   const totalSqm = placedModules.reduce((sum, m) => sum + m.sqm, 0);
