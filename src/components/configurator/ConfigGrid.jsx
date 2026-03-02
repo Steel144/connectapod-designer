@@ -135,6 +135,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove })
                 height: mod.h * CELL_H,
                 opacity: isDragging ? 0 : 1,
                 userSelect: "none",
+                border: "2px solid #F15A22",
               }}
             >
               <div className="absolute inset-0 overflow-hidden">
