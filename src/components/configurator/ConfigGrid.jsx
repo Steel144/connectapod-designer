@@ -9,7 +9,7 @@ const CELL_H = CELL_SIZE;
 const GRID_COLS = 75;
 const GRID_ROWS = 40;
 
-export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, onRotate }) {
+export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, onRotate, walls = [], onPlaceWall, onRemoveWall, onMoveWall }) {
   const gridRef = useRef(null);
 
   // Selection and drag state
@@ -18,6 +18,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
   // { mod, offsetX, offsetY, cursorX, cursorY, isPlaced, selectedIds }
   const [selectionBox, setSelectionBox] = useState(null);
   // { startX, startY, cursorX, cursorY }
+  const [selectedWallId, setSelectedWallId] = useState(null);
 
   const getCellFromClient = (clientX, clientY) => {
     const rect = gridRef.current.getBoundingClientRect();
