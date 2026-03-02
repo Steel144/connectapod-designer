@@ -212,11 +212,11 @@ export default function ModulePanel({ onDragStart }) {
       {/* Magnified preview on hover */}
       {hoveredModule && (
         <div
-          className="fixed z-50 bg-white border-2 border-[#F15A22] shadow-xl rounded pointer-events-none"
+          className="fixed z-[100] bg-white border-2 border-[#F15A22] shadow-xl rounded pointer-events-none"
           style={{
             width: "240px",
             height: "240px",
-            top: "20px",
+            top: "48px",
             right: "20px",
             padding: "8px",
           }}
