@@ -94,8 +94,8 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove })
           width: GRID_COLS * CELL_W,
           height: GRID_ROWS * CELL_H,
           backgroundImage: `
-            linear-gradient(to right, #E2E8F0 1px, transparent 1px),
-            linear-gradient(to bottom, #E2E8F0 1px, transparent 1px)
+            linear-gradient(to right, #D1D5DB 1px, transparent 1px),
+            linear-gradient(to bottom, #D1D5DB 1px, transparent 1px)
           `,
           backgroundSize: `${CELL_W}px ${CELL_H}px`,
           backgroundColor: "#F5F5F3",
