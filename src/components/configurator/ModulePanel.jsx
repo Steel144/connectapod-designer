@@ -182,10 +182,16 @@ export default function ModulePanel({ onDragStart }) {
                       key={item.code}
                       draggable
                       onDragStart={(e) => onDragStart(e, mod)}
-                      className="flex flex-col px-3 py-2 cursor-grab active:cursor-grabbing hover:bg-orange-50 border-b border-gray-50 last:border-0 transition-colors"
+                      className="flex items-center gap-3 px-3 py-2 cursor-grab active:cursor-grabbing hover:bg-orange-50 border-b border-gray-50 last:border-0 transition-colors"
                     >
-                      <p className="text-xs font-medium text-gray-700 leading-tight">{item.name}</p>
-                      <p className="text-[10px] text-gray-400 mt-0.5">{item.code} · {item.width}×{item.depth}m · {item.sqm}m²</p>
+                      <div className="shrink-0 w-10 h-16 border border-gray-200 bg-white overflow-hidden">
+                        <FloorPlanSVG code={item.code} className="w-full h-full" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-xs font-medium text-gray-700 leading-tight">{item.name}</p>
+                        <p className="text-[10px] text-gray-400 mt-0.5">{item.code}</p>
+                        <p className="text-[10px] text-gray-400">{item.width}×{item.depth}m · {item.sqm}m²</p>
+                      </div>
                     </div>
                   );
                 })}
