@@ -119,11 +119,15 @@ export default function Configurator() {
   };
 
   const handleMouseMove = (e) => {
-    if (!draggingPanel) return;
-    setPanelPos({
-      x: draggingPanel.panelX + (e.clientX - draggingPanel.startX),
-      y: draggingPanel.panelY + (e.clientY - draggingPanel.startY),
-    });
+    if (draggingPanel) {
+      setPanelPos({
+        x: draggingPanel.panelX + (e.clientX - draggingPanel.startX),
+        y: draggingPanel.panelY + (e.clientY - draggingPanel.startY),
+      });
+    }
+    if (draggingSummary) {
+      handleSummaryMove(e);
+    }
   };
 
   const handleMouseUp = () => {
