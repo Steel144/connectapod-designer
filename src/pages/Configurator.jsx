@@ -152,6 +152,7 @@ export default function Configurator() {
           onPlace={handlePlace}
           onRemove={handleRemove}
           onMove={handleMove}
+          onRotate={handleRotate}
           draggingMod={draggingMod}
         />
       </div>
