@@ -2,10 +2,10 @@ import React, { useState, useRef } from "react";
 import { X } from "lucide-react";
 import { MODULE_TYPES, GROUP_ICONS } from "./ModulePanel.jsx";
 
-const CELL_W = 120;
-const CELL_H = 192;
-const GRID_COLS = 15;
-const GRID_ROWS = 5;
+const CELL_W = 24;   // 600mm per cell
+const CELL_H = 24;   // 600mm per cell
+const GRID_COLS = 75; // 45m total width (was 15 × 3m)
+const GRID_ROWS = 40; // 24m total depth (was 5 × 4.8m)
 
 export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove }) {
   const [dragOverCell, setDragOverCell] = useState(null);
