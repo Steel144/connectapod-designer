@@ -93,7 +93,27 @@ export default function Configurator() {
     );
   };
 
-  const handleClear = () => setPlacedModules([]);
+  const handleClear = () => {
+    setPlacedModules([]);
+    setWalls([]);
+  };
+
+  const handlePlaceWall = (wallData, x, y) => {
+    setWalls((prev) => [
+      ...prev,
+      { ...wallData, id: generateWallId(), x, y },
+    ]);
+  };
+
+  const handleRemoveWall = (id) => {
+    setWalls((prev) => prev.filter((w) => w.id !== id));
+  };
+
+  const handleMoveWall = (id, x, y) => {
+    setWalls((prev) =>
+      prev.map((w) => (w.id === id ? { ...w, x, y } : w))
+    );
+  };
 
   const handleSave = (name) => {
     const totalSqm = placedModules.reduce((s, m) => s + m.sqm, 0);
