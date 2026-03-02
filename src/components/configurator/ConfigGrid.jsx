@@ -59,7 +59,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
   }, [dragging]);
 
   // Snap to nearest placed module edge within SNAP_THRESHOLD cells
-  const SNAP_THRESHOLD = 2;
+  const SNAP_THRESHOLD = 1;
 
   const magnetSnap = (mod, rawX, rawY, excludeId = null) => {
     let snapX = rawX;
