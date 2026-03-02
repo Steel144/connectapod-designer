@@ -115,8 +115,8 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove })
               top: dragOverCell.y * CELL_H,
               width: activeMod.w * CELL_W,
               height: activeMod.h * CELL_H,
-              opacity: previewValid ? 0.85 : 0.4,
-              border: `2px dashed ${previewValid ? "#F15A22" : "#EF4444"}`,
+              opacity: 0.85,
+              border: "none",
             }}
           >
             <FloorPlanSVG code={activeMod.type} className="w-full h-full" />
