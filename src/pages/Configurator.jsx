@@ -198,11 +198,11 @@ export default function Configurator() {
       </div>
 
       {/* Floating right panel — Design summary */}
-      {placedModules.length > 0 && (
-        <div
-          className="absolute right-4 z-20 w-60"
-          style={{ top: "60px" }}
-        >
+       {placedModules.length > 0 && (
+         <div
+           className="absolute right-4 z-20 w-60"
+           style={{ top: "310px" }}
+         >
           <div className="bg-white border border-gray-200 shadow-xl overflow-hidden">
             <DesignSummary
               placedModules={placedModules}
