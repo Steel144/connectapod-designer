@@ -110,8 +110,15 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
     const rawX = Math.round((dragging.cursorX - rect.left - dragging.offsetX) / CELL_W);
     const rawY = Math.round((dragging.cursorY - rect.top - dragging.offsetY) / CELL_H);
     const { snapX, snapY } = magnetSnap(dragging.mod, rawX, rawY, dragging.mod.id);
-    if (dragging.isPlaced && canPlace(dragging.mod, snapX, snapY, dragging.mod.id)) {
-      onMove(dragging.mod.id, snapX, snapY);
+    // Try snapped position first, fall back to raw position if snap would collide
+    let finalX = snapX;
+    let finalY = snapY;
+    if (!canPlace(dragging.mod, snapX, snapY, dragging.mod.id)) {
+      finalX = rawX;
+      finalY = rawY;
+    }
+    if (dragging.isPlaced && canPlace(dragging.mod, finalX, finalY, dragging.mod.id)) {
+      onMove(dragging.mod.id, finalX, finalY);
     }
     setDragging(null);
   }, [dragging, placedModules]);
