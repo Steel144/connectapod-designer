@@ -40,6 +40,20 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
     return true;
   };
 
+  const canPlaceGroup = (mod, cx, cy, selectedIds) => {
+    if (cx < 0 || cy < 0 || cx + mod.w > GRID_COLS || cy + mod.h > GRID_ROWS) return false;
+    for (let dx = 0; dx < mod.w; dx++) {
+      for (let dy = 0; dy < mod.h; dy++) {
+        const collides = placedModules.some((m) => {
+          if (selectedIds.has(m.id)) return false; // Ignore selected modules
+          return cx + dx >= m.x && cx + dx < m.x + m.w && cy + dy >= m.y && cy + dy < m.y + m.h;
+        });
+        if (collides) return false;
+      }
+    }
+    return true;
+  };
+
   // ── Pointer events ──────────────────────────────
 
   const startDragPlaced = (e, mod) => {
