@@ -8,6 +8,8 @@ import SavedDesigns from "@/components/configurator/SavedDesigns";
 import SaveDesignModal from "@/components/configurator/SaveDesignModal";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { toast } from "sonner";
+import { Link } from "react-router-dom";
+import { createPageUrl } from "@/utils";
 
 let idCounter = 1;
 
