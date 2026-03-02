@@ -110,7 +110,9 @@ export default function Configurator() {
   };
 
   const handlePanelMouseDown = (e) => {
-    if (e.target.closest("button") || e.target.closest("div[class*='overflow']")) return;
+    if (e.target.closest("button")) return;
+    const headerDiv = e.currentTarget.querySelector('[class*="border-b"]');
+    if (!headerDiv || !headerDiv.contains(e.target)) return;
     setDraggingPanel({ startX: e.clientX, startY: e.clientY, panelX: panelPos.x, panelY: panelPos.y });
   };
 
