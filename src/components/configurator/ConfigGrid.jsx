@@ -91,13 +91,13 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove })
         ref={gridRef}
         className="relative select-none"
         style={{
-          width: GRID_COLS * CELL_SIZE,
-          height: GRID_ROWS * CELL_SIZE,
+          width: GRID_COLS * CELL_W,
+          height: GRID_ROWS * CELL_H,
           backgroundImage: `
             linear-gradient(to right, #E2E8F0 1px, transparent 1px),
             linear-gradient(to bottom, #E2E8F0 1px, transparent 1px)
           `,
-          backgroundSize: `${CELL_SIZE}px ${CELL_SIZE}px`,
+          backgroundSize: `${CELL_W}px ${CELL_H}px`,
           backgroundColor: "#F8FAFC",
           borderRadius: 0,
           border: "1.5px solid #E2E8F0",
