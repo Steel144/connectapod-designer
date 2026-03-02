@@ -130,6 +130,7 @@ export default function Configurator() {
 
   const handleLoad = (design) => {
     setPlacedModules(design.grid || []);
+    setWalls(design.walls || []);
     setShowSaved(false);
     toast.success(`Loaded "${design.name}"`);
   };
