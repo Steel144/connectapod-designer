@@ -7,10 +7,9 @@ const GRID_COLS = 3;
 const GRID_ROWS = 5;
 
 export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove }) {
-  const [hoveredCell, setHoveredCell] = useState(null);
   const [dragOverCell, setDragOverCell] = useState(null);
-  const [draggingMod, setDraggingMod] = useState(null);
-  const [draggingPlacedId, setDraggingPlacedId] = useState(null);
+  const [draggingMod, setDraggingMod] = useState(null);       // from panel
+  const [draggingPlaced, setDraggingPlaced] = useState(null); // existing placed module
   const gridRef = useRef(null);
 
   const getCellFromEvent = (e) => {
@@ -18,6 +17,13 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove })
     const x = Math.floor((e.clientX - rect.left) / CELL_SIZE);
     const y = Math.floor((e.clientY - rect.top) / CELL_SIZE);
     return { x, y };
+  };
+
+  const isOccupied = (x, y, excludeId = null) => {
+    return placedModules.some((m) => {
+      if (m.id === excludeId) return false;
+      return x >= m.x && x < m.x + m.w && y >= m.y && y < m.y + m.h;
+    });
   };
 
   const canPlace = (mod, cx, cy, excludeId = null) => {
@@ -30,34 +36,30 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove })
     return true;
   };
 
-  const isOccupied = (x, y, excludeId = null) => {
-    return placedModules.some((m) => {
-      if (m.id === excludeId) return false;
-      return x >= m.x && x < m.x + m.w && y >= m.y && y < m.y + m.h;
-    });
-  };
-
-  const canPlace = (mod, cx, cy) => {
-    if (cx < 0 || cy < 0 || cx + mod.w > GRID_COLS || cy + mod.h > GRID_ROWS) return false;
-    for (let dx = 0; dx < mod.w; dx++) {
-      for (let dy = 0; dy < mod.h; dy++) {
-        if (isOccupied(cx + dx, cy + dy)) return false;
-      }
-    }
-    return true;
-  };
+  const activeMod = draggingPlaced || draggingMod;
 
   const handleDrop = (e) => {
     e.preventDefault();
-    const modType = e.dataTransfer.getData("moduleType");
-    const mod = MODULE_TYPES.find((m) => m.type === modType);
-    if (!mod || !gridRef.current) return;
+    if (!gridRef.current) return;
     const { x, y } = getCellFromEvent(e);
-    if (canPlace(mod, x, y)) {
-      onPlace(mod, x, y);
+
+    if (draggingPlaced) {
+      // Moving an existing placed module
+      if (canPlace(draggingPlaced, x, y, draggingPlaced.id)) {
+        onMove(draggingPlaced.id, x, y);
+      }
+    } else {
+      // Dropping a new module from the panel
+      const modType = e.dataTransfer.getData("moduleType");
+      const mod = MODULE_TYPES.find((m) => m.type === modType);
+      if (mod && canPlace(mod, x, y)) {
+        onPlace(mod, x, y);
+      }
     }
+
     setDragOverCell(null);
     setDraggingMod(null);
+    setDraggingPlaced(null);
   };
 
   const handleDragOver = (e) => {
@@ -68,10 +70,10 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove })
   };
 
   const getPreviewCells = () => {
-    if (!dragOverCell || !draggingMod) return [];
+    if (!dragOverCell || !activeMod) return [];
     const cells = [];
-    for (let dx = 0; dx < draggingMod.w; dx++) {
-      for (let dy = 0; dy < draggingMod.h; dy++) {
+    for (let dx = 0; dx < activeMod.w; dx++) {
+      for (let dy = 0; dy < activeMod.h; dy++) {
         cells.push({ x: dragOverCell.x + dx, y: dragOverCell.y + dy });
       }
     }
@@ -79,7 +81,8 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove })
   };
 
   const previewCells = getPreviewCells();
-  const previewValid = draggingMod && dragOverCell && canPlace(draggingMod, dragOverCell.x, dragOverCell.y);
+  const previewValid = activeMod && dragOverCell &&
+    canPlace(activeMod, dragOverCell.x, dragOverCell.y, draggingPlaced?.id);
 
   return (
     <div className="overflow-auto">
@@ -100,14 +103,13 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove })
         }}
         onDrop={handleDrop}
         onDragOver={handleDragOver}
-        onDragLeave={() => { setDragOverCell(null); setDraggingMod(null); }}
-        onMouseLeave={() => setHoveredCell(null)}
+        onDragLeave={() => { setDragOverCell(null); }}
       >
         {/* Drop preview */}
         {previewCells.map((c, i) => (
           <div
             key={`preview-${i}`}
-            className="absolute transition-all pointer-events-none"
+            className="absolute pointer-events-none"
             style={{
               left: c.x * CELL_SIZE + 2,
               top: c.y * CELL_SIZE + 2,
@@ -123,7 +125,14 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove })
         {placedModules.map((mod) => (
           <div
             key={mod.id}
-            className="absolute rounded-xl flex flex-col items-center justify-center group cursor-default transition-shadow hover:shadow-lg"
+            draggable
+            onDragStart={(e) => {
+              e.dataTransfer.setData("placedModuleId", mod.id);
+              setDraggingPlaced(mod);
+              setDraggingMod(null);
+            }}
+            onDragEnd={() => { setDraggingPlaced(null); setDragOverCell(null); }}
+            className="absolute flex flex-col items-center justify-center group cursor-grab active:cursor-grabbing transition-shadow hover:shadow-lg"
             style={{
               left: mod.x * CELL_SIZE + 3,
               top: mod.y * CELL_SIZE + 3,
@@ -131,6 +140,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove })
               height: mod.h * CELL_SIZE - 6,
               backgroundColor: mod.color,
               border: `2px solid ${mod.border}`,
+              opacity: draggingPlaced?.id === mod.id ? 0.4 : 1,
             }}
           >
             <span className="text-2xl">{mod.icon}</span>
