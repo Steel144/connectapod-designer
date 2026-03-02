@@ -138,7 +138,14 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                 border: "2px solid #F15A22",
               }}
             >
-              <div className="absolute inset-0 overflow-hidden">
+              <div
+                className="absolute inset-0 overflow-hidden flex items-center justify-center"
+                style={{
+                  transform: `rotate(${mod.rotation || 0}deg)`,
+                  width: "100%",
+                  height: "100%",
+                }}
+              >
                 <FloorPlanSVG code={mod.type} className="w-full h-full" />
               </div>
               <span className="absolute bottom-0 left-0 right-0 text-[9px] font-semibold text-slate-700 text-center leading-tight px-0.5 py-0.5 bg-white/60 truncate">
