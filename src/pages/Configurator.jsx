@@ -16,6 +16,7 @@ const generateWallId = () => `wall-${Math.random().toString(36).substr(2, 9)}`;
 
 export default function Configurator() {
   const [placedModules, setPlacedModules] = useState([]);
+  const [walls, setWalls] = useState([]);
   const [draggingMod, setDraggingMod] = useState(null);
   const [saveModalOpen, setSaveModalOpen] = useState(false);
   const [showSaved, setShowSaved] = useState(false);
