@@ -11,6 +11,7 @@ const GRID_ROWS = 40;
 
 export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, onRotate }) {
   const gridRef = useRef(null);
+  const [hoveredModId, setHoveredModId] = useState(null);
 
   // Live drag state
   const [dragging, setDragging] = useState(null);
