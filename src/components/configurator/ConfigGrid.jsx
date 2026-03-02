@@ -154,7 +154,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove })
         ))}
       </div>
       <p className="text-xs text-slate-400 mt-2 text-center">
-        Grid: {GRID_COLS}×{GRID_ROWS} cells · Each module = 3×4.8m
+        Grid: {GRID_COLS}×{GRID_ROWS} cells · Snap: 600mm
       </p>
     </div>
   );
