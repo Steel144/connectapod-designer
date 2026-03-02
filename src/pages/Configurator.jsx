@@ -195,15 +195,16 @@ export default function Configurator() {
 
       {/* Floating left panel — Module picker */}
       <div
-        className="absolute left-4 z-20 flex"
-        style={{ top: "60px", bottom: "16px" }}
+        className="absolute z-20 flex"
+        style={{ left: `${panelPos.x}px`, top: `${panelPos.y}px`, cursor: draggingPanel ? "grabbing" : "default" }}
       >
         <div
           className={`bg-white border border-gray-200 shadow-xl flex flex-col overflow-hidden transition-all duration-200 ${
             panelCollapsed ? "w-0 opacity-0 pointer-events-none" : "w-64 opacity-100"
           }`}
+          onMouseDown={handlePanelMouseDown}
         >
-          <div className="px-4 pt-3 pb-2 border-b border-gray-100 shrink-0">
+          <div className="px-4 pt-3 pb-2 border-b border-gray-100 shrink-0 cursor-grab active:cursor-grabbing">
             <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest">Module Library</p>
             <p className="text-[11px] text-gray-400 mt-0.5">Expand a category · drag to place</p>
           </div>
