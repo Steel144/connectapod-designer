@@ -215,6 +215,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
         }}
         onDrop={handleDrop}
         onDragOver={handleDragOver}
+        onMouseDown={startSelectionBox}
       >
         {/* Placed modules */}
         {placedModules.map((mod) => {
