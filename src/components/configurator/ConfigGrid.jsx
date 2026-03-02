@@ -185,12 +185,24 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
 
   const handleDrop = (e) => {
     e.preventDefault();
+    
     const modType = e.dataTransfer.getData("moduleType");
-    if (!modType) return;
-    const mod = MODULE_TYPES.find((m) => m.type === modType);
-    if (!mod || !gridRef.current) return;
-    const { x, y } = getCellFromClient(e.clientX, e.clientY);
-    if (canPlace(mod, x, y)) onPlace(mod, x, y);
+    if (modType) {
+      const mod = MODULE_TYPES.find((m) => m.type === modType);
+      if (!mod || !gridRef.current) return;
+      const { x, y } = getCellFromClient(e.clientX, e.clientY);
+      if (canPlace(mod, x, y)) onPlace(mod, x, y);
+      return;
+    }
+    
+    const wallType = e.dataTransfer.getData("wallType");
+    if (wallType) {
+      const wall = WALL_TYPES.find((w) => w.type === wallType);
+      if (!wall || !gridRef.current) return;
+      const { x, y } = getCellFromClient(e.clientX, e.clientY);
+      if (onPlaceWall) onPlaceWall(wall, x, y);
+      return;
+    }
   };
 
   // Compute live snap position for dragging module
