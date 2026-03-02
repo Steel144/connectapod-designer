@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { ChevronDown, ChevronRight } from "lucide-react";
+import FloorPlanSVG from "./FloorPlanSVG.jsx";
 
 function getIcon(key, size = 18) {
   const s = size;
