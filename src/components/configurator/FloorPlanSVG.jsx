@@ -362,7 +362,7 @@ function DeckPlan({ soffit, width }) {
 
 // ── Main export ────────────────────────────────
 
-export default function FloorPlanSVG({ code, className = "" }) {
+export function FloorPlanSVG({ code, className = "" }) {
   const PlanComponent = PLANS[code];
 
   return (
