@@ -20,6 +20,16 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove })
     return { x, y };
   };
 
+  const canPlace = (mod, cx, cy, excludeId = null) => {
+    if (cx < 0 || cy < 0 || cx + mod.w > GRID_COLS || cy + mod.h > GRID_ROWS) return false;
+    for (let dx = 0; dx < mod.w; dx++) {
+      for (let dy = 0; dy < mod.h; dy++) {
+        if (isOccupied(cx + dx, cy + dy, excludeId)) return false;
+      }
+    }
+    return true;
+  };
+
   const isOccupied = (x, y, excludeId = null) => {
     return placedModules.some((m) => {
       if (m.id === excludeId) return false;
