@@ -219,7 +219,8 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
       >
         {/* Placed modules */}
         {placedModules.map((mod) => {
-          const isDragging = dragging?.isPlaced && dragging.mod.id === mod.id;
+          const isDragging = dragging?.isPlaced && dragging.selectedIds?.has(mod.id);
+          const isSelected = selected.has(mod.id);
           return (
             <div
               key={mod.id}
@@ -232,7 +233,8 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                 height: mod.h * CELL_H,
                 opacity: isDragging ? 0 : 1,
                 userSelect: "none",
-                border: "2px solid #F15A22",
+                border: isSelected ? "3px solid #4F46E5" : "2px solid #F15A22",
+                boxShadow: isSelected ? "inset 0 0 0 1px #4F46E5" : "none",
               }}
             >
               <div
