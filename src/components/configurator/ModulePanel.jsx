@@ -208,6 +208,27 @@ export default function ModulePanel({ onDragStart }) {
       })}
 
       <p className="text-xs text-gray-400 mt-3 text-center">Expand a category, then drag →</p>
+
+      {/* Magnified preview on hover */}
+      {hoveredModule && (
+        <div
+          className="fixed z-50 bg-white border-2 border-[#F15A22] shadow-xl rounded pointer-events-none"
+          style={{
+            width: "240px",
+            height: "240px",
+            top: "20px",
+            right: "20px",
+            padding: "8px",
+          }}
+        >
+          <div className="w-full h-full bg-gray-50 border border-gray-200 rounded overflow-hidden">
+            <FloorPlanSVG code={hoveredModule.type} className="w-full h-full" />
+          </div>
+          <p className="text-xs font-semibold text-gray-700 text-center mt-2">
+            {hoveredModule.label}
+          </p>
+        </div>
+      )}
     </div>
   );
 }
