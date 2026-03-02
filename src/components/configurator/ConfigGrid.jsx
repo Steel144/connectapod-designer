@@ -84,7 +84,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove }) {
           `,
           backgroundSize: `${CELL_SIZE}px ${CELL_SIZE}px`,
           backgroundColor: "#F8FAFC",
-          borderRadius: 16,
+          borderRadius: 0,
           border: "1.5px solid #E2E8F0",
         }}
         onDrop={handleDrop}
