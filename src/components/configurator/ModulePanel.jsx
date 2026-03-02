@@ -28,9 +28,8 @@ export default function ModulePanel({ onDragStart }) {
           <span className="text-xl">{mod.icon}</span>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-semibold text-slate-700 leading-tight">{mod.label}</p>
-            <p className="text-xs text-slate-400">{mod.sqm} m² · ${(mod.price / 1000).toFixed(0)}k</p>
+            <p className="text-xs text-slate-400">3×4.8m · ${(mod.price / 1000).toFixed(0)}k</p>
           </div>
-          <div className="text-xs text-slate-300 font-mono">{mod.w}×{mod.h}</div>
         </div>
       ))}
       <p className="text-xs text-slate-400 mt-3 text-center">Drag modules onto the grid →</p>
