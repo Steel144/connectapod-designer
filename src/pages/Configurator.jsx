@@ -116,6 +116,7 @@ export default function Configurator() {
               placedModules={placedModules}
               onPlace={handlePlace}
               onRemove={handleRemove}
+              onMove={handleMove}
               draggingMod={draggingMod}
             />
           </div>
