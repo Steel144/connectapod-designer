@@ -178,7 +178,7 @@ export default function ModulePanel({ onDragStart }) {
             </button>
 
             {isOpen && (
-              <div className="border-t border-gray-100">
+              <div className="border-t border-gray-100 max-h-64 overflow-y-auto">
                 {group.items.map((item) => {
                   const mod = MODULE_TYPES.find((m) => m.type === item.code);
                   return (
