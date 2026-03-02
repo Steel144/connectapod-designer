@@ -144,7 +144,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove })
               opacity: draggingPlaced?.id === mod.id ? 0.4 : 1,
             }}
           >
-            <span className="text-2xl">{mod.icon}</span>
+            <span className="flex items-center justify-center">{ICONS[mod.moduleType]}</span>
             <span className="text-xs font-semibold text-slate-600 mt-1 text-center leading-tight px-1">{mod.label}</span>
             <button
               onClick={() => onRemove(mod.id)}
