@@ -98,9 +98,9 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove })
             linear-gradient(to bottom, #E2E8F0 1px, transparent 1px)
           `,
           backgroundSize: `${CELL_W}px ${CELL_H}px`,
-          backgroundColor: "#F8FAFC",
+          backgroundColor: "#F5F5F3",
           borderRadius: 0,
-          border: "1.5px solid #E2E8F0",
+          border: "1.5px solid #D1D5DB",
         }}
         onDrop={handleDrop}
         onDragOver={handleDragOver}
