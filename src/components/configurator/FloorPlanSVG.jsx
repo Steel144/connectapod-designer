@@ -363,6 +363,7 @@ function DeckPlan({ soffit, width }) {
 // ── Main export ────────────────────────────────
 
 export function FloorPlanSVG({ code, className = "" }) {
+// keep named export for ConfigGrid
   const PlanComponent = PLANS[code];
 
   return (
