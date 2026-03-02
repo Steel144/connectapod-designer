@@ -55,7 +55,7 @@ export default function Configurator() {
   const handlePlace = (mod, x, y) => {
     setPlacedModules((prev) => [
       ...prev,
-      { ...mod, id: `mod-${idCounter++}`, x, y },
+      { ...mod, id: generateId(), x, y },
     ]);
   };
 
