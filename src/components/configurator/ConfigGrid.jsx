@@ -116,8 +116,8 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove })
               top: c.y * CELL_H + 2,
               width: CELL_W - 4,
               height: CELL_H - 4,
-              backgroundColor: previewValid ? "rgba(99,102,241,0.15)" : "rgba(239,68,68,0.15)",
-              border: `2px dashed ${previewValid ? "#6366F1" : "#EF4444"}`,
+              backgroundColor: previewValid ? "rgba(241,90,34,0.15)" : "rgba(239,68,68,0.15)",
+              border: `2px dashed ${previewValid ? "#F15A22" : "#EF4444"}`,
             }}
           />
         ))}
