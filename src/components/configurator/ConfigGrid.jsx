@@ -6,10 +6,11 @@ const CELL_SIZE = 120;
 const GRID_COLS = 3;
 const GRID_ROWS = 5;
 
-export default function ConfigGrid({ placedModules, onPlace, onRemove }) {
+export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove }) {
   const [hoveredCell, setHoveredCell] = useState(null);
   const [dragOverCell, setDragOverCell] = useState(null);
   const [draggingMod, setDraggingMod] = useState(null);
+  const [draggingPlacedId, setDraggingPlacedId] = useState(null);
   const gridRef = useRef(null);
 
   const getCellFromEvent = (e) => {
