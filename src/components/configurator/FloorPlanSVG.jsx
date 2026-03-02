@@ -369,7 +369,8 @@ function FloorPlanSVG({ code, className = "" }) {
     <svg
       viewBox={`0 0 ${W} ${H}`}
       className={className}
-      style={{ display: "block" }}
+      style={{ display: "block", width: "100%", height: "100%" }}
+      preserveAspectRatio="xMidYMid slice"
     >
       {/* Module outline */}
       <rect x={4} y={4} width={W-8} height={H-8} fill="#F8F9FA" stroke={stroke} strokeWidth={wall} rx={0} />
