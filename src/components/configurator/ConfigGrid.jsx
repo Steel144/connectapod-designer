@@ -12,9 +12,12 @@ const GRID_ROWS = 40;
 export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, onRotate }) {
   const gridRef = useRef(null);
 
-  // Live drag state
+  // Selection and drag state
+  const [selected, setSelected] = useState(new Set());
   const [dragging, setDragging] = useState(null);
-  // { mod, offsetX, offsetY, cursorX, cursorY, isPlaced }
+  // { mod, offsetX, offsetY, cursorX, cursorY, isPlaced, selectedIds }
+  const [selectionBox, setSelectionBox] = useState(null);
+  // { startX, startY, cursorX, cursorY }
 
   const getCellFromClient = (clientX, clientY) => {
     const rect = gridRef.current.getBoundingClientRect();
