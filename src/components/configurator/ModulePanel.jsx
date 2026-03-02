@@ -216,6 +216,54 @@ export default function ModulePanel({ onDragStart }) {
         );
       })}
 
+      {/* Walls section */}
+      <div className="border border-gray-200 bg-white overflow-hidden mt-1">
+        <button
+          className="w-full flex items-center gap-3 p-3 hover:bg-gray-50 transition-colors text-left"
+          onClick={() => setOpenGroup(openGroup === "walls" ? null : "walls")}
+        >
+          <span className="flex items-center justify-center w-5 h-5 shrink-0">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#F15A22" strokeWidth="2" width="18" height="18">
+              <line x1="3" y1="12" x2="21" y2="12" strokeWidth="3"/>
+            </svg>
+          </span>
+          <span className="flex-1 text-sm font-semibold text-gray-800">Walls</span>
+          <span className="text-gray-400 shrink-0">
+            {openGroup === "walls" ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+          </span>
+        </button>
+
+        {openGroup === "walls" && (
+          <div className="border-t border-gray-100 max-h-64 overflow-y-auto">
+            {WALL_TYPES.map((wall) => (
+              <div
+                key={wall.type}
+                draggable
+                onDragStart={(e) => {
+                  e.dataTransfer.setData("wallType", wall.type);
+                  onDragStart(e, wall);
+                }}
+                className="flex items-center gap-3 px-3 py-2 cursor-grab active:cursor-grabbing hover:bg-orange-50 border-b border-gray-50 last:border-0 transition-colors"
+              >
+                <div className="shrink-0 w-10 h-8 border border-gray-200 bg-white flex items-center justify-center">
+                  <div 
+                    style={{
+                      width: wall.orientation === "horizontal" ? "90%" : `${wall.thickness * 2}px`,
+                      height: wall.orientation === "vertical" ? "90%" : `${wall.thickness * 2}px`,
+                      backgroundColor: "#4B5563",
+                    }}
+                  />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-xs font-medium text-gray-700 leading-tight">{wall.label}</p>
+                  <p className="text-[10px] text-gray-400 mt-0.5">Thickness: {wall.thickness}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
       <p className="text-xs text-gray-400 mt-3 text-center">Expand a category, then drag →</p>
 
       {/* Magnified preview on hover */}
