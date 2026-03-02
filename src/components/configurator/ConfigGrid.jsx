@@ -112,10 +112,10 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove })
             key={`preview-${i}`}
             className="absolute pointer-events-none"
             style={{
-              left: c.x * CELL_SIZE + 2,
-              top: c.y * CELL_SIZE + 2,
-              width: CELL_SIZE - 4,
-              height: CELL_SIZE - 4,
+              left: c.x * CELL_W + 2,
+              top: c.y * CELL_H + 2,
+              width: CELL_W - 4,
+              height: CELL_H - 4,
               backgroundColor: previewValid ? "rgba(99,102,241,0.15)" : "rgba(239,68,68,0.15)",
               border: `2px dashed ${previewValid ? "#6366F1" : "#EF4444"}`,
             }}
