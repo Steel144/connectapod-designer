@@ -125,23 +125,45 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
   };
 
   const onMouseUp = useCallback((e) => {
+    // Handle selection box
+    if (selectionBox) {
+      const rect = gridRef.current.getBoundingClientRect();
+      const minX = Math.min(selectionBox.startX, selectionBox.cursorX);
+      const maxX = Math.max(selectionBox.startX, selectionBox.cursorX);
+      const minY = Math.min(selectionBox.startY, selectionBox.cursorY);
+      const maxY = Math.max(selectionBox.startY, selectionBox.cursorY);
+      
+      const newSelected = new Set();
+      placedModules.forEach((mod) => {
+        const modX1 = mod.x * CELL_W;
+        const modY1 = mod.y * CELL_H;
+        const modX2 = modX1 + mod.w * CELL_W;
+        const modY2 = modY1 + mod.h * CELL_H;
+        
+        if (!(modX2 < minX || modX1 > maxX || modY2 < minY || modY1 > maxY)) {
+          newSelected.add(mod.id);
+        }
+      });
+      
+      if (newSelected.size > 0) setSelected(newSelected);
+      setSelectionBox(null);
+      return;
+    }
+
     if (!dragging) return;
     const rect = gridRef.current.getBoundingClientRect();
-    const rawX = Math.round((dragging.cursorX - rect.left - dragging.offsetX) / CELL_W);
-    const rawY = Math.round((dragging.cursorY - rect.top - dragging.offsetY) / CELL_H);
-    const { snapX, snapY } = magnetSnap(dragging.mod, rawX, rawY, dragging.mod.id);
-    // Try snapped position first, fall back to raw position if snap would collide
-    let finalX = snapX;
-    let finalY = snapY;
-    if (!canPlace(dragging.mod, snapX, snapY, dragging.mod.id)) {
-      finalX = rawX;
-      finalY = rawY;
-    }
-    if (dragging.isPlaced && canPlace(dragging.mod, finalX, finalY, dragging.mod.id)) {
-      onMove(dragging.mod.id, finalX, finalY);
-    }
+    const deltaX = Math.round((dragging.cursorX - (rect.left + dragging.mod.x * CELL_W + dragging.offsetX)) / CELL_W);
+    const deltaY = Math.round((dragging.cursorY - (rect.top + dragging.mod.y * CELL_H + dragging.offsetY)) / CELL_H);
+
+    // Move all selected modules by same delta
+    dragging.selectedIds.forEach((id) => {
+      const mod = placedModules.find((m) => m.id === id);
+      if (mod && canPlace(mod, mod.x + deltaX, mod.y + deltaY, id)) {
+        onMove(id, mod.x + deltaX, mod.y + deltaY);
+      }
+    });
     setDragging(null);
-  }, [dragging, placedModules]);
+  }, [dragging, selectionBox, placedModules]);
 
   // ── HTML drag drop for new modules from panel ───
 
