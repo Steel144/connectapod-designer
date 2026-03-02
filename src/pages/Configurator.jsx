@@ -238,6 +238,10 @@ export default function Configurator() {
           onMove={handleMove}
           onRotate={handleRotate}
           draggingMod={draggingMod}
+          walls={walls}
+          onPlaceWall={handlePlaceWall}
+          onRemoveWall={handleRemoveWall}
+          onMoveWall={handleMoveWall}
         />
       </div>
 
