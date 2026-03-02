@@ -105,7 +105,7 @@ export default function Configurator() {
       {activeTab === "configure" && (
         <div className="flex flex-col lg:flex-row gap-0 h-[calc(100vh-73px)]">
           {/* Left: Module Panel */}
-          <div className="lg:w-64 shrink-0 bg-white border-r border-slate-100 overflow-y-auto p-4">
+          <div className="lg:w-64 shrink-0 bg-white border-r border-gray-200 overflow-y-auto p-4">
             <ModulePanel onDragStart={handleDragStart} />
           </div>
 
