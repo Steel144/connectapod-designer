@@ -12,6 +12,7 @@ import { createPageUrl } from "@/utils";
 import { BookOpen, FolderOpen, Save, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
 
 const generateId = () => `mod-${Math.random().toString(36).substr(2, 9)}`;
+const generateWallId = () => `wall-${Math.random().toString(36).substr(2, 9)}`;
 
 export default function Configurator() {
   const [placedModules, setPlacedModules] = useState([]);
