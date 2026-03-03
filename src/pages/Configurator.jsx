@@ -126,6 +126,16 @@ export default function Configurator() {
     );
   }, [wallImages]);
 
+  // Update modules with images when floorPlanImages changes
+  useEffect(() => {
+    setPlacedModules((prev) =>
+      prev.map((m) => ({
+        ...m,
+        floorPlanImage: floorPlanImages[m.type] || m.floorPlanImage || null,
+      }))
+    );
+  }, [floorPlanImages]);
+
   const handlePlace = (mod, x, y) => {
     pushHistory(placedModules, walls);
     // Ensure chassis, width, etc. are always stored on the placed module
