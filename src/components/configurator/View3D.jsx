@@ -382,10 +382,19 @@ export default function View3D({ placedModules, walls }) {
       const wM = wall.orientation === "horizontal" ? wall.length * CELL_M : thickness;
       const hM = wall.orientation === "vertical" ? wall.length * CELL_M : thickness;
 
-      // Use weatherboard for gable ends (Z, X faces), standing seam for others
-      const isGableEnd = wall.face === 'Z' || wall.face === 'X';
-      const texture = isGableEnd ? createWeatherboardTexture() : createStandingSeamTexture();
-      const material = new THREE.MeshLambertMaterial({ map: texture, color: 0xffffff });
+      // Use elevation image if available, otherwise use generated texture
+      let material;
+      if (wall.elevationImage) {
+        const textureLoader = new THREE.TextureLoader();
+        const texture = textureLoader.load(wall.elevationImage);
+        texture.magFilter = THREE.LinearFilter;
+        texture.minFilter = THREE.LinearFilter;
+        material = new THREE.MeshLambertMaterial({ map: texture, color: 0xffffff });
+      } else {
+        const isGableEnd = wall.face === 'Z' || wall.face === 'X';
+        const texture = isGableEnd ? createWeatherboardTexture() : createStandingSeamTexture();
+        material = new THREE.MeshLambertMaterial({ map: texture, color: 0xffffff });
+      }
 
       const geo = new THREE.BoxGeometry(wM, WALL_HEIGHT, hM);
       const mesh = new THREE.Mesh(geo, material);
