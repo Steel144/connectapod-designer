@@ -482,21 +482,24 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
            return (
              <div key={wall.id}>
                <div
-                 onMouseDown={(e) => startDragWall(e, wall)}
-                 className="absolute group cursor-grab active:cursor-grabbing flex items-center justify-center"
-                 style={{
-                   position: "absolute",
-                   left: wall.x * CELL_W,
-                   top: wall.y * CELL_H,
-                   width: wallW,
-                   height: wallH,
-                   backgroundColor: isSelected ? "#4F46E5" : "#4B5563",
-                   border: isSelected ? "2px solid #4F46E5" : "1px solid #2d3748",
-                   opacity: isBeingDragged ? 0.2 : 0.7,
-                   transform: wall.rotation ? `rotate(${wall.rotation}deg)` : undefined,
-                   transformOrigin: "center",
-                 }}
-               >
+                  onMouseDown={(e) => {
+                    if (e.target.closest("button")) return;
+                    startDragWall(e, wall);
+                  }}
+                  className="absolute group cursor-grab active:cursor-grabbing flex items-center justify-center"
+                  style={{
+                    position: "absolute",
+                    left: wall.x * CELL_W,
+                    top: wall.y * CELL_H,
+                    width: wallW,
+                    height: wallH,
+                    backgroundColor: isSelected ? "#4F46E5" : "#4B5563",
+                    border: isSelected ? "2px solid #4F46E5" : "1px solid #2d3748",
+                    opacity: isBeingDragged ? 0.2 : 0.7,
+                    transform: wall.rotation ? `rotate(${wall.rotation}deg)` : undefined,
+                    transformOrigin: "center",
+                  }}
+                >
                  {wall.face && (
                    <span className="text-[8px] font-bold text-white/80 pointer-events-none select-none">
                      {wall.face}
