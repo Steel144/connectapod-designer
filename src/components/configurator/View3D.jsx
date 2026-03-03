@@ -413,6 +413,53 @@ export default function View3D({ placedModules, walls }) {
       
       scene.add(mesh);
 
+      // Add gable to end walls (Z, X faces) matching module profile
+      if (wall.face === 'Z' || wall.face === 'X') {
+        const pitchAngle = 25 * Math.PI / 180;
+        const roofDepth = hM + 0.37;
+        const roofPeakH = (roofDepth / 2) * Math.tan(pitchAngle);
+        
+        const gableUVs = new Float32Array([
+          0, 0, 1, 0, 0.5, roofPeakH / WALL_HEIGHT,
+          0, 0, 1, 0, 0.5, roofPeakH / WALL_HEIGHT,
+        ]);
+        
+        // Left gable
+        const leftGableGeo = new THREE.BufferGeometry();
+        leftGableGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array([
+          -wM/2, 0, -roofDepth/2,
+          -wM/2, 0, roofDepth/2,
+          -wM/2, roofPeakH, 0,
+        ]), 3));
+        leftGableGeo.setAttribute('uv', new THREE.BufferAttribute(gableUVs, 2));
+        leftGableGeo.computeVertexNormals();
+        
+        const gableMat = new THREE.MeshLambertMaterial({ map: createWeatherboardTexture(), color: 0xffffff });
+        const leftGable = new THREE.Mesh(leftGableGeo, gableMat);
+        leftGable.castShadow = true;
+        leftGable.receiveShadow = true;
+        leftGable.position.copy(mesh.position);
+        leftGable.position.y = WALL_HEIGHT;
+        scene.add(leftGable);
+        
+        // Right gable
+        const rightGableGeo = new THREE.BufferGeometry();
+        rightGableGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array([
+          wM/2, 0, -roofDepth/2,
+          wM/2, roofPeakH, 0,
+          wM/2, 0, roofDepth/2,
+        ]), 3));
+        rightGableGeo.setAttribute('uv', new THREE.BufferAttribute(gableUVs, 2));
+        rightGableGeo.computeVertexNormals();
+        
+        const rightGable = new THREE.Mesh(rightGableGeo, gableMat);
+        rightGable.castShadow = true;
+        rightGable.receiveShadow = true;
+        rightGable.position.copy(mesh.position);
+        rightGable.position.y = WALL_HEIGHT;
+        scene.add(rightGable);
+      }
+
       // Add box spouting (125mm) to front/back walls (W and Y)
       if ((wall.face === 'W' || wall.face === 'Y') && wall.length) {
         const spoutingLength = wall.length * CELL_M;
