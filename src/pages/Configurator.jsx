@@ -101,9 +101,11 @@ export default function Configurator() {
 
   const handlePlace = (mod, x, y) => {
     pushHistory(placedModules, walls);
+    // Ensure chassis, width, etc. are always stored on the placed module
+    const fullMod = MODULE_TYPES.find(m => m.type === mod.type) || mod;
     setPlacedModules((prev) => [
       ...prev,
-      { ...mod, id: generateId(), x, y },
+      { ...fullMod, ...mod, id: generateId(), x, y },
     ]);
   };
 
