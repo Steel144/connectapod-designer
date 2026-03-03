@@ -190,7 +190,10 @@ export default function ModulePanel({ onDragStart, onDragEnd }) {
                     <div
                       key={item.code}
                       draggable
-                      onDragStart={(e) => onDragStart(e, mod)}
+                      onDragStart={(e) => {
+                        e.dataTransfer.effectAllowed = "copy";
+                        onDragStart(e, mod);
+                      }}
                       onDragEnd={onDragEnd}
                       onMouseEnter={() => setHoveredModule(mod)}
                       onMouseLeave={() => setHoveredModule(null)}
