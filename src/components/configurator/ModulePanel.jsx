@@ -397,7 +397,7 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
 
         {openGroup === "walls" && (
           <div className="border-t border-gray-100 max-h-64 overflow-y-auto">
-            {filterWalls && filterReason && (
+            {filterReason && (
               <div className="px-3 py-1.5 bg-orange-50 border-b border-orange-100">
                 <p className="text-[10px] text-[#F15A22]">{filterReason}</p>
               </div>
