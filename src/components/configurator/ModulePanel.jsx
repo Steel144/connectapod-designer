@@ -276,13 +276,26 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
 
     if (!attachedMod) return { compatibleWalls: WALL_TYPES, filterReason: null };
 
-    const chassis = attachedMod.chassis || "SF";
+    // Resolve chassis and width — placed modules have chassis/widthCode from MODULE_TYPES spread
+    // but fall back to deriving from MODULE_TYPES lookup if missing
+    let chassis = attachedMod.chassis;
+    let modWidthM = attachedMod.width; // metres (from panel item)
+    if (!chassis || !modWidthM) {
+      const resolved = MODULE_TYPES.find(m => m.type === attachedMod.type);
+      chassis = chassis || resolved?.chassis || "SF";
+      modWidthM = modWidthM || (attachedMod.w ? attachedMod.w * CELL_M : resolved?.w * CELL_M) || 3.0;
+    } else {
+      modWidthM = modWidthM || (attachedMod.w * CELL_M);
+    }
+    // Always derive from grid cells to be safe (w is the authoritative source after rotation)
+    modWidthM = attachedMod.w ? attachedMod.w * CELL_M : modWidthM;
+
     const isDeck = chassis === "DK" || chassis === "SO";
     const isEnd = chassis === "EF" || chassis === "LF" || chassis === "RF" || chassis === "ER";
     const isLongFace = face === "W" || face === "Y";
 
     const faceWidthM = isLongFace
-      ? attachedMod.w * CELL_M   // W/Y face = module width
+      ? modWidthM          // W/Y face = module width
       : attachedMod.h * CELL_M;  // Z/X face = module depth (4.8m)
 
     // Z/X end faces only on End chassis
