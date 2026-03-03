@@ -172,6 +172,45 @@ export default function View3D({ placedModules, walls }) {
       top.rotation.x = -Math.PI / 2;
       top.position.set(mesh.position.x, MODULE_HEIGHT + 0.01, mesh.position.z);
       scene.add(top);
+
+      // Pitched gable roof over module
+      const roofPeakH = 0.8;
+      const roofVertices = new Float32Array([
+        // Rectangle base
+        -wM/2, 0, -hM/2,          // 0: front-left
+        wM/2, 0, -hM/2,           // 1: front-right
+        wM/2, 0, hM/2,            // 2: back-right
+        -wM/2, 0, hM/2,           // 3: back-left
+        // Peak ridge (center)
+        0, roofPeakH, -hM/2,       // 4: front-center-peak
+        0, roofPeakH, hM/2,        // 5: back-center-peak
+      ]);
+      
+      const roofIndices = new Uint32Array([
+        // Bottom
+        0, 2, 1, 0, 3, 2,
+        // Left sloped face
+        0, 4, 5, 0, 5, 3,
+        // Right sloped face
+        1, 2, 5, 1, 5, 4,
+        // Front triangle
+        0, 1, 4,
+        // Back triangle
+        3, 5, 2,
+      ]);
+      
+      const roofGeo = new THREE.BufferGeometry();
+      roofGeo.setAttribute('position', new THREE.BufferAttribute(roofVertices, 3));
+      roofGeo.setIndex(new THREE.BufferAttribute(roofIndices, 1));
+      roofGeo.computeVertexNormals();
+      
+      const roofMat = new THREE.MeshLambertMaterial({ color: 0x1a1a1a });
+      const roof = new THREE.Mesh(roofGeo, roofMat);
+      roof.castShadow = true;
+      roof.receiveShadow = true;
+      roof.position.copy(mesh.position);
+      roof.position.y = MODULE_HEIGHT;
+      scene.add(roof);
     });
 
     // Place walls
