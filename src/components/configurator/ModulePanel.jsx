@@ -157,7 +157,7 @@ const WALL_TYPES = [
 
 export { MODULE_TYPES, GROUP_ICONS, WALL_TYPES };
 
-export default function ModulePanel({ onDragStart }) {
+export default function ModulePanel({ onDragStart, onDragEnd }) {
   const [openGroup, setOpenGroup] = useState(null);
   const [hoveredModule, setHoveredModule] = useState(null);
 
