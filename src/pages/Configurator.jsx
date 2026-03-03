@@ -223,10 +223,10 @@ export default function Configurator() {
     setWalls((prev) => prev.filter((w) => w.id !== id));
   };
 
-  const handleMoveWall = (id, x, y) => {
+  const handleMoveWall = (id, x, y, wallUpdate) => {
     pushHistory(placedModules, walls);
     setWalls((prev) =>
-      prev.map((w) => (w.id === id ? { ...w, x, y } : w))
+      prev.map((w) => (w.id === id ? { ...w, x, y, ...wallUpdate } : w))
     );
   };
 
