@@ -52,6 +52,14 @@ export default function Configurator() {
     },
   });
 
+  const { data: floorPlanImages = {} } = useQuery({
+    queryKey: ["floorPlanImages"],
+    queryFn: async () => {
+      const images = await base44.entities.FloorPlanImage.list();
+      return Object.fromEntries(images.map(img => [img.moduleType, img.imageUrl]));
+    },
+  });
+
   const saveMutation = useMutation({
     mutationFn: (data) => base44.entities.HomeDesign.create(data),
     onSuccess: () => {
