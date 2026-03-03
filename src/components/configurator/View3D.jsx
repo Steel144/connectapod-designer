@@ -301,7 +301,10 @@ export default function View3D({ placedModules, walls }) {
         const plane = new THREE.Mesh(planeGeo, planeMat);
         plane.position.copy(mesh.position).add(pos);
         plane.position.y = 0.3;
-        plane.lookAt(camera.position);
+        // Rotate plane to face outward based on corner
+        if (label === 'W') plane.rotation.y = Math.PI;
+        else if (label === 'X') plane.rotation.y = Math.PI / 2;
+        else if (label === 'Z') plane.rotation.y = -Math.PI / 2;
         scene.add(plane);
       });
 
