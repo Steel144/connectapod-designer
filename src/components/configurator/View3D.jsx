@@ -108,6 +108,8 @@ function createStandingSeamTexture(width = 512, height = 512) {
   const texture = new THREE.CanvasTexture(canvas);
   texture.magFilter = THREE.LinearFilter;
   texture.minFilter = THREE.LinearFilter;
+  texture.wrapS = THREE.RepeatWrapping;
+  texture.wrapT = THREE.RepeatWrapping;
   return texture;
 }
 
