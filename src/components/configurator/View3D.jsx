@@ -159,14 +159,39 @@ export default function View3D({ placedModules, walls }) {
       );
       scene.add(mesh);
 
-      // Gable roof (pitched roof geometry)
-      const roofGeo = new THREE.ConeGeometry(Math.max(wM, hM) / 2, GABLE_HEIGHT, 4, 1);
-      const roofMat = new THREE.MeshLambertMaterial({ color: 0x2a2a2a });
+      // Gable roof (pitched roof as triangular prism)
+      const roofVertices = new Float32Array([
+        // Front triangle
+        -wM/2, 0, -hM/2,  // left base
+        wM/2, 0, -hM/2,   // right base
+        0, GABLE_HEIGHT, -hM/2,  // peak
+        // Back triangle
+        -wM/2, 0, hM/2,   // left base
+        wM/2, 0, hM/2,    // right base
+        0, GABLE_HEIGHT, hM/2,   // peak
+      ]);
+      const roofIndices = new Uint32Array([
+        // Front face
+        0, 1, 2,
+        // Back face
+        4, 3, 5,
+        // Left face
+        0, 3, 5, 0, 5, 2,
+        // Right face
+        1, 4, 5, 1, 5, 2,
+        // Bottom face
+        0, 4, 1, 0, 3, 4
+      ]);
+      const roofGeo = new THREE.BufferGeometry();
+      roofGeo.setAttribute('position', new THREE.BufferAttribute(roofVertices, 3));
+      roofGeo.setIndex(new THREE.BufferAttribute(roofIndices, 1));
+      roofGeo.computeVertexNormals();
+      
+      const roofMat = new THREE.MeshLambertMaterial({ color: 0x1a1a1a });
       const roof = new THREE.Mesh(roofGeo, roofMat);
       roof.castShadow = true;
       roof.receiveShadow = true;
-      roof.position.set(mesh.position.x, MODULE_HEIGHT + GABLE_HEIGHT / 2, mesh.position.z);
-      roof.rotation.y = Math.PI / 4;
+      roof.position.set(mesh.position.x, MODULE_HEIGHT, mesh.position.z);
       scene.add(roof);
 
       // Outline
