@@ -50,6 +50,10 @@ export default function Configurator() {
   });
 
   const handleDragStart = (e, mod) => {
+    if (mod.orientation) {
+      // Wall — wallType is already set by ModulePanel, don't overwrite with moduleType
+      return;
+    }
     e.dataTransfer.setData("moduleType", mod.type);
     setDraggingMod(mod);
   };
