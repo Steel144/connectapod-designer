@@ -207,40 +207,34 @@ export default function View3D({ placedModules, walls }) {
       // Generate gable end wall if this is a 4.8m or 5.2m vertical wall
       const isGable = wall.orientation === "vertical" && (Math.abs(wall.width - 4.8) < 0.1 || Math.abs(wall.width - 5.2) < 0.1);
       if (isGable) {
-        const rectHeight = 2.4; // rectangular section height
-        const peakHeight = 1.2; // triangle peak above rectangle
-        const frameThickness = 0.08;
+        const roofHeight = 1.2; // Peak height above the rectangular section
+        const frameWidth = 0.1;
         
-        // Create pentagonal gable geometry
+        // Create simple pentagonal gable (front face only, backed by rectangles)
         const gableVertices = new Float32Array([
-          // Front face vertices
-          -wM/2, 0, -hM/2,           // 0: bottom-left
-          wM/2, 0, -hM/2,            // 1: bottom-right
-          wM/2, rectHeight, -hM/2,   // 2: rectangle top-right
-          0, rectHeight + peakHeight, -hM/2, // 3: peak (center)
-          -wM/2, rectHeight, -hM/2,  // 4: rectangle top-left
-          
-          // Back face vertices
-          -wM/2, 0, hM/2,            // 5: bottom-left
-          wM/2, 0, hM/2,             // 6: bottom-right
-          wM/2, rectHeight, hM/2,    // 7: rectangle top-right
-          0, rectHeight + peakHeight, hM/2, // 8: peak (center)
-          -wM/2, rectHeight, hM/2,   // 9: rectangle top-left
+          // Front face pentagon
+          -wM/2, 0, -hM/2,              // 0: bottom-left
+          wM/2, 0, -hM/2,               // 1: bottom-right
+          wM/2, 0, hM/2,                // 2: bottom-right-back
+          -wM/2, 0, hM/2,               // 3: bottom-left-back
+          wM/2, roofHeight, -hM/2,      // 4: roof-right-front
+          wM/2, roofHeight, hM/2,       // 5: roof-right-back
+          0, roofHeight, -hM/2,         // 6: peak-front
+          0, roofHeight, hM/2,          // 7: peak-back
+          -wM/2, roofHeight, -hM/2,     // 8: roof-left-front
+          -wM/2, roofHeight, hM/2,      // 9: roof-left-back
         ]);
         
         const gableIndices = new Uint32Array([
-          // Front pentagonal face
-          0, 1, 2, 0, 2, 4, 2, 3, 4,
-          // Back pentagonal face
-          6, 5, 9, 6, 9, 7, 7, 9, 8,
-          // Left sloped face (2 triangles for peaked roof)
-          0, 4, 9, 0, 9, 5,
-          4, 3, 8, 4, 8, 9,
-          // Right sloped face (2 triangles for peaked roof)
-          1, 6, 7, 1, 7, 2,
-          2, 7, 8, 2, 8, 3,
-          // Bottom face
-          0, 5, 6, 0, 6, 1,
+          // Rectangular sides (left/right ends)
+          0, 8, 9, 0, 9, 3,  // left end
+          1, 2, 5, 1, 5, 4,  // right end
+          // Bottom
+          0, 3, 2, 0, 2, 1,
+          // Sloped roof left side
+          8, 6, 7, 8, 7, 9,
+          // Sloped roof right side
+          4, 5, 7, 4, 7, 6,
         ]);
         
         const gableGeo = new THREE.BufferGeometry();
@@ -248,7 +242,7 @@ export default function View3D({ placedModules, walls }) {
         gableGeo.setIndex(new THREE.BufferAttribute(gableIndices, 1));
         gableGeo.computeVertexNormals();
         
-        const gableMat = new THREE.MeshLambertMaterial({ color: 0xc77a2f }); // Timber color
+        const gableMat = new THREE.MeshLambertMaterial({ color: 0xd4a86a }); // Timber
         const gable = new THREE.Mesh(gableGeo, gableMat);
         gable.castShadow = true;
         gable.receiveShadow = true;
@@ -259,59 +253,37 @@ export default function View3D({ placedModules, walls }) {
         );
         scene.add(gable);
         
-        // Dark frame border
-        const frameMat = new THREE.MeshLambertMaterial({ color: 0x3a3a3a });
+        // Dark frame
+        const frameMat = new THREE.MeshLambertMaterial({ color: 0x2a2a2a });
         
-        // Bottom frame
-        const bottomFrameGeo = new THREE.BoxGeometry(wM, frameThickness, hM);
-        const bottomFrame = new THREE.Mesh(bottomFrameGeo, frameMat);
-        bottomFrame.position.set(
+        // Bottom border
+        const bottomBorderGeo = new THREE.BoxGeometry(wM + frameWidth * 2, frameWidth, hM + frameWidth * 2);
+        const bottomBorder = new THREE.Mesh(bottomBorderGeo, frameMat);
+        bottomBorder.position.set(
           wall.x * CELL_M + wM / 2,
-          WALL_HEIGHT - frameThickness / 2,
+          WALL_HEIGHT - frameWidth / 2,
           wall.y * CELL_M + hM / 2
         );
-        scene.add(bottomFrame);
+        scene.add(bottomBorder);
         
-        // Left and right frames
-        const verticalFrameGeo = new THREE.BoxGeometry(frameThickness, rectHeight + peakHeight * 1.2, hM);
-        const leftFrame = new THREE.Mesh(verticalFrameGeo, frameMat);
-        leftFrame.position.set(
-          wall.x * CELL_M - wM / 2 + frameThickness / 2,
-          WALL_HEIGHT + (rectHeight + peakHeight * 0.8) / 2,
+        // Left vertical border
+        const leftBorderGeo = new THREE.BoxGeometry(frameWidth, roofHeight + frameWidth, hM + frameWidth * 2);
+        const leftBorder = new THREE.Mesh(leftBorderGeo, frameMat);
+        leftBorder.position.set(
+          wall.x * CELL_M - wM / 2 - frameWidth / 2,
+          WALL_HEIGHT + roofHeight / 2,
           wall.y * CELL_M + hM / 2
         );
-        scene.add(leftFrame);
+        scene.add(leftBorder);
         
-        const rightFrame = new THREE.Mesh(verticalFrameGeo, frameMat);
-        rightFrame.position.set(
-          wall.x * CELL_M + wM / 2 - frameThickness / 2,
-          WALL_HEIGHT + (rectHeight + peakHeight * 0.8) / 2,
+        // Right vertical border
+        const rightBorder = new THREE.Mesh(leftBorderGeo, frameMat);
+        rightBorder.position.set(
+          wall.x * CELL_M + wM / 2 + frameWidth / 2,
+          WALL_HEIGHT + roofHeight / 2,
           wall.y * CELL_M + hM / 2
         );
-        scene.add(rightFrame);
-        
-        // Top sloped frames
-        const topFrameLength = Math.sqrt(wM * wM / 4 + peakHeight * peakHeight);
-        const topFrameAngle = Math.atan2(peakHeight, wM / 2);
-        
-        const topLeftFrameGeo = new THREE.BoxGeometry(frameThickness, frameThickness, topFrameLength);
-        const topLeftFrame = new THREE.Mesh(topLeftFrameGeo, frameMat);
-        topLeftFrame.rotation.z = topFrameAngle;
-        topLeftFrame.position.set(
-          wall.x * CELL_M - wM / 4,
-          WALL_HEIGHT + rectHeight + peakHeight / 2,
-          wall.y * CELL_M + hM / 2
-        );
-        scene.add(topLeftFrame);
-        
-        const topRightFrame = new THREE.Mesh(topLeftFrameGeo, frameMat);
-        topRightFrame.rotation.z = -topFrameAngle;
-        topRightFrame.position.set(
-          wall.x * CELL_M + wM / 4,
-          WALL_HEIGHT + rectHeight + peakHeight / 2,
-          wall.y * CELL_M + hM / 2
-        );
-        scene.add(topRightFrame);
+        scene.add(rightBorder);
       }
     });
 
