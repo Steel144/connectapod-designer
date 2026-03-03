@@ -15,6 +15,7 @@ export default function WallImageUpload({ wall, onImageAssigned }) {
     setIsLoading(true);
     try {
       const { data } = await base44.integrations.Core.UploadFile({ file });
+      setImageUrl(data.file_url);
       onImageAssigned(data.file_url);
       toast.success("Wall image uploaded");
     } catch (err) {
@@ -26,6 +27,7 @@ export default function WallImageUpload({ wall, onImageAssigned }) {
   };
 
   const handleRemoveImage = () => {
+    setImageUrl(null);
     onImageAssigned(null);
   };
 
