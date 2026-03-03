@@ -377,11 +377,11 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
            const distToWFace = Math.abs(exactY - mod.y);
 
            if (distToYFace <= SNAP_THRESHOLD && exactX >= mod.x - SNAP_THRESHOLD && exactX <= mod.x + mod.w + SNAP_THRESHOLD) {
-             snapped = { x: mod.x - WALL_OFFSET, y: mod.y + mod.h, length: mod.w, face: "Y" };
+             snapped = { x: mod.x, y: mod.y + mod.h, length: mod.w, face: "Y" };
              break;
            }
            if (distToWFace <= SNAP_THRESHOLD && exactX >= mod.x - SNAP_THRESHOLD && exactX <= mod.x + mod.w + SNAP_THRESHOLD) {
-             snapped = { x: mod.x - WALL_OFFSET, y: mod.y - WALL_OFFSET, length: mod.w, face: "W", rotation: 180 };
+             snapped = { x: mod.x, y: mod.y - WALL_OFFSET, length: mod.w, face: "W", rotation: 180 };
              break;
            }
          }
@@ -392,7 +392,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
              break;
            }
            if (Math.abs(exactX - (mod.x + mod.w)) <= SNAP_THRESHOLD && exactY >= mod.y - SNAP_THRESHOLD && exactY <= mod.y + mod.h + SNAP_THRESHOLD) {
-             snapped = { x: mod.x + mod.w - 0.31, y: mod.y, length: mod.h, face: "X" };
+             snapped = { x: mod.x + mod.w - WALL_OFFSET, y: mod.y, length: mod.h, face: "X" };
              break;
            }
          }
