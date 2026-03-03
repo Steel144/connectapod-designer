@@ -414,9 +414,9 @@ export default function View3D({ placedModules, walls }) {
         wall.y * CELL_M + hM / 2
       );
       
-      // Rotate W walls (W face) 90 degrees
+      // Rotate W walls (W face) 180 degrees
       if (wall.face === 'W') {
-        mesh.rotation.y = Math.PI / 2;
+        mesh.rotation.y = Math.PI;
       }
       
       scene.add(mesh);
