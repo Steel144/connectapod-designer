@@ -241,14 +241,7 @@ export default function Configurator() {
       </div>
 
       {/* Workspace */}
-      <div
-        className="flex-1 overflow-auto pt-12 relative"
-        onDragOver={(e) => e.preventDefault()}
-        onDrop={(e) => {
-          // Bubble up to ConfigGrid's handler — do nothing here but prevent default
-          e.preventDefault();
-        }}
-      >
+      <div className="flex-1 overflow-auto pt-12 relative">
         <ConfigGrid
           placedModules={placedModules}
           onPlace={handlePlace}
