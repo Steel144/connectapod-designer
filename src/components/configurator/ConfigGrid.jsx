@@ -498,8 +498,8 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                   className="absolute group cursor-grab active:cursor-grabbing flex items-center justify-center"
                   style={{
                     position: "absolute",
-                    left: wall.x * CELL_W,
-                    top: wall.y * CELL_H,
+                    left: posX,
+                    top: posY,
                     width: wallW,
                     height: wallH,
                     backgroundColor: isSelected ? "#4F46E5" : "#4B5563",
