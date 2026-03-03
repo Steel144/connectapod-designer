@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { ZoomIn, ZoomOut } from "lucide-react";
 
 export default function ElevationGallery({ walls }) {
+  const [zoom, setZoom] = useState(100);
   const wallsWithElevations = walls.filter(w => w.elevationImage);
 
   if (wallsWithElevations.length === 0) {
