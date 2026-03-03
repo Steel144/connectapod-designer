@@ -435,50 +435,50 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
 
            return (
              <div key={wall.id}>
-              <div
-                onMouseDown={(e) => startDragWall(e, wall)}
-                className="absolute group cursor-grab active:cursor-grabbing flex items-center justify-center overflow-hidden"
-                style={{
-                  left: wall.x * CELL_W,
-                  top: wall.y * CELL_H,
-                  width: wallW,
-                  height: wallH,
-                  backgroundColor: isSelected ? "#4F46E5" : "#4B5563",
-                  border: isSelected ? "2px solid #4F46E5" : "1px solid #2d3748",
-                  opacity: isBeingDragged ? 0.2 : 0.7,
-                }}
-              >
-                {wall.face && (
-                  <span className="text-[8px] font-bold text-white/80 pointer-events-none select-none">
-                    {wall.face}
-                  </span>
-                )}
-                <button
-                  onMouseDown={(e) => e.stopPropagation()}
-                  onClick={() => onRemoveWall && onRemoveWall(wall.id)}
-                  className="absolute top-0.5 right-0.5 opacity-0 group-hover:opacity-100 transition-opacity bg-white rounded-full p-0.5 shadow-sm hover:bg-red-50 z-10"
-                >
-                  <X size={10} className="text-red-400" />
-                </button>
-              </div>
-              {/* Ghost while dragging */}
-              {isBeingDragged && (
-                <div
-                  className="absolute pointer-events-none"
-                  style={{
-                    left: ghostLeft,
-                    top: ghostTop,
-                    width: wallW,
-                    height: wallH,
-                    backgroundColor: "#4F46E5",
-                    opacity: 0.5,
-                    border: "2px dashed #4F46E5",
-                  }}
-                />
-              )}
-              </div>
-              );
-              })}
+               <div
+                 onMouseDown={(e) => startDragWall(e, wall)}
+                 className="absolute group cursor-grab active:cursor-grabbing flex items-center justify-center overflow-hidden"
+                 style={{
+                   left: wall.x * CELL_W,
+                   top: wall.y * CELL_H,
+                   width: wallW,
+                   height: wallH,
+                   backgroundColor: isSelected ? "#4F46E5" : "#4B5563",
+                   border: isSelected ? "2px solid #4F46E5" : "1px solid #2d3748",
+                   opacity: isBeingDragged ? 0.2 : 0.7,
+                 }}
+               >
+                 {wall.face && (
+                   <span className="text-[8px] font-bold text-white/80 pointer-events-none select-none">
+                     {wall.face}
+                   </span>
+                 )}
+                 <button
+                   onMouseDown={(e) => e.stopPropagation()}
+                   onClick={() => onRemoveWall && onRemoveWall(wall.id)}
+                   className="absolute top-0.5 right-0.5 opacity-0 group-hover:opacity-100 transition-opacity bg-white rounded-full p-0.5 shadow-sm hover:bg-red-50 z-10"
+                 >
+                   <X size={10} className="text-red-400" />
+                 </button>
+               </div>
+               {/* Ghost while dragging */}
+               {isBeingDragged && (
+                 <div
+                   className="absolute pointer-events-none"
+                   style={{
+                     left: ghostLeft,
+                     top: ghostTop,
+                     width: wallW,
+                     height: wallH,
+                     backgroundColor: "#4F46E5",
+                     opacity: 0.5,
+                     border: "2px dashed #4F46E5",
+                   }}
+                 />
+               )}
+             </div>
+           );
+           })}
 
         {/* Selection box */}
         {selectionBox && (
