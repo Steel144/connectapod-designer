@@ -23,6 +23,10 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
   // Notify parent when selected wall changes
   const selectedWall = walls.find(w => w.id === selectedWallId) || null;
   React.useEffect(() => { onWallSelect && onWallSelect(selectedWall); }, [selectedWallId]);
+
+  const [selectedModId, setSelectedModId] = useState(null);
+  const selectedModObj = placedModules.find(m => m.id === selectedModId) || null;
+  React.useEffect(() => { onModuleSelect && onModuleSelect(selectedModObj); }, [selectedModId]);
   // { wall, offsetX, offsetY, cursorX, cursorY }
 
   useEffect(() => {
