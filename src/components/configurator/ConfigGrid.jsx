@@ -196,11 +196,11 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
       // Snap to module faces
       if (wall.orientation === "horizontal") {
         for (const mod of placedModules) {
-          const distToWFace = Math.abs(exactY - (mod.y - 1));
+          const distToWFace = Math.abs(exactY - mod.y);
           const distToYFace = Math.abs(exactY - (mod.y + mod.h));
           
           if (distToWFace <= SNAP_THRESHOLD && exactX >= mod.x - SNAP_THRESHOLD && exactX <= mod.x + mod.w + SNAP_THRESHOLD) {
-            snapped = { x: mod.x, y: mod.y - 1, length: mod.w, face: "W" };
+            snapped = { x: mod.x, y: mod.y, length: mod.w, face: "W" };
             break;
           }
           if (distToYFace <= SNAP_THRESHOLD && exactX >= mod.x - SNAP_THRESHOLD && exactX <= mod.x + mod.w + SNAP_THRESHOLD) {
