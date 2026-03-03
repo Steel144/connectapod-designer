@@ -234,7 +234,7 @@ export default function Configurator() {
       </div>
 
       {/* Workspace */}
-      <div className="flex-1 overflow-auto pt-12">
+      <div className="flex-1 overflow-auto pt-12 relative">
         <ConfigGrid
           placedModules={placedModules}
           onPlace={handlePlace}
