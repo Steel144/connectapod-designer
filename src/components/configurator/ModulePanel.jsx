@@ -143,13 +143,18 @@ const MODULE_TYPES = PANEL_GROUPS.flatMap((group) =>
   group.items.map((item) => ({
     type: item.code,
     label: item.name,
+    mpCode: item.mpCode,
     color: group.color,
     border: group.border,
-    w: mToCells(item.width),   // e.g. 3.0m → 5 cells
-    h: mToCells(item.depth),   // e.g. 4.8m → 8 cells
+    w: mToCells(item.width),
+    h: mToCells(item.depth),
     sqm: item.sqm,
     price: group.price,
     groupKey: group.key,
+    chassis: item.chassis,
+    widthCode: item.widthCode,
+    room: item.room,
+    orientation: item.orientation || 1,
   }))
 );
 
