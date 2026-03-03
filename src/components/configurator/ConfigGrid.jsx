@@ -396,8 +396,8 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
            let ghostTop = wall.y * CELL_H;
            if (isBeingDragged && gridRef.current) {
              const rect = gridRef.current.getBoundingClientRect();
-             ghostLeft = Math.max(0, Math.round((draggingWall.cursorX - rect.left - draggingWall.offsetX) / CELL_W)) * CELL_W;
-             ghostTop = Math.max(0, Math.round((draggingWall.cursorY - rect.top - draggingWall.offsetY) / CELL_H)) * CELL_H;
+             ghostLeft = Math.max(0, (draggingWall.cursorX - rect.left - draggingWall.offsetX));
+             ghostTop = Math.max(0, (draggingWall.cursorY - rect.top - draggingWall.offsetY));
            }
 
            return (
