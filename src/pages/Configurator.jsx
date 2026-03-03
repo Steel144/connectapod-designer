@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import ModulePanel, { MODULE_TYPES } from "@/components/configurator/ModulePanel";
@@ -9,7 +9,7 @@ import SaveDesignModal from "@/components/configurator/SaveDesignModal";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { BookOpen, FolderOpen, Save, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
+import { BookOpen, FolderOpen, Save, Trash2, ChevronLeft, ChevronRight, Undo2 } from "lucide-react";
 
 const generateId = () => `mod-${Math.random().toString(36).substr(2, 9)}`;
 const generateWallId = () => `wall-${Math.random().toString(36).substr(2, 9)}`;
