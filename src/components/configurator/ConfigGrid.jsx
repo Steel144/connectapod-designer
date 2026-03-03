@@ -22,6 +22,23 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
   const [draggingWall, setDraggingWall] = useState(null);
   // { wall, offsetX, offsetY, cursorX, cursorY }
 
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === "Delete" || e.key === "Backspace") {
+        if (selected.size > 0) {
+          selected.forEach((id) => onRemove(id));
+          setSelected(new Set());
+        }
+        if (selectedWallId) {
+          onRemoveWall && onRemoveWall(selectedWallId);
+          setSelectedWallId(null);
+        }
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [selected, selectedWallId, onRemove, onRemoveWall]);
+
   const getCellFromClient = (clientX, clientY) => {
     const rect = gridRef.current.getBoundingClientRect();
     const x = Math.floor((clientX - rect.left) / CELL_W);
