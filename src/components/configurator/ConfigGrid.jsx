@@ -205,7 +205,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
       }
     });
     setDragging(null);
-  }, [dragging, selectionBox, placedModules]);
+  }, [dragging, draggingWall, selectionBox, placedModules]);
 
   // ── HTML drag drop for new modules from panel ───
 
