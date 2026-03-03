@@ -15,21 +15,6 @@ export default function ElevationViewer() {
     }
   }, []);
 
-  if (!imageUrl) {
-    return (
-      <div className="w-full h-screen bg-black flex items-center justify-center">
-        <button
-          onClick={() => navigate(-1)}
-          className="absolute top-4 left-4 flex items-center gap-2 text-white hover:text-gray-300 transition-colors"
-        >
-          <ArrowLeft size={24} />
-          Back
-        </button>
-        <p className="text-white text-lg">No image provided</p>
-      </div>
-    );
-  }
-
   return (
     <div className="w-full h-screen bg-black flex items-center justify-center overflow-hidden">
       <button
@@ -39,11 +24,19 @@ export default function ElevationViewer() {
         <ArrowLeft size={24} />
         Back
       </button>
-      <img
-        src={imageUrl}
-        alt="Elevation"
-        className="max-w-full max-h-full object-contain"
-      />
+      
+      {imageUrl ? (
+        <img
+          src={imageUrl}
+          alt="Elevation"
+          className="max-w-full max-h-full object-contain"
+        />
+      ) : (
+        <div className="text-center text-white">
+          <p className="text-lg mb-2">No elevation image provided</p>
+          <p className="text-sm text-gray-400">Upload an elevation image to a wall to view it here</p>
+        </div>
+      )}
     </div>
   );
 }
