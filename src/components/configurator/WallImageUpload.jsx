@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
-import { Upload, Loader2, X } from "lucide-react";
+import { Upload, Loader2, X, Eye } from "lucide-react";
 import { toast } from "sonner";
+import { createPageUrl } from "@/utils";
 
 export default function WallImageUpload({ wall, onImageAssigned }) {
   const [isLoading, setIsLoading] = useState(false);
