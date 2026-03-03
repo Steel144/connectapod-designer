@@ -274,6 +274,23 @@ export default function View3D({ placedModules, walls }) {
       line.position.copy(mesh.position);
       scene.add(line);
 
+      // WXYZ corner labels
+      const corners = [
+        { pos: new THREE.Vector3(-wM/2, 0, -hM/2), label: 'W', color: 0xff0000 },
+        { pos: new THREE.Vector3(wM/2, 0, -hM/2), label: 'X', color: 0x00ff00 },
+        { pos: new THREE.Vector3(wM/2, 0, hM/2), label: 'Y', color: 0x0000ff },
+        { pos: new THREE.Vector3(-wM/2, 0, hM/2), label: 'Z', color: 0xffff00 },
+      ];
+      
+      corners.forEach(({ pos, label, color }) => {
+        const sphereGeo = new THREE.SphereGeometry(0.15, 16, 16);
+        const sphereMat = new THREE.MeshBasicMaterial({ color });
+        const sphere = new THREE.Mesh(sphereGeo, sphereMat);
+        sphere.position.copy(mesh.position).add(pos);
+        sphere.position.y = 0.15;
+        scene.add(sphere);
+      });
+
       // Label plane (small flat box on top)
       const topGeo = new THREE.PlaneGeometry(wM - 0.05, hM - 0.05);
       const topMat = new THREE.MeshLambertMaterial({ color: 0xffffff, transparent: true, opacity: 0.15 });
