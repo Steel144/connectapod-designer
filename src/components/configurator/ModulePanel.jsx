@@ -336,6 +336,18 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
         !w.type.includes("D/") && !w.type.endsWith("D") &&
         Math.abs(w.width - faceWidthM) < 0.05
       );
+      
+      // For end modules, also include long walls (different widths) for W/Y faces
+      if (isEnd && isLongFace) {
+        const longWalls = WALL_TYPES.filter(w =>
+          w.orientation === "horizontal" &&
+          !w.type.startsWith("Z") && !w.type.startsWith("X") &&
+          !w.type.includes("D/") && !w.type.endsWith("D")
+        );
+        filtered = [...filtered, ...longWalls];
+        // Remove duplicates
+        filtered = Array.from(new Map(filtered.map(w => [w.type, w])).values());
+      }
     }
 
     const context = selectedWall ? `Face ${face}` : `${chassis} module`;
