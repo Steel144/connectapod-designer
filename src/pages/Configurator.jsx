@@ -213,6 +213,9 @@ export default function Configurator() {
 
   const handleRotate = (id) => {
     pushHistory(placedModules, walls);
+    const modToRotate = placedModules.find((m) => m.id === id);
+    if (!modToRotate) return;
+    
     setPlacedModules((prev) =>
       prev.map((m) => {
         if (m.id !== id) return m;
@@ -228,6 +231,22 @@ export default function Configurator() {
           h: baseH,
           rotation: newRotation,
         };
+      })
+    );
+    
+    // Rotate attached side walls (Z and X faces)
+    setWalls((prev) =>
+      prev.map((w) => {
+        const WALL_OFFSET = 0.308;
+        // Z wall: left side
+        if (w.face === 'Z' && Math.abs(w.y - modToRotate.y) < 0.5 && Math.abs(w.x - modToRotate.x) < 0.5) {
+          return { ...w, rotation: (w.rotation || 0) + 180 };
+        }
+        // X wall: right side
+        if (w.face === 'X' && Math.abs(w.y - modToRotate.y) < 0.5 && Math.abs(w.x - (modToRotate.x + modToRotate.w - WALL_OFFSET)) < 0.5) {
+          return { ...w, rotation: (w.rotation || 0) + 180 };
+        }
+        return w;
       })
     );
   };
