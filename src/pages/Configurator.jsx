@@ -153,18 +153,19 @@ export default function Configurator() {
       prev.map((w) => {
         if (!w.face) return w;
         
-        const isLongFace = w.face === "W" || w.face === "Y";
+        const WALL_OFFSET = 0.308;
         
-        if (isLongFace) {
-          // W/Y walls: check if x position aligns with module's x
-          if (Math.abs(w.x - oldMod.x) < 0.5) {
-            return { ...w, x: w.x + deltaX, y: w.y + deltaY };
-          }
-        } else {
-          // Z/X walls: check if y position aligns with module's y
-          if (Math.abs(w.y - oldMod.y) < 0.5) {
-            return { ...w, x: w.x + deltaX, y: w.y + deltaY };
-          }
+        if (w.face === "Y" && Math.abs(w.x - oldMod.x) < 0.5 && Math.abs(w.y - (oldMod.y + oldMod.h)) < 0.5) {
+          return { ...w, x: w.x + deltaX, y: w.y + deltaY };
+        }
+        if (w.face === "W" && Math.abs(w.x - oldMod.x) < 0.5 && Math.abs(w.y - (oldMod.y - WALL_OFFSET)) < 0.5) {
+          return { ...w, x: w.x + deltaX, y: w.y + deltaY };
+        }
+        if (w.face === "Z" && Math.abs(w.y - oldMod.y) < 0.5 && Math.abs(w.x - oldMod.x) < 0.5) {
+          return { ...w, x: w.x + deltaX, y: w.y + deltaY };
+        }
+        if (w.face === "X" && Math.abs(w.y - oldMod.y) < 0.5 && Math.abs(w.x - (oldMod.x + oldMod.w - WALL_OFFSET)) < 0.5) {
+          return { ...w, x: w.x + deltaX, y: w.y + deltaY };
         }
         return w;
       })
