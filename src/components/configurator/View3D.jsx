@@ -213,24 +213,6 @@ export default function View3D({ placedModules, walls }) {
       roof.position.copy(mesh.position);
       roof.position.y = MODULE_HEIGHT;
       scene.add(roof);
-
-      // Add 40x60mm standing seam ribs to roof at 600mm centres (along ridge)
-      const ribWidth = 0.04;
-      const ribDepth = 0.06;
-      const ribSpacing = 0.6;
-      const numRibs = Math.floor(roofDepth / ribSpacing) + 1;
-      const ribGeo = new THREE.BoxGeometry(wM, ribDepth, ribWidth);
-      const ribMat = new THREE.MeshLambertMaterial({ color: 0x0d0d0d });
-      
-      for (let i = 0; i < numRibs; i++) {
-        const rib = new THREE.Mesh(ribGeo, ribMat);
-        rib.castShadow = true;
-        rib.receiveShadow = true;
-        
-        const ribZ = (i * ribSpacing) - roofDepth / 2 + ribSpacing / 2;
-        rib.position.set(mesh.position.x, MODULE_HEIGHT + roofPeakH / 2, mesh.position.z + ribZ);
-        scene.add(rib);
-      }
     });
 
     // Place walls
@@ -262,32 +244,6 @@ export default function View3D({ placedModules, walls }) {
         wall.y * CELL_M + hM / 2
       );
       scene.add(mesh);
-
-      // Add vertical 40x60mm standing seam ribs at 600mm centres on 3m walls
-      if (Math.abs(wall.length - 5) < 0.1) { // 3m wall (5 cells = 3m)
-        const ribWidth = 0.04;
-        const ribDepth = 0.06;
-        const ribSpacing = 0.6;
-        const ribGeo = new THREE.BoxGeometry(ribWidth, WALL_HEIGHT, ribDepth);
-        const ribMat = new THREE.MeshLambertMaterial({ color: 0x1a1a1a });
-        
-        const wallLength = wall.length * CELL_M;
-        const numRibs = Math.floor(wallLength / ribSpacing) + 1;
-        
-        for (let i = 0; i < numRibs; i++) {
-          const rib = new THREE.Mesh(ribGeo, ribMat);
-          rib.castShadow = true;
-          rib.receiveShadow = true;
-          
-          const ribPos = (i * ribSpacing) - wallLength / 2 + ribSpacing / 2;
-          if (wall.orientation === "horizontal") {
-            rib.position.set(wall.x * CELL_M + ribPos, WALL_HEIGHT / 2, wall.y * CELL_M + hM / 2);
-          } else {
-            rib.position.set(wall.x * CELL_M + wM / 2, WALL_HEIGHT / 2, wall.y * CELL_M + ribPos);
-          }
-          scene.add(rib);
-        }
-      }
     });
 
     // Centre camera on design
