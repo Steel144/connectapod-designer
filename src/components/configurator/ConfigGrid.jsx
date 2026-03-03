@@ -562,19 +562,14 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
            }
 
            return (
-             <div key={wall.id}>
+             <div key={wall.id} className="group absolute" style={{ left: wall.x * CELL_W, top: wall.y * CELL_H, width: wallW, height: wallH }}>
                <div
                   onMouseDown={(e) => {
                     if (e.target.closest("button")) return;
                     startDragWall(e, wall);
                   }}
-                  className="absolute group cursor-grab active:cursor-grabbing flex items-center justify-center overflow-hidden"
+                  className="absolute cursor-grab active:cursor-grabbing flex items-center justify-center overflow-hidden w-full h-full"
                   style={{
-                    position: "absolute",
-                    left: wall.x * CELL_W,
-                    top: wall.y * CELL_H,
-                    width: wallW,
-                    height: wallH,
                     backgroundColor: isSelected ? "#4F46E5" : "#4B5563",
                     border: isSelected ? "2px solid #4F46E5" : "1px solid #2d3748",
                     opacity: isBeingDragged ? 0.2 : 0.7,
@@ -594,17 +589,17 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                      {wall.face}
                    </span>
                  )}
-                 <button
-                   onMouseDown={(e) => {
-                     e.stopPropagation();
-                     e.preventDefault();
-                     onRemoveWall && onRemoveWall(wall.id);
-                   }}
-                   className="absolute top-0.5 right-0.5 opacity-0 group-hover:opacity-100 transition-opacity bg-white rounded-full p-0.5 shadow-sm hover:bg-red-50 z-10"
-                 >
-                   <X size={10} className="text-red-400" />
-                 </button>
                </div>
+               <button
+                 onMouseDown={(e) => {
+                   e.stopPropagation();
+                   e.preventDefault();
+                   onRemoveWall && onRemoveWall(wall.id);
+                 }}
+                 className="absolute top-0.5 right-0.5 opacity-0 group-hover:opacity-100 transition-opacity bg-white rounded-full p-0.5 shadow-sm hover:bg-red-50 z-10"
+               >
+                 <X size={10} className="text-red-400" />
+               </button>
                {/* Ghost while dragging */}
                {isBeingDragged && (
                  <div
