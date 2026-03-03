@@ -268,7 +268,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
       // Determine face label: W/Y = top/bottom (horizontal), X/Z = right/left (vertical ends)
       if (wallTemplate.orientation === "horizontal") {
         for (const mod of placedModules) {
-          if (Math.abs(y - mod.y) <= SNAP && x >= mod.x - SNAP && x <= mod.x + mod.w + SNAP) {
+          if (Math.abs(y - (mod.y - 1)) <= SNAP && x >= mod.x - SNAP && x <= mod.x + mod.w + SNAP) {
             // W face (top) — place outside (above module)
             snapped = { x: mod.x, y: mod.y - 1, length: mod.w, face: "W" };
             break;
