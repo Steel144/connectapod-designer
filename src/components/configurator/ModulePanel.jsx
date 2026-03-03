@@ -497,7 +497,7 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
         <FloorPlanUpload 
           module={selectedModule} 
           onImageAssigned={(imageUrl) => {
-            selectedModule.floorPlanImage = imageUrl;
+            onModuleImageUpdate?.(selectedModule.id, imageUrl);
           }}
         />
       )}
@@ -507,7 +507,7 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
         <WallImageUpload 
           wall={selectedWall} 
           onImageAssigned={(imageUrl) => {
-            selectedWall.elevationImage = imageUrl;
+            onWallImageUpdate?.(selectedWall.id, imageUrl);
           }}
         />
       )}
