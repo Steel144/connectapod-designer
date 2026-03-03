@@ -6,6 +6,7 @@ import { toast } from "sonner";
 
 export default function WallImageUpload({ wall, onImageAssigned }) {
   const [isLoading, setIsLoading] = useState(false);
+  const [imageUrl, setImageUrl] = useState(wall?.elevationImage || null);
 
   const handleImageUpload = async (e) => {
     const file = e.target.files?.[0];
