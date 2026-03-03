@@ -173,30 +173,31 @@ export default function View3D({ placedModules, walls }) {
       top.position.set(mesh.position.x, MODULE_HEIGHT + 0.01, mesh.position.z);
       scene.add(top);
 
-      // Pitched gable roof over module
-      const roofPeakH = 0.8;
+      // Pitched gable roof over module (ridge along width, 25 degree pitch)
+      const pitchAngle = 25 * Math.PI / 180;
+      const roofPeakH = (hM / 2) * Math.tan(pitchAngle);
       const roofVertices = new Float32Array([
         // Rectangle base
         -wM/2, 0, -hM/2,          // 0: front-left
         wM/2, 0, -hM/2,           // 1: front-right
         wM/2, 0, hM/2,            // 2: back-right
         -wM/2, 0, hM/2,           // 3: back-left
-        // Peak ridge (center)
-        0, roofPeakH, -hM/2,       // 4: front-center-peak
-        0, roofPeakH, hM/2,        // 5: back-center-peak
+        // Peak ridge (center along width)
+        -wM/2, roofPeakH, 0,       // 4: left-center-peak
+        wM/2, roofPeakH, 0,        // 5: right-center-peak
       ]);
       
       const roofIndices = new Uint32Array([
         // Bottom
         0, 2, 1, 0, 3, 2,
-        // Left sloped face
-        0, 4, 5, 0, 5, 3,
-        // Right sloped face
-        1, 2, 5, 1, 5, 4,
-        // Front triangle
-        0, 1, 4,
-        // Back triangle
-        3, 5, 2,
+        // Front sloped face
+        0, 4, 5, 0, 5, 1,
+        // Back sloped face
+        3, 2, 5, 3, 5, 4,
+        // Left triangle
+        0, 3, 4,
+        // Right triangle
+        1, 5, 2,
       ]);
       
       const roofGeo = new THREE.BufferGeometry();
