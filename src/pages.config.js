@@ -50,6 +50,7 @@
 import Catalogue from './pages/Catalogue';
 import Configurator from './pages/Configurator';
 import WallCatalogue from './pages/WallCatalogue';
+import ElevationViewer from './pages/ElevationViewer';
 import __Layout from './Layout.jsx';
 
 
@@ -57,6 +58,7 @@ export const PAGES = {
     "Catalogue": Catalogue,
     "Configurator": Configurator,
     "WallCatalogue": WallCatalogue,
+    "ElevationViewer": ElevationViewer,
 }
 
 export const pagesConfig = {
