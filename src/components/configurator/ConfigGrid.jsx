@@ -419,22 +419,22 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
 
         {/* Walls */}
         {walls.map((wall) => {
-          const isBeingDragged = draggingWall?.wall.id === wall.id;
-          const isSelected = selectedWallId === wall.id;
-          const wallW = wall.orientation === "horizontal" ? wall.length * CELL_W : wall.thickness * CELL_W;
-          const wallH = wall.orientation === "vertical" ? wall.length * CELL_H : wall.thickness * CELL_H;
+           const isBeingDragged = draggingWall?.wall.id === wall.id;
+           const isSelected = selectedWallId === wall.id;
+           const wallW = wall.orientation === "horizontal" ? wall.length * CELL_W : wall.thickness * CELL_W;
+           const wallH = wall.orientation === "vertical" ? wall.length * CELL_H : wall.thickness * CELL_H;
 
-          // Ghost position while dragging
-          let ghostLeft = wall.x * CELL_W;
-          let ghostTop = wall.y * CELL_H;
-          if (isBeingDragged && gridRef.current) {
-            const rect = gridRef.current.getBoundingClientRect();
-            ghostLeft = Math.max(0, Math.round((draggingWall.cursorX - rect.left - draggingWall.offsetX) / CELL_W)) * CELL_W;
-            ghostTop = Math.max(0, Math.round((draggingWall.cursorY - rect.top - draggingWall.offsetY) / CELL_H)) * CELL_H;
-          }
+           // Ghost position while dragging
+           let ghostLeft = wall.x * CELL_W;
+           let ghostTop = wall.y * CELL_H;
+           if (isBeingDragged && gridRef.current) {
+             const rect = gridRef.current.getBoundingClientRect();
+             ghostLeft = Math.max(0, Math.round((draggingWall.cursorX - rect.left - draggingWall.offsetX) / CELL_W)) * CELL_W;
+             ghostTop = Math.max(0, Math.round((draggingWall.cursorY - rect.top - draggingWall.offsetY) / CELL_H)) * CELL_H;
+           }
 
-          return (
-            <React.Fragment key={wall.id}>
+           return (
+             <div key={wall.id}>
               <div
                 onMouseDown={(e) => startDragWall(e, wall)}
                 className="absolute group cursor-grab active:cursor-grabbing flex items-center justify-center overflow-hidden"
