@@ -75,14 +75,13 @@ export default function ElevationGallery({ walls }) {
         </div>
       </div>
       
-      <div className="flex-1 overflow-auto" onWheel={(e) => {
+      <div className="flex-1 overflow-auto flex items-center justify-center" onWheel={(e) => {
         if (e.ctrlKey || e.metaKey) {
           e.preventDefault();
           setZoom(Math.max(50, Math.min(200, zoom + (e.deltaY > 0 ? -5 : 5))));
         }
       }}>
-        <div className="p-6 flex justify-center items-center" style={{ minHeight: '100%' }}>
-          <div style={{ transform: `scale(${zoom / 100})`, transformOrigin: 'top center', transition: 'transform 0.2s' }}>
+        <div style={{ transform: `scale(${zoom / 100})`, transformOrigin: 'center', transition: 'transform 0.2s' }}>
             {/* Front elevation (W) */}
             {wallsByFace.W.length > 0 && (
           <div className="mb-12">
