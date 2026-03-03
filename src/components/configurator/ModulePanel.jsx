@@ -232,9 +232,40 @@ const WALL_TYPES = [
 
 export { MODULE_TYPES, GROUP_ICONS, WALL_TYPES };
 
-export default function ModulePanel({ onDragStart, onDragEnd }) {
+export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, placedModules = [] }) {
   const [openGroup, setOpenGroup] = useState(null);
   const [hoveredModule, setHoveredModule] = useState(null);
+
+  // When a wall is selected, derive which module it's attached to and filter compatible walls
+  const filterWalls = selectedWall && placedModules.length > 0;
+  const compatibleWalls = React.useMemo(() => {
+    if (!filterWalls) return WALL_TYPES;
+    const face = selectedWall.face;
+    // W/Y faces are horizontal (long side of module = 3.0m wide)
+    // X/Z faces are vertical (short end = depth of module = 4.8m wide, but stored as length in cells)
+    const isHorizontalFace = face === "W" || face === "Y";
+    const targetOrientation = isHorizontalFace ? "horizontal" : "vertical";
+    // Find the module this wall is attached to — match by position
+    const CELL_SIZE_M = 0.6;
+    let attachedMod = null;
+    for (const mod of placedModules) {
+      if (isHorizontalFace) {
+        if (selectedWall.x === mod.x && (selectedWall.y === mod.y || selectedWall.y === mod.y + mod.h)) {
+          attachedMod = mod; break;
+        }
+      } else {
+        if (selectedWall.y === mod.y && (selectedWall.x === mod.x || selectedWall.x === mod.x + mod.w)) {
+          attachedMod = mod; break;
+        }
+      }
+    }
+    const targetWidthM = attachedMod
+      ? (isHorizontalFace ? attachedMod.w * CELL_SIZE_M : attachedMod.h * CELL_SIZE_M)
+      : selectedWall.width;
+    return WALL_TYPES.filter(w =>
+      w.orientation === targetOrientation && Math.abs(w.width - targetWidthM) < 0.01
+    );
+  }, [filterWalls, selectedWall, placedModules]);
 
   return (
     <div className="flex flex-col gap-1 relative">
