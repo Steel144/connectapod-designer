@@ -305,6 +305,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
   return (
     <div
       className="overflow-auto w-full h-full"
+      style={{ display: hidden ? "none" : undefined }}
       onMouseMove={onMouseMove}
       onMouseUp={onMouseUp}
       onMouseLeave={onMouseUp}
