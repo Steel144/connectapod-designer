@@ -92,6 +92,8 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
     // If clicking on already-selected module, drag all selected; otherwise select just this one
     const newSelected = selected.has(mod.id) ? selected : new Set([mod.id]);
     setSelected(newSelected);
+    setSelectedModId(mod.id);
+    setSelectedWallId(null); // deselect wall when clicking a module
     
     setDragging({ mod, offsetX, offsetY, cursorX: e.clientX, cursorY: e.clientY, isPlaced: true, selectedIds: newSelected });
   };
