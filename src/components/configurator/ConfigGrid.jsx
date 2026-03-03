@@ -600,10 +600,9 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                      e.preventDefault();
                      onRemoveWall && onRemoveWall(wall.id);
                    }}
-                   className="absolute opacity-0 group-hover:opacity-100 transition-opacity bg-red-500 rounded-full p-1.5 shadow-lg hover:bg-red-600"
-                   style={{ pointerEvents: "auto", top: '-8px', right: '-8px', zIndex: 50 }}
+                   className="absolute top-0.5 right-0.5 opacity-0 group-hover:opacity-100 transition-opacity bg-white rounded-full p-0.5 shadow-sm hover:bg-red-50 z-10"
                  >
-                   <X size={14} className="text-white" />
+                   <X size={10} className="text-red-400" />
                  </button>
                </div>
                {/* Ghost while dragging */}
