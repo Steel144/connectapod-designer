@@ -462,12 +462,51 @@ export default function View3D({ placedModules, walls }) {
       }
     });
 
-    // Centre camera on design
+    // Create ground labels (W, X, Y, Z)
+    const createTextCanvas = (text, size = 256) => {
+      const canvas = document.createElement('canvas');
+      canvas.width = size;
+      canvas.height = size;
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+      ctx.font = `bold ${size * 0.6}px Arial`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(text, size / 2, size / 2);
+      return new THREE.CanvasTexture(canvas);
+    };
+
     if (placedModules.length > 0) {
       const xs = placedModules.map((m) => m.x + m.w / 2);
       const ys = placedModules.map((m) => m.y + m.h / 2);
-      const cx = (Math.min(...xs) + Math.max(...xs)) / 2 * CELL_M;
-      const cy = (Math.min(...ys) + Math.max(...ys)) / 2 * CELL_M;
+      const minX = Math.min(...xs.map((x, i) => placedModules[i].x));
+      const maxX = Math.max(...xs.map((x, i) => placedModules[i].x + placedModules[i].w));
+      const minY = Math.min(...ys.map((y, i) => placedModules[i].y));
+      const maxY = Math.max(...ys.map((y, i) => placedModules[i].y + placedModules[i].h));
+      
+      const cx = (minX + maxX) / 2 * CELL_M;
+      const cy = (minY + maxY) / 2 * CELL_M;
+      const minXM = minX * CELL_M - 1.5;
+      const maxXM = maxX * CELL_M + 1.5;
+      const minYM = minY * CELL_M - 1.5;
+      const maxYM = maxY * CELL_M + 1.5;
+      
+      const labels = [
+        { pos: new THREE.Vector3(cx, 0.01, minYM), label: 'W' },
+        { pos: new THREE.Vector3(maxXM, 0.01, cy), label: 'X' },
+        { pos: new THREE.Vector3(cx, 0.01, maxYM), label: 'Y' },
+        { pos: new THREE.Vector3(minXM, 0.01, cy), label: 'Z' },
+      ];
+      
+      labels.forEach(({ pos, label }) => {
+        const planeGeo = new THREE.PlaneGeometry(0.8, 0.8);
+        const planeMat = new THREE.MeshBasicMaterial({ map: createTextCanvas(label), transparent: true });
+        const plane = new THREE.Mesh(planeGeo, planeMat);
+        plane.position.copy(pos);
+        plane.rotation.x = -Math.PI / 2;
+        scene.add(plane);
+      });
+
       camera.position.set(cx + 20, 30, cy + 30);
       camera.lookAt(cx, 0, cy);
     }
