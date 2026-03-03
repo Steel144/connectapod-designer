@@ -260,11 +260,21 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
       const isLongFace = face === "W" || face === "Y";
       for (const mod of placedModules) {
         if (isLongFace) {
-          if (selectedWall.x === mod.x && (selectedWall.y === mod.y || selectedWall.y === mod.y + mod.h)) {
+          // W face (top/outside): x aligns, y is one cell above
+          if (face === "W" && selectedWall.x === mod.x && selectedWall.y === mod.y - 1) {
+            attachedMod = mod; break;
+          }
+          // Y face (bottom/outside): x aligns, y is at module bottom edge
+          if (face === "Y" && selectedWall.x === mod.x && selectedWall.y === mod.y + mod.h) {
             attachedMod = mod; break;
           }
         } else {
-          if (selectedWall.y === mod.y && (selectedWall.x === mod.x || selectedWall.x === mod.x + mod.w)) {
+          // Z face (left/inside): y aligns, x is one cell inside
+          if (face === "Z" && selectedWall.y === mod.y && selectedWall.x === mod.x + 1) {
+            attachedMod = mod; break;
+          }
+          // X face (right/inside): y aligns, x is one cell inside from right
+          if (face === "X" && selectedWall.y === mod.y && selectedWall.x === mod.x + mod.w - 1) {
             attachedMod = mod; break;
           }
         }
