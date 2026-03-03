@@ -420,6 +420,28 @@ export default function View3D({ placedModules, walls }) {
       }
       
       scene.add(mesh);
+
+      // Add box spouting (125mm) to side walls (Z and X)
+      if ((wall.face === 'Z' || wall.face === 'X') && wall.length) {
+        const spoutingWidth = 0.125; // 125mm
+        const spoutingDepth = 0.08; // 80mm
+        const spoutingThickness = 0.003; // 3mm material
+        
+        const spoutingGeo = new THREE.BoxGeometry(
+          wall.orientation === "vertical" ? spoutingWidth : wall.length * CELL_M,
+          spoutingDepth,
+          wall.orientation === "vertical" ? wall.length * CELL_M : spoutingWidth
+        );
+        
+        const spoutingMat = new THREE.MeshLambertMaterial({ color: 0xd0d0d0 });
+        const spouting = new THREE.Mesh(spoutingGeo, spoutingMat);
+        spouting.castShadow = true;
+        spouting.receiveShadow = true;
+        
+        // Position at the top of the wall
+        spouting.position.set(mesh.position.x, WALL_HEIGHT + spoutingDepth / 2, mesh.position.z);
+        scene.add(spouting);
+      }
       
       // Add windows based on wall code
       const windowCode = wall.type?.split('/')[0];
