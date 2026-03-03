@@ -406,31 +406,32 @@ export default function View3D({ placedModules, walls }) {
         const isHorizontal = wall.orientation === "horizontal";
         
         windowSpecs.forEach((spec) => {
-          // For vertical walls, swap width/height to match orientation
-          const winW = isHorizontal ? spec.w : spec.h;
-          const winH = isHorizontal ? spec.h : spec.w;
-          const winGeo = new THREE.BoxGeometry(winW, winH, 0.1);
           const winMat = new THREE.MeshPhongMaterial({ 
             color: 0x87CEEB,
             emissive: 0x4A90E2,
             emissiveIntensity: 0.4,
             shininess: 80
           });
-          const window = new THREE.Mesh(winGeo, winMat);
-          window.castShadow = true;
-          window.receiveShadow = true;
+          let window, winX, winY, winZ;
           
-          let winX, winY, winZ;
           if (isHorizontal) {
+            // Horizontal walls: window normal faces Z
+            const winGeo = new THREE.BoxGeometry(spec.w, spec.h, 0.1);
+            window = new THREE.Mesh(winGeo, winMat);
             winX = mesh.position.x - wM / 2 + spec.x;
             winY = mesh.position.y + spec.y;
             winZ = mesh.position.z + 0.05;
           } else {
+            // Vertical walls: window normal faces X, rotated 90 degrees
+            const winGeo = new THREE.BoxGeometry(0.1, spec.h, spec.w);
+            window = new THREE.Mesh(winGeo, winMat);
             winX = mesh.position.x + 0.05;
-            winY = mesh.position.y + spec.x;
-            winZ = mesh.position.z - hM / 2 + spec.y;
+            winY = mesh.position.y + spec.h / 2 + spec.y;
+            winZ = mesh.position.z - hM / 2 + spec.x;
           }
           
+          window.castShadow = true;
+          window.receiveShadow = true;
           window.position.set(winX, winY, winZ);
           scene.add(window);
         });
