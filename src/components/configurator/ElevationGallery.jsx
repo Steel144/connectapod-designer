@@ -15,8 +15,8 @@ export default function ElevationGallery({ walls }) {
   }
 
   return (
-    <div className="w-full h-full bg-white overflow-auto p-3">
-      <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
+    <div className="w-full h-full bg-white overflow-auto p-3 flex items-center justify-center">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 max-w-3xl">
         {wallsWithElevations.map((wall) => (
           <div key={wall.id} className="bg-white border border-gray-200 rounded overflow-hidden shadow hover:shadow-lg transition-shadow">
             <div className="aspect-square overflow-hidden bg-gray-100 flex items-center justify-center">
