@@ -133,13 +133,21 @@ export default function Configurator() {
         const isLongFace = w.face === "W" || w.face === "Y";
         
         if (isLongFace) {
-          // Long face: wall x aligns with module x, y is module y or y+h
-          if (w.x === oldMod.x && (w.y === oldMod.y || w.y === oldMod.y + oldMod.h)) {
+          // W face (top/outside): x aligns, y is one cell above module's y
+          if (w.face === "W" && w.x === oldMod.x && w.y === oldMod.y - 1) {
+            return { ...w, x: w.x + deltaX, y: w.y + deltaY };
+          }
+          // Y face (bottom/outside): x aligns, y is at module's bottom edge
+          if (w.face === "Y" && w.x === oldMod.x && w.y === oldMod.y + oldMod.h) {
             return { ...w, x: w.x + deltaX, y: w.y + deltaY };
           }
         } else {
-          // End face: wall y aligns with module y, x is module x or x+w
-          if (w.y === oldMod.y && (w.x === oldMod.x || w.x === oldMod.x + oldMod.w)) {
+          // Z face (left end/inside): y aligns, x is one cell inside from left
+          if (w.face === "Z" && w.y === oldMod.y && w.x === oldMod.x + 1) {
+            return { ...w, x: w.x + deltaX, y: w.y + deltaY };
+          }
+          // X face (right end/inside): y aligns, x is one cell inside from right
+          if (w.face === "X" && w.y === oldMod.y && w.x === oldMod.x + oldMod.w - 1) {
             return { ...w, x: w.x + deltaX, y: w.y + deltaY };
           }
         }
