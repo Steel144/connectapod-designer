@@ -260,10 +260,6 @@ export default function View3D({ placedModules, walls }) {
         0, 4, 5, 0, 5, 1,
         // Back sloped face
         3, 2, 5, 3, 5, 4,
-        // Left triangle
-        0, 3, 4,
-        // Right triangle
-        1, 5, 2,
       ]);
       
       const roofGeo = new THREE.BufferGeometry();
