@@ -510,6 +510,7 @@ export default function Configurator() {
           onRemove={handleRemove}
           onMove={handleMove}
           onRotate={handleRotate}
+          onFlip={handleFlip}
           draggingMod={draggingMod}
           walls={walls}
           onPlaceWall={handlePlaceWall}
