@@ -419,7 +419,7 @@ export default function View3D({ placedModules, walls }) {
       }
 
       // Add gable to end walls (Z, X faces) with image stretched across entire wall+gable
-      if ((wall.face === 'Z' || wall.face === 'X') && wall.elevationImage) {
+      if ((wall.face === 'Z' || wall.face === 'X') && wall.elevationImage && mesh) {
         const pitchAngle = 25 * Math.PI / 180;
         const roofDepth = hM + 0.37;
         const roofPeakH = (roofDepth / 2) * Math.tan(pitchAngle);
@@ -502,7 +502,7 @@ export default function View3D({ placedModules, walls }) {
       }
 
       // Add box spouting (125mm) to front/back walls (W and Y)
-      if ((wall.face === 'W' || wall.face === 'Y') && wall.length) {
+      if ((wall.face === 'W' || wall.face === 'Y') && wall.length && mesh) {
         const spoutingLength = wall.length * CELL_M;
         const spoutingGeo = new THREE.BoxGeometry(spoutingLength, 0.125, 0.08);
         
