@@ -90,12 +90,12 @@ export default function ElevationGallery({ walls }) {
             <div className="inline-block border border-gray-200 rounded overflow-hidden">
               <div className="flex bg-white">
                 {wallsByFace.W.map((wall) => (
-                  <div key={wall.id} className="bg-gray-100">
-                    <img
-                      src={wall.elevationImage}
-                      alt={`Wall ${wall.type}`}
-                      className="h-96 object-contain"
-                    />
+                   <div key={wall.id} className="bg-gray-100">
+                     <img
+                       src={wall.elevationImage}
+                       alt={`Wall ${wall.type}`}
+                       className="h-48 object-contain"
+                     />
                   </div>
                 ))}
               </div>
