@@ -72,7 +72,30 @@ export default function Configurator() {
 
 
 
+  const handleUndo = useCallback(() => {
+    setHistory((prev) => {
+      if (prev.length === 0) return prev;
+      const next = [...prev];
+      const last = next.pop();
+      setPlacedModules(last.placedModules);
+      setWalls(last.walls);
+      return next;
+    });
+  }, []);
+
+  useEffect(() => {
+    const onKey = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === "z" && !e.shiftKey) {
+        e.preventDefault();
+        handleUndo();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [handleUndo]);
+
   const handlePlace = (mod, x, y) => {
+    pushHistory(placedModules, walls);
     setPlacedModules((prev) => [
       ...prev,
       { ...mod, id: generateId(), x, y },
@@ -80,22 +103,24 @@ export default function Configurator() {
   };
 
   const handleRemove = (id) => {
+    pushHistory(placedModules, walls);
     setPlacedModules((prev) => prev.filter((m) => m.id !== id));
   };
 
   const handleMove = (id, x, y) => {
+    pushHistory(placedModules, walls);
     setPlacedModules((prev) =>
       prev.map((m) => (m.id === id ? { ...m, x, y } : m))
     );
   };
 
   const handleRotate = (id) => {
+    pushHistory(placedModules, walls);
     setPlacedModules((prev) =>
       prev.map((m) => {
         if (m.id !== id) return m;
         const currentRotation = m.rotation || 0;
         const newRotation = (currentRotation + 90) % 360;
-        // Swap w/h on 90° and 270° (odd quarter turns)
         const shouldSwap = newRotation === 90 || newRotation === 270;
         const baseW = m.baseW ?? m.w;
         const baseH = m.baseH ?? m.h;
@@ -112,11 +137,13 @@ export default function Configurator() {
   };
 
   const handleClear = () => {
+    pushHistory(placedModules, walls);
     setPlacedModules([]);
     setWalls([]);
   };
 
   const handlePlaceWall = (wallData, x, y) => {
+    pushHistory(placedModules, walls);
     setWalls((prev) => [
       ...prev,
       { ...wallData, id: generateWallId(), x, y },
@@ -124,10 +151,12 @@ export default function Configurator() {
   };
 
   const handleRemoveWall = (id) => {
+    pushHistory(placedModules, walls);
     setWalls((prev) => prev.filter((w) => w.id !== id));
   };
 
   const handleMoveWall = (id, x, y) => {
+    pushHistory(placedModules, walls);
     setWalls((prev) =>
       prev.map((w) => (w.id === id ? { ...w, x, y } : w))
     );
