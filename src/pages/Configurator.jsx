@@ -277,10 +277,23 @@ export default function Configurator() {
     toast.success(`Loaded "${design.name}"`);
   };
 
-  const handleModuleImageUpdate = (moduleId, imageUrl) => {
+  const handleModuleImageUpdate = async (moduleId, imageUrl) => {
+    const module = placedModules.find(m => m.id === moduleId);
+    
     setPlacedModules((prev) =>
       prev.map((m) => (m.id === moduleId ? { ...m, floorPlanImage: imageUrl } : m))
     );
+
+    // Save image to database for this module type
+    if (module && module.type) {
+      const existing = await base44.entities.FloorPlanImage.filter({ moduleType: module.type });
+      if (existing.length > 0) {
+        await base44.entities.FloorPlanImage.update(existing[0].id, { imageUrl });
+      } else {
+        await base44.entities.FloorPlanImage.create({ moduleType: module.type, imageUrl });
+      }
+      queryClient.invalidateQueries({ queryKey: ["floorPlanImages"] });
+    }
   };
 
   const handleWallImageUpdate = async (wallId, imageUrl) => {
