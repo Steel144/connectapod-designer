@@ -74,6 +74,7 @@ function createOrbitControls(camera, domElement) {
 const CELL_M = 0.6; // each cell = 0.6 metres
 const MODULE_HEIGHT = 2.8; // metres tall
 const WALL_HEIGHT = 2.8;
+const GABLE_HEIGHT = 1.2; // gable roof peak height
 
 const GROUP_COLORS = {
   general: 0xf5dcc8,
@@ -157,6 +158,16 @@ export default function View3D({ placedModules, walls }) {
         mod.y * CELL_M + hM / 2
       );
       scene.add(mesh);
+
+      // Gable roof (pitched roof geometry)
+      const roofGeo = new THREE.ConeGeometry(Math.max(wM, hM) / 2, GABLE_HEIGHT, 4, 1);
+      const roofMat = new THREE.MeshLambertMaterial({ color: 0x2a2a2a });
+      const roof = new THREE.Mesh(roofGeo, roofMat);
+      roof.castShadow = true;
+      roof.receiveShadow = true;
+      roof.position.set(mesh.position.x, MODULE_HEIGHT + GABLE_HEIGHT / 2, mesh.position.z);
+      roof.rotation.y = Math.PI / 4;
+      scene.add(roof);
 
       // Outline
       const edges = new THREE.EdgesGeometry(geo);

@@ -166,22 +166,22 @@ const GROUP_ICONS = Object.fromEntries(
 
 const WALL_TYPES = [
   // 0.6m & 1.2m Module Walls
-  { type: "W000/Y000",  label: "600mm Standard Wall",              mpCode: "W000/Y000",   width: 0.6, orientation: "horizontal", length: 1, thickness: 0.31, elevationImage: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69a55c0c222e61cb3fbc417c/fa9207d4a_generated_image.png" },
-  { type: "W001/Y001",  label: "1200mm Standard Wall",             mpCode: "W001/Y001",   width: 1.2, orientation: "horizontal", length: 2, thickness: 0.31, elevationImage: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69a55c0c222e61cb3fbc417c/c153b043e_generated_image.png" },
+  { type: "W000/Y000",  label: "600mm Standard Wall",              mpCode: "W000/Y000",   width: 0.6, orientation: "horizontal", length: 1, thickness: 0.31, elevationImage: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69a55c0c222e61cb3fbc417c/619a194a4_generated_image.png" },
+  { type: "W001/Y001",  label: "1200mm Standard Wall",             mpCode: "W001/Y001",   width: 1.2, orientation: "horizontal", length: 2, thickness: 0.31, elevationImage: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69a55c0c222e61cb3fbc417c/5f2325862_generated_image.png" },
   { type: "WS003/YS003",label: "1200mm Wall – 1 Window (620×1520)",mpCode: "WS003/YS003", width: 1.2, orientation: "horizontal", length: 2, thickness: 0.31 },
   { type: "W004/Y004",  label: "1200mm Wall – Window 690×1520",    mpCode: "W004/Y004",   width: 1.2, orientation: "horizontal", length: 2, thickness: 0.31 },
   { type: "W005/Y005",  label: "1200mm Wall – 2 Windows (620×1220)",mpCode: "W005/Y005",  width: 1.2, orientation: "horizontal", length: 2, thickness: 0.31 },
   { type: "W006/Y006",  label: "1200mm Wall – 2 Windows (620×1520)",mpCode: "W006/Y006",  width: 1.2, orientation: "horizontal", length: 2, thickness: 0.31 },
   { type: "W030/Y030",  label: "1200mm Wall – Fixed 322 (3.2m wide)",mpCode: "W030/Y030", width: 1.2, orientation: "horizontal", length: 2, thickness: 0.31 },
   // 1.8m Module Walls
-  { type: "W050/YS050", label: "1800mm Standard Wall",             mpCode: "W050/YS050",  width: 1.8, orientation: "horizontal", length: 3, thickness: 0.31, elevationImage: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69a55c0c222e61cb3fbc417c/d329d26bb_generated_image.png" },
+  { type: "W050/YS050", label: "1800mm Standard Wall",             mpCode: "W050/YS050",  width: 1.8, orientation: "horizontal", length: 3, thickness: 0.31, elevationImage: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69a55c0c222e61cb3fbc417c/4f99b4047_generated_image.png" },
   { type: "W051D/Y051D",label: "1800mm Deck Wall – Window (1250×2160)",mpCode: "W051D/Y051D",width: 1.8, orientation: "horizontal", length: 3, thickness: 0.31 },
   // 2.4m Module Walls
-  { type: "W200/Y200",  label: "2400mm Standard Wall",             mpCode: "W200/Y200",   width: 2.4, orientation: "horizontal", length: 4, thickness: 0.31, elevationImage: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69a55c0c222e61cb3fbc417c/3e8f951c7_generated_image.png" },
+  { type: "W200/Y200",  label: "2400mm Standard Wall",             mpCode: "W200/Y200",   width: 2.4, orientation: "horizontal", length: 4, thickness: 0.31, elevationImage: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69a55c0c222e61cb3fbc417c/8e78c839f_generated_image.png" },
   { type: "W201D/Y201D",label: "2400mm Deck Wall – Opening 1822",  mpCode: "W201D/Y201D", width: 2.4, orientation: "horizontal", length: 4, thickness: 0.31 },
   { type: "W202/Y202",  label: "2400mm Wall – Louvre 1822",        mpCode: "W202/Y202",   width: 2.4, orientation: "horizontal", length: 4, thickness: 0.31 },
   // 3.0m Module Walls – Series 500
-  { type: "W500/Y500",  label: "3000mm Standard Wall",             mpCode: "W500/Y500",   width: 3.0, orientation: "horizontal", length: 5, thickness: 0.31, elevationImage: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69a55c0c222e61cb3fbc417c/1035e29d8_generated_image.png" },
+  { type: "W500/Y500",  label: "3000mm Standard Wall",             mpCode: "W500/Y500",   width: 3.0, orientation: "horizontal", length: 5, thickness: 0.31, elevationImage: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69a55c0c222e61cb3fbc417c/7c2092c24_generated_image.png" },
   { type: "W501/Y501",  label: "3000mm Wall – Louvre 2122",        mpCode: "W501/Y501",   width: 3.0, orientation: "horizontal", length: 5, thickness: 0.31 },
   { type: "W502/Y502",  label: "3000mm Wall – 8-Panel Window 2122",mpCode: "W502/Y502",   width: 3.0, orientation: "horizontal", length: 5, thickness: 0.31 },
   { type: "W503/Y503",  label: "3000mm Wall – Door Right + 2 Sidelights",mpCode: "W503/Y503",width: 3.0, orientation: "horizontal", length: 5, thickness: 0.31 },
