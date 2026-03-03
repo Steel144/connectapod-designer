@@ -337,15 +337,13 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
         Math.abs(w.width - faceWidthM) < 0.05
       );
       
-      // For end modules, also include long walls (4.8m) for W/Y faces
-      if (isEnd && isLongFace) {
-        const longWalls = WALL_TYPES.filter(w =>
-          w.orientation === "horizontal" &&
-          !w.type.startsWith("Z") && !w.type.startsWith("X") &&
-          !w.type.includes("D/") && !w.type.endsWith("D") &&
+      // For end modules, also include gable/end walls (4.8m vertical) for side walls
+      if (isEnd) {
+        const endWalls = WALL_TYPES.filter(w =>
+          (w.type.startsWith("Z") || w.type.startsWith("X")) &&
           Math.abs(w.width - 4.8) < 0.05
         );
-        filtered = [...filtered, ...longWalls];
+        filtered = [...filtered, ...endWalls];
         // Remove duplicates
         filtered = Array.from(new Map(filtered.map(w => [w.type, w])).values());
       }
