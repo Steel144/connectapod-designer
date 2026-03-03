@@ -186,9 +186,48 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
       const rect = gridRef.current.getBoundingClientRect();
       const rawX = draggingWall.cursorX - rect.left - draggingWall.offsetX;
       const rawY = draggingWall.cursorY - rect.top - draggingWall.offsetY;
-      const newX = Math.max(0, rawX / CELL_W);
-      const newY = Math.max(0, rawY / CELL_H);
-      if (onMoveWall) onMoveWall(draggingWall.wall.id, newX, newY);
+      const exactX = rawX / CELL_W;
+      const exactY = rawY / CELL_H;
+      const SNAP_THRESHOLD = 1.5; // cells
+      
+      let snapped = null;
+      const wall = draggingWall.wall;
+
+      // Snap to module faces
+      if (wall.orientation === "horizontal") {
+        for (const mod of placedModules) {
+          const distToWFace = Math.abs(exactY - (mod.y - 1));
+          const distToYFace = Math.abs(exactY - (mod.y + mod.h));
+          
+          if (distToWFace <= SNAP_THRESHOLD && exactX >= mod.x - SNAP_THRESHOLD && exactX <= mod.x + mod.w + SNAP_THRESHOLD) {
+            snapped = { x: mod.x, y: mod.y - 1, length: mod.w, face: "W" };
+            break;
+          }
+          if (distToYFace <= SNAP_THRESHOLD && exactX >= mod.x - SNAP_THRESHOLD && exactX <= mod.x + mod.w + SNAP_THRESHOLD) {
+            snapped = { x: mod.x, y: mod.y + mod.h, length: mod.w, face: "Y" };
+            break;
+          }
+        }
+      } else {
+        for (const mod of placedModules) {
+          if (Math.abs(exactX - mod.x) <= SNAP_THRESHOLD && exactY >= mod.y - SNAP_THRESHOLD && exactY <= mod.y + mod.h + SNAP_THRESHOLD) {
+            snapped = { x: mod.x + 1, y: mod.y, length: mod.h, face: "Z" };
+            break;
+          }
+          if (Math.abs(exactX - (mod.x + mod.w)) <= SNAP_THRESHOLD && exactY >= mod.y - SNAP_THRESHOLD && exactY <= mod.y + mod.h + SNAP_THRESHOLD) {
+            snapped = { x: mod.x + mod.w - 1, y: mod.y, length: mod.h, face: "X" };
+            break;
+          }
+        }
+      }
+
+      if (snapped) {
+        if (onMoveWall) onMoveWall(wall.id, snapped.x, snapped.y, { ...wall, length: snapped.length, face: snapped.face });
+      } else {
+        const newX = Math.max(0, exactX);
+        const newY = Math.max(0, exactY);
+        if (onMoveWall) onMoveWall(wall.id, newX, newY);
+      }
       setDraggingWall(null);
       return;
     }
