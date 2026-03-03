@@ -237,7 +237,7 @@ export default function View3D({ placedModules, walls }) {
         roof.receiveShadow = true;
         roof.position.set(
           wall.x * CELL_M + wM / 2,
-          WALL_HEIGHT,
+          WALL_HEIGHT + GABLE_HEIGHT / 2,
           wall.y * CELL_M + hM / 2
         );
         scene.add(roof);
