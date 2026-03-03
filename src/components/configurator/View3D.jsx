@@ -295,9 +295,11 @@ export default function View3D({ placedModules, walls }) {
       scene.add(roof);
       
       // Gable end triangles with weatherboard texture
+      // Scale gable UVs to continue texture from wall (v=0 at wall top, v=peakRatio at peak)
+      const gablePeakRatio = roofPeakH / WALL_HEIGHT;
       const gableUVs = new Float32Array([
-        0, 0, 1, 0, 0.5, 1,
-        0, 0, 1, 0, 0.5, 1,
+        0, 0, 1, 0, 0.5, gablePeakRatio,
+        0, 0, 1, 0, 0.5, gablePeakRatio,
       ]);
       
       // Left gable
