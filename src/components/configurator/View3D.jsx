@@ -406,7 +406,10 @@ export default function View3D({ placedModules, walls }) {
         const isHorizontal = wall.orientation === "horizontal";
         
         windowSpecs.forEach((spec) => {
-          const winGeo = new THREE.BoxGeometry(spec.w, spec.h, 0.1);
+          // For vertical walls, swap width/height to match orientation
+          const winW = isHorizontal ? spec.w : spec.h;
+          const winH = isHorizontal ? spec.h : spec.w;
+          const winGeo = new THREE.BoxGeometry(winW, winH, 0.1);
           const winMat = new THREE.MeshPhongMaterial({ 
             color: 0x87CEEB,
             emissive: 0x4A90E2,
@@ -424,8 +427,8 @@ export default function View3D({ placedModules, walls }) {
             winZ = mesh.position.z + 0.05;
           } else {
             winX = mesh.position.x + 0.05;
-            winY = mesh.position.y + spec.y;
-            winZ = mesh.position.z - hM / 2 + spec.x;
+            winY = mesh.position.y + spec.x;
+            winZ = mesh.position.z - hM / 2 + spec.y;
           }
           
           window.position.set(winX, winY, winZ);
