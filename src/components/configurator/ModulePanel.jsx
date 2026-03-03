@@ -413,9 +413,14 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, plac
 
         {openGroup === "walls" && (
           <div className="border-t border-gray-100 max-h-64 overflow-y-auto">
-            {filterWalls && (
+            {filterWalls && filterReason && (
               <div className="px-3 py-1.5 bg-orange-50 border-b border-orange-100">
-                <p className="text-[10px] text-[#F15A22]">Showing walls that fit face <strong>{selectedWall.face}</strong> ({compatibleWalls[0]?.width ?? "?"}m wide)</p>
+                <p className="text-[10px] text-[#F15A22]">{filterReason}</p>
+              </div>
+            )}
+            {filterWalls && compatibleWalls.length === 0 && (
+              <div className="px-3 py-3 text-center text-[11px] text-gray-400">
+                No compatible walls for this face/chassis combination.
               </div>
             )}
             {compatibleWalls.map((wall) => (
