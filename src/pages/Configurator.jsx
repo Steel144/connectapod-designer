@@ -44,6 +44,14 @@ export default function Configurator() {
     queryFn: () => base44.entities.HomeDesign.list("-created_date"),
   });
 
+  const { data: wallImages = {} } = useQuery({
+    queryKey: ["wallImages"],
+    queryFn: async () => {
+      const images = await base44.entities.WallImage.list();
+      return Object.fromEntries(images.map(img => [img.wallType, img.imageUrl]));
+    },
+  });
+
   const saveMutation = useMutation({
     mutationFn: (data) => base44.entities.HomeDesign.create(data),
     onSuccess: () => {
