@@ -204,60 +204,7 @@ export default function View3D({ placedModules, walls }) {
       );
       scene.add(mesh);
 
-      // Generate gable end wall if this is a 4.8m or 5.2m vertical wall
-      const isGable = wall.orientation === "vertical" && (Math.abs(wall.width - 4.8) < 0.1 || Math.abs(wall.width - 5.2) < 0.1);
-      if (isGable) {
-        const peakH = 1.0; // Triangle peak height
-        const frameW = 0.1;
-        const depth = hM;
-        
-        // Pentagonal gable shape
-        const geoVertices = new Float32Array([
-          // Front pentagonal face
-          -wM/2, 0, 0,          // 0: bottom-left
-          wM/2, 0, 0,           // 1: bottom-right
-          wM/2, 0, depth,       // 2: bottom-right-back
-          -wM/2, 0, depth,      // 3: bottom-left-back
-          -wM/2, 0, 0,          // 4: left-rect-top (duplicate for clarity)
-          wM/2, 0, 0,           // 5: right-rect-top (duplicate)
-          -wM/2, 0, depth,      // 6: left-rect-top-back
-          wM/2, 0, depth,       // 7: right-rect-top-back
-          0, peakH, 0,          // 8: peak-front
-          0, peakH, depth,      // 9: peak-back
-        ]);
-        
-        const geoIndices = new Uint32Array([
-          // Bottom rectangle
-          0, 2, 1,
-          0, 3, 2,
-          // Left sloped face
-          0, 6, 9, 0, 9, 8,
-          // Right sloped face
-          1, 7, 9, 1, 9, 8,
-          // Left end
-          0, 8, 9, 0, 9, 6,
-          // Right end
-          1, 2, 7, 1, 7, 9,
-          // Back sloped face
-          3, 9, 8, 3, 8, 4,
-        ]);
-        
-        const gableGeo = new THREE.BufferGeometry();
-        gableGeo.setAttribute('position', new THREE.BufferAttribute(geoVertices, 3));
-        gableGeo.setIndex(new THREE.BufferAttribute(geoIndices, 1));
-        gableGeo.computeVertexNormals();
-        
-        const gableMat = new THREE.MeshLambertMaterial({ color: 0xb8860b, side: THREE.DoubleSide });
-        const gable = new THREE.Mesh(gableGeo, gableMat);
-        gable.castShadow = true;
-        gable.receiveShadow = true;
-        gable.position.set(
-          wall.x * CELL_M + wM / 2,
-          WALL_HEIGHT,
-          wall.y * CELL_M + hM / 2 - depth / 2
-        );
-        scene.add(gable);
-      }
+
     });
 
     // Centre camera on design
