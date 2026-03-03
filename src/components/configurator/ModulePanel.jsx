@@ -474,7 +474,7 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
                   onDragEnd={onDragEnd}
                   className="flex items-center gap-3 px-3 py-2 cursor-grab active:cursor-grabbing hover:bg-orange-50 border-b border-gray-50 last:border-0 transition-colors"
                 >
-                  <div className="shrink-0 w-10 h-8 border border-gray-200 bg-white flex items-center justify-center">
+                  <div className="shrink-0 w-10 h-8 border border-gray-200 bg-white flex items-center justify-center relative">
                     <div 
                       style={{
                         width: wall.orientation === "horizontal" ? "90%" : `${wall.thickness * 2}px`,
@@ -482,6 +482,11 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
                         backgroundColor: "#4B5563",
                       }}
                     />
+                    {wall.elevationImage && (
+                      <div className="absolute top-0 right-0 bg-[#F15A22] rounded-full p-0.5">
+                        <ImageIcon size={8} className="text-white" />
+                      </div>
+                    )}
                   </div>
                   <div className="min-w-0">
                     <p className="text-xs font-medium text-gray-700 leading-tight">{wall.label}</p>
