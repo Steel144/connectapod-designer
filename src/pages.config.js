@@ -49,12 +49,14 @@
  */
 import Catalogue from './pages/Catalogue';
 import Configurator from './pages/Configurator';
+import WallCatalogue from './pages/WallCatalogue';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
     "Catalogue": Catalogue,
     "Configurator": Configurator,
+    "WallCatalogue": WallCatalogue,
 }
 
 export const pagesConfig = {
