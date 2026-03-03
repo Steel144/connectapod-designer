@@ -261,11 +261,47 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
       const wallTemplate = WALL_TYPES.find((w) => w.type === wallType);
       if (!wallTemplate || !gridRef.current) return;
       
-      // Place at exact cursor position, no snapping
-      const exactX = (e.clientX - gridRef.current.getBoundingClientRect().left) / CELL_W;
-      const exactY = (e.clientY - gridRef.current.getBoundingClientRect().top) / CELL_H;
-      console.log("Placing wall at exact position:", { x: exactX, y: exactY });
-      if (onPlaceWall) onPlaceWall(wallTemplate, exactX, exactY);
+      const rect = gridRef.current.getBoundingClientRect();
+      const exactX = (e.clientX - rect.left) / CELL_W;
+      const exactY = (e.clientY - rect.top) / CELL_H;
+      const SNAP_THRESHOLD = 1.5; // cells
+      
+      let snapped = null;
+
+      // Snap to module faces
+      if (wallTemplate.orientation === "horizontal") {
+        for (const mod of placedModules) {
+          const distToWFace = Math.abs(exactY - (mod.y - 1));
+          const distToYFace = Math.abs(exactY - (mod.y + mod.h));
+          
+          if (distToWFace <= SNAP_THRESHOLD && exactX >= mod.x - SNAP_THRESHOLD && exactX <= mod.x + mod.w + SNAP_THRESHOLD) {
+            snapped = { x: mod.x, y: mod.y - 1, length: mod.w, face: "W" };
+            break;
+          }
+          if (distToYFace <= SNAP_THRESHOLD && exactX >= mod.x - SNAP_THRESHOLD && exactX <= mod.x + mod.w + SNAP_THRESHOLD) {
+            snapped = { x: mod.x, y: mod.y + mod.h, length: mod.w, face: "Y" };
+            break;
+          }
+        }
+      } else {
+        for (const mod of placedModules) {
+          if (Math.abs(exactX - mod.x) <= SNAP_THRESHOLD && exactY >= mod.y - SNAP_THRESHOLD && exactY <= mod.y + mod.h + SNAP_THRESHOLD) {
+            snapped = { x: mod.x + 1, y: mod.y, length: mod.h, face: "Z" };
+            break;
+          }
+          if (Math.abs(exactX - (mod.x + mod.w)) <= SNAP_THRESHOLD && exactY >= mod.y - SNAP_THRESHOLD && exactY <= mod.y + mod.h + SNAP_THRESHOLD) {
+            snapped = { x: mod.x + mod.w - 1, y: mod.y, length: mod.h, face: "X" };
+            break;
+          }
+        }
+      }
+
+      if (snapped) {
+        const wallWithFace = { ...wallTemplate, length: snapped.length, face: snapped.face };
+        if (onPlaceWall) onPlaceWall(wallWithFace, snapped.x, snapped.y);
+      } else {
+        if (onPlaceWall) onPlaceWall(wallTemplate, exactX, exactY);
+      }
       return;
     }
   };
