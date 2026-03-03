@@ -246,98 +246,77 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, plac
     if (selectedWall) setOpenGroup("walls");
   }, [selectedWall?.id]);
 
-  // Chassis-based wall elevation rules from the Moduletec catalogue
-  // Returns allowed wall type prefixes for each face based on chassis code
-  const getChassisWallRules = (chassis, widthCode, face) => {
-    const isEnd = chassis === "EF" || chassis === "LF" || chassis === "RF" || chassis === "ER";
-    const isSoffit = chassis === "SO";
-    const isDeck = chassis === "DK";
-
-    // Map widthCode to module width in metres for wall matching
-    const widthMap = { "06": 0.6, "12": 1.2, "18": 1.8, "24": 2.4, "30": 3.0 };
-    const modWidthM = widthMap[widthCode] || 3.0;
-
-    if (face === "Z") {
-      // Z face = gable end wall — only available on End chassis modules
-      // End chassis always uses gable walls (Z000/X000 series)
-      if (!isEnd) return { allowed: false, reason: "Z face only on End chassis (EF/LF/RF)" };
-      return { allowed: true, widthOverride: null, gableOnly: true };
-    }
-
-    if (face === "X") {
-      // X face = right-end gable — only on RF (right-end) modules
-      // LF (left-end) modules: X face is not applicable
-      if (chassis === "LF" || chassis === "EF") return { allowed: false, reason: "X face not applicable on Left-End chassis" };
-      if (!isEnd) return { allowed: false, reason: "X face only on End chassis (RF)" };
-      return { allowed: true, widthOverride: null, gableOnly: true };
-    }
-
-    if (face === "W" || face === "Y") {
-      // W/Y faces = front/back long faces — available on all chassis
-      // Deck/Soffit use D-suffix walls only
-      if (isDeck || isSoffit) return { allowed: true, deckOnly: true, widthM: modWidthM };
-      return { allowed: true, widthM: modWidthM, deckOnly: false };
-    }
-
-    return { allowed: true };
-  };
-
-  // When a wall is selected, derive which module it's attached to and filter compatible walls
+  // When a wall is selected, find the attached module and filter compatible walls by chassis rules
   const filterWalls = selectedWall && placedModules.length > 0;
   const { compatibleWalls, filterReason } = React.useMemo(() => {
     if (!filterWalls) return { compatibleWalls: WALL_TYPES, filterReason: null };
 
     const face = selectedWall.face;
-    const isHorizontalFace = face === "W" || face === "Y";
-    const CELL_SIZE_M = 0.6;
+    // W/Y = long faces (module width), Z/X = short end gable faces (module depth = 4.8m)
+    const isLongFace = face === "W" || face === "Y";
+    const CELL_M = 0.6;
 
-    // Find attached module by position
+    // Find the module this wall snapped onto by position
     let attachedMod = null;
     for (const mod of placedModules) {
-      if (isHorizontalFace) {
+      if (isLongFace) {
+        // Wall runs along top (y===mod.y) or bottom (y===mod.y+mod.h), same x origin
         if (selectedWall.x === mod.x && (selectedWall.y === mod.y || selectedWall.y === mod.y + mod.h)) {
           attachedMod = mod; break;
         }
       } else {
+        // Wall runs along left (x===mod.x) or right (x===mod.x+mod.w), same y origin
         if (selectedWall.y === mod.y && (selectedWall.x === mod.x || selectedWall.x === mod.x + mod.w)) {
           attachedMod = mod; break;
         }
       }
     }
 
-    const chassis = attachedMod?.chassis || "SF";
-    const widthCode = attachedMod?.widthCode || "30";
-    const rules = getChassisWallRules(chassis, widthCode, face);
-
-    if (!rules.allowed) {
-      return { compatibleWalls: [], filterReason: rules.reason };
+    if (!attachedMod) {
+      return { compatibleWalls: WALL_TYPES, filterReason: "Could not identify attached module" };
     }
 
-    // Filter by width matching the module's W/Y face = module width, Z/X face = not applicable (gable)
-    const targetWidthM = isHorizontalFace
-      ? (attachedMod ? attachedMod.w * CELL_SIZE_M : selectedWall.width)
-      : null; // Z/X gable walls — match by any gable width
+    const chassis = attachedMod.chassis || "SF";
+    const isDeck = chassis === "DK" || chassis === "SO";
+    const isEnd = chassis === "EF" || chassis === "LF" || chassis === "RF" || chassis === "ER";
+
+    // Module's actual face width in metres
+    // W/Y face = module width (x direction), Z/X face = module depth (y direction)
+    const faceWidthM = isLongFace
+      ? attachedMod.w * CELL_M   // e.g. 3.0m for a 30-wide module
+      : attachedMod.h * CELL_M;  // e.g. 4.8m for a standard module depth
+
+    // Z/X faces only allowed on End chassis
+    if (!isLongFace && !isEnd) {
+      return { compatibleWalls: [], filterReason: `Face ${face} only available on End chassis (this module is ${chassis})` };
+    }
 
     let filtered = WALL_TYPES;
 
-    if (rules.gableOnly) {
-      // Z/X faces: only gable walls (Z/X series)
-      filtered = filtered.filter(w => w.type.startsWith("Z") || w.type.startsWith("X"));
-    } else if (rules.deckOnly) {
-      // Deck/soffit: only D-suffix walls
-      filtered = filtered.filter(w => w.type.includes("D/") || w.type.endsWith("D"));
-      if (targetWidthM) filtered = filtered.filter(w => Math.abs(w.width - targetWidthM) < 0.01);
+    if (!isLongFace) {
+      // Z/X gable end faces: only vertical gable walls (Z/X series), matching depth
+      filtered = filtered.filter(w =>
+        (w.type.startsWith("Z") || w.type.startsWith("X")) &&
+        Math.abs(w.width - faceWidthM) < 0.05
+      );
+    } else if (isDeck) {
+      // Deck/Soffit W/Y faces: only D-suffix walls matching module width
+      filtered = filtered.filter(w =>
+        (w.type.includes("D/") || w.type.endsWith("D")) &&
+        !w.type.startsWith("Z") && !w.type.startsWith("X") &&
+        Math.abs(w.width - faceWidthM) < 0.05
+      );
     } else {
-      // W/Y faces: match by module width, exclude gable walls, exclude deck-only walls
-      if (targetWidthM) filtered = filtered.filter(w => Math.abs(w.width - targetWidthM) < 0.01);
-      filtered = filtered.filter(w => !w.type.startsWith("Z") && !w.type.startsWith("X"));
-      // Exclude deck-only walls (D suffix) for non-deck modules
-      if (chassis !== "DK" && chassis !== "SO") {
-        filtered = filtered.filter(w => !w.type.includes("D/") && !w.type.endsWith("D"));
-      }
+      // Standard W/Y faces: horizontal walls matching module width, excluding gable and deck walls
+      filtered = filtered.filter(w =>
+        w.orientation === "horizontal" &&
+        !w.type.startsWith("Z") && !w.type.startsWith("X") &&
+        !w.type.includes("D/") && !w.type.endsWith("D") &&
+        Math.abs(w.width - faceWidthM) < 0.05
+      );
     }
 
-    const reason = `Face ${face} · ${chassis}${widthCode} chassis · ${filtered.length} compatible walls`;
+    const reason = `Face ${face} · ${faceWidthM}m · ${chassis} chassis · ${filtered.length} wall${filtered.length !== 1 ? "s" : ""}`;
     return { compatibleWalls: filtered, filterReason: reason };
   }, [filterWalls, selectedWall, placedModules]);
 
