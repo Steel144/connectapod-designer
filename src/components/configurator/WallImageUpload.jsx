@@ -14,9 +14,11 @@ export default function WallImageUpload({ wall, onImageAssigned }) {
 
     setIsLoading(true);
     try {
-      const { data } = await base44.integrations.Core.UploadFile({ file });
-      setImageUrl(data.file_url);
-      onImageAssigned(data.file_url);
+      const response = await base44.integrations.Core.UploadFile({ file });
+      const fileUrl = response?.data?.file_url || response?.file_url;
+      if (!fileUrl) throw new Error("No file URL returned");
+      setImageUrl(fileUrl);
+      onImageAssigned(fileUrl);
       toast.success("Wall image uploaded");
     } catch (err) {
       toast.error("Failed to upload image");
