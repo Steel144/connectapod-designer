@@ -425,8 +425,8 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
         );
       })}
 
-      {/* Walls section — only shown when a module is selected */}
-      {selectedModule && (
+      {/* Walls section — shown when a module or wall is selected */}
+      {(selectedModule || selectedWall) && (
         <div className="border border-gray-200 bg-white overflow-hidden mt-1">
           <button
             className="w-full flex items-center gap-3 p-3 hover:bg-gray-50 transition-colors text-left"
