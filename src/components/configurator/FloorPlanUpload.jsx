@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
+import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Upload, Loader2, X } from "lucide-react";
 import { toast } from "sonner";
@@ -7,6 +8,7 @@ import { toast } from "sonner";
 export default function FloorPlanUpload({ module, onImageAssigned }) {
   const [isLoading, setIsLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState(module?.floorPlanImage || null);
+  const queryClient = useQueryClient();
 
   // Update local state if module prop changes
   React.useEffect(() => {
@@ -24,9 +26,22 @@ export default function FloorPlanUpload({ module, onImageAssigned }) {
       const response = await base44.integrations.Core.UploadFile({ file });
       const fileUrl = response?.data?.file_url || response?.file_url;
       if (!fileUrl) throw new Error("No file URL returned");
+      
       setImageUrl(fileUrl);
       onImageAssigned(fileUrl);
-      toast.success("Floor plan uploaded");
+
+      // Save to database for this module type
+      if (module?.type) {
+        const existing = await base44.entities.FloorPlanImage.filter({ moduleType: module.type });
+        if (existing.length > 0) {
+          await base44.entities.FloorPlanImage.update(existing[0].id, { imageUrl: fileUrl });
+        } else {
+          await base44.entities.FloorPlanImage.create({ moduleType: module.type, imageUrl: fileUrl });
+        }
+        queryClient.invalidateQueries({ queryKey: ["floorPlanImages"] });
+      }
+
+      toast.success("Floor plan uploaded and saved");
     } catch (err) {
       toast.error("Failed to upload image");
       console.error(err);
@@ -35,9 +50,18 @@ export default function FloorPlanUpload({ module, onImageAssigned }) {
     }
   };
 
-  const handleRemoveImage = () => {
+  const handleRemoveImage = async () => {
     setImageUrl(null);
     onImageAssigned(null);
+
+    // Remove from database
+    if (module?.type) {
+      const existing = await base44.entities.FloorPlanImage.filter({ moduleType: module.type });
+      if (existing.length > 0) {
+        await base44.entities.FloorPlanImage.delete(existing[0].id);
+        queryClient.invalidateQueries({ queryKey: ["floorPlanImages"] });
+      }
+    }
   };
 
   return (
