@@ -1,8 +1,9 @@
 import React, { useState, useMemo } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, ZoomIn, ZoomOut } from "lucide-react";
 
 export default function ElevationGallery({ walls = [] }) {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [zoom, setZoom] = useState(100);
 
   // Flatten all walls with elevation images into a single list
   const allElevations = useMemo(() => {
