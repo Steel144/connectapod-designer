@@ -305,6 +305,16 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
       const mod = placedModules.find((m) => m.id === id);
       if (mod && canPlaceGroup(mod, mod.x + deltaX, mod.y + deltaY, dragging.selectedIds)) {
         onMove(id, mod.x + deltaX, mod.y + deltaY);
+        
+        // Move any Z and X walls attached to this module
+        walls.forEach((wall) => {
+          if (wall.face === "Z" && wall.y === mod.y && wall.x === mod.x) {
+            if (onMoveWall) onMoveWall(wall.id, mod.x + deltaX, mod.y + deltaY);
+          }
+          if (wall.face === "X" && wall.y === mod.y && Math.abs(wall.x - (mod.x + mod.w - 0.31)) < 0.01) {
+            if (onMoveWall) onMoveWall(wall.id, mod.x + mod.w + deltaX - 0.31, mod.y + deltaY);
+          }
+        });
       }
     });
     setDragging(null);
