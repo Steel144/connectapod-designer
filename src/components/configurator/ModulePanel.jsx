@@ -217,11 +217,16 @@ const WALL_TYPES = [
   { type: "W802/Y802",  label: "3000mm Wall – High Right Door SG",  mpCode: "W802/Y802",   width: 3.0, orientation: "horizontal", length: 5, thickness: 0.31 },
   { type: "W805/Y805",  label: "3000mm Wall – 2 Windows 922",       mpCode: "W805/Y805",   width: 3.0, orientation: "horizontal", length: 5, thickness: 0.31 },
   { type: "W807/Y807",  label: "3000mm Wall – 3 Windows 922",       mpCode: "W807/Y807",   width: 3.0, orientation: "horizontal", length: 5, thickness: 0.31 },
+  // 4.8m Gable / End Walls (Z = left end, X = right end) — vertical orientation (placed on module ends)
+  { type: "Z000/X000", label: "Gable – Plain 4800mm",              mpCode: "Z000/X000",   width: 4.8, orientation: "vertical", length: 8, thickness: 0.31 },
+  { type: "Z001/X001", label: "Gable – 4 Sidelights 4222",         mpCode: "Z001/X001",   width: 4.8, orientation: "vertical", length: 8, thickness: 0.31 },
+  { type: "Z040/X040", label: "Gable – Door Right 2122",           mpCode: "Z040/X040",   width: 4.8, orientation: "vertical", length: 8, thickness: 0.31 },
+  { type: "Z041/X041", label: "Gable – Door Left 2122",            mpCode: "Z041/X041",   width: 4.8, orientation: "vertical", length: 8, thickness: 0.31 },
   // 5.2m Family Gable Walls
-  { type: "Z000-F/X000-F", label: "Gable – Plain 5.2m",            mpCode: "Z000-F/X000-F",   width: 5.2, orientation: "horizontal", length: 9, thickness: 0.31 },
-  { type: "Z001-F/X001-F", label: "Gable – 4 Sidelights 4222",     mpCode: "Z001-F/X001-F",   width: 5.2, orientation: "horizontal", length: 9, thickness: 0.31 },
-  { type: "Z040-F/X040-F", label: "Gable – Door Right 2122",       mpCode: "Z040-F/X040-F",   width: 5.2, orientation: "horizontal", length: 9, thickness: 0.31 },
-  { type: "Z041-F/X041-F", label: "Gable – Door Left 2122",        mpCode: "Z041-F/X041-F",   width: 5.2, orientation: "horizontal", length: 9, thickness: 0.31 },
+  { type: "Z000-F/X000-F", label: "Gable – Plain 5200mm",            mpCode: "Z000-F/X000-F",   width: 5.2, orientation: "vertical", length: 9, thickness: 0.31 },
+  { type: "Z001-F/X001-F", label: "Gable – 4 Sidelights 4222",     mpCode: "Z001-F/X001-F",   width: 5.2, orientation: "vertical", length: 9, thickness: 0.31 },
+  { type: "Z040-F/X040-F", label: "Gable – Door Right 2122",       mpCode: "Z040-F/X040-F",   width: 5.2, orientation: "vertical", length: 9, thickness: 0.31 },
+  { type: "Z041-F/X041-F", label: "Gable – Door Left 2122",        mpCode: "Z041-F/X041-F",   width: 5.2, orientation: "vertical", length: 9, thickness: 0.31 },
   // Musgrove Joinery
   { type: "WM201/YM201", label: "Musgrove – Door Right 1820",       mpCode: "WM201/YM201",   width: 3.0, orientation: "horizontal", length: 5, thickness: 0.31 },
   { type: "WM202/YM202", label: "Musgrove – Plain 3000",            mpCode: "WM202/YM202",   width: 3.0, orientation: "horizontal", length: 5, thickness: 0.31 },
