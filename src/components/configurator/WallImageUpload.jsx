@@ -35,7 +35,7 @@ export default function WallImageUpload({ wall, onImageAssigned }) {
     <div className="border-t pt-3 mt-3">
       <p className="text-xs font-semibold text-slate-700 mb-2">Wall Texture</p>
       
-      {wall.elevationImage ? (
+      {imageUrl ? (
         <div className="space-y-2">
           <img 
             src={wall.elevationImage} 
