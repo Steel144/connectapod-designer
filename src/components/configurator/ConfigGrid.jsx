@@ -471,9 +471,17 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
            const wallW = wall.orientation === "horizontal" ? wall.length * CELL_W : wall.thickness * CELL_W;
            const wallH = wall.orientation === "vertical" ? wall.length * CELL_H : wall.thickness * CELL_H;
 
+           // Adjust position for 180-degree rotation
+           let posX = wall.x * CELL_W;
+           let posY = wall.y * CELL_H;
+           if (wall.rotation === 180) {
+             posX -= wallW;
+             posY -= wallH;
+           }
+
            // Ghost position while dragging
-           let ghostLeft = wall.x * CELL_W;
-           let ghostTop = wall.y * CELL_H;
+           let ghostLeft = posX;
+           let ghostTop = posY;
            if (isBeingDragged && gridRef.current) {
              const rect = gridRef.current.getBoundingClientRect();
              ghostLeft = Math.max(0, (draggingWall.cursorX - rect.left - draggingWall.offsetX));
