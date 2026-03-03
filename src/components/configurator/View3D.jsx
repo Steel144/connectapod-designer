@@ -390,6 +390,36 @@ export default function View3D({ placedModules, walls }) {
         wall.y * CELL_M + hM / 2
       );
       scene.add(mesh);
+      
+      // Add windows based on wall elevation code
+      let windowCode = wall.elevationCode || wall.type?.split('-')[0];
+      if (windowCode && WINDOW_CONFIGS[windowCode]) {
+        const windowSpecs = WINDOW_CONFIGS[windowCode];
+        const wallLength = wall.orientation === "horizontal" ? wall.length * CELL_M : hM;
+        const isHorizontal = wall.orientation === "horizontal";
+        
+        windowSpecs.forEach((spec) => {
+          const winGeo = new THREE.BoxGeometry(spec.w, spec.h, 0.08);
+          const winMat = new THREE.MeshLambertMaterial({ color: 0x87CEEB, emissive: 0x4A90E2, emissiveIntensity: 0.3 });
+          const window = new THREE.Mesh(winGeo, winMat);
+          window.castShadow = true;
+          window.receiveShadow = true;
+          
+          let winX, winY, winZ;
+          if (isHorizontal) {
+            winX = mesh.position.x - wM / 2 + spec.x;
+            winY = mesh.position.y + spec.y;
+            winZ = mesh.position.z;
+          } else {
+            winX = mesh.position.x;
+            winY = mesh.position.y + spec.y;
+            winZ = mesh.position.z - hM / 2 + spec.x;
+          }
+          
+          window.position.set(winX, winY, winZ);
+          scene.add(window);
+        });
+      }
     });
 
     // Centre camera on design
