@@ -409,19 +409,20 @@ export default function View3D({ placedModules, walls }) {
       );
       scene.add(mesh);
       
-      // Add windows based on wall elevation code
-      let windowCode = wall.type?.split('/')[0] || wall.elevationCode;
-      if (windowCode && WINDOW_CONFIGS[windowCode]) {
-        const windowSpecs = WINDOW_CONFIGS[windowCode];
+      // Add windows based on wall code
+      const windowCode = wall.type?.split('/')[0];
+      const windowSpecs = getWindowConfig(windowCode);
+      
+      if (windowSpecs && windowSpecs.length > 0) {
         const isHorizontal = wall.orientation === "horizontal";
         
         windowSpecs.forEach((spec) => {
           const winGeo = new THREE.BoxGeometry(spec.w, spec.h, 0.1);
-          const winMat = new THREE.MeshLambertMaterial({ 
-            color: 0x5DADE2, 
-            emissive: 0x2E8BC0,
-            emissiveIntensity: 0.5,
-            shininess: 100
+          const winMat = new THREE.MeshPhongMaterial({ 
+            color: 0x87CEEB,
+            emissive: 0x4A90E2,
+            emissiveIntensity: 0.4,
+            shininess: 80
           });
           const window = new THREE.Mesh(winGeo, winMat);
           window.castShadow = true;
@@ -431,7 +432,7 @@ export default function View3D({ placedModules, walls }) {
           if (isHorizontal) {
             winX = mesh.position.x - wM / 2 + spec.x;
             winY = mesh.position.y + spec.y;
-            winZ = mesh.position.z + 0.05; // Push forward on wall surface
+            winZ = mesh.position.z + 0.05;
           } else {
             winX = mesh.position.x + 0.05;
             winY = mesh.position.y + spec.y;
