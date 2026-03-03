@@ -35,7 +35,6 @@ export default function Configurator() {
   const [draggingSummary, setDraggingSummary] = useState(null);
   const [summaryCollapsed, setSummaryCollapsed] = useState(false);
   const [selectedWall, setSelectedWall] = useState(null);
-  const [selectedModule, setSelectedModule] = useState(null); // module clicked on the grid
   const queryClient = useQueryClient();
 
   const { data: designs = [] } = useQuery({
