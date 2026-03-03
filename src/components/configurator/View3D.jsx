@@ -396,6 +396,12 @@ export default function View3D({ placedModules, walls }) {
         WALL_HEIGHT / 2,
         wall.y * CELL_M + hM / 2
       );
+      
+      // Rotate W walls (W face) 90 degrees
+      if (wall.face === 'W') {
+        mesh.rotation.y = Math.PI / 2;
+      }
+      
       scene.add(mesh);
       
       // Add windows based on wall code
