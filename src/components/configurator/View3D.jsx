@@ -286,6 +286,48 @@ export default function View3D({ placedModules, walls }) {
       roof.position.copy(mesh.position);
       roof.position.y = MODULE_HEIGHT;
       scene.add(roof);
+      
+      // Gable end triangles with weatherboard texture
+      const gableUVs = new Float32Array([
+        0, 0, 1, 0, 0.5, 1,
+        0, 0, 1, 0, 0.5, 1,
+      ]);
+      
+      // Left gable
+      const leftGableGeo = new THREE.BufferGeometry();
+      leftGableGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array([
+        -wM/2, 0, -roofDepth/2,
+        -wM/2, 0, roofDepth/2,
+        -wM/2, roofPeakH, 0,
+      ]), 3));
+      leftGableGeo.setAttribute('uv', new THREE.BufferAttribute(gableUVs, 2));
+      leftGableGeo.computeVertexNormals();
+      
+      const weatherboardTex = createWeatherboardTexture();
+      const gableMat = new THREE.MeshLambertMaterial({ map: weatherboardTex, color: 0xffffff });
+      const leftGable = new THREE.Mesh(leftGableGeo, gableMat);
+      leftGable.castShadow = true;
+      leftGable.receiveShadow = true;
+      leftGable.position.copy(mesh.position);
+      leftGable.position.y = MODULE_HEIGHT;
+      scene.add(leftGable);
+      
+      // Right gable
+      const rightGableGeo = new THREE.BufferGeometry();
+      rightGableGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array([
+        wM/2, 0, -roofDepth/2,
+        wM/2, roofPeakH, 0,
+        wM/2, 0, roofDepth/2,
+      ]), 3));
+      rightGableGeo.setAttribute('uv', new THREE.BufferAttribute(gableUVs, 2));
+      rightGableGeo.computeVertexNormals();
+      
+      const rightGable = new THREE.Mesh(rightGableGeo, gableMat);
+      rightGable.castShadow = true;
+      rightGable.receiveShadow = true;
+      rightGable.position.copy(mesh.position);
+      rightGable.position.y = MODULE_HEIGHT;
+      scene.add(rightGable);
     });
 
     // Place walls
