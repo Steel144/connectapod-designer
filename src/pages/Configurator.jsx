@@ -143,35 +143,26 @@ export default function Configurator() {
     const deltaX = x - oldMod.x;
     const deltaY = y - oldMod.y;
     
-    console.log("Moving module from", { x: oldMod.x, y: oldMod.y }, "to", { x, y }, "delta:", { deltaX, deltaY });
-    
     // Move module
     setPlacedModules((prev) =>
       prev.map((m) => (m.id === id ? { ...m, x, y } : m))
     );
     
-    // Move attached walls (W/Y on long faces, Z/X on end faces)
-    const WALL_OFFSET = 0.308; // 185mm offset
+    // Move attached walls by applying delta to their position
     setWalls((prev) =>
       prev.map((w) => {
+        if (!w.face) return w;
+        
         const isLongFace = w.face === "W" || w.face === "Y";
         
         if (isLongFace) {
-          // W face (top/outside): x aligns, y is offset above module's y
-          if (w.face === "W" && w.x === oldMod.x && Math.abs(w.y - (oldMod.y - WALL_OFFSET)) < 0.01) {
-            return { ...w, x: w.x + deltaX, y: w.y + deltaY };
-          }
-          // Y face (bottom/outside): x aligns, y is at module's bottom edge
-          if (w.face === "Y" && w.x === oldMod.x && w.y === oldMod.y + oldMod.h) {
+          // W/Y walls: check if x position aligns with module's x
+          if (Math.abs(w.x - oldMod.x) < 0.5) {
             return { ...w, x: w.x + deltaX, y: w.y + deltaY };
           }
         } else {
-          // Z face (left end/inside): y aligns, x is offset to the left
-          if (w.face === "Z" && w.y === oldMod.y && Math.abs(w.x - (oldMod.x - WALL_OFFSET)) < 0.01) {
-            return { ...w, x: w.x + deltaX, y: w.y + deltaY };
-          }
-          // X face (right end/inside): y aligns, x is offset to the right
-          if (w.face === "X" && w.y === oldMod.y && Math.abs(w.x - (oldMod.x + oldMod.w + WALL_OFFSET)) < 0.01) {
+          // Z/X walls: check if y position aligns with module's y
+          if (Math.abs(w.y - oldMod.y) < 0.5) {
             return { ...w, x: w.x + deltaX, y: w.y + deltaY };
           }
         }
