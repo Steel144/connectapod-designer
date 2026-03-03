@@ -240,6 +240,7 @@ export default function ModulePanel({ onDragStart, onDragEnd }) {
                 key={wall.type}
                 draggable
                 onDragStart={(e) => {
+                  e.dataTransfer.effectAllowed = "copy";
                   e.dataTransfer.setData("wallType", wall.type);
                   onDragStart(e, wall);
                 }}
