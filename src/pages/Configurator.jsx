@@ -50,8 +50,6 @@ export default function Configurator() {
   });
 
   const [isDraggingFromPanel, setIsDraggingFromPanel] = useState(false);
-  const gridRef = React.useRef(null);
-
   const handleDragStart = (e, mod) => {
     setIsDraggingFromPanel(true);
     if (mod.orientation) {
