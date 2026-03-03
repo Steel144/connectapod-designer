@@ -84,6 +84,38 @@ const GROUP_COLORS = {
   deck: 0xf5f0c8,
 };
 
+// Create standing seam metal texture
+function createStandingSeamTexture(width = 512, height = 512) {
+  const canvas = document.createElement('canvas');
+  canvas.width = width;
+  canvas.height = height;
+  const ctx = canvas.getContext('2d');
+  
+  // Base dark gray
+  ctx.fillStyle = '#2a2a2a';
+  ctx.fillRect(0, 0, width, height);
+  
+  // Vertical seams at 40mm intervals (scaled to texture)
+  const seamSpacing = Math.floor(width / 15); // ~15 seams across
+  const seamWidth = 2;
+  
+  ctx.fillStyle = '#1a1a1a';
+  for (let x = 0; x < width; x += seamSpacing) {
+    ctx.fillRect(x, 0, seamWidth, height);
+  }
+  
+  // Subtle horizontal variation for realism
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.02)';
+  for (let y = 0; y < height; y += 8) {
+    ctx.fillRect(0, y, width, 1);
+  }
+  
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.magFilter = THREE.LinearFilter;
+  texture.minFilter = THREE.LinearFilter;
+  return texture;
+}
+
 export default function View3D({ placedModules, walls }) {
   const mountRef = useRef(null);
 
@@ -206,7 +238,8 @@ export default function View3D({ placedModules, walls }) {
       roofGeo.setIndex(new THREE.BufferAttribute(roofIndices, 1));
       roofGeo.computeVertexNormals();
       
-      const roofMat = new THREE.MeshLambertMaterial({ color: 0x1a1a1a });
+      const roofTexture = createStandingSeamTexture();
+      const roofMat = new THREE.MeshLambertMaterial({ map: roofTexture, color: 0xffffff });
       const roof = new THREE.Mesh(roofGeo, roofMat);
       roof.castShadow = true;
       roof.receiveShadow = true;
@@ -221,17 +254,18 @@ export default function View3D({ placedModules, walls }) {
       const wM = wall.orientation === "horizontal" ? wall.length * CELL_M : thickness;
       const hM = wall.orientation === "vertical" ? wall.length * CELL_M : thickness;
 
-      const textureLoader = new THREE.TextureLoader();
       let material;
 
       if (wall.elevationImage) {
+        const textureLoader = new THREE.TextureLoader();
         textureLoader.load(wall.elevationImage, (texture) => {
           material.map = texture;
           material.needsUpdate = true;
         });
         material = new THREE.MeshLambertMaterial({ color: 0xffffff });
       } else {
-        material = new THREE.MeshLambertMaterial({ color: 0x4b5563 });
+        const seamTexture = createStandingSeamTexture();
+        material = new THREE.MeshLambertMaterial({ map: seamTexture, color: 0xffffff });
       }
 
       const geo = new THREE.BoxGeometry(wM, WALL_HEIGHT, hM);
