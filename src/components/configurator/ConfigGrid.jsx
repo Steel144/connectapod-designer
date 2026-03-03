@@ -297,7 +297,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
 
       if (snapped) {
         const wallWithFace = { ...wallTemplate, length: snapped.length, face: snapped.face };
-        console.log("Placing wall snapped:", { ...snapped, face: snapped.face });
+        console.log("Placing wall snapped:", { ...snapped, face: snapped.face, calculatedY: snapped.y, shouldBeAt: snapped.y });
         if (onPlaceWall) onPlaceWall(wallWithFace, snapped.x, snapped.y);
       } else {
         console.log("Placing wall unsnapped at:", { x, y });
