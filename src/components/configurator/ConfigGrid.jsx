@@ -504,6 +504,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                    onMouseDown={(e) => e.stopPropagation()}
                    onClick={() => onRemoveWall && onRemoveWall(wall.id)}
                    className="absolute top-0.5 right-0.5 opacity-0 group-hover:opacity-100 transition-opacity bg-white rounded-full p-0.5 shadow-sm hover:bg-red-50 z-10"
+                   style={{ pointerEvents: "auto" }}
                  >
                    <X size={10} className="text-red-400" />
                  </button>
