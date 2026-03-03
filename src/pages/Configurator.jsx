@@ -113,15 +113,19 @@ export default function Configurator() {
     pushHistory(placedModules, walls);
     const modToRemove = placedModules.find((m) => m.id === id);
     if (modToRemove) {
-      // Delete walls attached to this module
+      // Delete walls attached to this module (by position)
       setWalls((prev) =>
         prev.filter((w) => {
-          const isLongFace = w.face === "W" || w.face === "Y";
+          const isLongFace = w.face === "W" || w.face === "Y" || (!w.face && w.orientation === "horizontal");
           if (isLongFace) {
-            if (w.face === "W" && w.x === modToRemove.x && w.y === modToRemove.y - 1) return false;
+            // W face (top): x aligns, y is one cell above
+            if ((w.face === "W" || !w.face) && w.x === modToRemove.x && w.y === modToRemove.y - 1) return false;
+            // Y face (bottom): x aligns, y is at module bottom edge
             if (w.face === "Y" && w.x === modToRemove.x && w.y === modToRemove.y + modToRemove.h) return false;
           } else {
+            // Z face (left): y aligns, x is one cell inside
             if (w.face === "Z" && w.y === modToRemove.y && w.x === modToRemove.x + 1) return false;
+            // X face (right): y aligns, x is one cell inside from right
             if (w.face === "X" && w.y === modToRemove.y && w.x === modToRemove.x + modToRemove.w - 1) return false;
           }
           return true;
