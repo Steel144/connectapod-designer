@@ -413,51 +413,72 @@ export default function View3D({ placedModules, walls }) {
       
       scene.add(mesh);
 
-      // Add gable to end walls (Z, X faces) matching module profile
-      if (wall.face === 'Z' || wall.face === 'X') {
+      // Add gable to end walls (Z, X faces) with image stretched across entire wall+gable
+      if ((wall.face === 'Z' || wall.face === 'X') && wall.elevationImage) {
         const pitchAngle = 25 * Math.PI / 180;
         const roofDepth = hM + 0.37;
         const roofPeakH = (roofDepth / 2) * Math.tan(pitchAngle);
         
-        const gableUVs = new Float32Array([
-          0, 0, 1, 0, 0.5, roofPeakH / WALL_HEIGHT,
-          0, 0, 1, 0, 0.5, roofPeakH / WALL_HEIGHT,
+        // Create combined wall + gable geometry
+        const vertices = new Float32Array([
+          // Wall base (4 corners)
+          -wM/2, 0, -roofDepth/2,        // 0: bottom-left
+          wM/2, 0, -roofDepth/2,         // 1: bottom-right
+          wM/2, WALL_HEIGHT, -roofDepth/2, // 2: top-right
+          -wM/2, WALL_HEIGHT, -roofDepth/2, // 3: top-left
+          -wM/2, 0, roofDepth/2,         // 4: bottom-left-back
+          wM/2, 0, roofDepth/2,          // 5: bottom-right-back
+          wM/2, WALL_HEIGHT, roofDepth/2,  // 6: top-right-back
+          -wM/2, WALL_HEIGHT, roofDepth/2, // 7: top-left-back
+          // Gable peaks
+          -wM/2, WALL_HEIGHT + roofPeakH, 0, // 8: left peak
+          wM/2, WALL_HEIGHT + roofPeakH, 0,  // 9: right peak
         ]);
         
-        // Left gable
-        const leftGableGeo = new THREE.BufferGeometry();
-        leftGableGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array([
-          -wM/2, 0, -roofDepth/2,
-          -wM/2, 0, roofDepth/2,
-          -wM/2, roofPeakH, 0,
-        ]), 3));
-        leftGableGeo.setAttribute('uv', new THREE.BufferAttribute(gableUVs, 2));
-        leftGableGeo.computeVertexNormals();
+        const uvs = new Float32Array([
+          0, 0,    // 0
+          1, 0,    // 1
+          1, 0.7,  // 2
+          0, 0.7,  // 3
+          0, 0,    // 4 (same as 0 for back face)
+          1, 0,    // 5 (same as 1 for back face)
+          1, 0.7,  // 6
+          0, 0.7,  // 7
+          0.5, 1,  // 8 peak
+          0.5, 1,  // 9 peak
+        ]);
         
-        const gableMat = new THREE.MeshLambertMaterial({ map: createWeatherboardTexture(), color: 0xffffff });
-        const leftGable = new THREE.Mesh(leftGableGeo, gableMat);
-        leftGable.castShadow = true;
-        leftGable.receiveShadow = true;
-        leftGable.position.copy(mesh.position);
-        leftGable.position.y = WALL_HEIGHT;
-        scene.add(leftGable);
+        const indices = new Uint32Array([
+          // Front face (with gable)
+          0, 2, 3, 0, 1, 2, // wall rect
+          3, 2, 8, 2, 9, 8, // right gable triangle
+          3, 8, 9, 3, 9, 2, // left gable triangle (flipped for proper winding)
+          // Back face (with gable)
+          4, 7, 6, 4, 6, 5, // wall rect
+          7, 8, 9, 7, 9, 6, // right gable
+          7, 9, 8, 7, 8, 4, // left gable
+        ]);
         
-        // Right gable
-        const rightGableGeo = new THREE.BufferGeometry();
-        rightGableGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array([
-          wM/2, 0, -roofDepth/2,
-          wM/2, roofPeakH, 0,
-          wM/2, 0, roofDepth/2,
-        ]), 3));
-        rightGableGeo.setAttribute('uv', new THREE.BufferAttribute(gableUVs, 2));
-        rightGableGeo.computeVertexNormals();
+        const gableWallGeo = new THREE.BufferGeometry();
+        gableWallGeo.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+        gableWallGeo.setAttribute('uv', new THREE.BufferAttribute(uvs, 2));
+        gableWallGeo.setIndex(new THREE.BufferAttribute(indices, 1));
+        gableWallGeo.computeVertexNormals();
         
-        const rightGable = new THREE.Mesh(rightGableGeo, gableMat);
-        rightGable.castShadow = true;
-        rightGable.receiveShadow = true;
-        rightGable.position.copy(mesh.position);
-        rightGable.position.y = WALL_HEIGHT;
-        scene.add(rightGable);
+        const textureLoader = new THREE.TextureLoader();
+        const gableTexture = textureLoader.load(wall.elevationImage);
+        gableTexture.magFilter = THREE.LinearFilter;
+        gableTexture.minFilter = THREE.LinearFilter;
+        const gableWallMat = new THREE.MeshLambertMaterial({ map: gableTexture, color: 0xffffff });
+        
+        const gableWallMesh = new THREE.Mesh(gableWallGeo, gableWallMat);
+        gableWallMesh.castShadow = true;
+        gableWallMesh.receiveShadow = true;
+        gableWallMesh.position.copy(mesh.position);
+        scene.add(gableWallMesh);
+        
+        // Remove the plain wall mesh for end walls with images
+        scene.remove(mesh);
       }
 
       // Add box spouting (125mm) to front/back walls (W and Y)
