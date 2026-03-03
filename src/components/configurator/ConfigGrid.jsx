@@ -512,11 +512,11 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                 <X size={10} className="text-red-400" />
               </button>
 
-              {/* WXYZ corner labels - larger, bold, 50% black */}
-              {!hasModAbove && <span className="absolute text-2xl font-bold text-gray-500" style={{ left: '50%', top: '-24px', transform: 'translateX(-50%)' }}>W</span>}
-              {!hasModRight && <span className="absolute text-2xl font-bold text-gray-500" style={{ right: '-24px', top: '50%', transform: 'translateY(-50%)' }}>X</span>}
-              {!hasModBelow && <span className="absolute text-2xl font-bold text-gray-500" style={{ left: '50%', bottom: '-24px', transform: 'translateX(-50%)' }}>Y</span>}
-              {!hasModLeft && <span className="absolute text-2xl font-bold text-gray-500" style={{ left: '-24px', top: '50%', transform: 'translateY(-50%)' }}>Z</span>}
+              {/* WXYZ corner labels - larger, bold, 30% black */}
+              {!hasModAbove && <span className="absolute text-2xl font-bold" style={{ left: '50%', top: '-48px', transform: 'translateX(-50%)', color: 'rgba(0, 0, 0, 0.3)' }}>W</span>}
+              {!hasModRight && <span className="absolute text-2xl font-bold" style={{ right: '-48px', top: '50%', transform: 'translateY(-50%)', color: 'rgba(0, 0, 0, 0.3)' }}>X</span>}
+              {!hasModBelow && <span className="absolute text-2xl font-bold" style={{ left: '50%', bottom: '-48px', transform: 'translateX(-50%)', color: 'rgba(0, 0, 0, 0.3)' }}>Y</span>}
+              {!hasModLeft && <span className="absolute text-2xl font-bold" style={{ left: '-48px', top: '50%', transform: 'translateY(-50%)', color: 'rgba(0, 0, 0, 0.3)' }}>Z</span>}
               </div>
               );
               })}
