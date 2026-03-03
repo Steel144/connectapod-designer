@@ -253,9 +253,18 @@ export default function Configurator() {
   };
 
   const handleWallImageUpdate = (wallId, imageUrl) => {
-    setWalls((prev) =>
-      prev.map((w) => (w.id === wallId ? { ...w, elevationImage: imageUrl } : w))
-    );
+    console.log('Updating wall:', wallId, 'with image:', imageUrl);
+    setWalls((prev) => {
+      const updated = prev.map((w) => {
+        if (w.id === wallId) {
+          console.log('Wall matched, updating:', { ...w, elevationImage: imageUrl });
+          return { ...w, elevationImage: imageUrl };
+        }
+        return w;
+      });
+      console.log('All walls after update:', updated);
+      return updated;
+    });
   };
 
   const handlePanelMouseDown = (e) => {
