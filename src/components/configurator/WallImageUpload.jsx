@@ -36,9 +36,22 @@ export default function WallImageUpload({ wall, onImageAssigned }) {
       const response = await base44.integrations.Core.UploadFile({ file });
       const fileUrl = response?.data?.file_url || response?.file_url;
       if (!fileUrl) throw new Error("No file URL returned");
+      
       setImageUrl(fileUrl);
       onImageAssigned(fileUrl);
-      toast.success("Wall image uploaded");
+
+      // Save to database for this wall type
+      if (wall?.type) {
+        const existing = await base44.entities.WallImage.filter({ wallType: wall.type });
+        if (existing.length > 0) {
+          await base44.entities.WallImage.update(existing[0].id, { imageUrl: fileUrl });
+        } else {
+          await base44.entities.WallImage.create({ wallType: wall.type, imageUrl: fileUrl });
+        }
+        queryClient.invalidateQueries({ queryKey: ["wallImage", wall.type] });
+      }
+
+      toast.success("Wall image uploaded and saved");
     } catch (err) {
       toast.error("Failed to upload image");
       console.error(err);
