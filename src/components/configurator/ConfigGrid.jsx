@@ -555,7 +555,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                     if (e.target.closest("button")) return;
                     startDragWall(e, wall);
                   }}
-                  className="absolute group cursor-grab active:cursor-grabbing flex items-center justify-center"
+                  className="absolute group cursor-grab active:cursor-grabbing flex items-center justify-center overflow-hidden"
                   style={{
                     position: "absolute",
                     left: wall.x * CELL_W,
@@ -569,8 +569,15 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                     transformOrigin: "center",
                   }}
                 >
+                 {wall.elevationImage && (
+                   <img 
+                     src={wall.elevationImage} 
+                     alt={wall.label}
+                     className="w-full h-full object-cover pointer-events-none"
+                   />
+                 )}
                  {wall.face && (
-                   <span className="text-[8px] font-bold text-white/80 pointer-events-none select-none">
+                   <span className="text-[8px] font-bold text-white/80 pointer-events-none select-none absolute bottom-1 left-1">
                      {wall.face}
                    </span>
                  )}
@@ -589,7 +596,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                {/* Ghost while dragging */}
                {isBeingDragged && (
                  <div
-                   className="absolute pointer-events-none"
+                   className="absolute pointer-events-none overflow-hidden"
                    style={{
                      left: ghostLeft,
                      top: ghostTop,
@@ -599,7 +606,15 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                      opacity: 0.5,
                      border: "2px dashed #4F46E5",
                    }}
-                 />
+                 >
+                   {wall.elevationImage && (
+                     <img 
+                       src={wall.elevationImage} 
+                       alt={wall.label}
+                       className="w-full h-full object-cover opacity-60"
+                     />
+                   )}
+                 </div>
                )}
              </div>
            );
