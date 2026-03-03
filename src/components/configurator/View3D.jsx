@@ -204,43 +204,87 @@ export default function View3D({ placedModules, walls }) {
       );
       scene.add(mesh);
 
-      // Generate roof if this is a gable wall (4.8m or 5.2m vertical)
+      // Generate gable end wall if this is a 4.8m or 5.2m vertical wall
       const isGable = wall.orientation === "vertical" && (Math.abs(wall.width - 4.8) < 0.1 || Math.abs(wall.width - 5.2) < 0.1);
       if (isGable) {
-        // Create pitched roof above the gable wall (ridge on right side)
-        const roofVertices = new Float32Array([
-          -wM/2, 0, -hM/2,          // left base front
-          -wM/2, 0, hM/2,           // left base back
-          wM/2, GABLE_HEIGHT, -hM/2, // ridge front (right side)
-          wM/2, GABLE_HEIGHT, hM/2,  // ridge back (right side)
-          wM/2, 0, -hM/2,           // right base front
-          wM/2, 0, hM/2,            // right base back
-        ]);
-        const roofIndices = new Uint32Array([
-          // Left sloped face
-          0, 2, 1, 1, 2, 3,
-          // Right vertical face
-          2, 4, 5, 2, 5, 3,
-          // Front triangle
-          0, 4, 2,
-          // Back triangle
-          1, 5, 3,
-        ]);
-        const roofGeo = new THREE.BufferGeometry();
-        roofGeo.setAttribute('position', new THREE.BufferAttribute(roofVertices, 3));
-        roofGeo.setIndex(new THREE.BufferAttribute(roofIndices, 1));
-        roofGeo.computeVertexNormals();
+        const gableHeight = 2.4; // Gable peak height
+        const frameWidth = 0.12; // Dark frame border width
         
-        const roofMat = new THREE.MeshLambertMaterial({ color: 0x1a1a1a });
-        const roof = new THREE.Mesh(roofGeo, roofMat);
-        roof.castShadow = true;
-        roof.receiveShadow = true;
-        roof.position.set(
+        // Create gable end with triangular top section (centered ridge)
+        const gableVertices = new Float32Array([
+          // Rectangle base: front face
+          -wM/2, 0, -hM/2,              // 0: bottom-left
+          wM/2, 0, -hM/2,               // 1: bottom-right
+          wM/2, gableHeight, -hM/2,     // 2: top-right
+          -wM/2, gableHeight, -hM/2,    // 3: top-left
+          0, gableHeight + GABLE_HEIGHT, -hM/2, // 4: peak center
+          
+          // Rectangle base: back face
+          -wM/2, 0, hM/2,               // 5: bottom-left
+          wM/2, 0, hM/2,                // 6: bottom-right
+          wM/2, gableHeight, hM/2,      // 7: top-right
+          -wM/2, gableHeight, hM/2,     // 8: top-left
+          0, gableHeight + GABLE_HEIGHT, hM/2, // 9: peak center
+        ]);
+        
+        const gableIndices = new Uint32Array([
+          // Front rectangular section
+          0, 1, 2, 0, 2, 3,
+          // Front gable triangle
+          3, 2, 4,
+          // Back rectangular section
+          6, 5, 8, 6, 8, 7,
+          // Back gable triangle
+          9, 7, 8,
+          // Left face (rectangle)
+          0, 3, 8, 0, 8, 5,
+          // Left gable triangle
+          3, 4, 9, 3, 9, 8,
+          // Right face (rectangle)
+          1, 6, 7, 1, 7, 2,
+          // Right gable triangle
+          2, 7, 9, 2, 9, 4,
+        ]);
+        
+        const gableGeo = new THREE.BufferGeometry();
+        gableGeo.setAttribute('position', new THREE.BufferAttribute(gableVertices, 3));
+        gableGeo.setIndex(new THREE.BufferAttribute(gableIndices, 1));
+        gableGeo.computeVertexNormals();
+        
+        // Create material with timber color for gable
+        const gableMat = new THREE.MeshLambertMaterial({ color: 0xb8860b }); // Golden timber
+        const gable = new THREE.Mesh(gableGeo, gableMat);
+        gable.castShadow = true;
+        gable.receiveShadow = true;
+        gable.position.set(
           wall.x * CELL_M + wM / 2,
-          WALL_HEIGHT + GABLE_HEIGHT / 2,
+          WALL_HEIGHT,
           wall.y * CELL_M + hM / 2
         );
-        scene.add(roof);
+        scene.add(gable);
+        
+        // Add dark frame trim on edges
+        const frameMat = new THREE.MeshLambertMaterial({ color: 0x2d2d2d });
+        
+        // Left and right trim pieces
+        const trimGeo = new THREE.BoxGeometry(frameWidth, gableHeight + GABLE_HEIGHT * 1.5, hM);
+        const leftTrim = new THREE.Mesh(trimGeo, frameMat);
+        leftTrim.castShadow = true;
+        leftTrim.position.set(
+          wall.x * CELL_M + wM / 2 - wM / 2 + frameWidth / 2,
+          WALL_HEIGHT + (gableHeight + GABLE_HEIGHT) / 2,
+          wall.y * CELL_M + hM / 2
+        );
+        scene.add(leftTrim);
+        
+        const rightTrim = new THREE.Mesh(trimGeo, frameMat);
+        rightTrim.castShadow = true;
+        rightTrim.position.set(
+          wall.x * CELL_M + wM / 2 + wM / 2 - frameWidth / 2,
+          WALL_HEIGHT + (gableHeight + GABLE_HEIGHT) / 2,
+          wall.y * CELL_M + hM / 2
+        );
+        scene.add(rightTrim);
       }
     });
 
