@@ -108,6 +108,16 @@ export default function Configurator() {
     return () => window.removeEventListener("keydown", onKey);
   }, [handleUndo]);
 
+  // Update walls with images when wallImages changes
+  useEffect(() => {
+    setWalls((prev) =>
+      prev.map((w) => ({
+        ...w,
+        elevationImage: wallImages[w.type] || w.elevationImage || null,
+      }))
+    );
+  }, [wallImages]);
+
   const handlePlace = (mod, x, y) => {
     pushHistory(placedModules, walls);
     // Ensure chassis, width, etc. are always stored on the placed module
