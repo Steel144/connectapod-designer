@@ -392,7 +392,7 @@ export default function View3D({ placedModules, walls }) {
       scene.add(mesh);
       
       // Add windows based on wall elevation code
-      let windowCode = wall.elevationCode || wall.type?.split('-')[0];
+      let windowCode = wall.elevationCode || wall.type?.split('/')[0];
       if (windowCode && WINDOW_CONFIGS[windowCode]) {
         const windowSpecs = WINDOW_CONFIGS[windowCode];
         const wallLength = wall.orientation === "horizontal" ? wall.length * CELL_M : hM;
