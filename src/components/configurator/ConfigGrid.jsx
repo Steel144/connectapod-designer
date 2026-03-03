@@ -269,10 +269,12 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
       if (wallTemplate.orientation === "horizontal") {
         for (const mod of placedModules) {
           if (Math.abs(y - mod.y) <= SNAP && x >= mod.x - SNAP && x <= mod.x + mod.w + SNAP) {
-            snapped = { x: mod.x, y: mod.y, length: mod.w, face: "W" };
+            // W face (top) — place outside (above module)
+            snapped = { x: mod.x, y: mod.y - 1, length: mod.w, face: "W" };
             break;
           }
           if (Math.abs(y - (mod.y + mod.h)) <= SNAP && x >= mod.x - SNAP && x <= mod.x + mod.w + SNAP) {
+            // Y face (bottom) — place outside (below module)
             snapped = { x: mod.x, y: mod.y + mod.h, length: mod.w, face: "Y" };
             break;
           }
@@ -280,11 +282,13 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
       } else {
         for (const mod of placedModules) {
           if (Math.abs(x - mod.x) <= SNAP && y >= mod.y - SNAP && y <= mod.y + mod.h + SNAP) {
-            snapped = { x: mod.x, y: mod.y, length: mod.h, face: "Z" };
+            // Z face (left end) — place inside
+            snapped = { x: mod.x + 1, y: mod.y, length: mod.h, face: "Z" };
             break;
           }
           if (Math.abs(x - (mod.x + mod.w)) <= SNAP && y >= mod.y - SNAP && y <= mod.y + mod.h + SNAP) {
-            snapped = { x: mod.x + mod.w, y: mod.y, length: mod.h, face: "X" };
+            // X face (right end) — place inside
+            snapped = { x: mod.x + mod.w - 1, y: mod.y, length: mod.h, face: "X" };
             break;
           }
         }
