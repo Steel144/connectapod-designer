@@ -476,9 +476,9 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                   }}
                 />
               )}
-            </React.Fragment>
-          );
-        })}
+              </div>
+              );
+              })}
 
         {/* Selection box */}
         {selectionBox && (
