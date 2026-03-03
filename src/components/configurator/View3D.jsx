@@ -263,12 +263,12 @@ export default function View3D({ placedModules, walls }) {
       );
       scene.add(mesh);
 
-      // Add 40x60mm ribs at 600mm centres on 3m walls
+      // Add vertical 40x60mm standing seam ribs at 600mm centres on 3m walls
       if (Math.abs(wall.length - 5) < 0.1) { // 3m wall (5 cells = 3m)
         const ribWidth = 0.04;
-        const ribHeight = 0.06;
+        const ribDepth = 0.06;
         const ribSpacing = 0.6;
-        const ribGeo = new THREE.BoxGeometry(ribWidth, ribHeight, hM);
+        const ribGeo = new THREE.BoxGeometry(ribWidth, WALL_HEIGHT, ribDepth);
         const ribMat = new THREE.MeshLambertMaterial({ color: 0x1a1a1a });
         
         const wallLength = wall.length * CELL_M;
@@ -281,9 +281,9 @@ export default function View3D({ placedModules, walls }) {
           
           const ribPos = (i * ribSpacing) - wallLength / 2 + ribSpacing / 2;
           if (wall.orientation === "horizontal") {
-            rib.position.set(wall.x * CELL_M + ribPos, WALL_HEIGHT - ribHeight / 2, wall.y * CELL_M + hM / 2);
+            rib.position.set(wall.x * CELL_M + ribPos, WALL_HEIGHT / 2, wall.y * CELL_M + hM / 2);
           } else {
-            rib.position.set(wall.x * CELL_M + wM / 2, WALL_HEIGHT - ribHeight / 2, wall.y * CELL_M + ribPos);
+            rib.position.set(wall.x * CELL_M + wM / 2, WALL_HEIGHT / 2, wall.y * CELL_M + ribPos);
           }
           scene.add(rib);
         }
