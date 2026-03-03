@@ -174,17 +174,18 @@ export default function View3D({ placedModules, walls }) {
       scene.add(top);
 
       // Pitched gable roof over module (ridge along width, 25 degree pitch)
+      const roofWidth = 5.07; // 5070mm
       const pitchAngle = 25 * Math.PI / 180;
       const roofPeakH = (hM / 2) * Math.tan(pitchAngle);
       const roofVertices = new Float32Array([
         // Rectangle base
-        -wM/2, 0, -hM/2,          // 0: front-left
-        wM/2, 0, -hM/2,           // 1: front-right
-        wM/2, 0, hM/2,            // 2: back-right
-        -wM/2, 0, hM/2,           // 3: back-left
+        -roofWidth/2, 0, -hM/2,          // 0: front-left
+        roofWidth/2, 0, -hM/2,           // 1: front-right
+        roofWidth/2, 0, hM/2,            // 2: back-right
+        -roofWidth/2, 0, hM/2,           // 3: back-left
         // Peak ridge (center along width)
-        -wM/2, roofPeakH, 0,       // 4: left-center-peak
-        wM/2, roofPeakH, 0,        // 5: right-center-peak
+        -roofWidth/2, roofPeakH, 0,      // 4: left-center-peak
+        roofWidth/2, roofPeakH, 0,       // 5: right-center-peak
       ]);
       
       const roofIndices = new Uint32Array([
