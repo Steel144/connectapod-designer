@@ -84,23 +84,41 @@ const GROUP_COLORS = {
   deck: 0xf5f0c8,
 };
 
-// Window configurations based on wall elevation codes
-const WINDOW_CONFIGS = {
-  'W000': [{ x: 0.5, y: 0.5, w: 0.6, h: 0.8 }],
-  'W001': [{ x: 0.5, y: 0.5, w: 0.6, h: 0.8 }],
-  'W050': [{ x: 0.4, y: 0.5, w: 0.5, h: 0.8 }, { x: 1.3, y: 0.5, w: 0.5, h: 0.8 }],
-  'W200': [{ x: 0.3, y: 0.5, w: 0.5, h: 0.8 }, { x: 1.1, y: 0.5, w: 0.5, h: 0.8 }, { x: 1.9, y: 0.5, w: 0.5, h: 0.8 }],
-  'W500': [{ x: 0.4, y: 0.5, w: 0.5, h: 0.8 }, { x: 1.2, y: 0.5, w: 0.5, h: 0.8 }, { x: 2.0, y: 0.5, w: 0.5, h: 0.8 }],
-  'W700': [{ x: 0.3, y: 0.5, w: 0.45, h: 0.8 }, { x: 1.0, y: 0.5, w: 0.45, h: 0.8 }, { x: 1.7, y: 0.5, w: 0.45, h: 0.8 }, { x: 2.4, y: 0.5, w: 0.45, h: 0.8 }],
-  'Y000': [{ x: 0.5, y: 0.5, w: 0.6, h: 0.8 }],
-  'Y001': [{ x: 0.5, y: 0.5, w: 0.6, h: 0.8 }],
-  'Y050': [{ x: 0.4, y: 0.5, w: 0.5, h: 0.8 }, { x: 1.3, y: 0.5, w: 0.5, h: 0.8 }],
-  'Y200': [{ x: 0.3, y: 0.5, w: 0.5, h: 0.8 }, { x: 1.1, y: 0.5, w: 0.5, h: 0.8 }, { x: 1.9, y: 0.5, w: 0.5, h: 0.8 }],
-  'Y500': [{ x: 0.4, y: 0.5, w: 0.5, h: 0.8 }, { x: 1.2, y: 0.5, w: 0.5, h: 0.8 }, { x: 2.0, y: 0.5, w: 0.5, h: 0.8 }],
-  'Y530': [{ x: 0.4, y: 0.5, w: 0.5, h: 0.8 }, { x: 1.2, y: 0.5, w: 0.5, h: 0.8 }, { x: 2.0, y: 0.5, w: 0.5, h: 0.8 }],
-  'Y700': [{ x: 0.3, y: 0.5, w: 0.45, h: 0.8 }, { x: 1.0, y: 0.5, w: 0.45, h: 0.8 }, { x: 1.7, y: 0.5, w: 0.45, h: 0.8 }, { x: 2.4, y: 0.5, w: 0.45, h: 0.8 }],
-  'Z000': [{ x: 0.75, y: 0.6, w: 0.4, h: 0.5 }],
-  'X000': [{ x: 0.75, y: 0.6, w: 0.4, h: 0.5 }],
+// Window configurations by wall series
+const getWindowConfig = (wallCode) => {
+  const code = wallCode?.toUpperCase() || '';
+  
+  // Map wall codes to window patterns by series number
+  if (code.startsWith('W') || code.startsWith('Y')) {
+    const series = parseInt(code.substring(1));
+    
+    // Standard 600mm walls (W000, W001, Y000, Y001)
+    if (code.includes('000') || code.includes('001')) {
+      return [{ x: 0.5, y: 0.5, w: 0.5, h: 0.7 }];
+    }
+    
+    // 1800mm walls (W050, W051, Y050, Y051, YS050, Y051D)
+    if (code.includes('050') || code.includes('051')) {
+      return [{ x: 0.4, y: 0.5, w: 0.45, h: 0.7 }, { x: 1.2, y: 0.5, w: 0.45, h: 0.7 }];
+    }
+    
+    // 2400mm walls (W200, W201, W202, Y200, Y201, Y202)
+    if (code.includes('200') || code.includes('201') || code.includes('202')) {
+      return [{ x: 0.3, y: 0.5, w: 0.45, h: 0.7 }, { x: 1.2, y: 0.5, w: 0.45, h: 0.7 }, { x: 2.1, y: 0.5, w: 0.45, h: 0.7 }];
+    }
+    
+    // 3000mm walls series 500+ (W500-W518, Y500-Y518, W530-Y540, etc.)
+    if (series >= 400) {
+      return [{ x: 0.3, y: 0.5, w: 0.4, h: 0.7 }, { x: 1.2, y: 0.5, w: 0.4, h: 0.7 }, { x: 2.1, y: 0.5, w: 0.4, h: 0.7 }];
+    }
+  }
+  
+  // Gable/end walls (Z, X series)
+  if (code.startsWith('Z') || code.startsWith('X')) {
+    return [{ x: 1.8, y: 0.8, w: 0.6, h: 0.9 }];
+  }
+  
+  return null;
 };
 
 // Create standing seam metal texture (vertical 40mm seams at 600mm spacing, centred)
