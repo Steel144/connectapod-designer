@@ -111,6 +111,23 @@ export default function Configurator() {
 
   const handleRemove = (id) => {
     pushHistory(placedModules, walls);
+    const modToRemove = placedModules.find((m) => m.id === id);
+    if (modToRemove) {
+      // Delete walls attached to this module
+      setWalls((prev) =>
+        prev.filter((w) => {
+          const isLongFace = w.face === "W" || w.face === "Y";
+          if (isLongFace) {
+            if (w.face === "W" && w.x === modToRemove.x && w.y === modToRemove.y - 1) return false;
+            if (w.face === "Y" && w.x === modToRemove.x && w.y === modToRemove.y + modToRemove.h) return false;
+          } else {
+            if (w.face === "Z" && w.y === modToRemove.y && w.x === modToRemove.x + 1) return false;
+            if (w.face === "X" && w.y === modToRemove.y && w.x === modToRemove.x + modToRemove.w - 1) return false;
+          }
+          return true;
+        })
+      );
+    }
     setPlacedModules((prev) => prev.filter((m) => m.id !== id));
   };
 
