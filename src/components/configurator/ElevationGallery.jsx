@@ -14,10 +14,21 @@ export default function ElevationGallery({ walls }) {
     );
   }
 
+  // Sort walls by face order (W, Y, Z, X) then by position
+  const faceOrder = { W: 0, Y: 1, Z: 2, X: 3 };
+  const sortedWalls = [...wallsWithElevations].sort((a, b) => {
+    const faceA = faceOrder[a.face] ?? 999;
+    const faceB = faceOrder[b.face] ?? 999;
+    if (faceA !== faceB) return faceA - faceB;
+    // Sort by y then x position within same face
+    if (a.y !== b.y) return a.y - b.y;
+    return a.x - b.x;
+  });
+
   return (
     <div className="w-full h-full bg-white overflow-auto p-3 flex items-center justify-center">
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 max-w-3xl">
-        {wallsWithElevations.map((wall) => (
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 max-w-4xl">
+        {sortedWalls.map((wall) => (
           <div key={wall.id} className="bg-white border border-gray-200 rounded overflow-hidden shadow hover:shadow-lg transition-shadow">
             <div className="aspect-square overflow-hidden bg-gray-100 flex items-center justify-center">
               <img
@@ -28,7 +39,7 @@ export default function ElevationGallery({ walls }) {
             </div>
             <div className="p-2 bg-gray-50">
               <p className="text-gray-900 font-semibold text-xs truncate">{wall.label || wall.type}</p>
-              <p className="text-gray-500 text-[10px] mt-0.5">Face: {wall.face || 'N/A'}</p>
+              <p className="text-gray-500 text-[10px] mt-0.5">Face {wall.face || 'N/A'} · {wall.type}</p>
             </div>
           </div>
         ))}
