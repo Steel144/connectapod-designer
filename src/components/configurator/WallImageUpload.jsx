@@ -60,9 +60,18 @@ export default function WallImageUpload({ wall, onImageAssigned }) {
     }
   };
 
-  const handleRemoveImage = () => {
+  const handleRemoveImage = async () => {
     setImageUrl(null);
     onImageAssigned(null);
+
+    // Remove from database
+    if (wall?.type) {
+      const existing = await base44.entities.WallImage.filter({ wallType: wall.type });
+      if (existing.length > 0) {
+        await base44.entities.WallImage.delete(existing[0].id);
+        queryClient.invalidateQueries({ queryKey: ["wallImage", wall.type] });
+      }
+    }
   };
 
   return (
