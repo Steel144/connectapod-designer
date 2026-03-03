@@ -44,8 +44,44 @@ export default function ElevationGallery({ walls }) {
   });
 
   return (
-    <div className="w-full h-full bg-gray-50 overflow-auto">
-      <div className="p-6 max-w-6xl mx-auto">
+    <div className="w-full h-full bg-gray-50 flex flex-col">
+      {/* Zoom controls */}
+      <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 bg-white sticky top-0 z-10">
+        <h2 className="text-sm font-semibold text-gray-700">Elevations</h2>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setZoom(Math.max(50, zoom - 10))}
+            className="p-1.5 hover:bg-gray-100 rounded transition-colors text-gray-600"
+            title="Zoom out"
+          >
+            <ZoomOut size={18} />
+          </button>
+          <div className="w-12 text-center text-xs font-medium text-gray-600 bg-gray-100 py-1 rounded">
+            {zoom}%
+          </div>
+          <button
+            onClick={() => setZoom(Math.min(200, zoom + 10))}
+            className="p-1.5 hover:bg-gray-100 rounded transition-colors text-gray-600"
+            title="Zoom in"
+          >
+            <ZoomIn size={18} />
+          </button>
+          <button
+            onClick={() => setZoom(100)}
+            className="ml-2 px-2 py-1 text-xs bg-gray-200 hover:bg-gray-300 rounded transition-colors text-gray-700 font-medium"
+          >
+            Reset
+          </button>
+        </div>
+      </div>
+      
+      <div className="flex-1 overflow-auto" onWheel={(e) => {
+        if (e.ctrlKey || e.metaKey) {
+          e.preventDefault();
+          setZoom(Math.max(50, Math.min(200, zoom + (e.deltaY > 0 ? -5 : 5))));
+        }
+      }}>
+      <div className="p-6 flex justify-center" style={{ minHeight: '100%' }}>
         {/* Front elevation (W) */}
         {wallsByFace.W.length > 0 && (
           <div className="mb-12">
