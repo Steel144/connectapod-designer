@@ -213,6 +213,24 @@ export default function View3D({ placedModules, walls }) {
       roof.position.copy(mesh.position);
       roof.position.y = MODULE_HEIGHT;
       scene.add(roof);
+
+      // Add 40x60mm ribs to roof at 600mm centres
+      const ribWidth = 0.04;
+      const ribDepth = 0.06;
+      const ribSpacing = 0.6;
+      const numRibs = Math.floor(wM / ribSpacing) + 1;
+      const ribGeo = new THREE.BoxGeometry(ribWidth, ribDepth, roofDepth);
+      const ribMat = new THREE.MeshLambertMaterial({ color: 0x0d0d0d });
+      
+      for (let i = 0; i < numRibs; i++) {
+        const rib = new THREE.Mesh(ribGeo, ribMat);
+        rib.castShadow = true;
+        rib.receiveShadow = true;
+        
+        const ribX = (i * ribSpacing) - wM / 2 + ribSpacing / 2;
+        rib.position.set(mesh.position.x + ribX, MODULE_HEIGHT + roofPeakH * 0.7, mesh.position.z);
+        scene.add(rib);
+      }
     });
 
     // Place walls
