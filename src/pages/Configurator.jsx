@@ -15,8 +15,14 @@ const generateId = () => `mod-${Math.random().toString(36).substr(2, 9)}`;
 const generateWallId = () => `wall-${Math.random().toString(36).substr(2, 9)}`;
 
 export default function Configurator() {
+  const MAX_HISTORY = 10;
+  const [history, setHistory] = useState([]); // stack of {placedModules, walls}
   const [placedModules, setPlacedModules] = useState([]);
   const [walls, setWalls] = useState([]);
+
+  const pushHistory = useCallback((modules, w) => {
+    setHistory((prev) => [...prev.slice(-MAX_HISTORY + 1), { placedModules: modules, walls: w }]);
+  }, []);
   const [draggingMod, setDraggingMod] = useState(null);
   const [saveModalOpen, setSaveModalOpen] = useState(false);
   const [showSaved, setShowSaved] = useState(false);
