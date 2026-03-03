@@ -261,6 +261,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
       const wallTemplate = WALL_TYPES.find((w) => w.type === wallType);
       if (!wallTemplate || !gridRef.current) return;
       const { x, y } = getCellFromClient(e.clientX, e.clientY);
+      console.log("Wall dropped at grid position:", { x, y });
 
       const SNAP = 3; // cells
       let snapped = null;
