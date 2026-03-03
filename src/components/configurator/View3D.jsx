@@ -382,6 +382,8 @@ export default function View3D({ placedModules, walls }) {
       const wM = wall.orientation === "horizontal" ? wall.length * CELL_M : thickness;
       const hM = wall.orientation === "vertical" ? wall.length * CELL_M : thickness;
 
+      let mesh; // Declare mesh outside the conditional
+      
       // Skip plain wall mesh for end walls with elevation images (handled below)
       if (!((wall.face === 'Z' || wall.face === 'X') && wall.elevationImage)) {
         // Use elevation image if available, otherwise use generated texture
@@ -399,7 +401,7 @@ export default function View3D({ placedModules, walls }) {
         }
 
         const geo = new THREE.BoxGeometry(wM, WALL_HEIGHT, hM);
-        const mesh = new THREE.Mesh(geo, material);
+        mesh = new THREE.Mesh(geo, material);
         mesh.castShadow = true;
         mesh.receiveShadow = true;
         mesh.position.set(
