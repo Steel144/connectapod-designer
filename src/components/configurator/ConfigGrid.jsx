@@ -483,6 +483,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                  onMouseDown={(e) => startDragWall(e, wall)}
                  className="absolute group cursor-grab active:cursor-grabbing flex items-center justify-center overflow-hidden"
                  style={{
+                   position: "absolute",
                    left: wall.x * CELL_W,
                    top: wall.y * CELL_H,
                    width: wallW,
