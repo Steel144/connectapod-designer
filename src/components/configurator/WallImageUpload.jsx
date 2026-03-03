@@ -38,7 +38,7 @@ export default function WallImageUpload({ wall, onImageAssigned }) {
       {imageUrl ? (
         <div className="space-y-2">
           <img 
-            src={wall.elevationImage} 
+            src={imageUrl} 
             alt="Wall preview" 
             className="w-full h-24 object-cover rounded border border-slate-200"
           />
