@@ -227,11 +227,36 @@ export default function Catalogue() {
                     </div>
                     <p className="text-xs text-gray-500 leading-relaxed mb-3">{mod.description}</p>
 
-                    <div className="flex gap-3 text-xs text-gray-500 border-t border-gray-100 pt-2.5">
+                    <div className="flex gap-3 text-xs text-gray-500 border-t border-gray-100 pt-2.5 mb-3">
                       <span><span className="font-semibold text-gray-700">{mod.width}m</span> wide</span>
                       <span><span className="font-semibold text-gray-700">{mod.depth}m</span> deep</span>
                       <span><span className="font-semibold text-gray-700">{mod.sqm.toFixed(1)}</span> m²</span>
                     </div>
+
+                    {mod.chassisCodes && (
+                      <div className="mb-2">
+                        <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1">Chassis Codes</p>
+                        <div className="flex flex-wrap gap-1">
+                          {mod.chassisCodes.map(c => (
+                            <span key={c} className="text-[10px] font-mono bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded">{c}</span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {mod.wallElevations && (
+                      <div className="border-t border-gray-100 pt-2 mt-1">
+                        <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1.5">Wall Elevations</p>
+                        <div className="grid grid-cols-2 gap-x-3 gap-y-0.5">
+                          {Object.entries(mod.wallElevations).map(([face, val]) => (
+                            <div key={face} className="flex items-start gap-1 text-[10px]">
+                              <span className="font-bold text-[#F15A22] w-3 shrink-0">{face}</span>
+                              <span className="text-gray-500 leading-tight">{val}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
