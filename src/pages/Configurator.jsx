@@ -18,7 +18,6 @@ export default function Configurator() {
   const [placedModules, setPlacedModules] = useState([]);
   const [walls, setWalls] = useState([]);
   const [draggingMod, setDraggingMod] = useState(null);
-  const [isDraggingFromPanel, setIsDraggingFromPanel] = useState(false);
   const [saveModalOpen, setSaveModalOpen] = useState(false);
   const [showSaved, setShowSaved] = useState(false);
   const [panelCollapsed, setPanelCollapsed] = useState(false);
