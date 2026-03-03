@@ -245,6 +245,18 @@ export default function Configurator() {
     toast.success(`Loaded "${design.name}"`);
   };
 
+  const handleModuleImageUpdate = (moduleId, imageUrl) => {
+    setPlacedModules((prev) =>
+      prev.map((m) => (m.id === moduleId ? { ...m, floorPlanImage: imageUrl } : m))
+    );
+  };
+
+  const handleWallImageUpdate = (wallId, imageUrl) => {
+    setWalls((prev) =>
+      prev.map((w) => (w.id === wallId ? { ...w, elevationImage: imageUrl } : w))
+    );
+  };
+
   const handlePanelMouseDown = (e) => {
     if (e.target.closest("button")) return;
     const headerDiv = e.currentTarget.querySelector('[class*="border-b"]');
