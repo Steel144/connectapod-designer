@@ -322,7 +322,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
              break;
            }
            if (distToWFace <= SNAP_THRESHOLD && exactX >= mod.x - SNAP_THRESHOLD && exactX <= mod.x + mod.w + SNAP_THRESHOLD) {
-             snapped = { x: mod.x, y: mod.y - WALL_OFFSET, length: mod.w, face: "W" };
+             snapped = { x: mod.x, y: mod.y - WALL_OFFSET, length: mod.w, face: "W", rotation: 180 };
              break;
            }
          }
