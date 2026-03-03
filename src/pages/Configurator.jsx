@@ -61,7 +61,9 @@ export default function Configurator() {
     setDraggingMod(mod);
   };
 
-  const handleDragEnd = () => setIsDraggingFromPanel(false);
+  const handleDragEnd = (e) => {
+    setIsDraggingFromPanel(false);
+  };
 
   const handlePlace = (mod, x, y) => {
     setPlacedModules((prev) => [
