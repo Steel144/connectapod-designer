@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ChevronDown, ChevronRight } from "lucide-react";
+import { ChevronDown, ChevronRight, Image as ImageIcon } from "lucide-react";
 import FloorPlanSVG from "./FloorPlanSVG.jsx";
 import WallSuggestions from "./WallSuggestions.jsx";
 import WallImageUpload from "./WallImageUpload.jsx";
