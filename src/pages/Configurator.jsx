@@ -263,19 +263,27 @@ export default function Configurator() {
     );
   };
 
-  const handleWallImageUpdate = (wallId, imageUrl) => {
-    console.log('Updating wall:', wallId, 'with image:', imageUrl);
+  const handleWallImageUpdate = async (wallId, imageUrl) => {
     setWalls((prev) => {
-      const updated = prev.map((w) => {
+      return prev.map((w) => {
         if (w.id === wallId) {
-          console.log('Wall matched, updating:', { ...w, elevationImage: imageUrl });
           return { ...w, elevationImage: imageUrl };
         }
         return w;
       });
-      console.log('All walls after update:', updated);
-      return updated;
     });
+
+    // Save image to database for this wall type
+    const wall = walls.find(w => w.id === wallId);
+    if (wall && wall.type) {
+      const existing = await base44.entities.WallImage.filter({ wallType: wall.type });
+      if (existing.length > 0) {
+        await base44.entities.WallImage.update(existing[0].id, { imageUrl });
+      } else {
+        await base44.entities.WallImage.create({ wallType: wall.type, imageUrl });
+      }
+      queryClient.invalidateQueries({ queryKey: ["wallImages"] });
+    }
   };
 
   const handlePanelMouseDown = (e) => {
