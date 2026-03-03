@@ -267,6 +267,7 @@ export default function ModulePanel({ onDragStart, onDragEnd }) {
                       draggable
                       onDragStart={(e) => {
                         e.dataTransfer.effectAllowed = "copy";
+                        e.dataTransfer.setData("moduleType", mod.type);
                         onDragStart(e, mod);
                       }}
                       onDragEnd={onDragEnd}
