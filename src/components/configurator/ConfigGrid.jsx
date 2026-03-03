@@ -197,10 +197,42 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
     
     const wallType = e.dataTransfer.getData("wallType");
     if (wallType) {
-      const wall = WALL_TYPES.find((w) => w.type === wallType);
-      if (!wall || !gridRef.current) return;
+      const wallTemplate = WALL_TYPES.find((w) => w.type === wallType);
+      if (!wallTemplate || !gridRef.current) return;
       const { x, y } = getCellFromClient(e.clientX, e.clientY);
-      if (onPlaceWall) onPlaceWall(wall, x, y);
+
+      const SNAP = 3; // cells
+      let snapped = null;
+
+      if (wallTemplate.orientation === "horizontal") {
+        for (const mod of placedModules) {
+          if (Math.abs(y - mod.y) <= SNAP && x >= mod.x - SNAP && x <= mod.x + mod.w + SNAP) {
+            snapped = { x: mod.x, y: mod.y, length: mod.w };
+            break;
+          }
+          if (Math.abs(y - (mod.y + mod.h)) <= SNAP && x >= mod.x - SNAP && x <= mod.x + mod.w + SNAP) {
+            snapped = { x: mod.x, y: mod.y + mod.h, length: mod.w };
+            break;
+          }
+        }
+      } else {
+        for (const mod of placedModules) {
+          if (Math.abs(x - mod.x) <= SNAP && y >= mod.y - SNAP && y <= mod.y + mod.h + SNAP) {
+            snapped = { x: mod.x, y: mod.y, length: mod.h };
+            break;
+          }
+          if (Math.abs(x - (mod.x + mod.w)) <= SNAP && y >= mod.y - SNAP && y <= mod.y + mod.h + SNAP) {
+            snapped = { x: mod.x + mod.w, y: mod.y, length: mod.h };
+            break;
+          }
+        }
+      }
+
+      if (snapped) {
+        if (onPlaceWall) onPlaceWall({ ...wallTemplate, length: snapped.length }, snapped.x, snapped.y);
+      } else {
+        if (onPlaceWall) onPlaceWall(wallTemplate, x, y);
+      }
       return;
     }
   };
