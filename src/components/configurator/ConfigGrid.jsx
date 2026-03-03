@@ -256,32 +256,33 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
       const SNAP = 3; // cells
       let snapped = null;
 
+      // Determine face label: W/Y = top/bottom (horizontal), X/Z = right/left (vertical ends)
       if (wallTemplate.orientation === "horizontal") {
         for (const mod of placedModules) {
           if (Math.abs(y - mod.y) <= SNAP && x >= mod.x - SNAP && x <= mod.x + mod.w + SNAP) {
-            snapped = { x: mod.x, y: mod.y, length: mod.w };
+            snapped = { x: mod.x, y: mod.y, length: mod.w, face: "W" };
             break;
           }
           if (Math.abs(y - (mod.y + mod.h)) <= SNAP && x >= mod.x - SNAP && x <= mod.x + mod.w + SNAP) {
-            snapped = { x: mod.x, y: mod.y + mod.h, length: mod.w };
+            snapped = { x: mod.x, y: mod.y + mod.h, length: mod.w, face: "Y" };
             break;
           }
         }
       } else {
         for (const mod of placedModules) {
           if (Math.abs(x - mod.x) <= SNAP && y >= mod.y - SNAP && y <= mod.y + mod.h + SNAP) {
-            snapped = { x: mod.x, y: mod.y, length: mod.h };
+            snapped = { x: mod.x, y: mod.y, length: mod.h, face: "Z" };
             break;
           }
           if (Math.abs(x - (mod.x + mod.w)) <= SNAP && y >= mod.y - SNAP && y <= mod.y + mod.h + SNAP) {
-            snapped = { x: mod.x + mod.w, y: mod.y, length: mod.h };
+            snapped = { x: mod.x + mod.w, y: mod.y, length: mod.h, face: "X" };
             break;
           }
         }
       }
 
       if (snapped) {
-        if (onPlaceWall) onPlaceWall({ ...wallTemplate, length: snapped.length }, snapped.x, snapped.y);
+        if (onPlaceWall) onPlaceWall({ ...wallTemplate, length: snapped.length, face: snapped.face }, snapped.x, snapped.y);
       } else {
         if (onPlaceWall) onPlaceWall(wallTemplate, x, y);
       }
