@@ -3,6 +3,7 @@ import { ChevronDown, ChevronRight } from "lucide-react";
 import FloorPlanSVG from "./FloorPlanSVG.jsx";
 import WallSuggestions from "./WallSuggestions.jsx";
 import WallImageUpload from "./WallImageUpload.jsx";
+import FloorPlanUpload from "./FloorPlanUpload.jsx";
 
 function getIcon(key, size = 18) {
   const s = size;
