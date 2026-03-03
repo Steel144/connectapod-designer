@@ -232,6 +232,17 @@ export default function View3D({ placedModules, walls }) {
       
       const roofGeo = new THREE.BufferGeometry();
       roofGeo.setAttribute('position', new THREE.BufferAttribute(roofVertices, 3));
+      
+      // UV coordinates for texture mapping
+      const roofUVs = new Float32Array([
+        0, 0,    // 0
+        1, 0,    // 1
+        1, 1,    // 2
+        0, 1,    // 3
+        0, 0.5,  // 4
+        1, 0.5,  // 5
+      ]);
+      roofGeo.setAttribute('uv', new THREE.BufferAttribute(roofUVs, 2));
       roofGeo.setIndex(new THREE.BufferAttribute(roofIndices, 1));
       roofGeo.computeVertexNormals();
       
