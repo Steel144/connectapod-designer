@@ -441,9 +441,11 @@ export default function View3D({ placedModules, walls }) {
             // Horizontal walls: window normal faces Z
             const winGeo = new THREE.BoxGeometry(spec.w, spec.h, 0.1);
             window = new THREE.Mesh(winGeo, winMat);
-            winX = mesh.position.x - wM / 2 + spec.x;
+            // For W walls (face === 'W'), mirror the window X position
+            const windowX = wall.face === 'W' ? wM - spec.x - spec.w : spec.x;
+            winX = mesh.position.x - wM / 2 + windowX;
             winY = mesh.position.y + spec.y;
-            winZ = mesh.position.z + 0.05;
+            winZ = mesh.position.z + (wall.face === 'W' ? -0.05 : 0.05);
           } else {
             // Vertical walls: window normal faces X, rotated 90 degrees
             const winGeo = new THREE.BoxGeometry(0.1, spec.h, spec.w);
