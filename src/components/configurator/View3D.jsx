@@ -159,28 +159,29 @@ export default function View3D({ placedModules, walls }) {
       );
       scene.add(mesh);
 
-      // Gable roof (pitched roof as triangular prism)
+      // Gable roof (pitched roof along module width, ridge runs full depth)
       const roofVertices = new Float32Array([
-        // Front triangle
-        -wM/2, 0, -hM/2,  // left base
-        wM/2, 0, -hM/2,   // right base
-        0, GABLE_HEIGHT, -hM/2,  // peak
-        // Back triangle
-        -wM/2, 0, hM/2,   // left base
-        wM/2, 0, hM/2,    // right base
-        0, GABLE_HEIGHT, hM/2,   // peak
+        // Left triangle (front)
+        -wM/2, 0, -hM/2,
+        -wM/2, 0, hM/2,
+        0, GABLE_HEIGHT, -hM/2,
+        0, GABLE_HEIGHT, hM/2,
+        // Right triangle (back)
+        wM/2, 0, -hM/2,
+        wM/2, 0, hM/2,
       ]);
       const roofIndices = new Uint32Array([
-        // Front face
-        0, 1, 2,
-        // Back face
-        4, 3, 5,
-        // Left face
-        0, 3, 5, 0, 5, 2,
-        // Right face
-        1, 4, 5, 1, 5, 2,
-        // Bottom face
-        0, 4, 1, 0, 3, 4
+        // Left face (sloped roof)
+        0, 2, 1, 1, 2, 3,
+        // Right face (sloped roof)
+        4, 5, 6, 5, 7, 6,
+        // Front triangle
+        0, 4, 2,
+        // Back triangle
+        1, 3, 5,
+        // Bottom faces
+        0, 5, 4, 0, 1, 5,
+        1, 5, 3, 5, 7, 3,
       ]);
       const roofGeo = new THREE.BufferGeometry();
       roofGeo.setAttribute('position', new THREE.BufferAttribute(roofVertices, 3));
