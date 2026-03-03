@@ -191,6 +191,7 @@ export default function ModulePanel({ onDragStart, onDragEnd }) {
                       key={item.code}
                       draggable
                       onDragStart={(e) => onDragStart(e, mod)}
+                      onDragEnd={onDragEnd}
                       onMouseEnter={() => setHoveredModule(mod)}
                       onMouseLeave={() => setHoveredModule(null)}
                       className="flex items-center gap-3 px-3 py-2 cursor-grab active:cursor-grabbing hover:bg-orange-50 border-b border-gray-50 last:border-0 transition-colors"
