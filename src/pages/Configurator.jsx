@@ -31,7 +31,7 @@ export default function Configurator() {
   const [panelCollapsed, setPanelCollapsed] = useState(false);
   const [panelPos, setPanelPos] = useState({ x: 16, y: 60 });
   const [draggingPanel, setDraggingPanel] = useState(null);
-  const [summaryPos, setSummaryPos] = useState({ x: 16, y: 310 });
+  const [summaryPos, setSummaryPos] = useState({ x: window.innerWidth - 256 - 16, y: 60 });
   const [draggingSummary, setDraggingSummary] = useState(null);
   const [summaryCollapsed, setSummaryCollapsed] = useState(false);
   const [selectedWall, setSelectedWall] = useState(null);
