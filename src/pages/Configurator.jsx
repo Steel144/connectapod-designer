@@ -272,7 +272,14 @@ export default function Configurator() {
             className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-gray-600 hover:text-[#F15A22] border border-gray-200 bg-white hover:border-[#F15A22] transition-all"
           >
             <BookOpen size={13} />
-            Catalogue
+            Floor Catalogue
+          </Link>
+          <Link
+            to={createPageUrl("WallCatalogue")}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-gray-600 hover:text-[#F15A22] border border-gray-200 bg-white hover:border-[#F15A22] transition-all"
+          >
+            <BookOpen size={13} />
+            Wall Catalogue
           </Link>
           <button
             onClick={() => setShowSaved(!showSaved)}
