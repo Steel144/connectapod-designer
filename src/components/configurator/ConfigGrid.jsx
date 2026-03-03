@@ -280,6 +280,20 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
         }
       });
       
+      // Check if any wall is in the selection box
+      walls.forEach((wall) => {
+        const wallW = wall.orientation === "horizontal" ? wall.length * CELL_W : wall.thickness * CELL_W;
+        const wallH = wall.orientation === "vertical" ? wall.length * CELL_H : wall.thickness * CELL_H;
+        const wallX1 = wall.x * CELL_W;
+        const wallY1 = wall.y * CELL_H;
+        const wallX2 = wallX1 + wallW;
+        const wallY2 = wallY1 + wallH;
+        
+        if (!(wallX2 < minX || wallX1 > maxX || wallY2 < minY || wallY1 > maxY)) {
+          setSelectedWallId(wall.id);
+        }
+      });
+      
       if (newSelected.size > 0) setSelected(newSelected);
       setSelectionBox(null);
       return;
