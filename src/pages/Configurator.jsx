@@ -251,6 +251,16 @@ export default function Configurator() {
     );
   };
 
+  const handleFlip = (id) => {
+    pushHistory(placedModules, walls);
+    setPlacedModules((prev) =>
+      prev.map((m) => {
+        if (m.id !== id) return m;
+        return { ...m, flipped: !m.flipped };
+      })
+    );
+  };
+
   const handleClear = () => {
     pushHistory(placedModules, walls);
     setPlacedModules([]);
