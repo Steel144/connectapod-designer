@@ -38,7 +38,7 @@ export default function FloorPlanUpload({ module, onImageAssigned }) {
       {imageUrl ? (
         <div className="space-y-2">
           <img 
-            src={module.floorPlanImage} 
+            src={imageUrl} 
             alt="Floor plan preview" 
             className="w-full h-24 object-cover rounded border border-slate-200"
           />
