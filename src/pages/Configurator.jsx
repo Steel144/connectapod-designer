@@ -63,6 +63,12 @@ export default function Configurator() {
 
   const handleDragEnd = () => setIsDraggingFromPanel(false);
 
+  const handleWorkspaceDrop = (e) => {
+    e.preventDefault();
+    // Forward to ConfigGrid's internal handler by dispatching on the grid element
+    // The grid handles it via its own onDrop
+  };
+
   const handlePlace = (mod, x, y) => {
     setPlacedModules((prev) => [
       ...prev,
