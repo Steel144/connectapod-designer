@@ -162,9 +162,8 @@ export default function ElevationGallery({ walls }) {
             </div>
           </div>
             )}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
+            </div>
+            </div>
+            </div>
+            );
+            }
