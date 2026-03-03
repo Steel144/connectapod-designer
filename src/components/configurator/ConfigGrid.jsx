@@ -262,8 +262,6 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
       onMouseMove={onMouseMove}
       onMouseUp={onMouseUp}
       onMouseLeave={onMouseUp}
-      onDragOver={(e) => e.preventDefault()}
-      onDrop={handleDrop}
     >
       <div
         ref={gridRef}
