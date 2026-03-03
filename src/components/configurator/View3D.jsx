@@ -203,6 +203,58 @@ export default function View3D({ placedModules, walls }) {
         wall.y * CELL_M + hM / 2
       );
       scene.add(mesh);
+
+      // Generate roof if this is a gable wall (4.8m or 5.2m vertical)
+      const isGable = wall.orientation === "vertical" && (Math.abs(wall.width - 4.8) < 0.1 || Math.abs(wall.width - 5.2) < 0.1);
+      if (isGable) {
+        // Find adjacent module to place roof above
+        const adjMod = placedModules.find(m => {
+          const modWM = m.w * CELL_M;
+          const modHM = m.h * CELL_M;
+          const modX = m.x * CELL_M + modWM / 2;
+          const modZ = m.y * CELL_M + modHM / 2;
+          
+          // Check if gable wall is at module end (Z or X face)
+          const wallCenterX = wall.x * CELL_M + wM / 2;
+          const wallCenterZ = wall.y * CELL_M + hM / 2;
+          
+          return Math.abs(wallCenterX - modX) < 0.2 && Math.abs(wallCenterZ - modZ) < modHM / 2 + 0.5;
+        });
+
+        if (adjMod) {
+          const modWM = adjMod.w * CELL_M;
+          const modHM = adjMod.h * CELL_M;
+          const modX = adjMod.x * CELL_M + modWM / 2;
+          const modZ = adjMod.y * CELL_M + modHM / 2;
+
+          // Create pitched roof above module
+          const roofVertices = new Float32Array([
+            -modWM/2, 0, -modHM/2,
+            -modWM/2, 0, modHM/2,
+            modWM/2, GABLE_HEIGHT, -modHM/2,
+            modWM/2, GABLE_HEIGHT, modHM/2,
+            modWM/2, 0, -modHM/2,
+            modWM/2, 0, modHM/2,
+          ]);
+          const roofIndices = new Uint32Array([
+            0, 2, 1, 1, 2, 3,
+            2, 4, 5, 2, 5, 3,
+            0, 4, 2,
+            1, 5, 3,
+          ]);
+          const roofGeo = new THREE.BufferGeometry();
+          roofGeo.setAttribute('position', new THREE.BufferAttribute(roofVertices, 3));
+          roofGeo.setIndex(new THREE.BufferAttribute(roofIndices, 1));
+          roofGeo.computeVertexNormals();
+          
+          const roofMat = new THREE.MeshLambertMaterial({ color: 0x1a1a1a });
+          const roof = new THREE.Mesh(roofGeo, roofMat);
+          roof.castShadow = true;
+          roof.receiveShadow = true;
+          roof.position.set(modX, MODULE_HEIGHT, modZ);
+          scene.add(roof);
+        }
+      }
     });
 
     // Centre camera on design
