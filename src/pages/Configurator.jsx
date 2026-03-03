@@ -400,6 +400,11 @@ export default function Configurator() {
             <View3D placedModules={placedModules} walls={walls} />
           </div>
         )}
+        {viewMode === "elevations" && (
+          <div className="absolute inset-0 z-10">
+            <ElevationGallery walls={walls} />
+          </div>
+        )}
         <ConfigGrid
           placedModules={placedModules}
           onPlace={handlePlace}
@@ -413,7 +418,7 @@ export default function Configurator() {
           onMoveWall={handleMoveWall}
           onWallSelect={setSelectedWall}
           onModuleSelect={setSelectedModule}
-          hidden={viewMode === "3d"}
+          hidden={viewMode === "3d" || viewMode === "elevations"}
         />
       </div>
 
