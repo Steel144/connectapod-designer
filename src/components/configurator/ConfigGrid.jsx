@@ -222,7 +222,9 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
       }
 
       if (snapped) {
-        if (onMoveWall) onMoveWall(wall.id, snapped.x, snapped.y, { length: snapped.length, face: snapped.face });
+        const wallUpdate = { length: snapped.length, face: snapped.face };
+        if (snapped.rotation) wallUpdate.rotation = snapped.rotation;
+        if (onMoveWall) onMoveWall(wall.id, snapped.x, snapped.y, wallUpdate);
       } else {
         const newX = Math.max(0, exactX);
         const newY = Math.max(0, exactY);
