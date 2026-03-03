@@ -179,9 +179,21 @@ export default function View3D({ placedModules, walls }) {
       const wM = wall.orientation === "horizontal" ? wall.length * CELL_M : thickness;
       const hM = wall.orientation === "vertical" ? wall.length * CELL_M : thickness;
 
+      const textureLoader = new THREE.TextureLoader();
+      let material;
+
+      if (wall.elevationImage) {
+        textureLoader.load(wall.elevationImage, (texture) => {
+          material.map = texture;
+          material.needsUpdate = true;
+        });
+        material = new THREE.MeshLambertMaterial({ color: 0xffffff });
+      } else {
+        material = new THREE.MeshLambertMaterial({ color: 0x4b5563 });
+      }
+
       const geo = new THREE.BoxGeometry(wM, WALL_HEIGHT, hM);
-      const mat = new THREE.MeshLambertMaterial({ color: 0x4b5563 });
-      const mesh = new THREE.Mesh(geo, mat);
+      const mesh = new THREE.Mesh(geo, material);
       mesh.castShadow = true;
       mesh.receiveShadow = true;
       mesh.position.set(
