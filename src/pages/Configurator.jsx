@@ -237,6 +237,24 @@ export default function Configurator() {
           <span className="ml-2 text-xs text-gray-400">Design Studio</span>
         </div>
         <div className="flex items-center gap-2">
+          {/* 2D / 3D toggle */}
+          <div className="flex border border-gray-200 overflow-hidden">
+            <button
+              onClick={() => setViewMode("2d")}
+              className={`flex items-center gap-1.5 px-3 py-1.5 text-xs transition-all ${viewMode === "2d" ? "bg-[#F15A22] text-white" : "bg-white text-gray-600 hover:text-[#F15A22]"}`}
+            >
+              <Grid2X2 size={13} />
+              2D
+            </button>
+            <button
+              onClick={() => setViewMode("3d")}
+              className={`flex items-center gap-1.5 px-3 py-1.5 text-xs transition-all ${viewMode === "3d" ? "bg-[#F15A22] text-white" : "bg-white text-gray-600 hover:text-[#F15A22]"}`}
+            >
+              <Box size={13} />
+              3D
+            </button>
+          </div>
+
           <button
             onClick={handleUndo}
             disabled={history.length === 0}
