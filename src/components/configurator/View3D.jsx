@@ -72,8 +72,8 @@ function createOrbitControls(camera, domElement) {
 }
 
 const CELL_M = 0.6; // each cell = 0.6 metres
-const MODULE_HEIGHT = 2.8; // metres tall
-const WALL_HEIGHT = 2.8;
+const MODULE_HEIGHT = 2.4; // metres tall
+const WALL_HEIGHT = 2.4;
 const GABLE_HEIGHT = 1.2; // gable roof peak height
 
 const GROUP_COLORS = {
