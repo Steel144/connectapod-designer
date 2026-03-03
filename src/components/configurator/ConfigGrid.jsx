@@ -218,11 +218,11 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
         } else {
           for (const mod of placedModules) {
             if (Math.abs(exactX - mod.x) <= SNAP_THRESHOLD && exactY >= mod.y - SNAP_THRESHOLD && exactY <= mod.y + mod.h + SNAP_THRESHOLD) {
-              snapped = { x: mod.x - 1, y: mod.y, length: mod.h, face: "Z" };
+              snapped = { x: mod.x - 1.31, y: mod.y, length: mod.h, face: "Z" };
               break;
             }
             if (Math.abs(exactX - (mod.x + mod.w)) <= SNAP_THRESHOLD && exactY >= mod.y - SNAP_THRESHOLD && exactY <= mod.y + mod.h + SNAP_THRESHOLD) {
-              snapped = { x: mod.x + mod.w, y: mod.y, length: mod.h, face: "X" };
+              snapped = { x: mod.x + mod.w + 0.31, y: mod.y, length: mod.h, face: "X" };
               break;
             }
           }
