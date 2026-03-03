@@ -130,10 +130,12 @@ export default function Configurator() {
     pushHistory(placedModules, walls);
     // Ensure chassis, width, etc. are always stored on the placed module
     const fullMod = MODULE_TYPES.find(m => m.type === mod.type) || mod;
-    setPlacedModules((prev) => [
-      ...prev,
-      { ...fullMod, ...mod, id: generateId(), x, y },
-    ]);
+    const newMod = { ...fullMod, ...mod, id: generateId(), x, y };
+    // Assign saved floor plan image if it exists for this module type
+    if (floorPlanImages[mod.type]) {
+      newMod.floorPlanImage = floorPlanImages[mod.type];
+    }
+    setPlacedModules((prev) => [...prev, newMod]);
   };
 
   const handleRemove = (id) => {
