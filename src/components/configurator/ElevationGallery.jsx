@@ -141,11 +141,11 @@ export default function ElevationGallery({ walls }) {
                 </div>
               </div>
             </div>
-          )}
-        </div>
+            )}
+            </div>
 
-        {/* Back elevation (Y) */}
-        {wallsByFace.Y.length > 0 && (
+            {/* Back elevation (Y) */}
+            {wallsByFace.Y.length > 0 && (
           <div>
             <h3 className="text-sm font-semibold text-gray-700 mb-3 uppercase tracking-wide">Back Elevation (Y)</h3>
             <div className="inline-block border border-gray-200 rounded overflow-hidden">
