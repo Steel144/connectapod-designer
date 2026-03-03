@@ -386,30 +386,62 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
         )}
 
         {/* Walls */}
-        {walls.map((wall) => (
-          <div
-            key={wall.id}
-            onMouseDown={() => setSelectedWallId(wall.id)}
-            className="absolute group cursor-grab active:cursor-grabbing"
-            style={{
-              left: wall.orientation === "horizontal" ? wall.x * CELL_W : wall.x * CELL_W,
-              top: wall.orientation === "vertical" ? wall.y * CELL_H : wall.y * CELL_H,
-              width: wall.orientation === "horizontal" ? wall.length * CELL_W : wall.thickness * CELL_W,
-              height: wall.orientation === "vertical" ? wall.length * CELL_H : wall.thickness * CELL_H,
-              backgroundColor: selectedWallId === wall.id ? "#4F46E5" : "#4B5563",
-              border: selectedWallId === wall.id ? "2px solid #4F46E5" : "1px solid #2d3748",
-              opacity: 0.7,
-            }}
-          >
-            <button
-              onMouseDown={(e) => e.stopPropagation()}
-              onClick={() => onRemoveWall && onRemoveWall(wall.id)}
-              className="absolute top-0.5 right-0.5 opacity-0 group-hover:opacity-100 transition-opacity bg-white rounded-full p-0.5 shadow-sm hover:bg-red-50 z-10"
-            >
-              <X size={10} className="text-red-400" />
-            </button>
-          </div>
-        ))}
+        {walls.map((wall) => {
+          const isBeingDragged = draggingWall?.wall.id === wall.id;
+          const isSelected = selectedWallId === wall.id;
+          const wallW = wall.orientation === "horizontal" ? wall.length * CELL_W : wall.thickness * CELL_W;
+          const wallH = wall.orientation === "vertical" ? wall.length * CELL_H : wall.thickness * CELL_H;
+
+          // Ghost position while dragging
+          let ghostLeft = wall.x * CELL_W;
+          let ghostTop = wall.y * CELL_H;
+          if (isBeingDragged && gridRef.current) {
+            const rect = gridRef.current.getBoundingClientRect();
+            ghostLeft = Math.max(0, Math.round((draggingWall.cursorX - rect.left - draggingWall.offsetX) / CELL_W)) * CELL_W;
+            ghostTop = Math.max(0, Math.round((draggingWall.cursorY - rect.top - draggingWall.offsetY) / CELL_H)) * CELL_H;
+          }
+
+          return (
+            <React.Fragment key={wall.id}>
+              <div
+                onMouseDown={(e) => startDragWall(e, wall)}
+                className="absolute group cursor-grab active:cursor-grabbing"
+                style={{
+                  left: wall.x * CELL_W,
+                  top: wall.y * CELL_H,
+                  width: wallW,
+                  height: wallH,
+                  backgroundColor: isSelected ? "#4F46E5" : "#4B5563",
+                  border: isSelected ? "2px solid #4F46E5" : "1px solid #2d3748",
+                  opacity: isBeingDragged ? 0.2 : 0.7,
+                }}
+              >
+                <button
+                  onMouseDown={(e) => e.stopPropagation()}
+                  onClick={() => onRemoveWall && onRemoveWall(wall.id)}
+                  className="absolute top-0.5 right-0.5 opacity-0 group-hover:opacity-100 transition-opacity bg-white rounded-full p-0.5 shadow-sm hover:bg-red-50 z-10"
+                >
+                  <X size={10} className="text-red-400" />
+                </button>
+              </div>
+              {/* Ghost while dragging */}
+              {isBeingDragged && (
+                <div
+                  className="absolute pointer-events-none"
+                  style={{
+                    left: ghostLeft,
+                    top: ghostTop,
+                    width: wallW,
+                    height: wallH,
+                    backgroundColor: "#4F46E5",
+                    opacity: 0.5,
+                    border: "2px dashed #4F46E5",
+                  }}
+                />
+              )}
+            </React.Fragment>
+          );
+        })}
 
         {/* Selection box */}
         {selectionBox && (
