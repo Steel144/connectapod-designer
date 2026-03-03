@@ -207,13 +207,13 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
             const distToWFace = Math.abs(exactY - mod.y);
 
             if (distToYFace <= SNAP_THRESHOLD && exactX >= mod.x - SNAP_THRESHOLD && exactX <= mod.x + mod.w + SNAP_THRESHOLD) {
-               snapped = { x: mod.x, y: mod.y + mod.h, length: mod.w, face: "Y" };
-               break;
-             }
-             if (distToWFace <= SNAP_THRESHOLD && exactX >= mod.x - SNAP_THRESHOLD && exactX <= mod.x + mod.w + SNAP_THRESHOLD) {
-               snapped = { x: mod.x, y: mod.y - WALL_OFFSET, length: mod.w, face: "W", rotation: 180 };
-               break;
-             }
+              snapped = { x: mod.x - WALL_OFFSET, y: mod.y + mod.h, length: mod.w, face: "Y" };
+              break;
+            }
+            if (distToWFace <= SNAP_THRESHOLD && exactX >= mod.x - SNAP_THRESHOLD && exactX <= mod.x + mod.w + SNAP_THRESHOLD) {
+              snapped = { x: mod.x - WALL_OFFSET, y: mod.y - WALL_OFFSET, length: mod.w, face: "W", rotation: 180 };
+              break;
+            }
           }
         } else {
           for (const mod of placedModules) {
