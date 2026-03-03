@@ -84,15 +84,29 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
     // This handler is for placed modules only.
   };
 
+  const startDragWall = (e, wall) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setSelectedWallId(wall.id);
+    const rect = gridRef.current.getBoundingClientRect();
+    const offsetX = e.clientX - rect.left - wall.x * CELL_W;
+    const offsetY = e.clientY - rect.top - wall.y * CELL_H;
+    setDraggingWall({ wall, offsetX, offsetY, cursorX: e.clientX, cursorY: e.clientY });
+  };
+
   const onMouseMove = useCallback((e) => {
     if (selectionBox) {
       const rect = gridRef.current.getBoundingClientRect();
       setSelectionBox((b) => ({ ...b, cursorX: e.clientX - rect.left, cursorY: e.clientY - rect.top }));
       return;
     }
+    if (draggingWall) {
+      setDraggingWall((d) => ({ ...d, cursorX: e.clientX, cursorY: e.clientY }));
+      return;
+    }
     if (!dragging) return;
     setDragging((d) => ({ ...d, cursorX: e.clientX, cursorY: e.clientY, selectedIds: d.selectedIds }));
-  }, [dragging, selectionBox]);
+  }, [dragging, draggingWall, selectionBox]);
 
   // Snap to nearest placed module edge within SNAP_THRESHOLD cells
   const SNAP_THRESHOLD = 1;
