@@ -151,29 +151,27 @@ export default function Configurator() {
     );
     
     // Move attached walls (W/Y on long faces, Z/X on end faces)
+    const WALL_OFFSET = 0.308; // 185mm offset
     setWalls((prev) =>
       prev.map((w) => {
         const isLongFace = w.face === "W" || w.face === "Y";
         
         if (isLongFace) {
-          // W face (top/outside): x aligns, y is one cell above module's y
-          console.log("Checking W wall attachment:", { wallX: w.x, wallY: w.y, wallFace: w.face, modX: oldMod.x, modY: oldMod.y, check1: w.face === "W", check2: w.x === oldMod.x, check3: w.y === oldMod.y - 1 });
-          if (w.face === "W" && w.x === oldMod.x && w.y === oldMod.y - 1) {
-            console.log("W wall attached! Moving from", { x: w.x, y: w.y }, "to", { x: w.x + deltaX, y: w.y + deltaY });
+          // W face (top/outside): x aligns, y is offset above module's y
+          if (w.face === "W" && w.x === oldMod.x && Math.abs(w.y - (oldMod.y - WALL_OFFSET)) < 0.01) {
             return { ...w, x: w.x + deltaX, y: w.y + deltaY };
           }
           // Y face (bottom/outside): x aligns, y is at module's bottom edge
           if (w.face === "Y" && w.x === oldMod.x && w.y === oldMod.y + oldMod.h) {
-            console.log("Y wall attached! Moving from", { x: w.x, y: w.y }, "to", { x: w.x + deltaX, y: w.y + deltaY });
             return { ...w, x: w.x + deltaX, y: w.y + deltaY };
           }
         } else {
-          // Z face (left end/inside): y aligns, x is one cell inside from left
-          if (w.face === "Z" && w.y === oldMod.y && w.x === oldMod.x + 1) {
+          // Z face (left end/inside): y aligns, x is offset to the left
+          if (w.face === "Z" && w.y === oldMod.y && Math.abs(w.x - (oldMod.x - WALL_OFFSET)) < 0.01) {
             return { ...w, x: w.x + deltaX, y: w.y + deltaY };
           }
-          // X face (right end/inside): y aligns, x is one cell inside from right
-          if (w.face === "X" && w.y === oldMod.y && w.x === oldMod.x + oldMod.w - 1) {
+          // X face (right end/inside): y aligns, x is offset to the right
+          if (w.face === "X" && w.y === oldMod.y && Math.abs(w.x - (oldMod.x + oldMod.w + WALL_OFFSET)) < 0.01) {
             return { ...w, x: w.x + deltaX, y: w.y + deltaY };
           }
         }
