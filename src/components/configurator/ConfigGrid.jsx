@@ -308,8 +308,11 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
         console.log("W wall should attach at: module.x=", placedModules.find(m => m.x === snapped.x)?.x, "module.y - 1 =", placedModules.find(m => m.x === snapped.x)?.y - 1, "actual wall y:", snapped.y);
         if (onPlaceWall) onPlaceWall(wallWithFace, snapped.x, snapped.y);
       } else {
-        console.log("Placing wall unsnapped at:", { x, y });
-        if (onPlaceWall) onPlaceWall(wallTemplate, x, y);
+        // Don't snap to grid, use exact drop position
+        const exactX = (e.clientX - gridRef.current.getBoundingClientRect().left) / CELL_W;
+        const exactY = (e.clientY - gridRef.current.getBoundingClientRect().top) / CELL_H;
+        console.log("Placing wall unsnapped at exact position:", { x: exactX, y: exactY });
+        if (onPlaceWall) onPlaceWall(wallTemplate, exactX, exactY);
       }
       return;
     }
