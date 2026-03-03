@@ -325,11 +325,22 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
       );
     } else if (isDeck) {
       // Deck/Soffit: D-suffix walls only, matching width
-      filtered = filtered.filter(w =>
-        (w.type.includes("D/") || w.type.endsWith("D")) &&
-        !w.type.startsWith("Z") && !w.type.startsWith("X") &&
-        Math.abs(w.width - faceWidthM) < 0.05
-      );
+      // For Soffit (SO), also include standard walls (W000/Y000, W001/Y001 etc.)
+      filtered = filtered.filter(w => {
+        const isStandardWall = !w.type.startsWith("Z") && !w.type.startsWith("X") && 
+                              !w.type.includes("D/") && !w.type.endsWith("D") &&
+                              w.orientation === "horizontal";
+        const isDeckWall = (w.type.includes("D/") || w.type.endsWith("D")) &&
+                          !w.type.startsWith("Z") && !w.type.startsWith("X");
+        const matchesWidth = Math.abs(w.width - faceWidthM) < 0.05;
+        
+        if (chassis === "SO") {
+          // Soffit: include both standard and D-suffix walls
+          return (isStandardWall || isDeckWall) && matchesWidth;
+        }
+        // Deck: only D-suffix walls
+        return isDeckWall && matchesWidth;
+      });
     } else {
       // Standard: horizontal walls matching module width, no gable or deck walls
       filtered = filtered.filter(w =>
