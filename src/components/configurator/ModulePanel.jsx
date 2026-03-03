@@ -236,6 +236,11 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, plac
   const [openGroup, setOpenGroup] = useState(null);
   const [hoveredModule, setHoveredModule] = useState(null);
 
+  // Auto-open walls section when a wall is selected on the grid
+  React.useEffect(() => {
+    if (selectedWall) setOpenGroup("walls");
+  }, [selectedWall?.id]);
+
   // When a wall is selected, derive which module it's attached to and filter compatible walls
   const filterWalls = selectedWall && placedModules.length > 0;
   const compatibleWalls = React.useMemo(() => {
