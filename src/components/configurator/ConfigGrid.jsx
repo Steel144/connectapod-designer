@@ -493,10 +493,10 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                 }}
               >
                 {mod.floorPlanImage ? (
-                  <img src={mod.floorPlanImage} alt={mod.label} className="w-full h-full object-cover" />
-                ) : (
-                  <FloorPlanSVG code={mod.type} className="w-full h-full" />
-                )}
+                    <img src={mod.floorPlanImage} alt={mod.label} className="w-full h-full object-cover" style={{ transform: mod.flipped ? 'scaleX(-1)' : 'none' }} />
+                  ) : (
+                    <FloorPlanSVG code={mod.type} className="w-full h-full" style={{ transform: mod.flipped ? 'scaleX(-1)' : 'none' }} />
+                  )}
               </div>
               <span className="absolute bottom-0 left-0 right-0 text-[9px] font-semibold text-slate-700 text-center leading-tight px-0.5 py-0.5 bg-white/60 truncate">
                 {mod.label}
