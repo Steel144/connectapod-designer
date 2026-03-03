@@ -426,14 +426,14 @@ export default function View3D({ placedModules, walls }) {
         const spoutingLength = wall.length * CELL_M;
         const spoutingGeo = new THREE.BoxGeometry(spoutingLength, 0.125, 0.08);
         
-        const spoutingMat = new THREE.MeshLambertMaterial({ color: 0xd0d0d0 });
+        const spoutingMat = new THREE.MeshLambertMaterial({ color: 0x000000 });
         const spouting = new THREE.Mesh(spoutingGeo, spoutingMat);
         spouting.castShadow = true;
         spouting.receiveShadow = true;
         
-        // Position at the top of the wall, offset outward based on face
+        // Position 125mm down from top of wall, offset outward based on face
         const zOffset = wall.face === 'W' ? -0.08 : 0.08;
-        spouting.position.set(mesh.position.x, WALL_HEIGHT + 0.0625, mesh.position.z + zOffset);
+        spouting.position.set(mesh.position.x, WALL_HEIGHT - 0.0625, mesh.position.z + zOffset);
         scene.add(spouting);
       }
       
