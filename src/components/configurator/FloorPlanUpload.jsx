@@ -8,6 +8,11 @@ export default function FloorPlanUpload({ module, onImageAssigned }) {
   const [isLoading, setIsLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState(module?.floorPlanImage || null);
 
+  // Update local state if module prop changes
+  React.useEffect(() => {
+    setImageUrl(module?.floorPlanImage || null);
+  }, [module?.floorPlanImage]);
+
   const handleImageUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
