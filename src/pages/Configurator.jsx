@@ -327,6 +327,13 @@ export default function Configurator() {
               <Box size={13} />
               3D
             </button>
+            <button
+              onClick={() => setViewMode("elevations")}
+              className={`flex items-center gap-1.5 px-3 py-1.5 text-xs transition-all ${viewMode === "elevations" ? "bg-[#F15A22] text-white" : "bg-white text-gray-600 hover:text-[#F15A22]"}`}
+            >
+              <Image size={13} />
+              Elevations
+            </button>
           </div>
 
           <Link
