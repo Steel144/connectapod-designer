@@ -311,29 +311,29 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
       let snapped = null;
 
       // Snap to module faces
-       const WALL_THICKNESS = 0.155; // half of 0.31
+       const WALL_OFFSET = 0.308; // 185mm offset
        if (wallTemplate.orientation === "horizontal") {
          for (const mod of placedModules) {
            const distToYFace = Math.abs(exactY - (mod.y + mod.h));
            const distToWFace = Math.abs(exactY - mod.y);
 
            if (distToYFace <= SNAP_THRESHOLD && exactX >= mod.x - SNAP_THRESHOLD && exactX <= mod.x + mod.w + SNAP_THRESHOLD) {
-             snapped = { x: mod.x, y: mod.y + mod.h - WALL_THICKNESS, length: mod.w, face: "Y" };
+             snapped = { x: mod.x, y: mod.y + mod.h + WALL_OFFSET, length: mod.w, face: "Y" };
              break;
            }
            if (distToWFace <= SNAP_THRESHOLD && exactX >= mod.x - SNAP_THRESHOLD && exactX <= mod.x + mod.w + SNAP_THRESHOLD) {
-             snapped = { x: mod.x, y: mod.y - WALL_THICKNESS, length: mod.w, face: "W" };
+             snapped = { x: mod.x, y: mod.y - WALL_OFFSET, length: mod.w, face: "W" };
              break;
            }
          }
        } else {
          for (const mod of placedModules) {
            if (Math.abs(exactX - mod.x) <= SNAP_THRESHOLD && exactY >= mod.y - SNAP_THRESHOLD && exactY <= mod.y + mod.h + SNAP_THRESHOLD) {
-             snapped = { x: mod.x - WALL_THICKNESS, y: mod.y, length: mod.h, face: "Z" };
+             snapped = { x: mod.x - WALL_OFFSET, y: mod.y, length: mod.h, face: "Z" };
              break;
            }
            if (Math.abs(exactX - (mod.x + mod.w)) <= SNAP_THRESHOLD && exactY >= mod.y - SNAP_THRESHOLD && exactY <= mod.y + mod.h + SNAP_THRESHOLD) {
-             snapped = { x: mod.x + mod.w - WALL_THICKNESS, y: mod.y, length: mod.h, face: "X" };
+             snapped = { x: mod.x + mod.w + WALL_OFFSET, y: mod.y, length: mod.h, face: "X" };
              break;
            }
          }
