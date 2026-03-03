@@ -211,7 +211,10 @@ export default function Configurator() {
 
   const handlePlaceWall = (wallData, x, y) => {
     pushHistory(placedModules, walls);
-    const wallWithRotation = { ...wallData, elevationImage: null };
+    const wallWithRotation = { 
+      ...wallData, 
+      elevationImage: wallImages[wallData.type] || null 
+    };
     // W walls (top/outside) need 180° rotation
     if (wallData.face === "W") {
       wallWithRotation.rotation = 180;
