@@ -336,14 +336,6 @@ export default function Configurator() {
             </button>
           </div>
 
-          <Link
-            to={createPageUrl("ElevationViewer")}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-gray-600 bg-white border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22] transition-all"
-          >
-            <Image size={13} />
-            Elevations
-          </Link>
-
           <button
             onClick={handleUndo}
             disabled={history.length === 0}
