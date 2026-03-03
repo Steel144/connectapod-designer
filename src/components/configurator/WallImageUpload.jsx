@@ -70,6 +70,7 @@ export default function WallImageUpload({ wall, onImageAssigned }) {
       if (existing.length > 0) {
         await base44.entities.WallImage.delete(existing[0].id);
         queryClient.invalidateQueries({ queryKey: ["wallImage", wall.type] });
+        queryClient.invalidateQueries({ queryKey: ["wallImages"] });
       }
     }
   };
