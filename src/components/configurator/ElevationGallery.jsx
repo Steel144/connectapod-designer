@@ -48,16 +48,18 @@ export default function ElevationGallery({ walls }) {
         {wallsByFace.W.length > 0 && (
           <div className="mb-12">
             <h3 className="text-sm font-semibold text-gray-700 mb-3 uppercase tracking-wide">Front Elevation (W)</h3>
-            <div className="flex gap-1 bg-white p-1 rounded border border-gray-200">
-              {wallsByFace.W.map((wall) => (
-                <div key={wall.id} className="flex-1 bg-gray-100 rounded overflow-hidden">
-                  <img
-                    src={wall.elevationImage}
-                    alt={`Wall ${wall.type}`}
-                    className="w-full h-auto object-contain max-h-96"
-                  />
-                </div>
-              ))}
+            <div className="inline-block border border-gray-200 rounded overflow-hidden">
+              <div className="flex bg-white">
+                {wallsByFace.W.map((wall) => (
+                  <div key={wall.id} className="bg-gray-100">
+                    <img
+                      src={wall.elevationImage}
+                      alt={`Wall ${wall.type}`}
+                      className="h-96 object-contain"
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         )}
@@ -67,16 +69,18 @@ export default function ElevationGallery({ walls }) {
           {wallsByFace.Z.length > 0 && (
             <div>
               <h3 className="text-sm font-semibold text-gray-700 mb-3 uppercase tracking-wide">Left Elevation (Z)</h3>
-              <div className="flex flex-col gap-1 bg-white p-1 rounded border border-gray-200">
-                {wallsByFace.Z.map((wall) => (
-                  <div key={wall.id} className="bg-gray-100 rounded overflow-hidden">
-                    <img
-                      src={wall.elevationImage}
-                      alt={`Wall ${wall.type}`}
-                      className="w-full h-auto object-contain max-h-64"
-                    />
-                  </div>
-                ))}
+              <div className="inline-block border border-gray-200 rounded overflow-hidden">
+                <div className="flex flex-col bg-white">
+                  {wallsByFace.Z.map((wall) => (
+                    <div key={wall.id} className="bg-gray-100">
+                      <img
+                        src={wall.elevationImage}
+                        alt={`Wall ${wall.type}`}
+                        className="w-64 h-auto object-contain"
+                      />
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           )}
@@ -84,16 +88,18 @@ export default function ElevationGallery({ walls }) {
           {wallsByFace.X.length > 0 && (
             <div>
               <h3 className="text-sm font-semibold text-gray-700 mb-3 uppercase tracking-wide">Right Elevation (X)</h3>
-              <div className="flex flex-col gap-1 bg-white p-1 rounded border border-gray-200">
-                {wallsByFace.X.map((wall) => (
-                  <div key={wall.id} className="bg-gray-100 rounded overflow-hidden">
-                    <img
-                      src={wall.elevationImage}
-                      alt={`Wall ${wall.type}`}
-                      className="w-full h-auto object-contain max-h-64"
-                    />
-                  </div>
-                ))}
+              <div className="inline-block border border-gray-200 rounded overflow-hidden">
+                <div className="flex flex-col bg-white">
+                  {wallsByFace.X.map((wall) => (
+                    <div key={wall.id} className="bg-gray-100">
+                      <img
+                        src={wall.elevationImage}
+                        alt={`Wall ${wall.type}`}
+                        className="w-64 h-auto object-contain"
+                      />
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           )}
@@ -103,16 +109,18 @@ export default function ElevationGallery({ walls }) {
         {wallsByFace.Y.length > 0 && (
           <div>
             <h3 className="text-sm font-semibold text-gray-700 mb-3 uppercase tracking-wide">Back Elevation (Y)</h3>
-            <div className="flex gap-1 bg-white p-1 rounded border border-gray-200">
-              {wallsByFace.Y.map((wall) => (
-                <div key={wall.id} className="flex-1 bg-gray-100 rounded overflow-hidden">
-                  <img
-                    src={wall.elevationImage}
-                    alt={`Wall ${wall.type}`}
-                    className="w-full h-auto object-contain max-h-96"
-                  />
-                </div>
-              ))}
+            <div className="inline-block border border-gray-200 rounded overflow-hidden">
+              <div className="flex bg-white">
+                {wallsByFace.Y.map((wall) => (
+                  <div key={wall.id} className="bg-gray-100">
+                    <img
+                      src={wall.elevationImage}
+                      alt={`Wall ${wall.type}`}
+                      className="h-96 object-contain"
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         )}
