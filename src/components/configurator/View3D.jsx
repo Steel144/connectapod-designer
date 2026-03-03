@@ -274,40 +274,6 @@ export default function View3D({ placedModules, walls }) {
       line.position.copy(mesh.position);
       scene.add(line);
 
-      // WXYZ corner labels (text canvas)
-      const createTextCanvas = (text, size = 200) => {
-        const canvas = document.createElement('canvas');
-        canvas.width = size;
-        canvas.height = size;
-        const ctx = canvas.getContext('2d');
-        ctx.fillStyle = '#808080';
-        ctx.font = `bold ${size * 0.7}px Arial`;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(text, size / 2, size / 2);
-        return new THREE.CanvasTexture(canvas);
-      };
-
-      const corners = [
-        { pos: new THREE.Vector3(-wM/2 - 0.5, 0, -hM/2 - 0.5), label: 'W' },
-        { pos: new THREE.Vector3(wM/2 + 0.5, 0, -hM/2 - 0.5), label: 'X' },
-        { pos: new THREE.Vector3(wM/2 + 0.5, 0, hM/2 + 0.5), label: 'Y' },
-        { pos: new THREE.Vector3(-wM/2 - 0.5, 0, hM/2 + 0.5), label: 'Z' },
-      ];
-      
-      corners.forEach(({ pos, label }) => {
-        const planeGeo = new THREE.PlaneGeometry(0.6, 0.6);
-        const planeMat = new THREE.MeshBasicMaterial({ map: createTextCanvas(label), transparent: true });
-        const plane = new THREE.Mesh(planeGeo, planeMat);
-        plane.position.copy(mesh.position).add(pos);
-        plane.position.y = 0.3;
-        // Rotate plane to face outward based on corner
-        if (label === 'W') plane.rotation.y = Math.PI;
-        else if (label === 'X') plane.rotation.y = Math.PI / 2;
-        else if (label === 'Z') plane.rotation.y = -Math.PI / 2;
-        scene.add(plane);
-      });
-
       // Label plane (small flat box on top)
       const topGeo = new THREE.PlaneGeometry(wM - 0.05, hM - 0.05);
       const topMat = new THREE.MeshLambertMaterial({ color: 0xffffff, transparent: true, opacity: 0.15 });
