@@ -50,14 +50,27 @@ export default function WallImageUpload({ wall, onImageAssigned }) {
             alt="Wall preview" 
             className="w-full h-24 object-cover rounded border border-slate-200"
           />
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={handleRemoveImage}
-            className="w-full text-xs gap-1"
-          >
-            <X size={12} /> Remove Image
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => {
+                const encoded = encodeURIComponent(imageUrl);
+                window.open(createPageUrl(`ElevationViewer?imageUrl=${encoded}`), '_blank');
+              }}
+              className="flex-1 text-xs gap-1"
+            >
+              <Eye size={12} /> View
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={handleRemoveImage}
+              className="flex-1 text-xs gap-1"
+            >
+              <X size={12} /> Remove
+            </Button>
+          </div>
         </div>
       ) : (
         <label className="block">
