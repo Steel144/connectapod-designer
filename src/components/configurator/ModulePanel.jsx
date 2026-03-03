@@ -540,7 +540,11 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
           }}
         >
           <div className="w-full h-full bg-gray-50 border border-gray-200 rounded overflow-hidden">
-            <FloorPlanSVG code={hoveredModule.type} className="w-full h-full" />
+            {hoveredModule.floorPlanImage ? (
+              <img src={hoveredModule.floorPlanImage} alt={hoveredModule.label} className="w-full h-full object-cover" />
+            ) : (
+              <FloorPlanSVG code={hoveredModule.type} className="w-full h-full" />
+            )}
           </div>
           <p className="text-xs font-semibold text-gray-700 text-center mt-2">
             {hoveredModule.label}
