@@ -84,7 +84,7 @@ export default function ElevationGallery({ walls }) {
         <div className="p-6 flex justify-center" style={{ minHeight: '100%' }}>
           <div style={{ transform: `scale(${zoom / 100})`, transformOrigin: 'top center', transition: 'transform 0.2s' }}>
             {/* Front elevation (W) */}
-        {wallsByFace.W.length > 0 && (
+            {wallsByFace.W.length > 0 && (
           <div className="mb-12">
             <h3 className="text-sm font-semibold text-gray-700 mb-3 uppercase tracking-wide">Front Elevation (W)</h3>
             <div className="inline-block border border-gray-200 rounded overflow-hidden">
