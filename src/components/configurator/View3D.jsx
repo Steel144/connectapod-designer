@@ -207,48 +207,40 @@ export default function View3D({ placedModules, walls }) {
       // Generate roof if this is a gable wall (4.8m or 5.2m vertical)
       const isGable = wall.orientation === "vertical" && (Math.abs(wall.width - 4.8) < 0.1 || Math.abs(wall.width - 5.2) < 0.1);
       if (isGable) {
-        // Find module this gable is attached to (Z or X face)
-        for (const mod of placedModules) {
-          const modWM = mod.w * CELL_M;
-          const modHM = mod.h * CELL_M;
-          const modX = mod.x * CELL_M;
-          const modZ = mod.y * CELL_M;
-          
-          // Z face: x = mod.x, y = mod.y to mod.y + mod.h
-          const isZFace = wall.x === mod.x && wall.y >= mod.y && wall.y <= mod.y + mod.h;
-          // X face: x = mod.x + mod.w, y = mod.y to mod.y + mod.h
-          const isXFace = wall.x === mod.x + modWM / CELL_M && wall.y >= mod.y && wall.y <= mod.y + mod.h;
-          
-          if (isZFace || isXFace) {
-            // Create pitched roof above this module
-            const roofVertices = new Float32Array([
-              -modWM/2, 0, -modHM/2,
-              -modWM/2, 0, modHM/2,
-              modWM/2, GABLE_HEIGHT, -modHM/2,
-              modWM/2, GABLE_HEIGHT, modHM/2,
-              modWM/2, 0, -modHM/2,
-              modWM/2, 0, modHM/2,
-            ]);
-            const roofIndices = new Uint32Array([
-              0, 2, 1, 1, 2, 3,
-              2, 4, 5, 2, 5, 3,
-              0, 4, 2,
-              1, 5, 3,
-            ]);
-            const roofGeo = new THREE.BufferGeometry();
-            roofGeo.setAttribute('position', new THREE.BufferAttribute(roofVertices, 3));
-            roofGeo.setIndex(new THREE.BufferAttribute(roofIndices, 1));
-            roofGeo.computeVertexNormals();
-            
-            const roofMat = new THREE.MeshLambertMaterial({ color: 0x1a1a1a });
-            const roof = new THREE.Mesh(roofGeo, roofMat);
-            roof.castShadow = true;
-            roof.receiveShadow = true;
-            roof.position.set(modX + modWM / 2, MODULE_HEIGHT, modZ + modHM / 2);
-            scene.add(roof);
-            break;
-          }
-        }
+        // Create pitched roof above the gable wall (ridge on right side)
+        const roofVertices = new Float32Array([
+          -wM/2, 0, -hM/2,          // left base front
+          -wM/2, 0, hM/2,           // left base back
+          wM/2, GABLE_HEIGHT, -hM/2, // ridge front (right side)
+          wM/2, GABLE_HEIGHT, hM/2,  // ridge back (right side)
+          wM/2, 0, -hM/2,           // right base front
+          wM/2, 0, hM/2,            // right base back
+        ]);
+        const roofIndices = new Uint32Array([
+          // Left sloped face
+          0, 2, 1, 1, 2, 3,
+          // Right vertical face
+          2, 4, 5, 2, 5, 3,
+          // Front triangle
+          0, 4, 2,
+          // Back triangle
+          1, 5, 3,
+        ]);
+        const roofGeo = new THREE.BufferGeometry();
+        roofGeo.setAttribute('position', new THREE.BufferAttribute(roofVertices, 3));
+        roofGeo.setIndex(new THREE.BufferAttribute(roofIndices, 1));
+        roofGeo.computeVertexNormals();
+        
+        const roofMat = new THREE.MeshLambertMaterial({ color: 0x1a1a1a });
+        const roof = new THREE.Mesh(roofGeo, roofMat);
+        roof.castShadow = true;
+        roof.receiveShadow = true;
+        roof.position.set(
+          wall.x * CELL_M + wM / 2,
+          WALL_HEIGHT,
+          wall.y * CELL_M + hM / 2
+        );
+        scene.add(roof);
       }
     });
 
