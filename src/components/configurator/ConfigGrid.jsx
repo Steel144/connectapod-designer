@@ -260,60 +260,12 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
     if (wallType) {
       const wallTemplate = WALL_TYPES.find((w) => w.type === wallType);
       if (!wallTemplate || !gridRef.current) return;
-      const { x, y } = getCellFromClient(e.clientX, e.clientY);
-      console.log("Wall dropped at grid position:", { x, y });
-
-      const SNAP = 3; // cells
-      let snapped = null;
-
-      // Determine face label: W/Y = top/bottom (horizontal), X/Z = right/left (vertical ends)
-      if (wallTemplate.orientation === "horizontal") {
-        console.log("Checking W/Y snap for horizontal wall, dropY:", y, "SNAP threshold:", SNAP);
-        for (const mod of placedModules) {
-          const distToWFace = Math.abs(y - (mod.y - 1));
-          const distToYFace = Math.abs(y - (mod.y + mod.h));
-          console.log("Module at", { x: mod.x, y: mod.y, h: mod.h }, "W face dist:", distToWFace, "Y face dist:", distToYFace);
-          
-          if (distToWFace <= SNAP && x >= mod.x - SNAP && x <= mod.x + mod.w + SNAP) {
-            // W face (top) — place outside (above module)
-            console.log("W snap detected!", { mod: { x: mod.x, y: mod.y }, wallY: mod.y - 1 });
-            snapped = { x: mod.x, y: mod.y - 1, length: mod.w, face: "W" };
-            break;
-          }
-          if (distToYFace <= SNAP && x >= mod.x - SNAP && x <= mod.x + mod.w + SNAP) {
-            // Y face (bottom) — place outside (below module)
-            console.log("Y snap detected!", { mod: { x: mod.x, y: mod.y }, wallY: mod.y + mod.h });
-            snapped = { x: mod.x, y: mod.y + mod.h, length: mod.w, face: "Y" };
-            break;
-          }
-        }
-      } else {
-        for (const mod of placedModules) {
-          if (Math.abs(x - mod.x) <= SNAP && y >= mod.y - SNAP && y <= mod.y + mod.h + SNAP) {
-            // Z face (left end) — place inside
-            snapped = { x: mod.x + 1, y: mod.y, length: mod.h, face: "Z" };
-            break;
-          }
-          if (Math.abs(x - (mod.x + mod.w)) <= SNAP && y >= mod.y - SNAP && y <= mod.y + mod.h + SNAP) {
-            // X face (right end) — place inside
-            snapped = { x: mod.x + mod.w - 1, y: mod.y, length: mod.h, face: "X" };
-            break;
-          }
-        }
-      }
-
-      if (snapped) {
-        const wallWithFace = { ...wallTemplate, length: snapped.length, face: snapped.face };
-        console.log("Placing wall snapped:", { ...snapped, face: snapped.face, calculatedY: snapped.y, shouldBeAt: snapped.y });
-        console.log("W wall should attach at: module.x=", placedModules.find(m => m.x === snapped.x)?.x, "module.y - 1 =", placedModules.find(m => m.x === snapped.x)?.y - 1, "actual wall y:", snapped.y);
-        if (onPlaceWall) onPlaceWall(wallWithFace, snapped.x, snapped.y);
-      } else {
-        // Don't snap to grid, use exact drop position
-        const exactX = (e.clientX - gridRef.current.getBoundingClientRect().left) / CELL_W;
-        const exactY = (e.clientY - gridRef.current.getBoundingClientRect().top) / CELL_H;
-        console.log("Placing wall unsnapped at exact position:", { x: exactX, y: exactY });
-        if (onPlaceWall) onPlaceWall(wallTemplate, exactX, exactY);
-      }
+      
+      // Place at exact cursor position, no snapping
+      const exactX = (e.clientX - gridRef.current.getBoundingClientRect().left) / CELL_W;
+      const exactY = (e.clientY - gridRef.current.getBoundingClientRect().top) / CELL_H;
+      console.log("Placing wall at exact position:", { x: exactX, y: exactY });
+      if (onPlaceWall) onPlaceWall(wallTemplate, exactX, exactY);
       return;
     }
   };
