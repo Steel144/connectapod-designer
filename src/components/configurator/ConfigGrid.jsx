@@ -181,7 +181,10 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
 
   // ── HTML drag drop for new modules from panel ───
 
-  const handleDragOver = (e) => e.preventDefault();
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "copy";
+  };
 
   const handleDrop = (e) => {
     e.preventDefault();
