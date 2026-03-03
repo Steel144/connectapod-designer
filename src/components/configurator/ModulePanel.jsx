@@ -240,7 +240,7 @@ const WALL_TYPES = [
 
 export { MODULE_TYPES, GROUP_ICONS, WALL_TYPES };
 
-export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, selectedModule, placedModules = [] }) {
+export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, selectedModule, placedModules = [], onModuleImageUpdate, onWallImageUpdate }) {
   const [openGroup, setOpenGroup] = useState(null);
   const [hoveredModule, setHoveredModule] = useState(null);
   const [showWallSuggestions, setShowWallSuggestions] = useState(true);
