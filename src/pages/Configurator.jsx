@@ -323,6 +323,7 @@ export default function Configurator() {
           onPlaceWall={handlePlaceWall}
           onRemoveWall={handleRemoveWall}
           onMoveWall={handleMoveWall}
+          hidden={viewMode === "3d"}
         />
       </div>
 
