@@ -532,8 +532,8 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
         <div
           className="fixed z-[100] bg-white border-2 border-[#F15A22] shadow-xl rounded pointer-events-none flex flex-col"
           style={{
-            width: "280px",
-            height: "360px",
+            width: "200px",
+            height: "280px",
             top: "48px",
             right: "20px",
             padding: "8px",
