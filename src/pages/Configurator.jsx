@@ -49,10 +49,10 @@ export default function Configurator() {
     },
   });
 
-  const [isDragging, setIsDragging] = useState(false);
+  const [isDraggingFromPanel, setIsDraggingFromPanel] = useState(false);
 
   const handleDragStart = (e, mod) => {
-    setIsDragging(true);
+    setIsDraggingFromPanel(true);
     if (mod.orientation) {
       // Wall — wallType is already set by ModulePanel
       return;
@@ -61,7 +61,7 @@ export default function Configurator() {
     setDraggingMod(mod);
   };
 
-  const handleDragEnd = () => setIsDragging(false);
+  const handleDragEnd = () => setIsDraggingFromPanel(false);
 
   const handlePlace = (mod, x, y) => {
     setPlacedModules((prev) => [
