@@ -164,8 +164,70 @@ const GROUP_ICONS = Object.fromEntries(
 );
 
 const WALL_TYPES = [
-  { type: "wall-h", label: "Horizontal Wall (185mm)", orientation: "horizontal", length: 8, thickness: 0.31 },
-  { type: "wall-v", label: "Vertical Wall (185mm)", orientation: "vertical", length: 8, thickness: 0.31 },
+  // 0.6m & 1.2m Module Walls
+  { type: "W000/Y000",  label: "600mm Standard Wall",              mpCode: "W000/Y000",   width: 0.6, orientation: "horizontal", length: 1, thickness: 0.31 },
+  { type: "W001/Y001",  label: "1200mm Standard Wall",             mpCode: "W001/Y001",   width: 1.2, orientation: "horizontal", length: 2, thickness: 0.31 },
+  { type: "WS003/YS003",label: "1200mm Wall – 1 Window (620×1520)",mpCode: "WS003/YS003", width: 1.2, orientation: "horizontal", length: 2, thickness: 0.31 },
+  { type: "W004/Y004",  label: "1200mm Wall – Window 690×1520",    mpCode: "W004/Y004",   width: 1.2, orientation: "horizontal", length: 2, thickness: 0.31 },
+  { type: "W005/Y005",  label: "1200mm Wall – 2 Windows (620×1220)",mpCode: "W005/Y005",  width: 1.2, orientation: "horizontal", length: 2, thickness: 0.31 },
+  { type: "W006/Y006",  label: "1200mm Wall – 2 Windows (620×1520)",mpCode: "W006/Y006",  width: 1.2, orientation: "horizontal", length: 2, thickness: 0.31 },
+  { type: "W030/Y030",  label: "1200mm Wall – Fixed 322 (3.2m wide)",mpCode: "W030/Y030", width: 1.2, orientation: "horizontal", length: 2, thickness: 0.31 },
+  // 1.8m Module Walls
+  { type: "W050/YS050", label: "1800mm Standard Wall",             mpCode: "W050/YS050",  width: 1.8, orientation: "horizontal", length: 3, thickness: 0.31 },
+  { type: "W051D/Y051D",label: "1800mm Deck Wall – Window (1250×2160)",mpCode: "W051D/Y051D",width: 1.8, orientation: "horizontal", length: 3, thickness: 0.31 },
+  // 2.4m Module Walls
+  { type: "W200/Y200",  label: "2400mm Standard Wall",             mpCode: "W200/Y200",   width: 2.4, orientation: "horizontal", length: 4, thickness: 0.31 },
+  { type: "W201D/Y201D",label: "2400mm Deck Wall – Opening 1822",  mpCode: "W201D/Y201D", width: 2.4, orientation: "horizontal", length: 4, thickness: 0.31 },
+  { type: "W202/Y202",  label: "2400mm Wall – Louvre 1822",        mpCode: "W202/Y202",   width: 2.4, orientation: "horizontal", length: 4, thickness: 0.31 },
+  // 3.0m Module Walls – Series 500
+  { type: "W500/Y500",  label: "3000mm Standard Wall",             mpCode: "W500/Y500",   width: 3.0, orientation: "horizontal", length: 5, thickness: 0.31 },
+  { type: "W501/Y501",  label: "3000mm Wall – Louvre 2122",        mpCode: "W501/Y501",   width: 3.0, orientation: "horizontal", length: 5, thickness: 0.31 },
+  { type: "W502/Y502",  label: "3000mm Wall – 8-Panel Window 2122",mpCode: "W502/Y502",   width: 3.0, orientation: "horizontal", length: 5, thickness: 0.31 },
+  { type: "W503/Y503",  label: "3000mm Wall – Door Right + 2 Sidelights",mpCode: "W503/Y503",width: 3.0, orientation: "horizontal", length: 5, thickness: 0.31 },
+  { type: "W504/Y504",  label: "3000mm Wall – Door Left + 2 Sidelights", mpCode: "W504/Y504",width: 3.0, orientation: "horizontal", length: 5, thickness: 0.31 },
+  { type: "W505/Y505",  label: "3000mm Wall – Bifold 3-Panel Left",mpCode: "W505/Y505",   width: 3.0, orientation: "horizontal", length: 5, thickness: 0.31 },
+  { type: "W506/Y506",  label: "3000mm Wall – Bifold 3-Panel Right",mpCode: "W506/Y506",  width: 3.0, orientation: "horizontal", length: 5, thickness: 0.31 },
+  { type: "W507/Y507",  label: "3000mm Wall – Double Door 2122",   mpCode: "W507/Y507",   width: 3.0, orientation: "horizontal", length: 5, thickness: 0.31 },
+  { type: "W510/Y510",  label: "3000mm Wall – Louvre 2422",        mpCode: "W510/Y510",   width: 3.0, orientation: "horizontal", length: 5, thickness: 0.31 },
+  { type: "W511/Y511",  label: "3000mm Wall – 8-Panel Window 2422",mpCode: "W511/Y511",   width: 3.0, orientation: "horizontal", length: 5, thickness: 0.31 },
+  { type: "W512/Y512",  label: "3000mm Wall – Door Right 2422",    mpCode: "W512/Y512",   width: 3.0, orientation: "horizontal", length: 5, thickness: 0.31 },
+  { type: "W513/Y513",  label: "3000mm Wall – Door Left 2422",     mpCode: "W513/Y513",   width: 3.0, orientation: "horizontal", length: 5, thickness: 0.31 },
+  { type: "W514/Y514",  label: "3000mm Wall – Bifold 3 Left 2422", mpCode: "W514/Y514",   width: 3.0, orientation: "horizontal", length: 5, thickness: 0.31 },
+  { type: "W515/Y515",  label: "3000mm Wall – Bifold 3 Right 2422",mpCode: "W515/Y515",   width: 3.0, orientation: "horizontal", length: 5, thickness: 0.31 },
+  { type: "W516/Y516",  label: "3000mm Wall – 4-Panel Door 2422",  mpCode: "W516/Y516",   width: 3.0, orientation: "horizontal", length: 5, thickness: 0.31 },
+  { type: "W517/Y517",  label: "3000mm Wall – Sliding 4-Panel Right",mpCode: "W517/Y517", width: 3.0, orientation: "horizontal", length: 5, thickness: 0.31 },
+  { type: "W518/Y518",  label: "3000mm Wall – Sliding 4-Panel Left",mpCode: "W518/Y518",  width: 3.0, orientation: "horizontal", length: 5, thickness: 0.31 },
+  // 3.0m – Series 530
+  { type: "W530/Y530",  label: "3000mm Wall – 4-Panel Cross Brace",mpCode: "W530/Y530",   width: 3.0, orientation: "horizontal", length: 5, thickness: 0.31 },
+  { type: "W531/Y531",  label: "3000mm Wall – 4-Panel Stacked",    mpCode: "W531/Y531",   width: 3.0, orientation: "horizontal", length: 5, thickness: 0.31 },
+  { type: "W532/Y532",  label: "3000mm Wall – 3-Panel Awning",     mpCode: "W532/Y532",   width: 3.0, orientation: "horizontal", length: 5, thickness: 0.31 },
+  { type: "W540/Y540",  label: "3000mm Wall – Corner Window 216",  mpCode: "W540/Y540",   width: 3.0, orientation: "horizontal", length: 5, thickness: 0.31 },
+  // 3.0m – Series 650 (Louvre & Highlight)
+  { type: "W651/Y651",  label: "3000mm Wall – Louvre Highlight Right SG",mpCode: "W651/Y651",width: 3.0, orientation: "horizontal", length: 5, thickness: 0.31 },
+  { type: "W652/Y652",  label: "3000mm Wall – Louvre Highlight Left SG", mpCode: "W652/Y652",width: 3.0, orientation: "horizontal", length: 5, thickness: 0.31 },
+  { type: "W653/Y653",  label: "3000mm Wall – Louvre Highlight Right TGV",mpCode: "W653/Y653",width: 3.0, orientation: "horizontal", length: 5, thickness: 0.31 },
+  { type: "W654/Y654",  label: "3000mm Wall – Louvre Highlight Left TGV",mpCode: "W654/Y654", width: 3.0, orientation: "horizontal", length: 5, thickness: 0.31 },
+  // 3.0m – Series 700 (Corner)
+  { type: "W700/Y700",  label: "3000mm Corner Wall – Window Left 622", mpCode: "W700/Y700", width: 3.0, orientation: "horizontal", length: 5, thickness: 0.31 },
+  { type: "W701/Y701",  label: "3000mm Corner Wall – Window Right 622",mpCode: "W701/Y701", width: 3.0, orientation: "horizontal", length: 5, thickness: 0.31 },
+  { type: "W702/Y702",  label: "3000mm Corner Wall – Window Left Mirror",mpCode: "W702/Y702",width: 3.0, orientation: "horizontal", length: 5, thickness: 0.31 },
+  { type: "W703/Y703",  label: "3000mm Corner Wall – Window Right Mirror",mpCode: "W703/Y703",width: 3.0, orientation: "horizontal", length: 5, thickness: 0.31 },
+  // 3.0m – Series 800/900 (Offset Window)
+  { type: "W801/Y801",  label: "3000mm Wall – High Left Door SG",   mpCode: "W801/Y801",   width: 3.0, orientation: "horizontal", length: 5, thickness: 0.31 },
+  { type: "W802/Y802",  label: "3000mm Wall – High Right Door SG",  mpCode: "W802/Y802",   width: 3.0, orientation: "horizontal", length: 5, thickness: 0.31 },
+  { type: "W805/Y805",  label: "3000mm Wall – 2 Windows 922",       mpCode: "W805/Y805",   width: 3.0, orientation: "horizontal", length: 5, thickness: 0.31 },
+  { type: "W807/Y807",  label: "3000mm Wall – 3 Windows 922",       mpCode: "W807/Y807",   width: 3.0, orientation: "horizontal", length: 5, thickness: 0.31 },
+  // 5.2m Family Gable Walls
+  { type: "Z000-F/X000-F", label: "Gable – Plain 5.2m",            mpCode: "Z000-F/X000-F",   width: 5.2, orientation: "horizontal", length: 9, thickness: 0.31 },
+  { type: "Z001-F/X001-F", label: "Gable – 4 Sidelights 4222",     mpCode: "Z001-F/X001-F",   width: 5.2, orientation: "horizontal", length: 9, thickness: 0.31 },
+  { type: "Z040-F/X040-F", label: "Gable – Door Right 2122",       mpCode: "Z040-F/X040-F",   width: 5.2, orientation: "horizontal", length: 9, thickness: 0.31 },
+  { type: "Z041-F/X041-F", label: "Gable – Door Left 2122",        mpCode: "Z041-F/X041-F",   width: 5.2, orientation: "horizontal", length: 9, thickness: 0.31 },
+  // Musgrove Joinery
+  { type: "WM201/YM201", label: "Musgrove – Door Right 1820",       mpCode: "WM201/YM201",   width: 3.0, orientation: "horizontal", length: 5, thickness: 0.31 },
+  { type: "WM202/YM202", label: "Musgrove – Plain 3000",            mpCode: "WM202/YM202",   width: 3.0, orientation: "horizontal", length: 5, thickness: 0.31 },
+  { type: "WM203/YM203", label: "Musgrove – Door Left 1820",        mpCode: "WM203/YM203",   width: 3.0, orientation: "horizontal", length: 5, thickness: 0.31 },
+  { type: "WM205/YM205", label: "Musgrove – 2-Panel Awning Left",   mpCode: "WM205/YM205",   width: 3.0, orientation: "horizontal", length: 5, thickness: 0.31 },
+  { type: "WM206/YM206", label: "Musgrove – 2-Panel Awning Right",  mpCode: "WM206/YM206",   width: 3.0, orientation: "horizontal", length: 5, thickness: 0.31 },
 ];
 
 export { MODULE_TYPES, GROUP_ICONS, WALL_TYPES };
