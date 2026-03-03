@@ -257,7 +257,7 @@ export default function Configurator() {
       {/* Floating left panel — Module picker */}
       <div
         className="absolute z-40 flex"
-        style={{ left: `${panelPos.x}px`, top: `${panelPos.y}px`, cursor: draggingPanel ? "grabbing" : "default" }}
+        style={{ left: `${panelPos.x}px`, top: `${panelPos.y}px`, cursor: draggingPanel ? "grabbing" : "default", pointerEvents: isDraggingFromPanel ? "none" : "auto" }}
       >
         <div
           className={`bg-white border border-gray-200 shadow-xl flex flex-col overflow-hidden transition-all duration-200 ${
