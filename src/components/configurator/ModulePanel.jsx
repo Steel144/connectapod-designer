@@ -333,7 +333,8 @@ export default function ModulePanel({ onDragStart, onDragEnd }) {
                 </div>
                 <div className="min-w-0">
                   <p className="text-xs font-medium text-gray-700 leading-tight">{wall.label}</p>
-                  <p className="text-[10px] text-gray-400 mt-0.5">Thickness: {wall.thickness}</p>
+                  <p className="text-[10px] font-mono text-[#F15A22] mt-0.5 truncate" title={wall.mpCode}>{wall.mpCode}</p>
+                  <p className="text-[10px] text-gray-400">{wall.width}m wide</p>
                 </div>
               </div>
             ))}
