@@ -498,7 +498,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                     <FloorPlanSVG code={mod.type} className="w-full h-full" style={{ transform: mod.flipped ? 'scaleX(-1)' : 'none' }} />
                   )}
               </div>
-              <span className="absolute text-[9px] font-semibold text-slate-700 text-center leading-tight px-0.5 py-0.5 truncate" style={{ bottom: '-18px', left: '50%', transform: 'translateX(-50%)', width: '100%' }}>
+              <span className="absolute text-[9px] font-semibold text-slate-700 text-center leading-tight px-0.5 py-0.5 truncate" style={{ bottom: '-36px', left: '50%', transform: 'translateX(-50%)', width: '100%' }}>
                 {mod.label}
               </span>
               <button
