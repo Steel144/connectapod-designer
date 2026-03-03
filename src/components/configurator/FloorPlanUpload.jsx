@@ -6,6 +6,7 @@ import { toast } from "sonner";
 
 export default function FloorPlanUpload({ module, onImageAssigned }) {
   const [isLoading, setIsLoading] = useState(false);
+  const [imageUrl, setImageUrl] = useState(module?.floorPlanImage || null);
 
   const handleImageUpload = async (e) => {
     const file = e.target.files?.[0];
