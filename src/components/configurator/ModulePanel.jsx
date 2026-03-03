@@ -334,7 +334,9 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, plac
               <line x1="3" y1="12" x2="21" y2="12" strokeWidth="3"/>
             </svg>
           </span>
-          <span className="flex-1 text-sm font-semibold text-gray-800">Walls</span>
+          <span className="flex-1 text-sm font-semibold text-gray-800">
+            Walls {filterWalls && <span className="text-[10px] font-normal text-[#F15A22]">· filtered to face {selectedWall.face}</span>}
+          </span>
           <span className="text-gray-400 shrink-0">
             {openGroup === "walls" ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
           </span>
@@ -342,7 +344,12 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, plac
 
         {openGroup === "walls" && (
           <div className="border-t border-gray-100 max-h-64 overflow-y-auto">
-            {WALL_TYPES.map((wall) => (
+            {filterWalls && (
+              <div className="px-3 py-1.5 bg-orange-50 border-b border-orange-100">
+                <p className="text-[10px] text-[#F15A22]">Showing walls that fit face <strong>{selectedWall.face}</strong> ({compatibleWalls[0]?.width ?? "?"}m wide)</p>
+              </div>
+            )}
+            {compatibleWalls.map((wall) => (
               <div
                 key={wall.type}
                 draggable
