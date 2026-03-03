@@ -50,6 +50,7 @@ export default function Configurator() {
   });
 
   const [isDraggingFromPanel, setIsDraggingFromPanel] = useState(false);
+  const gridRef = React.useRef(null);
 
   const handleDragStart = (e, mod) => {
     setIsDraggingFromPanel(true);
@@ -62,6 +63,21 @@ export default function Configurator() {
   };
 
   const handleDragEnd = () => {
+    setIsDraggingFromPanel(false);
+  };
+
+  // Forward drop from overlay to the grid element
+  const handleOverlayDrop = (e) => {
+    e.preventDefault();
+    if (!gridRef.current) return;
+    const gridEvent = new DragEvent("drop", {
+      bubbles: true,
+      cancelable: true,
+      dataTransfer: e.dataTransfer,
+      clientX: e.clientX,
+      clientY: e.clientY,
+    });
+    gridRef.current.dispatchEvent(gridEvent);
     setIsDraggingFromPanel(false);
   };
 
