@@ -424,7 +424,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
             <React.Fragment key={wall.id}>
               <div
                 onMouseDown={(e) => startDragWall(e, wall)}
-                className="absolute group cursor-grab active:cursor-grabbing"
+                className="absolute group cursor-grab active:cursor-grabbing flex items-center justify-center overflow-hidden"
                 style={{
                   left: wall.x * CELL_W,
                   top: wall.y * CELL_H,
@@ -435,6 +435,11 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                   opacity: isBeingDragged ? 0.2 : 0.7,
                 }}
               >
+                {wall.face && (
+                  <span className="text-[8px] font-bold text-white/80 pointer-events-none select-none">
+                    {wall.face}
+                  </span>
+                )}
                 <button
                   onMouseDown={(e) => e.stopPropagation()}
                   onClick={() => onRemoveWall && onRemoveWall(wall.id)}
