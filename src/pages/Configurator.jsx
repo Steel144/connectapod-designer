@@ -143,6 +143,8 @@ export default function Configurator() {
     const deltaX = x - oldMod.x;
     const deltaY = y - oldMod.y;
     
+    console.log("Moving module from", { x: oldMod.x, y: oldMod.y }, "to", { x, y }, "delta:", { deltaX, deltaY });
+    
     // Move module
     setPlacedModules((prev) =>
       prev.map((m) => (m.id === id ? { ...m, x, y } : m))
@@ -156,10 +158,12 @@ export default function Configurator() {
         if (isLongFace) {
           // W face (top/outside): x aligns, y is one cell above module's y
           if (w.face === "W" && w.x === oldMod.x && w.y === oldMod.y - 1) {
+            console.log("W wall attached! Moving from", { x: w.x, y: w.y }, "to", { x: w.x + deltaX, y: w.y + deltaY });
             return { ...w, x: w.x + deltaX, y: w.y + deltaY };
           }
           // Y face (bottom/outside): x aligns, y is at module's bottom edge
           if (w.face === "Y" && w.x === oldMod.x && w.y === oldMod.y + oldMod.h) {
+            console.log("Y wall attached! Moving from", { x: w.x, y: w.y }, "to", { x: w.x + deltaX, y: w.y + deltaY });
             return { ...w, x: w.x + deltaX, y: w.y + deltaY };
           }
         } else {
