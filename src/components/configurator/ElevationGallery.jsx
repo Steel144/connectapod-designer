@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState } from "react";
+import { ZoomIn, ZoomOut } from "lucide-react";
 
 export default function ElevationGallery({ walls }) {
   const wallsWithElevations = walls.filter(w => w.elevationImage);
