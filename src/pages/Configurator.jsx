@@ -157,6 +157,7 @@ export default function Configurator() {
         
         if (isLongFace) {
           // W face (top/outside): x aligns, y is one cell above module's y
+          console.log("Checking W wall attachment:", { wallX: w.x, wallY: w.y, wallFace: w.face, modX: oldMod.x, modY: oldMod.y, check1: w.face === "W", check2: w.x === oldMod.x, check3: w.y === oldMod.y - 1 });
           if (w.face === "W" && w.x === oldMod.x && w.y === oldMod.y - 1) {
             console.log("W wall attached! Moving from", { x: w.x, y: w.y }, "to", { x: w.x + deltaX, y: w.y + deltaY });
             return { ...w, x: w.x + deltaX, y: w.y + deltaY };
