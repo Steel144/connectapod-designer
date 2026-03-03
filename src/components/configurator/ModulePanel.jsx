@@ -402,7 +402,7 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
                 <p className="text-[10px] text-[#F15A22]">{filterReason}</p>
               </div>
             )}
-            {filterWalls && compatibleWalls.length === 0 && (
+            {(selectedWall || selectedModule) && compatibleWalls.length === 0 && (
               <div className="px-3 py-3 text-center text-[11px] text-gray-400">
                 No compatible walls for this face/chassis combination.
               </div>
