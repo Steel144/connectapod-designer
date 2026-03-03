@@ -505,11 +505,11 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                 <X size={10} className="text-red-400" />
               </button>
 
-              {/* WXYZ corner labels */}
-              <span className="absolute text-[9px] font-bold text-red-500" style={{ left: '2px', top: '2px' }}>W</span>
-              <span className="absolute text-[9px] font-bold text-green-500" style={{ right: '2px', top: '2px' }}>X</span>
-              <span className="absolute text-[9px] font-bold text-blue-500" style={{ right: '2px', bottom: '2px' }}>Y</span>
-              <span className="absolute text-[9px] font-bold text-yellow-600" style={{ left: '2px', bottom: '2px' }}>Z</span>
+              {/* WXYZ side labels */}
+              <span className="absolute text-[9px] font-bold text-red-500" style={{ left: '50%', top: '2px', transform: 'translateX(-50%)' }}>W</span>
+              <span className="absolute text-[9px] font-bold text-green-500" style={{ right: '2px', top: '50%', transform: 'translateY(-50%)' }}>X</span>
+              <span className="absolute text-[9px] font-bold text-blue-500" style={{ left: '50%', bottom: '2px', transform: 'translateX(-50%)' }}>Y</span>
+              <span className="absolute text-[9px] font-bold text-yellow-600" style={{ left: '2px', top: '50%', transform: 'translateY(-50%)' }}>Z</span>
               </div>
               );
               })}
