@@ -9,7 +9,7 @@ import SaveDesignModal from "@/components/configurator/SaveDesignModal";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { BookOpen, FolderOpen, Save, Trash2, ChevronLeft, ChevronRight, Undo2, Box, Grid2X2 } from "lucide-react";
+import { BookOpen, FolderOpen, Save, Trash2, ChevronLeft, ChevronRight, Undo2, Box, Grid2X2, Image } from "lucide-react";
 import View3D from "@/components/configurator/View3D";
 
 const generateId = () => `mod-${Math.random().toString(36).substr(2, 9)}`;
