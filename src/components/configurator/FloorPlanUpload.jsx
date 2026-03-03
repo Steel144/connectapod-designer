@@ -15,6 +15,7 @@ export default function FloorPlanUpload({ module, onImageAssigned }) {
     setIsLoading(true);
     try {
       const { data } = await base44.integrations.Core.UploadFile({ file });
+      setImageUrl(data.file_url);
       onImageAssigned(data.file_url);
       toast.success("Floor plan uploaded");
     } catch (err) {
@@ -26,6 +27,7 @@ export default function FloorPlanUpload({ module, onImageAssigned }) {
   };
 
   const handleRemoveImage = () => {
+    setImageUrl(null);
     onImageAssigned(null);
   };
 
