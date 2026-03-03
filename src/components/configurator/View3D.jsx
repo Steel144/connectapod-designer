@@ -274,21 +274,35 @@ export default function View3D({ placedModules, walls }) {
       line.position.copy(mesh.position);
       scene.add(line);
 
-      // WXYZ corner labels
+      // WXYZ corner labels (text canvas)
+      const createTextCanvas = (text, size = 200) => {
+        const canvas = document.createElement('canvas');
+        canvas.width = size;
+        canvas.height = size;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#808080';
+        ctx.font = `bold ${size * 0.7}px Arial`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(text, size / 2, size / 2);
+        return new THREE.CanvasTexture(canvas);
+      };
+
       const corners = [
-        { pos: new THREE.Vector3(-wM/2, 0, -hM/2), label: 'W', color: 0xff0000 },
-        { pos: new THREE.Vector3(wM/2, 0, -hM/2), label: 'X', color: 0x00ff00 },
-        { pos: new THREE.Vector3(wM/2, 0, hM/2), label: 'Y', color: 0x0000ff },
-        { pos: new THREE.Vector3(-wM/2, 0, hM/2), label: 'Z', color: 0xffff00 },
+        { pos: new THREE.Vector3(-wM/2 - 0.5, 0, -hM/2 - 0.5), label: 'W' },
+        { pos: new THREE.Vector3(wM/2 + 0.5, 0, -hM/2 - 0.5), label: 'X' },
+        { pos: new THREE.Vector3(wM/2 + 0.5, 0, hM/2 + 0.5), label: 'Y' },
+        { pos: new THREE.Vector3(-wM/2 - 0.5, 0, hM/2 + 0.5), label: 'Z' },
       ];
       
-      corners.forEach(({ pos, label, color }) => {
-        const sphereGeo = new THREE.SphereGeometry(0.15, 16, 16);
-        const sphereMat = new THREE.MeshBasicMaterial({ color });
-        const sphere = new THREE.Mesh(sphereGeo, sphereMat);
-        sphere.position.copy(mesh.position).add(pos);
-        sphere.position.y = 0.15;
-        scene.add(sphere);
+      corners.forEach(({ pos, label }) => {
+        const planeGeo = new THREE.PlaneGeometry(0.6, 0.6);
+        const planeMat = new THREE.MeshBasicMaterial({ map: createTextCanvas(label), transparent: true });
+        const plane = new THREE.Mesh(planeGeo, planeMat);
+        plane.position.copy(mesh.position).add(pos);
+        plane.position.y = 0.3;
+        plane.lookAt(camera.position);
+        scene.add(plane);
       });
 
       // Label plane (small flat box on top)
