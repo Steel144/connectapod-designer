@@ -521,7 +521,7 @@ export default function View3D({ placedModules, walls }) {
       const windowCode = wall.type?.split('/')[0];
       const windowSpecs = getWindowConfig(windowCode);
       
-      if (windowSpecs && windowSpecs.length > 0) {
+      if (windowSpecs && windowSpecs.length > 0 && mesh) {
         const isHorizontal = wall.orientation === "horizontal";
         
         windowSpecs.forEach((spec) => {
