@@ -512,11 +512,11 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                 <X size={10} className="text-red-400" />
               </button>
 
-              {/* WXYZ side labels */}
-              <span className="absolute text-[9px] font-bold text-red-500" style={{ left: '50%', top: '2px', transform: 'translateX(-50%)' }}>W</span>
-              <span className="absolute text-[9px] font-bold text-green-500" style={{ right: '2px', top: '50%', transform: 'translateY(-50%)' }}>X</span>
-              <span className="absolute text-[9px] font-bold text-blue-500" style={{ left: '50%', bottom: '2px', transform: 'translateX(-50%)' }}>Y</span>
-              <span className="absolute text-[9px] font-bold text-yellow-600" style={{ left: '2px', top: '50%', transform: 'translateY(-50%)' }}>Z</span>
+              {/* WXYZ side labels - only on exterior */}
+              {!hasModAbove && <span className="absolute text-[9px] font-bold text-red-500" style={{ left: '50%', top: '-12px', transform: 'translateX(-50%)' }}>W</span>}
+              {!hasModRight && <span className="absolute text-[9px] font-bold text-green-500" style={{ right: '-12px', top: '50%', transform: 'translateY(-50%)' }}>X</span>}
+              {!hasModBelow && <span className="absolute text-[9px] font-bold text-blue-500" style={{ left: '50%', bottom: '-12px', transform: 'translateX(-50%)' }}>Y</span>}
+              {!hasModLeft && <span className="absolute text-[9px] font-bold text-yellow-600" style={{ left: '-12px', top: '50%', transform: 'translateY(-50%)' }}>Z</span>}
               </div>
               );
               })}
