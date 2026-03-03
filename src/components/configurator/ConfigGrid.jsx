@@ -340,11 +340,12 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
        }
 
       if (snapped) {
-        const wallWithFace = { ...wallTemplate, length: snapped.length, face: snapped.face };
-        if (onPlaceWall) onPlaceWall(wallWithFace, snapped.x, snapped.y);
-      } else {
-        if (onPlaceWall) onPlaceWall(wallTemplate, exactX, exactY);
-      }
+         const wallWithFace = { ...wallTemplate, length: snapped.length, face: snapped.face };
+         if (snapped.rotation) wallWithFace.rotation = snapped.rotation;
+         if (onPlaceWall) onPlaceWall(wallWithFace, snapped.x, snapped.y);
+       } else {
+         if (onPlaceWall) onPlaceWall(wallTemplate, exactX, exactY);
+       }
       return;
     }
   };
