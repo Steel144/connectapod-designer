@@ -33,6 +33,7 @@ export default function Configurator() {
   const [draggingPanel, setDraggingPanel] = useState(null);
   const [summaryPos, setSummaryPos] = useState({ x: 16, y: 310 });
   const [draggingSummary, setDraggingSummary] = useState(null);
+  const [summaryCollapsed, setSummaryCollapsed] = useState(false);
   const queryClient = useQueryClient();
 
   const { data: designs = [] } = useQuery({
