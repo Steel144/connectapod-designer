@@ -159,43 +159,6 @@ export default function View3D({ placedModules, walls }) {
       );
       scene.add(mesh);
 
-      // Gable roof (pitched roof along module width, ridge runs full depth)
-      const roofVertices = new Float32Array([
-        // 0: left base front
-        -wM/2, 0, -hM/2,
-        // 1: left base back
-        -wM/2, 0, hM/2,
-        // 2: ridge front (moved to right side)
-        wM/2, GABLE_HEIGHT, -hM/2,
-        // 3: ridge back (moved to right side)
-        wM/2, GABLE_HEIGHT, hM/2,
-        // 4: right base front
-        wM/2, 0, -hM/2,
-        // 5: right base back
-        wM/2, 0, hM/2,
-      ]);
-      const roofIndices = new Uint32Array([
-        // Sloped left face
-        0, 2, 1, 1, 2, 3,
-        // Right vertical face
-        2, 4, 5, 2, 5, 3,
-        // Front triangle
-        0, 4, 2,
-        // Back triangle
-        1, 5, 3,
-      ]);
-      const roofGeo = new THREE.BufferGeometry();
-      roofGeo.setAttribute('position', new THREE.BufferAttribute(roofVertices, 3));
-      roofGeo.setIndex(new THREE.BufferAttribute(roofIndices, 1));
-      roofGeo.computeVertexNormals();
-      
-      const roofMat = new THREE.MeshLambertMaterial({ color: 0x1a1a1a });
-      const roof = new THREE.Mesh(roofGeo, roofMat);
-      roof.castShadow = true;
-      roof.receiveShadow = true;
-      roof.position.set(mesh.position.x, MODULE_HEIGHT, mesh.position.z);
-      scene.add(roof);
-
       // Outline
       const edges = new THREE.EdgesGeometry(geo);
       const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0xF15A22, linewidth: 1 }));
