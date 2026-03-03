@@ -329,7 +329,7 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
     }
 
     const context = selectedWall ? `Face ${face}` : `${chassis} module`;
-    const reason = `${context} · ${faceWidthM}m · ${filtered.length} compatible wall${filtered.length !== 1 ? "s" : ""}`;
+    const reason = `${context} · ${faceWidthM.toFixed(1)}m wide · ${filtered.length} wall${filtered.length !== 1 ? "s" : ""}`;
     return { compatibleWalls: filtered, filterReason: reason };
   }, [selectedWall, selectedModule, placedModules]);
 
