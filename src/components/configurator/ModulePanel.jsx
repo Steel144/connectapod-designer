@@ -166,8 +166,8 @@ const GROUP_ICONS = Object.fromEntries(
 
 const WALL_TYPES = [
   // 0.6m & 1.2m Module Walls
-  { type: "W000/Y000",  label: "600mm Standard Wall",              mpCode: "W000/Y000",   width: 0.6, orientation: "horizontal", length: 1, thickness: 0.31, elevationImage: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69a55c0c222e61cb3fbc417c/619a194a4_generated_image.png" },
-  { type: "W001/Y001",  label: "1200mm Standard Wall",             mpCode: "W001/Y001",   width: 1.2, orientation: "horizontal", length: 2, thickness: 0.31, elevationImage: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69a55c0c222e61cb3fbc417c/5f2325862_generated_image.png" },
+  { type: "W000/Y000",  label: "600mm Standard Wall",              mpCode: "W000/Y000",   width: 0.6, orientation: "horizontal", length: 1, thickness: 0.31 },
+  { type: "W001/Y001",  label: "1200mm Standard Wall",             mpCode: "W001/Y001",   width: 1.2, orientation: "horizontal", length: 2, thickness: 0.31 },
   { type: "WS003/YS003",label: "1200mm Wall – 1 Window (620×1520)",mpCode: "WS003/YS003", width: 1.2, orientation: "horizontal", length: 2, thickness: 0.31 },
   { type: "W004/Y004",  label: "1200mm Wall – Window 690×1520",    mpCode: "W004/Y004",   width: 1.2, orientation: "horizontal", length: 2, thickness: 0.31 },
   { type: "W005/Y005",  label: "1200mm Wall – 2 Windows (620×1220)",mpCode: "W005/Y005",  width: 1.2, orientation: "horizontal", length: 2, thickness: 0.31 },
