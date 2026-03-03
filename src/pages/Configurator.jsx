@@ -327,6 +327,7 @@ export default function Configurator() {
           onRemoveWall={handleRemoveWall}
           onMoveWall={handleMoveWall}
           onWallSelect={setSelectedWall}
+          onModuleSelect={setSelectedModule}
           hidden={viewMode === "3d"}
         />
       </div>
