@@ -96,8 +96,8 @@ function createStandingSeamTexture(width = 512, height = 512) {
   ctx.fillRect(0, 0, width, height);
   
   // Vertical seams only: 40mm wide at 600mm spacing, centred on surface
-  const seamPixelWidth = Math.max(1, Math.round(width * 0.04 / 3.6)); // 40mm seam width
-  const seamSpacingPixels = Math.round(width * 0.6 / 3.6); // 600mm spacing
+  const seamPixelWidth = Math.max(1, Math.round(width * 0.04 / 3.0)); // 40mm seam width (3m module width)
+  const seamSpacingPixels = Math.round(width * 0.6 / 3.0); // 600mm spacing for 3m width = 6 seams
   const startOffset = (width - (Math.floor(width / seamSpacingPixels) * seamSpacingPixels)) / 2; // Centre seams
   
   ctx.fillStyle = '#1a1a1a';
