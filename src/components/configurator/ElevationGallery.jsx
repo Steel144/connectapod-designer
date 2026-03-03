@@ -103,8 +103,8 @@ export default function ElevationGallery({ walls }) {
           </div>
         )}
 
-        {/* Side elevations (Z and X) */}
-        <div className="grid grid-cols-2 gap-6 mb-12">
+            {/* Side elevations (Z and X) */}
+            <div className="grid grid-cols-2 gap-6 mb-12">
           {wallsByFace.Z.length > 0 && (
             <div>
               <h3 className="text-sm font-semibold text-gray-700 mb-3 uppercase tracking-wide">Left Elevation (Z)</h3>
