@@ -38,8 +38,13 @@ export default function ElevationGallery({ walls }) {
               />
             </div>
             <div className="p-2 bg-gray-50">
-              <p className="text-gray-900 font-semibold text-xs truncate">{wall.label || wall.type}</p>
-              <p className="text-gray-500 text-[10px] mt-0.5">Face {wall.face || 'N/A'} · {wall.type}</p>
+              <div className="flex items-center justify-between">
+                <p className="text-gray-900 font-semibold text-xs truncate">{wall.label || wall.type}</p>
+                <span className="text-[11px] font-bold text-[#F15A22] bg-white px-1.5 py-0.5 rounded">
+                  {wall.face || 'N/A'}
+                </span>
+              </div>
+              <p className="text-gray-500 text-[10px] mt-1">{wall.type}</p>
             </div>
           </div>
         ))}
