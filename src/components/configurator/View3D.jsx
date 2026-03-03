@@ -419,44 +419,55 @@ export default function View3D({ placedModules, walls }) {
         const roofDepth = hM + 0.37;
         const roofPeakH = (roofDepth / 2) * Math.tan(pitchAngle);
         
-        // Create combined wall + gable geometry
+        // Create combined wall + gable geometry with proper trapezoid shape
         const vertices = new Float32Array([
-          // Wall base (4 corners)
-          -wM/2, 0, -roofDepth/2,        // 0: bottom-left
-          wM/2, 0, -roofDepth/2,         // 1: bottom-right
-          wM/2, WALL_HEIGHT, -roofDepth/2, // 2: top-right
-          -wM/2, WALL_HEIGHT, -roofDepth/2, // 3: top-left
-          -wM/2, 0, roofDepth/2,         // 4: bottom-left-back
-          wM/2, 0, roofDepth/2,          // 5: bottom-right-back
-          wM/2, WALL_HEIGHT, roofDepth/2,  // 6: top-right-back
-          -wM/2, WALL_HEIGHT, roofDepth/2, // 7: top-left-back
-          // Gable peaks
-          -wM/2, WALL_HEIGHT + roofPeakH, 0, // 8: left peak
-          wM/2, WALL_HEIGHT + roofPeakH, 0,  // 9: right peak
+          // Front wall + gable trapezoid
+          -wM/2, 0, 0,              // 0: bottom-left
+          wM/2, 0, 0,               // 1: bottom-right
+          wM/2, WALL_HEIGHT, 0,     // 2: wall-top-right
+          -wM/2, WALL_HEIGHT, 0,    // 3: wall-top-left
+          wM/2, WALL_HEIGHT + roofPeakH, 0, // 4: peak-right
+          -wM/2, WALL_HEIGHT + roofPeakH, 0, // 5: peak-left
+          
+          // Back wall + gable trapezoid
+          -wM/2, 0, roofDepth,              // 6: bottom-left-back
+          wM/2, 0, roofDepth,               // 7: bottom-right-back
+          wM/2, WALL_HEIGHT, roofDepth,     // 8: wall-top-right-back
+          -wM/2, WALL_HEIGHT, roofDepth,    // 9: wall-top-left-back
+          wM/2, WALL_HEIGHT + roofPeakH, roofDepth/2, // 10: peak-right-back
+          -wM/2, WALL_HEIGHT + roofPeakH, roofDepth/2, // 11: peak-left-back
         ]);
         
         const uvs = new Float32Array([
           0, 0,    // 0
           1, 0,    // 1
-          1, 0.7,  // 2
-          0, 0.7,  // 3
-          0, 0,    // 4 (same as 0 for back face)
-          1, 0,    // 5 (same as 1 for back face)
-          1, 0.7,  // 6
-          0, 0.7,  // 7
-          0.5, 1,  // 8 peak
-          0.5, 1,  // 9 peak
+          1, 0.65, // 2
+          0, 0.65, // 3
+          1, 1,    // 4
+          0, 1,    // 5
+          0, 0,    // 6
+          1, 0,    // 7
+          1, 0.65, // 8
+          0, 0.65, // 9
+          1, 1,    // 10
+          0, 1,    // 11
         ]);
         
         const indices = new Uint32Array([
-          // Front face (with gable)
-          0, 2, 3, 0, 1, 2, // wall rect
-          3, 2, 8, 2, 9, 8, // right gable triangle
-          3, 8, 9, 3, 9, 2, // left gable triangle (flipped for proper winding)
-          // Back face (with gable)
-          4, 7, 6, 4, 6, 5, // wall rect
-          7, 8, 9, 7, 9, 6, // right gable
-          7, 9, 8, 7, 8, 4, // left gable
+          // Front face wall
+          0, 2, 3, 0, 1, 2,
+          // Front gable
+          3, 2, 4, 3, 4, 5,
+          // Back face wall
+          6, 9, 8, 6, 8, 7,
+          // Back gable
+          9, 11, 10, 9, 10, 8,
+          // Side faces (left)
+          0, 3, 9, 0, 9, 6,
+          3, 5, 11, 3, 11, 9,
+          // Side faces (right)
+          1, 7, 8, 1, 8, 2,
+          2, 8, 10, 2, 10, 4,
         ]);
         
         const gableWallGeo = new THREE.BufferGeometry();
@@ -474,7 +485,11 @@ export default function View3D({ placedModules, walls }) {
         const gableWallMesh = new THREE.Mesh(gableWallGeo, gableWallMat);
         gableWallMesh.castShadow = true;
         gableWallMesh.receiveShadow = true;
-        gableWallMesh.position.copy(mesh.position);
+        gableWallMesh.position.set(
+          mesh.position.x,
+          mesh.position.y - WALL_HEIGHT / 2,
+          mesh.position.z - (roofDepth / 2) / 2
+        );
         scene.add(gableWallMesh);
         
         // Remove the plain wall mesh for end walls with images
