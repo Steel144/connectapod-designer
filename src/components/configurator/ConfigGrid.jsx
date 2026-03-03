@@ -188,48 +188,55 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
       const rawY = draggingWall.cursorY - rect.top - draggingWall.offsetY;
       const exactX = rawX / CELL_W;
       const exactY = rawY / CELL_H;
-      const SNAP_THRESHOLD = 1.5; // cells
       
-      let snapped = null;
-      const wall = draggingWall.wall;
+      // Only snap if the wall moved significantly (more than 0.1 cells)
+      const movedX = Math.abs(exactX - draggingWall.wall.x);
+      const movedY = Math.abs(exactY - draggingWall.wall.y);
+      const hasMoved = movedX > 0.1 || movedY > 0.1;
+      
+      if (hasMoved) {
+        const SNAP_THRESHOLD = 1.5; // cells
+        let snapped = null;
+        const wall = draggingWall.wall;
 
-      // Snap to module faces
-      const WALL_OFFSET = 0.308; // 185mm offset
-      if (wall.orientation === "horizontal") {
-        for (const mod of placedModules) {
-          const distToYFace = Math.abs(exactY - (mod.y + mod.h));
-          const distToWFace = Math.abs(exactY - mod.y);
+        // Snap to module faces
+        const WALL_OFFSET = 0.308; // 185mm offset
+        if (wall.orientation === "horizontal") {
+          for (const mod of placedModules) {
+            const distToYFace = Math.abs(exactY - (mod.y + mod.h));
+            const distToWFace = Math.abs(exactY - mod.y);
 
-          if (distToYFace <= SNAP_THRESHOLD && exactX >= mod.x - SNAP_THRESHOLD && exactX <= mod.x + mod.w + SNAP_THRESHOLD) {
-             snapped = { x: mod.x, y: mod.y + mod.h, length: mod.w, face: "Y" };
-             break;
-           }
-           if (distToWFace <= SNAP_THRESHOLD && exactX >= mod.x - SNAP_THRESHOLD && exactX <= mod.x + mod.w + SNAP_THRESHOLD) {
-             snapped = { x: mod.x, y: mod.y - WALL_OFFSET, length: mod.w, face: "W", rotation: 180 };
-             break;
-           }
-        }
-      } else {
-        for (const mod of placedModules) {
-          if (Math.abs(exactX - mod.x) <= SNAP_THRESHOLD && exactY >= mod.y - SNAP_THRESHOLD && exactY <= mod.y + mod.h + SNAP_THRESHOLD) {
-            snapped = { x: mod.x - WALL_OFFSET, y: mod.y, length: mod.h, face: "Z" };
-            break;
+            if (distToYFace <= SNAP_THRESHOLD && exactX >= mod.x - SNAP_THRESHOLD && exactX <= mod.x + mod.w + SNAP_THRESHOLD) {
+               snapped = { x: mod.x, y: mod.y + mod.h, length: mod.w, face: "Y" };
+               break;
+             }
+             if (distToWFace <= SNAP_THRESHOLD && exactX >= mod.x - SNAP_THRESHOLD && exactX <= mod.x + mod.w + SNAP_THRESHOLD) {
+               snapped = { x: mod.x, y: mod.y - WALL_OFFSET, length: mod.w, face: "W", rotation: 180 };
+               break;
+             }
           }
-          if (Math.abs(exactX - (mod.x + mod.w)) <= SNAP_THRESHOLD && exactY >= mod.y - SNAP_THRESHOLD && exactY <= mod.y + mod.h + SNAP_THRESHOLD) {
-            snapped = { x: mod.x + mod.w + WALL_OFFSET, y: mod.y, length: mod.h, face: "X" };
-            break;
+        } else {
+          for (const mod of placedModules) {
+            if (Math.abs(exactX - mod.x) <= SNAP_THRESHOLD && exactY >= mod.y - SNAP_THRESHOLD && exactY <= mod.y + mod.h + SNAP_THRESHOLD) {
+              snapped = { x: mod.x - WALL_OFFSET, y: mod.y, length: mod.h, face: "Z" };
+              break;
+            }
+            if (Math.abs(exactX - (mod.x + mod.w)) <= SNAP_THRESHOLD && exactY >= mod.y - SNAP_THRESHOLD && exactY <= mod.y + mod.h + SNAP_THRESHOLD) {
+              snapped = { x: mod.x + mod.w + WALL_OFFSET, y: mod.y, length: mod.h, face: "X" };
+              break;
+            }
           }
         }
-      }
 
-      if (snapped) {
-        const wallUpdate = { length: snapped.length, face: snapped.face };
-        if (snapped.rotation) wallUpdate.rotation = snapped.rotation;
-        if (onMoveWall) onMoveWall(wall.id, snapped.x, snapped.y, wallUpdate);
-      } else {
-        const newX = Math.max(0, exactX);
-        const newY = Math.max(0, exactY);
-        if (onMoveWall) onMoveWall(wall.id, newX, newY);
+        if (snapped) {
+          const wallUpdate = { length: snapped.length, face: snapped.face };
+          if (snapped.rotation) wallUpdate.rotation = snapped.rotation;
+          if (onMoveWall) onMoveWall(wall.id, snapped.x, snapped.y, wallUpdate);
+        } else {
+          const newX = Math.max(0, exactX);
+          const newY = Math.max(0, exactY);
+          if (onMoveWall) onMoveWall(wall.id, newX, newY);
+        }
       }
       setDraggingWall(null);
       return;
