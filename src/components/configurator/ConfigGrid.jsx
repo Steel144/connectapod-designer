@@ -295,7 +295,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
       }
 
       if (snapped) {
-        if (onPlaceWall) onPlaceWall({ ...wallTemplate, length: snapped.length, face: snapped.face }, snapped.x, snapped.y);
+        if (onPlaceWall) onPlaceWall({ ...wallTemplate, ...snapped }, snapped.x, snapped.y);
       } else {
         if (onPlaceWall) onPlaceWall(wallTemplate, x, y);
       }
