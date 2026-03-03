@@ -265,6 +265,16 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
     const deltaX = Math.round((dragging.cursorX - (rect.left + dragging.mod.x * CELL_W + dragging.offsetX)) / CELL_W);
     const deltaY = Math.round((dragging.cursorY - (rect.top + dragging.mod.y * CELL_H + dragging.offsetY)) / CELL_H);
 
+    // Check if it was a click (no movement) on already-selected module
+    const movedSignificantly = Math.abs(deltaX) > 0 || Math.abs(deltaY) > 0;
+    if (!movedSignificantly && dragging.wasSelected) {
+      // Deselect if clicked without dragging
+      setSelected(new Set());
+      setSelectedModId(null);
+      setDragging(null);
+      return;
+    }
+
     // Move all selected modules by same delta
     dragging.selectedIds.forEach((id) => {
       const mod = placedModules.find((m) => m.id === id);
