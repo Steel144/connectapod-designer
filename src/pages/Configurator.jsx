@@ -363,17 +363,27 @@ export default function Configurator() {
            style={{ left: `${summaryPos.x}px`, top: `${summaryPos.y}px`, cursor: draggingSummary ? "grabbing" : "default" }}
          >
            <div className="bg-white border border-gray-200 shadow-xl overflow-hidden" onMouseDown={handleSummaryMouseDown}>
-             <div className="px-4 py-3 border-b border-gray-100 cursor-grab active:cursor-grabbing">
+             <div className="px-4 py-3 border-b border-gray-100 cursor-grab active:cursor-grabbing flex items-center justify-between">
                <p className="text-xs font-semibold text-gray-800">Design Summary</p>
+               <button
+                 onMouseDown={e => e.stopPropagation()}
+                 onClick={() => setSummaryCollapsed(c => !c)}
+                 className="text-gray-400 hover:text-[#F15A22] transition-colors text-xs leading-none"
+                 title={summaryCollapsed ? "Expand" : "Minimise"}
+               >
+                 {summaryCollapsed ? "▲" : "▼"}
+               </button>
              </div>
-             <div className="p-4">
-               <DesignSummary
-                 placedModules={placedModules}
-                 onSave={() => setSaveModalOpen(true)}
-                 onClear={handleClear}
-                 isSaving={saveMutation.isPending}
-               />
-             </div>
+             {!summaryCollapsed && (
+               <div className="p-4">
+                 <DesignSummary
+                   placedModules={placedModules}
+                   onSave={() => setSaveModalOpen(true)}
+                   onClear={handleClear}
+                   isSaving={saveMutation.isPending}
+                 />
+               </div>
+             )}
            </div>
          </div>
        )}
