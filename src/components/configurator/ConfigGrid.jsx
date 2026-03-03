@@ -183,12 +183,13 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
 
   const handleDragOver = (e) => {
     e.preventDefault();
+    e.stopPropagation();
     e.dataTransfer.dropEffect = "copy";
   };
 
   const handleDrop = (e) => {
     e.preventDefault();
-    console.log("DROP fired, types:", [...e.dataTransfer.types], "items:", e.dataTransfer.items.length);
+    e.stopPropagation();
 
     const modType = e.dataTransfer.getData("moduleType");
     console.log("modType:", modType);
