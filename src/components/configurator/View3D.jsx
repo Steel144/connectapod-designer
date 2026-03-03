@@ -113,6 +113,42 @@ function createStandingSeamTexture(width = 512, height = 512) {
   return texture;
 }
 
+// Create timber weatherboard texture (horizontal boards with grain)
+function createWeatherboardTexture(width = 512, height = 512) {
+  const canvas = document.createElement('canvas');
+  canvas.width = width;
+  canvas.height = height;
+  const ctx = canvas.getContext('2d');
+  
+  // Base timber color
+  ctx.fillStyle = '#8B7355';
+  ctx.fillRect(0, 0, width, height);
+  
+  // Horizontal weatherboards
+  const boardHeight = 16;
+  for (let y = 0; y < height; y += boardHeight) {
+    // Vary board color slightly
+    const colorVariation = Math.random() > 0.5 ? '#A0826D' : '#7A6347';
+    ctx.fillStyle = colorVariation;
+    ctx.fillRect(0, y, width, boardHeight * 0.9);
+    
+    // Board shadow line
+    ctx.strokeStyle = '#6B5344';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(0, y + boardHeight * 0.95);
+    ctx.lineTo(width, y + boardHeight * 0.95);
+    ctx.stroke();
+  }
+  
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.magFilter = THREE.LinearFilter;
+  texture.minFilter = THREE.LinearFilter;
+  texture.wrapS = THREE.RepeatWrapping;
+  texture.wrapT = THREE.RepeatWrapping;
+  return texture;
+}
+
 export default function View3D({ placedModules, walls }) {
   const mountRef = useRef(null);
 
