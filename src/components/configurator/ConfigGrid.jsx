@@ -510,6 +510,13 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
               </button>
               <button
                 onMouseDown={(e) => e.stopPropagation()}
+                onClick={() => onFlip?.(mod.id)}
+                className="absolute top-0.5 left-7 opacity-0 group-hover:opacity-100 transition-opacity bg-white rounded-full p-0.5 shadow-sm hover:bg-orange-50 z-10"
+              >
+                <FlipHorizontal size={10} className="text-[#F15A22]" />
+              </button>
+              <button
+                onMouseDown={(e) => e.stopPropagation()}
                 onClick={() => onRemove(mod.id)}
                 className="absolute top-0.5 right-0.5 opacity-0 group-hover:opacity-100 transition-opacity bg-white rounded-full p-0.5 shadow-sm hover:bg-red-50 z-10"
               >
