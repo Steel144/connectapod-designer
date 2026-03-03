@@ -399,15 +399,16 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
        }
 
       if (snapped) {
+         const WALL_OFFSET = 0.308;
          // Check if the snapped module is selected
          const snappedModule = placedModules.find(mod => {
            const isLongFace = wallTemplate.orientation === "horizontal";
            if (isLongFace) {
-             return (snapped.face === "Y" && snapped.y === mod.y + mod.h) ||
-                    (snapped.face === "W" && Math.abs(snapped.y - (mod.y - 0.308)) < 0.01);
+             return (snapped.face === "Y" && Math.abs(snapped.x - (mod.x - WALL_OFFSET)) < 0.01 && snapped.y === mod.y + mod.h) ||
+                    (snapped.face === "W" && Math.abs(snapped.x - (mod.x - WALL_OFFSET)) < 0.01 && Math.abs(snapped.y - (mod.y - WALL_OFFSET)) < 0.01);
            } else {
-             return (snapped.face === "Z" && snapped.y === mod.y) ||
-                    (snapped.face === "X" && snapped.y === mod.y);
+             return (snapped.face === "Z" && snapped.x === mod.x && snapped.y === mod.y) ||
+                    (snapped.face === "X" && Math.abs(snapped.x - (mod.x + mod.w - 0.31)) < 0.01 && snapped.y === mod.y);
            }
          });
 
