@@ -116,8 +116,35 @@ export default function Configurator() {
 
   const handleMove = (id, x, y) => {
     pushHistory(placedModules, walls);
+    const oldMod = placedModules.find((m) => m.id === id);
+    if (!oldMod) return;
+    
+    const deltaX = x - oldMod.x;
+    const deltaY = y - oldMod.y;
+    
+    // Move module
     setPlacedModules((prev) =>
       prev.map((m) => (m.id === id ? { ...m, x, y } : m))
+    );
+    
+    // Move attached walls (W/Y on long faces, Z/X on end faces)
+    setWalls((prev) =>
+      prev.map((w) => {
+        const isLongFace = w.face === "W" || w.face === "Y";
+        
+        if (isLongFace) {
+          // Long face: wall x aligns with module x, y is module y or y+h
+          if (w.x === oldMod.x && (w.y === oldMod.y || w.y === oldMod.y + oldMod.h)) {
+            return { ...w, x: w.x + deltaX, y: w.y + deltaY };
+          }
+        } else {
+          // End face: wall y aligns with module y, x is module x or x+w
+          if (w.y === oldMod.y && (w.x === oldMod.x || w.x === oldMod.x + oldMod.w)) {
+            return { ...w, x: w.x + deltaX, y: w.y + deltaY };
+          }
+        }
+        return w;
+      })
     );
   };
 
