@@ -235,6 +235,15 @@ export default function Configurator() {
           <span className="ml-2 text-xs text-gray-400">Design Studio</span>
         </div>
         <div className="flex items-center gap-2">
+          <button
+            onClick={handleUndo}
+            disabled={history.length === 0}
+            title="Undo (Ctrl+Z)"
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-gray-600 bg-white border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22] disabled:opacity-30 transition-all"
+          >
+            <Undo2 size={13} />
+            Undo {history.length > 0 && <span className="text-[10px] text-gray-400">({history.length})</span>}
+          </button>
           <Link
             to={createPageUrl("Catalogue")}
             className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-gray-600 hover:text-[#F15A22] border border-gray-200 bg-white hover:border-[#F15A22] transition-all"
