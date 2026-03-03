@@ -84,7 +84,7 @@ const GROUP_COLORS = {
   deck: 0xf5f0c8,
 };
 
-// Create standing seam metal texture (40x40mm seams at 600mm spacing)
+// Create standing seam metal texture (vertical 40mm seams at 600mm spacing, centred)
 function createStandingSeamTexture(width = 512, height = 512) {
   const canvas = document.createElement('canvas');
   canvas.width = width;
@@ -95,22 +95,14 @@ function createStandingSeamTexture(width = 512, height = 512) {
   ctx.fillStyle = '#2a2a2a';
   ctx.fillRect(0, 0, width, height);
   
-  // Vertical seams: 40mm wide at 600mm spacing
-  // Texture pixels map to actual surface, so scale proportionally
-  const seamPixelWidth = Math.max(1, Math.round(width * 0.04 / 3.6)); // 40mm out of ~3.6m visible
+  // Vertical seams only: 40mm wide at 600mm spacing, centred on surface
+  const seamPixelWidth = Math.max(1, Math.round(width * 0.04 / 3.6)); // 40mm seam width
   const seamSpacingPixels = Math.round(width * 0.6 / 3.6); // 600mm spacing
+  const startOffset = (width - (Math.floor(width / seamSpacingPixels) * seamSpacingPixels)) / 2; // Centre seams
   
   ctx.fillStyle = '#1a1a1a';
-  for (let x = seamSpacingPixels / 2; x < width; x += seamSpacingPixels) {
+  for (let x = startOffset; x < width; x += seamSpacingPixels) {
     ctx.fillRect(x - seamPixelWidth / 2, 0, seamPixelWidth, height);
-  }
-  
-  // Horizontal seams: 40mm tall at 600mm spacing
-  const seamPixelHeight = Math.max(1, Math.round(height * 0.04 / 2.8));
-  const seamSpacingHeightPixels = Math.round(height * 0.6 / 2.8);
-  
-  for (let y = seamSpacingHeightPixels / 2; y < height; y += seamSpacingHeightPixels) {
-    ctx.fillRect(0, y - seamPixelHeight / 2, width, seamPixelHeight);
   }
   
   const texture = new THREE.CanvasTexture(canvas);
