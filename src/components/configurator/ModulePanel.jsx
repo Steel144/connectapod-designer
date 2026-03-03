@@ -388,7 +388,7 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
             </svg>
           </span>
           <span className="flex-1 text-sm font-semibold text-gray-800">
-            Walls {filterWalls && <span className="text-[10px] font-normal text-[#F15A22]">· filtered to face {selectedWall.face}</span>}
+            Walls {(selectedWall || selectedModule) && <span className="text-[10px] font-normal text-[#F15A22]">· filtered</span>}
           </span>
           <span className="text-gray-400 shrink-0">
             {openGroup === "walls" ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
