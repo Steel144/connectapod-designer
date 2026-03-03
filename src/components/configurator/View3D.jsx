@@ -382,36 +382,39 @@ export default function View3D({ placedModules, walls }) {
       const wM = wall.orientation === "horizontal" ? wall.length * CELL_M : thickness;
       const hM = wall.orientation === "vertical" ? wall.length * CELL_M : thickness;
 
-      // Use elevation image if available, otherwise use generated texture
-      let material;
-      if (wall.elevationImage) {
-        const textureLoader = new THREE.TextureLoader();
-        const texture = textureLoader.load(wall.elevationImage);
-        texture.magFilter = THREE.LinearFilter;
-        texture.minFilter = THREE.LinearFilter;
-        material = new THREE.MeshLambertMaterial({ map: texture, color: 0xffffff });
-      } else {
-        const isGableEnd = wall.face === 'Z' || wall.face === 'X';
-        const texture = isGableEnd ? createWeatherboardTexture() : createStandingSeamTexture();
-        material = new THREE.MeshLambertMaterial({ map: texture, color: 0xffffff });
-      }
+      // Skip plain wall mesh for end walls with elevation images (handled below)
+      if (!((wall.face === 'Z' || wall.face === 'X') && wall.elevationImage)) {
+        // Use elevation image if available, otherwise use generated texture
+        let material;
+        if (wall.elevationImage) {
+          const textureLoader = new THREE.TextureLoader();
+          const texture = textureLoader.load(wall.elevationImage);
+          texture.magFilter = THREE.LinearFilter;
+          texture.minFilter = THREE.LinearFilter;
+          material = new THREE.MeshLambertMaterial({ map: texture, color: 0xffffff });
+        } else {
+          const isGableEnd = wall.face === 'Z' || wall.face === 'X';
+          const texture = isGableEnd ? createWeatherboardTexture() : createStandingSeamTexture();
+          material = new THREE.MeshLambertMaterial({ map: texture, color: 0xffffff });
+        }
 
-      const geo = new THREE.BoxGeometry(wM, WALL_HEIGHT, hM);
-      const mesh = new THREE.Mesh(geo, material);
-      mesh.castShadow = true;
-      mesh.receiveShadow = true;
-      mesh.position.set(
-        wall.x * CELL_M + wM / 2,
-        WALL_HEIGHT / 2,
-        wall.y * CELL_M + hM / 2
-      );
-      
-      // Rotate W walls (W face) 180 degrees
-      if (wall.face === 'W') {
-        mesh.rotation.y = Math.PI;
+        const geo = new THREE.BoxGeometry(wM, WALL_HEIGHT, hM);
+        const mesh = new THREE.Mesh(geo, material);
+        mesh.castShadow = true;
+        mesh.receiveShadow = true;
+        mesh.position.set(
+          wall.x * CELL_M + wM / 2,
+          WALL_HEIGHT / 2,
+          wall.y * CELL_M + hM / 2
+        );
+        
+        // Rotate W walls (W face) 180 degrees
+        if (wall.face === 'W') {
+          mesh.rotation.y = Math.PI;
+        }
+        
+        scene.add(mesh);
       }
-      
-      scene.add(mesh);
 
       // Add gable to end walls (Z, X faces) with image stretched across entire wall+gable
       if ((wall.face === 'Z' || wall.face === 'X') && wall.elevationImage) {
