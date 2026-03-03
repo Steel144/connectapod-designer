@@ -14,40 +14,108 @@ export default function ElevationGallery({ walls }) {
     );
   }
 
-  // Sort walls by face order (W, Y, Z, X) then by position
-  const faceOrder = { W: 0, Y: 1, Z: 2, X: 3 };
-  const sortedWalls = [...wallsWithElevations].sort((a, b) => {
-    const faceA = faceOrder[a.face] ?? 999;
-    const faceB = faceOrder[b.face] ?? 999;
-    if (faceA !== faceB) return faceA - faceB;
-    // Sort by y then x position within same face
-    if (a.y !== b.y) return a.y - b.y;
-    return a.x - b.x;
+  // Group walls by face and sort
+  const wallsByFace = {
+    W: [],
+    Y: [],
+    Z: [],
+    X: []
+  };
+  
+  wallsWithElevations.forEach((wall) => {
+    if (wallsByFace[wall.face]) {
+      wallsByFace[wall.face].push(wall);
+    }
+  });
+  
+  // Sort each face's walls by position
+  Object.keys(wallsByFace).forEach((face) => {
+    wallsByFace[face].sort((a, b) => {
+      if (face === 'W' || face === 'Y') {
+        // Front/back: sort by x
+        return a.x - b.x;
+      } else {
+        // Side: sort by y
+        return a.y - b.y;
+      }
+    });
   });
 
   return (
-    <div className="w-full h-full bg-white overflow-auto p-3 flex items-center justify-center">
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 max-w-4xl">
-        {sortedWalls.map((wall) => (
-          <div key={wall.id} className="bg-white border border-gray-200 rounded overflow-hidden shadow hover:shadow-lg transition-shadow">
-            <div className="aspect-square overflow-hidden bg-gray-100 flex items-center justify-center">
-              <img
-                src={wall.elevationImage}
-                alt={`Wall ${wall.type} - Face ${wall.face}`}
-                className="w-full h-full object-contain"
-              />
-            </div>
-            <div className="p-2 bg-gray-50">
-              <div className="flex items-center justify-between">
-                <p className="text-gray-900 font-semibold text-xs truncate">{wall.label || wall.type}</p>
-                <span className="text-[11px] font-bold text-[#F15A22] bg-white px-1.5 py-0.5 rounded">
-                  {wall.face || 'N/A'}
-                </span>
-              </div>
-              <p className="text-gray-500 text-[10px] mt-1">{wall.type}</p>
+    <div className="w-full h-full bg-gray-50 overflow-auto">
+      <div className="p-6 max-w-6xl mx-auto">
+        {/* Front elevation (W) */}
+        {wallsByFace.W.length > 0 && (
+          <div className="mb-12">
+            <h3 className="text-sm font-semibold text-gray-700 mb-3 uppercase tracking-wide">Front Elevation (W)</h3>
+            <div className="flex gap-1 bg-white p-1 rounded border border-gray-200">
+              {wallsByFace.W.map((wall) => (
+                <div key={wall.id} className="flex-1 bg-gray-100 rounded overflow-hidden">
+                  <img
+                    src={wall.elevationImage}
+                    alt={`Wall ${wall.type}`}
+                    className="w-full h-auto object-contain max-h-96"
+                  />
+                </div>
+              ))}
             </div>
           </div>
-        ))}
+        )}
+
+        {/* Side elevations (Z and X) */}
+        <div className="grid grid-cols-2 gap-6 mb-12">
+          {wallsByFace.Z.length > 0 && (
+            <div>
+              <h3 className="text-sm font-semibold text-gray-700 mb-3 uppercase tracking-wide">Left Elevation (Z)</h3>
+              <div className="flex flex-col gap-1 bg-white p-1 rounded border border-gray-200">
+                {wallsByFace.Z.map((wall) => (
+                  <div key={wall.id} className="bg-gray-100 rounded overflow-hidden">
+                    <img
+                      src={wall.elevationImage}
+                      alt={`Wall ${wall.type}`}
+                      className="w-full h-auto object-contain max-h-64"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+          
+          {wallsByFace.X.length > 0 && (
+            <div>
+              <h3 className="text-sm font-semibold text-gray-700 mb-3 uppercase tracking-wide">Right Elevation (X)</h3>
+              <div className="flex flex-col gap-1 bg-white p-1 rounded border border-gray-200">
+                {wallsByFace.X.map((wall) => (
+                  <div key={wall.id} className="bg-gray-100 rounded overflow-hidden">
+                    <img
+                      src={wall.elevationImage}
+                      alt={`Wall ${wall.type}`}
+                      className="w-full h-auto object-contain max-h-64"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Back elevation (Y) */}
+        {wallsByFace.Y.length > 0 && (
+          <div>
+            <h3 className="text-sm font-semibold text-gray-700 mb-3 uppercase tracking-wide">Back Elevation (Y)</h3>
+            <div className="flex gap-1 bg-white p-1 rounded border border-gray-200">
+              {wallsByFace.Y.map((wall) => (
+                <div key={wall.id} className="flex-1 bg-gray-100 rounded overflow-hidden">
+                  <img
+                    src={wall.elevationImage}
+                    alt={`Wall ${wall.type}`}
+                    className="w-full h-auto object-contain max-h-96"
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
