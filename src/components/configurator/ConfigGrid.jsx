@@ -19,6 +19,8 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
   const [selectionBox, setSelectionBox] = useState(null);
   // { startX, startY, cursorX, cursorY }
   const [selectedWallId, setSelectedWallId] = useState(null);
+  const [draggingWall, setDraggingWall] = useState(null);
+  // { wall, offsetX, offsetY, cursorX, cursorY }
 
   const getCellFromClient = (clientX, clientY) => {
     const rect = gridRef.current.getBoundingClientRect();
