@@ -165,24 +165,24 @@ export default function View3D({ placedModules, walls }) {
         -wM/2, 0, -hM/2,
         // 1: left base back
         -wM/2, 0, hM/2,
-        // 2: ridge front
-        0, GABLE_HEIGHT, -hM/2,
-        // 3: ridge back
-        0, GABLE_HEIGHT, hM/2,
+        // 2: ridge front (moved to right side)
+        wM/2, GABLE_HEIGHT, -hM/2,
+        // 3: ridge back (moved to right side)
+        wM/2, GABLE_HEIGHT, hM/2,
         // 4: right base front
         wM/2, 0, -hM/2,
         // 5: right base back
         wM/2, 0, hM/2,
       ]);
       const roofIndices = new Uint32Array([
-        // Left face (sloped roof)
+        // Sloped left face
         0, 2, 1, 1, 2, 3,
-        // Right face (sloped roof)
-        4, 5, 2, 5, 3, 2,
+        // Right vertical face
+        2, 4, 5, 2, 5, 3,
         // Front triangle
         0, 4, 2,
         // Back triangle
-        1, 3, 5,
+        1, 5, 3,
       ]);
       const roofGeo = new THREE.BufferGeometry();
       roofGeo.setAttribute('position', new THREE.BufferAttribute(roofVertices, 3));
