@@ -27,6 +27,7 @@ export default function Configurator() {
   const [draggingMod, setDraggingMod] = useState(null);
   const [saveModalOpen, setSaveModalOpen] = useState(false);
   const [showSaved, setShowSaved] = useState(false);
+  const [viewMode, setViewMode] = useState("2d"); // "2d" | "3d"
   const [panelCollapsed, setPanelCollapsed] = useState(false);
   const [panelPos, setPanelPos] = useState({ x: 16, y: 60 });
   const [draggingPanel, setDraggingPanel] = useState(null);
