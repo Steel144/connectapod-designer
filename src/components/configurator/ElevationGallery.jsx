@@ -40,11 +40,45 @@ export default function ElevationGallery({ walls = [] }) {
   };
 
   return (
-    <div className="w-full h-full bg-black flex flex-col items-center justify-center relative">
+    <div className="w-full h-full bg-black flex flex-col">
+      {/* Zoom controls */}
+      <div className="flex items-center justify-center gap-3 px-4 py-3 border-b border-gray-700 bg-gray-900">
+        <button
+          onClick={() => setZoom(Math.max(50, zoom - 10))}
+          className="p-1.5 hover:bg-gray-700 rounded transition-colors text-gray-400 hover:text-white"
+          title="Zoom out"
+        >
+          <ZoomOut size={18} />
+        </button>
+        <div className="w-12 text-center text-xs font-medium text-gray-400 bg-gray-800 py-1 rounded">
+          {zoom}%
+        </div>
+        <button
+          onClick={() => setZoom(Math.min(200, zoom + 10))}
+          className="p-1.5 hover:bg-gray-700 rounded transition-colors text-gray-400 hover:text-white"
+          title="Zoom in"
+        >
+          <ZoomIn size={18} />
+        </button>
+        <button
+          onClick={() => setZoom(100)}
+          className="ml-2 px-2 py-1 text-xs bg-gray-700 hover:bg-gray-600 rounded transition-colors text-gray-300 font-medium"
+        >
+          Reset
+        </button>
+      </div>
+
       {/* Current elevation */}
-      <div className="flex flex-col items-center gap-3">
+      <div className="flex-1 overflow-auto flex flex-col items-center justify-center gap-3" onWheel={(e) => {
+        if (e.ctrlKey || e.metaKey) {
+          e.preventDefault();
+          setZoom(Math.max(50, Math.min(200, zoom + (e.deltaY > 0 ? -5 : 5))));
+        }
+      }}>
         <p className="text-white text-sm">{current.label}</p>
-        <img src={current.image} alt={current.label} className="max-w-full max-h-[calc(100vh-120px)] object-contain" />
+        <div style={{ transform: `scale(${zoom / 100})`, transformOrigin: 'center', transition: 'transform 0.2s' }}>
+          <img src={current.image} alt={current.label} className="max-w-full max-h-[calc(100vh-200px)] object-contain" />
+        </div>
       </div>
 
       {/* Navigation */}
