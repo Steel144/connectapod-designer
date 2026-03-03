@@ -54,14 +54,14 @@ export default function Configurator() {
   const handleDragStart = (e, mod) => {
     setIsDraggingFromPanel(true);
     if (mod.orientation) {
-      // Wall — wallType is already set by ModulePanel
+      // Wall — wallType already set by ModulePanel
       return;
     }
     e.dataTransfer.setData("moduleType", mod.type);
     setDraggingMod(mod);
   };
 
-  const handleDragEnd = (e) => {
+  const handleDragEnd = () => {
     setIsDraggingFromPanel(false);
   };
 
