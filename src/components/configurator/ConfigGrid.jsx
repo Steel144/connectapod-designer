@@ -504,9 +504,15 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
               >
                 <X size={10} className="text-red-400" />
               </button>
-            </div>
-          );
-        })}
+
+              {/* WXYZ corner labels */}
+              <span className="absolute text-[9px] font-bold text-red-500" style={{ left: '2px', top: '2px' }}>W</span>
+              <span className="absolute text-[9px] font-bold text-green-500" style={{ right: '2px', top: '2px' }}>X</span>
+              <span className="absolute text-[9px] font-bold text-blue-500" style={{ right: '2px', bottom: '2px' }}>Y</span>
+              <span className="absolute text-[9px] font-bold text-yellow-600" style={{ left: '2px', bottom: '2px' }}>Z</span>
+              </div>
+              );
+              })}
 
         {/* Live drag ghost — snapped to grid, no shadow */}
         {dragging && dragSnap && (
