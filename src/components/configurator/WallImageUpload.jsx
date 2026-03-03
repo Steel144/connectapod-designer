@@ -48,6 +48,7 @@ export default function WallImageUpload({ wall, onImageAssigned }) {
         } else {
           await base44.entities.WallImage.create({ wallType: wall.type, imageUrl: fileUrl });
         }
+        queryClient.invalidateQueries({ queryKey: ["wallImage", wall.type] });
         queryClient.invalidateQueries({ queryKey: ["wallImages"] });
       }
 
