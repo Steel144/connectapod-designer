@@ -185,8 +185,10 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
 
   const handleDrop = (e) => {
     e.preventDefault();
+    console.log("DROP fired, types:", [...e.dataTransfer.types], "items:", e.dataTransfer.items.length);
 
     const modType = e.dataTransfer.getData("moduleType");
+    console.log("modType:", modType);
     if (modType) {
       const mod = MODULE_TYPES.find((m) => m.type === modType);
       if (!mod || !gridRef.current) return;
@@ -196,6 +198,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
     }
 
     const wallType = e.dataTransfer.getData("wallType");
+    console.log("wallType:", wallType);
     if (wallType) {
       const wallTemplate = WALL_TYPES.find((w) => w.type === wallType);
       if (!wallTemplate || !gridRef.current) return;
