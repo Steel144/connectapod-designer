@@ -8,6 +8,11 @@ export default function WallImageUpload({ wall, onImageAssigned }) {
   const [isLoading, setIsLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState(wall?.elevationImage || null);
 
+  // Update local state if wall prop changes
+  React.useEffect(() => {
+    setImageUrl(wall?.elevationImage || null);
+  }, [wall?.elevationImage]);
+
   const handleImageUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
