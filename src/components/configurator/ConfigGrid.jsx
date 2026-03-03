@@ -155,6 +155,18 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
   };
 
   const onMouseUp = useCallback((e) => {
+    // Handle wall drag
+    if (draggingWall) {
+      const rect = gridRef.current.getBoundingClientRect();
+      const rawX = draggingWall.cursorX - rect.left - draggingWall.offsetX;
+      const rawY = draggingWall.cursorY - rect.top - draggingWall.offsetY;
+      const newX = Math.max(0, Math.round(rawX / CELL_W));
+      const newY = Math.max(0, Math.round(rawY / CELL_H));
+      if (onMoveWall) onMoveWall(draggingWall.wall.id, newX, newY);
+      setDraggingWall(null);
+      return;
+    }
+
     // Handle selection box
     if (selectionBox) {
       const rect = gridRef.current.getBoundingClientRect();
