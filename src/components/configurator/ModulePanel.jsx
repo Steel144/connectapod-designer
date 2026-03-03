@@ -530,18 +530,18 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
       {/* Magnified preview on hover */}
       {hoveredModule && (
         <div
-          className="fixed z-[100] bg-white border-2 border-[#F15A22] shadow-xl rounded pointer-events-none"
+          className="fixed z-[100] bg-white border-2 border-[#F15A22] shadow-xl rounded pointer-events-none flex flex-col"
           style={{
-            width: "240px",
-            height: "240px",
+            width: "280px",
+            height: "360px",
             top: "48px",
             right: "20px",
             padding: "8px",
           }}
         >
-          <div className="w-full h-full bg-gray-50 border border-gray-200 rounded overflow-hidden">
+          <div className="flex-1 bg-gray-50 border border-gray-200 rounded overflow-hidden">
             {hoveredModule.floorPlanImage ? (
-              <img src={hoveredModule.floorPlanImage} alt={hoveredModule.label} className="w-full h-full object-cover" />
+              <img src={hoveredModule.floorPlanImage} alt={hoveredModule.label} className="w-full h-full object-contain" />
             ) : (
               <FloorPlanSVG code={hoveredModule.type} className="w-full h-full" />
             )}
