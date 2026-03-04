@@ -324,24 +324,30 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
       if (mod && canPlaceGroup(mod, mod.x + deltaX, mod.y + deltaY, dragging.selectedIds)) {
         onMove(id, mod.x + deltaX, mod.y + deltaY);
         
-        // Move walls attached to this module (Z, X, W, Y faces)
+        // Move walls attached to this module
         walls.forEach((wall) => {
           const WALL_OFFSET = 0.308;
-          // Z face walls (left side)
-          if (wall.face === "Z" && Math.abs(wall.y - mod.y) < 0.01 && Math.abs(wall.x - mod.x) < 0.01) {
-            if (onMoveWall) onMoveWall(wall.id, mod.x + deltaX, mod.y + deltaY);
-          }
-          // X face walls (right side)
-          if (wall.face === "X" && Math.abs(wall.y - mod.y) < 0.01 && Math.abs(wall.x - (mod.x + mod.w - WALL_OFFSET)) < 0.01) {
-            if (onMoveWall) onMoveWall(wall.id, mod.x + mod.w + deltaX - WALL_OFFSET, mod.y + deltaY);
-          }
-          // W face walls (top)
-          if (wall.face === "W" && Math.abs(wall.y - (mod.y - WALL_OFFSET)) < 0.01 && Math.abs(wall.x - (mod.x - WALL_OFFSET)) < 0.01) {
-            if (onMoveWall) onMoveWall(wall.id, mod.x + deltaX - WALL_OFFSET, mod.y + deltaY - WALL_OFFSET);
-          }
-          // Y face walls (bottom)
-          if (wall.face === "Y" && Math.abs(wall.y - (mod.y + mod.h)) < 0.01 && Math.abs(wall.x - (mod.x - WALL_OFFSET)) < 0.01) {
-            if (onMoveWall) onMoveWall(wall.id, mod.x + deltaX - WALL_OFFSET, mod.y + mod.h + deltaY);
+          // Horizontal walls
+          if (wall.orientation === "horizontal") {
+            // Top wall (W face)
+            if (Math.abs(wall.y - (mod.y - WALL_OFFSET)) < 0.01 && Math.abs(wall.x - (mod.x - WALL_OFFSET)) < 0.01 && Math.abs(wall.length - mod.w) < 0.01) {
+              if (onMoveWall) onMoveWall(wall.id, mod.x + deltaX - WALL_OFFSET, mod.y + deltaY - WALL_OFFSET);
+            }
+            // Bottom wall (Y face)
+            else if (Math.abs(wall.y - (mod.y + mod.h)) < 0.01 && Math.abs(wall.x - (mod.x - WALL_OFFSET)) < 0.01 && Math.abs(wall.length - mod.w) < 0.01) {
+              if (onMoveWall) onMoveWall(wall.id, mod.x + deltaX - WALL_OFFSET, mod.y + mod.h + deltaY);
+            }
+          } 
+          // Vertical walls
+          else if (wall.orientation === "vertical") {
+            // Left wall (Z face)
+            if (Math.abs(wall.x - mod.x) < 0.01 && Math.abs(wall.y - mod.y) < 0.01 && Math.abs(wall.length - mod.h) < 0.01) {
+              if (onMoveWall) onMoveWall(wall.id, mod.x + deltaX, mod.y + deltaY);
+            }
+            // Right wall (X face)
+            else if (Math.abs(wall.x - (mod.x + mod.w - WALL_OFFSET)) < 0.01 && Math.abs(wall.y - mod.y) < 0.01 && Math.abs(wall.length - mod.h) < 0.01) {
+              if (onMoveWall) onMoveWall(wall.id, mod.x + mod.w + deltaX - WALL_OFFSET, mod.y + deltaY);
+            }
           }
         });
       }
