@@ -136,7 +136,7 @@ export default function ElevationGallery({ walls = [] }) {
           <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{rowLabel}</span>
           <div className="flex-1 h-px bg-gray-200" />
         </div>
-        <div className="flex items-start">
+        <div className="flex items-end">
           {/* Z end — left, separated */}
           {endLeft && (
             <div className="flex items-end shrink-0" style={{ marginRight: "-1px" }}>
