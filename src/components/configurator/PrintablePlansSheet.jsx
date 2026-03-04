@@ -1,6 +1,6 @@
 import React from "react";
 
-const CELL_SIZE = 60; // pixels per grid cell in print
+const CELL_SIZE = 40; // pixels per grid cell in print
 
 export default function PrintablePlansSheet({ placedModules, onClose }) {
   React.useEffect(() => {
@@ -53,7 +53,7 @@ export default function PrintablePlansSheet({ placedModules, onClose }) {
         </div>
         
         {/* Main content */}
-        <div className="flex-1 flex flex-col p-8">
+        <div className="flex-1 flex flex-col p-4">
           {/* Grid view */}
           <div className="flex-1 flex items-center justify-center overflow-hidden mb-6">
             <svg
