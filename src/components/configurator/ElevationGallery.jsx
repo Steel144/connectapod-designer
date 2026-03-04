@@ -141,7 +141,6 @@ export default function ElevationGallery({ walls = [] }) {
           {endLeft && (
             <div className="flex items-end shrink-0">
               <ElevationImage wall={endLeft} label={endLeft.type || "End"} face={endLeft.face || "Z"} />
-              <div className="w-10 shrink-0" />
             </div>
           )}
 
