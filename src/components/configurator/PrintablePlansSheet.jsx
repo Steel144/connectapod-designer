@@ -2,10 +2,15 @@ import React from "react";
 
 const CELL_SIZE = 60; // pixels per grid cell in print
 
-export default function PrintablePlansSheet({ placedModules }) {
+export default function PrintablePlansSheet({ placedModules, onClose }) {
   React.useEffect(() => {
     window.print();
-  }, []);
+    const handleAfterPrint = () => {
+      onClose?.();
+    };
+    window.addEventListener("afterprint", handleAfterPrint);
+    return () => window.removeEventListener("afterprint", handleAfterPrint);
+  }, [onClose]);
 
   const modules = placedModules || [];
   const totalSqm = modules.reduce((sum, m) => sum + (m.sqm || 0), 0);
