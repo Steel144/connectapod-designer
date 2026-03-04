@@ -1,11 +1,16 @@
 import React from "react";
 
-export default function PrintableElevationsSheet({ walls }) {
+export default function PrintableElevationsSheet({ walls, onClose }) {
   const elevations = walls.filter(w => w.elevationImage);
 
   React.useEffect(() => {
     window.print();
-  }, []);
+    const handleAfterPrint = () => {
+      onClose?.();
+    };
+    window.addEventListener("afterprint", handleAfterPrint);
+    return () => window.removeEventListener("afterprint", handleAfterPrint);
+  }, [onClose]);
 
   const groupedByFace = {
     W: elevations.filter(w => w.face === "W").sort((a, b) => a.x - b.x),
