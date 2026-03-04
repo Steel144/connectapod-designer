@@ -18,7 +18,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
   // { mod, offsetX, offsetY, cursorX, cursorY, isPlaced, selectedIds }
   const [selectionBox, setSelectionBox] = useState(null);
   // { startX, startY, cursorX, cursorY }
-  const [selectedWallId, setSelectedWallId] = useState(null);
+  const [selectedWallIds, setSelectedWallIds] = useState(new Set());
   const [draggingWall, setDraggingWall] = useState(null);
   // Notify parent when selected wall changes
   const selectedWall = walls.find(w => w.id === selectedWallId) || null;
