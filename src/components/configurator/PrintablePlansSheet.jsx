@@ -181,6 +181,54 @@ export default function PrintablePlansSheet({ placedModules, onClose }) {
         </div>
       </div>
 
+      {/* Summary Page */}
+      <div className="h-screen flex flex-col p-0" style={{ pageBreakAfter: "always" }}>
+        <div className="flex-1 flex flex-col p-12 items-center justify-center">
+          {/* Summary box */}
+          <div className="border-2 border-gray-900 p-8 bg-gray-50 w-full max-w-2xl">
+            <p className="text-xs text-gray-500 uppercase tracking-widest font-bold mb-6">PROJECT SUMMARY</p>
+            <div className="grid grid-cols-4 gap-6">
+              <div>
+                <p className="text-xs text-gray-500 uppercase tracking-widest font-bold">Modules</p>
+                <p className="text-4xl font-bold text-gray-900 mt-2">{modules.length}</p>
+              </div>
+              <div>
+                <p className="text-xs text-gray-500 uppercase tracking-widest font-bold">Total Area</p>
+                <p className="text-4xl font-bold text-gray-900 mt-2">{totalSqm.toFixed(1)} sqm</p>
+              </div>
+              <div>
+                <p className="text-xs text-gray-500 uppercase tracking-widest font-bold">Est. Price</p>
+                <p className="text-4xl font-bold text-gray-900 mt-2">${(totalPrice / 1000).toFixed(1)}k</p>
+              </div>
+              <div>
+                <p className="text-xs text-gray-500 uppercase tracking-widest font-bold">Scale</p>
+                <p className="text-lg font-bold text-gray-900 mt-2">1:100</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Title block footer */}
+        <div className="border-t-2 border-gray-900 grid grid-cols-4 text-[10px] text-gray-600">
+          <div className="border-r border-gray-900 p-3">
+            <p className="uppercase font-bold text-gray-900 text-[9px]">Project</p>
+            <p className="mt-0.5">connectapod Design</p>
+          </div>
+          <div className="border-r border-gray-900 p-3">
+            <p className="uppercase font-bold text-gray-900 text-[9px]">Sheet</p>
+            <p className="mt-0.5">Project Summary</p>
+          </div>
+          <div className="border-r border-gray-900 p-3">
+            <p className="uppercase font-bold text-gray-900 text-[9px]">Date</p>
+            <p className="mt-0.5">{new Date().toLocaleDateString()}</p>
+          </div>
+          <div className="p-3">
+            <p className="uppercase font-bold text-gray-900 text-[9px]">Scale</p>
+            <p className="mt-0.5">1:100</p>
+          </div>
+        </div>
+      </div>
+
       <style>{`
         @page { margin: 0; size: A4 landscape; }
         @media print {
