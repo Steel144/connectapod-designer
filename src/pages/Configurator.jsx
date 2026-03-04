@@ -427,10 +427,10 @@ export default function Configurator() {
 
   // Print modes
   if (printMode === "plans") {
-    return <PrintablePlansSheet placedModules={placedModules} />;
+    return <PrintablePlansSheet placedModules={placedModules} onClose={() => setPrintMode(null)} />;
   }
   if (printMode === "elevations") {
-    return <PrintableElevationsSheet walls={walls} />;
+    return <PrintableElevationsSheet walls={walls} onClose={() => setPrintMode(null)} />;
   }
 
   return (
