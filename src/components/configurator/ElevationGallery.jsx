@@ -106,7 +106,7 @@ export default function ElevationGallery({ walls = [] }) {
   const imgHeight = Math.round((zoom / 100) * 480);
 
   const ElevationImage = ({ wall, label, face, tight }) => (
-    <div className={`flex flex-col items-center gap-2 shrink-0 ${tight ? "" : ""}`}>
+    <div className={`flex flex-col items-center ${tight ? "gap-0" : "gap-2"} shrink-0`}>
       <div
         className={`bg-white overflow-hidden ${tight ? "border-y border-gray-200" : "border border-gray-200 shadow-sm"}`}
         style={{ height: `${imgHeight}px` }}
