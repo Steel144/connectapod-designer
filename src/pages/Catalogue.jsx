@@ -128,6 +128,7 @@ const CATEGORY_COLORS = {
 };
 
 export default function Catalogue() {
+  const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState("All");
 
