@@ -145,7 +145,7 @@ export default function ElevationGallery({ walls = [] }) {
           )}
 
           {/* Middle walls joined tightly — no gap between */}
-          <div className="flex items-end">
+          <div className="flex items-end" style={{ marginLeft: "-1px" }}>
             {midWalls.map((wall, idx) => (
               <div key={wall.id} className="flex items-end" style={{ marginLeft: idx === 0 ? 0 : "-1px" }}>
                 <ElevationImage wall={wall} label={wall.type || "Wall"} face={wall.face} tight />
