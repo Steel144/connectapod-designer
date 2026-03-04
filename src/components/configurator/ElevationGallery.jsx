@@ -120,15 +120,14 @@ export default function ElevationGallery({ walls = [] }) {
             </div>
           )}
 
-          {/* Middle walls joined tightly */}
-          {midWalls.map((wall, idx) => (
-            <div key={wall.id} className="flex items-end gap-0">
-              <ElevationImage wall={wall} label={wall.type || "Wall"} face={wall.face} />
-              {idx < midWalls.length - 1 && (
-                <div className="w-px self-stretch bg-gray-300 mb-8" />
-              )}
-            </div>
-          ))}
+          {/* Middle walls joined tightly — no gap between */}
+          <div className="flex items-end">
+            {midWalls.map((wall, idx) => (
+              <div key={wall.id} className="flex items-end" style={{ marginLeft: idx === 0 ? 0 : "-1px" }}>
+                <ElevationImage wall={wall} label={wall.type || "Wall"} face={wall.face} tight />
+              </div>
+            ))}
+          </div>
 
           {/* X end — right, separated */}
           {endRight && (
