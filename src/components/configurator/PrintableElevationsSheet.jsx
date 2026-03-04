@@ -54,53 +54,70 @@ export default function PrintableElevationsSheet({ walls, onClose }) {
 
               {/* Elevations grid */}
               <div className="flex-1 flex items-center justify-center overflow-x-auto">
-                <div className="flex items-end">
-                  {/* Z (left end) - separated */}
-                  {walls.find(w => w.face === "Z" || w.orientation === "vertical") && (
-                    <>
-                      {walls.filter(w => w.face === "Z" || (w.orientation === "vertical" && !w.face && w.x < 5)).map(wall => (
-                        <div key={wall.id} className="flex flex-col items-center gap-2 shrink-0">
-                          <div className="bg-white flex items-center justify-center" style={{ height: "280px", width: "150px" }}>
-                            {wall.elevationImage && (
-                              <img src={wall.elevationImage} alt={wall.label} className="h-full w-full object-cover" />
-                            )}
+                {(face === "W" || face === "Y") ? (
+                  // Horizontal elevations layout
+                  <div className="flex items-end">
+                    {/* Z (left end) - separated */}
+                    {walls.find(w => w.face === "Z" || w.orientation === "vertical") && (
+                      <>
+                        {walls.filter(w => w.face === "Z" || (w.orientation === "vertical" && !w.face && w.x < 5)).map(wall => (
+                          <div key={wall.id} className="flex flex-col items-center gap-2 shrink-0">
+                            <div className="bg-white flex items-center justify-center" style={{ height: "280px", width: "150px" }}>
+                              {wall.elevationImage && (
+                                <img src={wall.elevationImage} alt={wall.label} className="h-full w-full object-cover" />
+                              )}
+                            </div>
+                            <p className="text-xs font-bold text-gray-900 text-center whitespace-nowrap">{wall.label || wall.type}</p>
                           </div>
-                          <p className="text-xs font-bold text-gray-900 text-center whitespace-nowrap">{wall.label || wall.type}</p>
-                        </div>
-                      ))}
-                      <div className="w-6 shrink-0" />
-                    </>
-                  )}
+                        ))}
+                        <div className="w-6 shrink-0" />
+                      </>
+                    )}
 
-                  {/* Middle walls - tightly joined */}
-                  {walls.filter(w => w.face === face || (w.orientation === "horizontal" && !w.face)).map((wall, idx) => (
-                    <div key={wall.id} className="flex flex-col items-center gap-2 shrink-0" style={{ marginLeft: idx > 0 ? "-1px" : 0 }}>
-                      <div className="bg-white flex items-center justify-center" style={{ height: "280px", width: "150px" }}>
-                        {wall.elevationImage && (
-                          <img src={wall.elevationImage} alt={wall.label} className="h-full w-full object-cover" />
-                        )}
+                    {/* Middle walls - tightly joined */}
+                    {walls.filter(w => w.face === face || (w.orientation === "horizontal" && !w.face)).map((wall, idx) => (
+                      <div key={wall.id} className="flex flex-col items-center gap-2 shrink-0" style={{ marginLeft: idx > 0 ? "-1px" : 0 }}>
+                        <div className="bg-white flex items-center justify-center" style={{ height: "280px", width: "150px" }}>
+                          {wall.elevationImage && (
+                            <img src={wall.elevationImage} alt={wall.label} className="h-full w-full object-cover" />
+                          )}
+                        </div>
+                        <p className="text-xs font-bold text-gray-900 text-center whitespace-nowrap">{wall.label || wall.type}</p>
                       </div>
-                      <p className="text-xs font-bold text-gray-900 text-center whitespace-nowrap">{wall.label || wall.type}</p>
-                    </div>
-                  ))}
+                    ))}
 
-                  {/* X (right end) - separated */}
-                  {walls.find(w => w.face === "X" || w.orientation === "vertical") && (
-                    <>
-                      <div className="w-6 shrink-0" />
-                      {walls.filter(w => w.face === "X" || (w.orientation === "vertical" && !w.face && w.x >= 5)).map(wall => (
-                        <div key={wall.id} className="flex flex-col items-center gap-2 shrink-0">
-                          <div className="bg-white flex items-center justify-center" style={{ height: "280px", width: "150px" }}>
-                            {wall.elevationImage && (
-                              <img src={wall.elevationImage} alt={wall.label} className="h-full w-full object-cover" />
-                            )}
+                    {/* X (right end) - separated */}
+                    {walls.find(w => w.face === "X" || w.orientation === "vertical") && (
+                      <>
+                        <div className="w-6 shrink-0" />
+                        {walls.filter(w => w.face === "X" || (w.orientation === "vertical" && !w.face && w.x >= 5)).map(wall => (
+                          <div key={wall.id} className="flex flex-col items-center gap-2 shrink-0">
+                            <div className="bg-white flex items-center justify-center" style={{ height: "280px", width: "150px" }}>
+                              {wall.elevationImage && (
+                                <img src={wall.elevationImage} alt={wall.label} className="h-full w-full object-cover" />
+                              )}
+                            </div>
+                            <p className="text-xs font-bold text-gray-900 text-center whitespace-nowrap">{wall.label || wall.type}</p>
                           </div>
-                          <p className="text-xs font-bold text-gray-900 text-center whitespace-nowrap">{wall.label || wall.type}</p>
+                        ))}
+                      </>
+                    )}
+                  </div>
+                ) : (
+                  // Vertical end elevations (Z and X) - displayed separately
+                  <div className="flex flex-col gap-8">
+                    {walls.map(wall => (
+                      <div key={wall.id} className="flex flex-col items-center gap-2">
+                        <div className="bg-white flex items-center justify-center" style={{ maxHeight: "350px", maxWidth: "600px" }}>
+                          {wall.elevationImage && (
+                            <img src={wall.elevationImage} alt={wall.label} className="h-auto w-auto max-h-full max-w-full object-contain" />
+                          )}
                         </div>
-                      ))}
-                    </>
-                  )}
-                </div>
+                        <p className="text-xs font-bold text-gray-900 text-center">{wall.label || wall.type}</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
 
