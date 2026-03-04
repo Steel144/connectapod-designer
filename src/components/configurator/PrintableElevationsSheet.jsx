@@ -18,9 +18,9 @@ export default function PrintableElevationsSheet({ walls, onClose }) {
 
   // Group by face, infer from orientation if no face property
   const groupedByFace = {
-    W: elevations.filter(w => w.face === "W" || w.orientation === "horizontal").sort((a, b) => a.x - b.x),
+    W: elevations.filter(w => w.face === "W" || (w.orientation === "horizontal" && (!w.face))).sort((a, b) => a.x - b.x),
     Y: elevations.filter(w => w.face === "Y").sort((a, b) => a.x - b.x),
-    Z: elevations.filter(w => w.face === "Z"),
+    Z: elevations.filter(w => w.face === "Z" || (w.orientation === "vertical" && (!w.face))),
     X: elevations.filter(w => w.face === "X"),
   };
 
