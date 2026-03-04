@@ -32,7 +32,13 @@ export default function PrintableElevationsSheet({ walls, onClose }) {
   };
 
   return (
-    <div className="bg-white">
+    <div className="bg-white relative">
+      <button
+        onClick={() => onClose?.()}
+        className="fixed top-4 right-4 z-50 bg-red-500 text-white px-4 py-2 rounded text-sm font-bold print:hidden"
+      >
+        Close
+      </button>
       {Object.entries(groupedByFace).map(([face, walls]) => {
         if (walls.length === 0) return null;
 
