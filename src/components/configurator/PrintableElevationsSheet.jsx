@@ -111,13 +111,7 @@ export default function PrintableElevationsSheet({ walls, onClose }) {
                    </div>
                  )}
               </div>
-
-              {/* Title */}
-              <div className="text-center mt-6 mb-6">
-                <p className="text-xs text-gray-500 uppercase tracking-widest">Elevation Drawing</p>
-                <h1 className="text-2xl font-bold text-gray-900 mt-1">{faceLabels[face]}</h1>
               </div>
-            </div>
 
             {/* Title block footer */}
             <div className="border-t-2 border-gray-900 grid grid-cols-4 text-[10px] text-gray-600">
