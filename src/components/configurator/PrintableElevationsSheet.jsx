@@ -85,13 +85,13 @@ export default function PrintableElevationsSheet({ walls, onClose }) {
                   // Horizontal elevations layout
                   <div className="flex items-end gap-0">
                     {walls.map((wall, idx) => (
-                      <div key={wall.id} className="flex flex-col items-center shrink-0 relative" style={{ marginLeft: idx > 0 ? "-1px" : 0, paddingBottom: "28px" }}>
+                      <div key={wall.id} className="flex flex-col items-center shrink-0" style={{ marginLeft: idx > 0 ? "-1px" : 0 }}>
                         <div className="bg-white flex items-center justify-center" style={{ height: "280px", width: "150px" }}>
                           {wall.elevationImage && (
                             <img src={wall.elevationImage} alt={wall.label} className="h-full w-full object-contain" />
                           )}
                         </div>
-                        <p className="text-xs font-bold text-gray-900 text-center whitespace-nowrap absolute" style={{ bottom: "0px" }}>{wall.type}</p>
+                        <p className="text-xs font-bold text-gray-900 text-center whitespace-nowrap mt-2">{wall.type}</p>
                       </div>
                     ))}
                   </div>
