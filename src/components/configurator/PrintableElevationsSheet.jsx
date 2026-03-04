@@ -15,95 +15,109 @@ export default function PrintableElevationsSheet({ walls }) {
   };
 
   const faceLabels = {
-    W: "Front Face (Outside / Top)",
-    Y: "Back Face (Outside / Bottom)",
-    Z: "Left End (Left Side)",
-    X: "Right End (Right Side)",
+    W: "Front Elevation (Face W)",
+    Y: "Rear Elevation (Face Y)",
+    Z: "Left End Elevation (Face Z)",
+    X: "Right End Elevation (Face X)",
   };
 
   return (
-    <div className="p-12 bg-white min-h-screen">
-      <h1 className="text-3xl font-bold mb-2 text-gray-900">Elevations</h1>
-      <p className="text-sm text-gray-500 mb-8">connectapod Design - Wall Elevations</p>
-
+    <div className="bg-white">
       {Object.entries(groupedByFace).map(([face, walls]) => {
         if (walls.length === 0) return null;
 
         return (
-          <div key={face} className="mb-12 page-break">
-            <h2 className="text-xl font-bold text-gray-900 mb-4 pb-2 border-b-2 border-gray-900">
-              {faceLabels[face]}
-            </h2>
+          <div key={face} className="h-screen flex flex-col p-0" style={{ pageBreakAfter: "always" }}>
+            {/* Main content */}
+            <div className="flex-1 flex flex-col p-16">
+              {/* Title */}
+              <div className="text-center mb-8">
+                <p className="text-xs text-gray-500 uppercase tracking-widest">Elevation Drawing</p>
+                <h1 className="text-3xl font-bold text-gray-900 mt-2">{faceLabels[face]}</h1>
+              </div>
 
-            <div className="space-y-6">
-              {walls.map((wall) => (
-                <div key={wall.id} className="border border-gray-300 p-4">
-                  {/* Header */}
-                  <div className="flex items-start justify-between mb-4 pb-3 border-b border-gray-200">
-                    <div>
-                      <h3 className="font-bold text-gray-900">{wall.label || wall.type}</h3>
-                      <p className="text-xs text-gray-500 mt-0.5">Code: {wall.type}</p>
+              {/* Elevations grid */}
+              <div className="flex-1 flex flex-col gap-8 justify-center">
+                {walls.map((wall, idx) => (
+                  <div key={wall.id} className="flex gap-8 items-start">
+                    {/* Image */}
+                    <div className="flex-1 border-2 border-gray-900 bg-white aspect-video flex items-center justify-center">
+                      {wall.elevationImage && (
+                        <img
+                          src={wall.elevationImage}
+                          alt={wall.label}
+                          className="w-full h-full object-contain p-6"
+                        />
+                      )}
                     </div>
-                    <div className="text-right">
-                      <p className="text-xs text-gray-500">Face</p>
-                      <p className="inline-block bg-[#F15A22] text-white text-xs font-bold px-2 py-1 rounded">
-                        {wall.face || "N/A"}
-                      </p>
+
+                    {/* Specifications */}
+                    <div className="w-48">
+                      <h3 className="text-sm font-bold text-gray-900 mb-4">{wall.label || wall.type}</h3>
+                      
+                      <div className="space-y-4 text-xs border-l-2 border-gray-900 pl-4">
+                        <div>
+                          <p className="uppercase text-gray-500 text-[10px] font-bold tracking-widest">Code</p>
+                          <p className="text-gray-900 font-mono font-bold text-sm">{wall.type}</p>
+                        </div>
+                        
+                        <div>
+                          <p className="uppercase text-gray-500 text-[10px] font-bold tracking-widest">Length</p>
+                          <p className="text-gray-900 font-bold">{wall.length}m</p>
+                        </div>
+
+                        <div>
+                          <p className="uppercase text-gray-500 text-[10px] font-bold tracking-widest">Orientation</p>
+                          <p className="text-gray-900 capitalize font-bold">{wall.orientation}</p>
+                        </div>
+
+                        {wall.thickness && (
+                          <div>
+                            <p className="uppercase text-gray-500 text-[10px] font-bold tracking-widest">Thickness</p>
+                            <p className="text-gray-900 font-bold">{wall.thickness}mm</p>
+                          </div>
+                        )}
+
+                        <div className="pt-2 border-t border-gray-300">
+                          <p className="uppercase text-gray-500 text-[10px] font-bold tracking-widest mb-1">Face</p>
+                          <div className="bg-[#F15A22] text-white text-xs font-bold px-2 py-1 rounded text-center inline-block">
+                            {wall.face || "N/A"}
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
+                ))}
+              </div>
+            </div>
 
-                  {/* Elevation Image */}
-                  {wall.elevationImage && (
-                    <div className="mb-4 flex justify-center">
-                      <img
-                        src={wall.elevationImage}
-                        alt={wall.label}
-                        className="max-h-64 object-contain bg-gray-50 border border-gray-200 p-2"
-                      />
-                    </div>
-                  )}
-
-                  {/* Details */}
-                  <div className="grid grid-cols-3 gap-4 text-xs">
-                    <div>
-                      <p className="text-gray-500">Orientation</p>
-                      <p className="font-semibold text-gray-900">{wall.orientation}</p>
-                    </div>
-                    <div>
-                      <p className="text-gray-500">Length</p>
-                      <p className="font-semibold text-gray-900">{wall.length}m</p>
-                    </div>
-                    <div>
-                      <p className="text-gray-500">Thickness</p>
-                      <p className="font-semibold text-gray-900">{wall.thickness || "N/A"}mm</p>
-                    </div>
-                  </div>
-                </div>
-              ))}
+            {/* Title block footer */}
+            <div className="border-t-2 border-gray-900 grid grid-cols-4 text-[10px] text-gray-600">
+              <div className="border-r border-gray-900 p-4">
+                <p className="uppercase font-bold text-gray-900">Project</p>
+                <p className="mt-1">connectapod Design</p>
+              </div>
+              <div className="border-r border-gray-900 p-4">
+                <p className="uppercase font-bold text-gray-900">Elevation</p>
+                <p className="mt-1">{face}</p>
+              </div>
+              <div className="border-r border-gray-900 p-4">
+                <p className="uppercase font-bold text-gray-900">Date</p>
+                <p className="mt-1">{new Date().toLocaleDateString()}</p>
+              </div>
+              <div className="p-4">
+                <p className="uppercase font-bold text-gray-900">Scale</p>
+                <p className="mt-1">As Noted</p>
+              </div>
             </div>
           </div>
         );
       })}
 
-      {/* Summary */}
-      <div className="border-t-2 border-gray-900 pt-8 mt-8">
-        <h3 className="text-lg font-bold text-gray-900 mb-4">Summary</h3>
-        <div className="grid grid-cols-2 gap-8">
-          <div>
-            <p className="text-sm text-gray-500 mb-1">Total Walls</p>
-            <p className="text-2xl font-bold text-gray-900">{elevations.length}</p>
-          </div>
-          <div>
-            <p className="text-sm text-gray-500 mb-1">Total Length</p>
-            <p className="text-2xl font-bold text-gray-900">{elevations.reduce((sum, w) => sum + (w.length || 0), 0)}m</p>
-          </div>
-        </div>
-      </div>
-
       <style>{`
+        @page { margin: 0; size: A4; }
         @media print {
           body { margin: 0; padding: 0; }
-          .page-break { page-break-inside: avoid; }
         }
       `}</style>
     </div>
