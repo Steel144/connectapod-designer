@@ -35,7 +35,13 @@ export default function PrintablePlansSheet({ placedModules, onClose }) {
   const canvasHeight = gridHeight * CELL_SIZE;
 
   return (
-    <div className="bg-white">
+    <div className="bg-white relative">
+      <button
+        onClick={() => onClose?.()}
+        className="fixed top-4 right-4 z-50 bg-red-500 text-white px-4 py-2 rounded text-sm font-bold print:hidden"
+      >
+        Close
+      </button>
       <div className="h-screen flex flex-col p-0" style={{ pageBreakAfter: "always" }}>
         <div className="flex-1 flex flex-col p-12">
           {/* Header */}
