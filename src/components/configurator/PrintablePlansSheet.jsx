@@ -160,6 +160,12 @@ export default function PrintablePlansSheet({ placedModules, onClose }) {
             </svg>
           </div>
 
+          {/* Header */}
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-gray-900">connectapod</h1>
+            <p className="text-xl text-gray-600 mt-1">FLOOR PLAN - SITE LAYOUT</p>
+          </div>
+
           {/* Summary box */}
           <div className="border-2 border-gray-900 p-6 bg-gray-50">
             <p className="text-xs text-gray-500 uppercase tracking-widest font-bold mb-4">PROJECT SUMMARY</p>
@@ -206,7 +212,7 @@ export default function PrintablePlansSheet({ placedModules, onClose }) {
       </div>
 
       <style>{`
-        @page { margin: 0; size: A4; }
+        @page { margin: 0; size: A4 landscape; }
         @media print {
           body { margin: 0; padding: 0; }
         }
