@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useRef, useCallback } from "react";
 import { ZoomIn, ZoomOut, Maximize2 } from "lucide-react";
 
 export default function ElevationGallery({ walls = [] }) {
