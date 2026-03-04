@@ -66,7 +66,7 @@ export default function ElevationGallery({ walls = [] }) {
           }
         }}
       >
-        <div className="flex items-start" style={{ width: 'max-content' }}>
+        <div className="flex items-start gap-8" style={{ width: 'max-content' }}>
           {allElevations.map((elev) => (
             <img
               key={elev.id}
