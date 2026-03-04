@@ -80,7 +80,7 @@ export default function PrintableElevationsSheet({ walls, onClose }) {
                   <div className="flex items-end gap-0">
                     {walls.map((wall, idx) => (
                       <div key={wall.id} className="flex flex-col items-center gap-2 shrink-0" style={{ marginLeft: idx > 0 ? "-1px" : 0 }}>
-                        <div className="bg-white flex items-center justify-center" style={{ maxHeight: "280px" }}>
+                        <div className="bg-white flex items-center justify-center" style={{ maxHeight: "200px", maxWidth: "100%" }}>
                           {wall.elevationImage && (
                             <img src={wall.elevationImage} alt={wall.label} className="h-auto w-auto max-h-full object-contain" />
                           )}
