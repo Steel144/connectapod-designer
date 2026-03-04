@@ -2,15 +2,42 @@ import React from "react";
 
 export default function PrintableElevationsSheet({ walls, onClose }) {
   const elevations = walls.filter(w => w.elevationImage);
+  const [imagesLoaded, setImagesLoaded] = React.useState(false);
 
   React.useEffect(() => {
+    if (elevations.length === 0) {
+      setImagesLoaded(true);
+      return;
+    }
+
+    let loadedCount = 0;
+    const handleImageLoad = () => {
+      loadedCount++;
+      if (loadedCount === elevations.length) {
+        setImagesLoaded(true);
+      }
+    };
+
+    elevations.forEach(wall => {
+      if (wall.elevationImage) {
+        const img = new Image();
+        img.onload = handleImageLoad;
+        img.onerror = handleImageLoad;
+        img.src = wall.elevationImage;
+      }
+    });
+  }, [elevations]);
+
+  React.useEffect(() => {
+    if (!imagesLoaded) return;
+
     window.print();
     const handleAfterPrint = () => {
       onClose?.();
     };
     window.addEventListener("afterprint", handleAfterPrint);
     return () => window.removeEventListener("afterprint", handleAfterPrint);
-  }, [onClose]);
+  }, [imagesLoaded, onClose]);
 
   const groupedByFace = {
     W: elevations.filter(w => w.face === "W").sort((a, b) => a.x - b.x),
