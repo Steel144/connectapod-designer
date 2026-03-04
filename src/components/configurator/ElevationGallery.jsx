@@ -155,7 +155,7 @@ export default function ElevationGallery({ walls = [] }) {
 
           {/* X end — right, separated */}
           {endRight && (
-            <div className="flex items-end shrink-0" style={{ marginLeft: "-1px" }}>
+            <div className="flex items-end shrink-0" style={{ marginLeft: `${Math.round((zoom / 100) * 48)}px` }}>
               <ElevationImage wall={endRight} label={endRight.type || "End"} face={endRight.face || "X"} tight />
             </div>
           )}
