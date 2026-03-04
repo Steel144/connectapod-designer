@@ -42,9 +42,9 @@ export default function PrintablePlansSheet({ placedModules, onClose }) {
       >
         Close
       </button>
-      <div className="bg-white flex flex-col p-0" style={{ minHeight: "100vh" }}>
+      <div className="bg-white flex flex-col p-0 relative" style={{ minHeight: "100vh" }}>
         {/* Logo */}
-        <div className="absolute top-4 right-4 z-40 print:block">
+        <div className="absolute top-4 right-4 z-40">
           <img 
             src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69a55c0c222e61cb3fbc417c/1ae4d27f6_Untitled-1-01.png" 
             alt="Connectapod Logo" 
