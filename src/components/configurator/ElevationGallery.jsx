@@ -29,7 +29,7 @@ export default function ElevationGallery({ walls = [] }) {
     e.currentTarget.style.cursor = "grab";
   }, []);
 
-  const zoomLevels = [15, 20, 25, 37, 50, 62, 75, 100, 125, 150, 200, 300];
+  const zoomLevels = [20, 25, 37, 50, 62, 75, 100, 125, 150, 200, 300];
 
   const adjustZoom = (delta) => {
     if (delta > 0) {
