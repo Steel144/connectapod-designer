@@ -324,13 +324,23 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
       if (mod && canPlaceGroup(mod, mod.x + deltaX, mod.y + deltaY, dragging.selectedIds)) {
         onMove(id, mod.x + deltaX, mod.y + deltaY);
         
-        // Move any Z and X walls attached to this module
+        // Move walls attached to this module (Z, X, W, Y faces)
         walls.forEach((wall) => {
+          // Z face walls (left side)
           if (wall.face === "Z" && wall.y === mod.y && wall.x === mod.x) {
             if (onMoveWall) onMoveWall(wall.id, mod.x + deltaX, mod.y + deltaY);
           }
+          // X face walls (right side)
           if (wall.face === "X" && wall.y === mod.y && Math.abs(wall.x - (mod.x + mod.w - 0.31)) < 0.01) {
             if (onMoveWall) onMoveWall(wall.id, mod.x + mod.w + deltaX - 0.31, mod.y + deltaY);
+          }
+          // W face walls (top)
+          if (wall.face === "W" && wall.y === mod.y - 0.308 && wall.x === mod.x) {
+            if (onMoveWall) onMoveWall(wall.id, mod.x + deltaX, mod.y + deltaY - 0.308);
+          }
+          // Y face walls (bottom)
+          if (wall.face === "Y" && wall.y === mod.y + mod.h && wall.x === mod.x) {
+            if (onMoveWall) onMoveWall(wall.id, mod.x + deltaX, mod.y + mod.h + deltaY);
           }
         });
       }
