@@ -224,6 +224,7 @@ export default function ElevationGallery({ walls = [] }) {
             position: "absolute",
             top: 40,
             left: 40,
+            paddingBottom: "100px",
           }}
         >
           <div className="flex flex-col" style={{ width: "max-content", gap: `${Math.round((zoom / 100) * 64)}px` }}>
