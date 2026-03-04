@@ -118,6 +118,25 @@ export default function Configurator() {
 
 
 
+  // Hydrate images into placed modules/walls when DB images load — only update if something changed
+  useEffect(() => {
+    if (Object.keys(wallImages).length === 0) return;
+    setWalls((prev) => {
+      const next = prev.map(w => ({ ...w, elevationImage: wallImages[w.type] || w.elevationImage || null }));
+      const changed = next.some((w, i) => w.elevationImage !== prev[i].elevationImage);
+      return changed ? next : prev;
+    });
+  }, [wallImages]);
+
+  useEffect(() => {
+    if (Object.keys(floorPlanImages).length === 0) return;
+    setPlacedModules((prev) => {
+      const next = prev.map(m => ({ ...m, floorPlanImage: floorPlanImages[m.type] || m.floorPlanImage || null }));
+      const changed = next.some((m, i) => m.floorPlanImage !== prev[i].floorPlanImage);
+      return changed ? next : prev;
+    });
+  }, [floorPlanImages]);
+
   const handlePlace = (mod, x, y) => {
     pushHistory(placedModules, walls);
     // Ensure chassis, width, etc. are always stored on the placed module
