@@ -291,6 +291,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
       });
       
       // Check if any wall is in the selection box
+      const newSelectedWalls = new Set(selectedWallIds);
       walls.forEach((wall) => {
         const wallW = wall.orientation === "horizontal" ? wall.length * CELL_W : wall.thickness * CELL_W;
         const wallH = wall.orientation === "vertical" ? wall.length * CELL_H : wall.thickness * CELL_H;
@@ -300,9 +301,10 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
         const wallY2 = wallY1 + wallH;
         
         if (!(wallX2 < minX || wallX1 > maxX || wallY2 < minY || wallY1 > maxY)) {
-          setSelectedWallId(wall.id);
+          newSelectedWalls.add(wall.id);
         }
       });
+      if (newSelectedWalls.size > 0) setSelectedWallIds(newSelectedWalls);
       
       if (newSelected.size > 0) setSelected(newSelected);
       setSelectionBox(null);
