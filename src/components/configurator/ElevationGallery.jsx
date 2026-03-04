@@ -17,8 +17,8 @@ export default function ElevationGallery({ walls = [] }) {
 
   if (allElevations.length === 0) {
     return (
-      <div className="w-full h-full flex items-center justify-center bg-black">
-        <div className="text-center text-white">
+      <div className="w-full h-full flex items-center justify-center bg-white">
+        <div className="text-center text-gray-500">
           <p className="text-lg mb-2">No elevations yet</p>
           <p className="text-sm text-gray-400">Add walls with images to your design to view elevations</p>
         </div>
