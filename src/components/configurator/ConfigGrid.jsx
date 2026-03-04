@@ -593,7 +593,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
         {/* Walls */}
         {walls.map((wall) => {
            const isBeingDragged = draggingWall?.wall.id === wall.id;
-           const isSelected = selectedWallId === wall.id;
+           const isSelected = selectedWallIds.has(wall.id);
            const wallW = wall.orientation === "horizontal" ? wall.length * CELL_W : wall.thickness * CELL_W;
            const wallH = wall.orientation === "vertical" ? wall.length * CELL_H : wall.thickness * CELL_H;
 
