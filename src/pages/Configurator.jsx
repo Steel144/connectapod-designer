@@ -425,6 +425,14 @@ export default function Configurator() {
     });
   };
 
+  // Print modes
+  if (printMode === "plans") {
+    return <PrintablePlansSheet placedModules={placedModules} />;
+  }
+  if (printMode === "elevations") {
+    return <PrintableElevationsSheet walls={walls} />;
+  }
+
   return (
     <div 
       className="w-screen h-screen bg-[#F0EFEd] overflow-hidden relative flex flex-col"
