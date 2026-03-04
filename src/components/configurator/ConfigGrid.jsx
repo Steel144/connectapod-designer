@@ -324,29 +324,43 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
       if (mod && canPlaceGroup(mod, mod.x + deltaX, mod.y + deltaY, dragging.selectedIds)) {
         onMove(id, mod.x + deltaX, mod.y + deltaY);
         
-        // Move walls attached to this module
+        // Move walls attached to this module based on position proximity
+        const WALL_THRESHOLD = 0.5;
         walls.forEach((wall) => {
-          const WALL_OFFSET = 0.308;
           // Horizontal walls
           if (wall.orientation === "horizontal") {
-            // Top wall (W face)
-            if (Math.abs(wall.y - (mod.y - WALL_OFFSET)) < 0.01 && Math.abs(wall.x - (mod.x - WALL_OFFSET)) < 0.01 && Math.abs(wall.length - mod.w) < 0.01) {
-              if (onMoveWall) onMoveWall(wall.id, mod.x + deltaX - WALL_OFFSET, mod.y + deltaY - WALL_OFFSET);
+            // Check if wall x range overlaps with module and is above or below
+            const wallXEnd = wall.x + wall.length;
+            const modXEnd = mod.x + mod.w;
+            const xOverlap = !(wallXEnd < mod.x || wall.x > modXEnd);
+            
+            if (xOverlap) {
+              // Wall above module (top/W face)
+              if (Math.abs(wall.y - (mod.y - wall.thickness)) < WALL_THRESHOLD) {
+                if (onMoveWall) onMoveWall(wall.id, wall.x + deltaX, wall.y + deltaY);
+              }
+              // Wall below module (bottom/Y face)
+              else if (Math.abs(wall.y - (mod.y + mod.h)) < WALL_THRESHOLD) {
+                if (onMoveWall) onMoveWall(wall.id, wall.x + deltaX, wall.y + deltaY);
+              }
             }
-            // Bottom wall (Y face)
-            else if (Math.abs(wall.y - (mod.y + mod.h)) < 0.01 && Math.abs(wall.x - (mod.x - WALL_OFFSET)) < 0.01 && Math.abs(wall.length - mod.w) < 0.01) {
-              if (onMoveWall) onMoveWall(wall.id, mod.x + deltaX - WALL_OFFSET, mod.y + mod.h + deltaY);
-            }
-          } 
+          }
           // Vertical walls
           else if (wall.orientation === "vertical") {
-            // Left wall (Z face)
-            if (Math.abs(wall.x - mod.x) < 0.01 && Math.abs(wall.y - mod.y) < 0.01 && Math.abs(wall.length - mod.h) < 0.01) {
-              if (onMoveWall) onMoveWall(wall.id, mod.x + deltaX, mod.y + deltaY);
-            }
-            // Right wall (X face)
-            else if (Math.abs(wall.x - (mod.x + mod.w - WALL_OFFSET)) < 0.01 && Math.abs(wall.y - mod.y) < 0.01 && Math.abs(wall.length - mod.h) < 0.01) {
-              if (onMoveWall) onMoveWall(wall.id, mod.x + mod.w + deltaX - WALL_OFFSET, mod.y + deltaY);
+            // Check if wall y range overlaps with module and is left or right
+            const wallYEnd = wall.y + wall.length;
+            const modYEnd = mod.y + mod.h;
+            const yOverlap = !(wallYEnd < mod.y || wall.y > modYEnd);
+            
+            if (yOverlap) {
+              // Wall left of module (Z face)
+              if (Math.abs(wall.x - mod.x) < WALL_THRESHOLD) {
+                if (onMoveWall) onMoveWall(wall.id, wall.x + deltaX, wall.y + deltaY);
+              }
+              // Wall right of module (X face)
+              else if (Math.abs(wall.x - (mod.x + mod.w)) < WALL_THRESHOLD) {
+                if (onMoveWall) onMoveWall(wall.id, wall.x + deltaX, wall.y + deltaY);
+              }
             }
           }
         });
