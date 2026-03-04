@@ -299,11 +299,11 @@ export default function Configurator() {
   const handleLoad = (design) => {
     const grid = (design.grid || []).map(m => ({
       ...m,
-      floorPlanImage: floorPlanImages[m.type] || m.floorPlanImage || null,
+      floorPlanImage: floorPlanImagesRef.current[m.type] || m.floorPlanImage || null,
     }));
     const loadedWalls = (design.walls || []).map(w => ({
       ...w,
-      elevationImage: wallImages[w.type] || w.elevationImage || null,
+      elevationImage: wallImagesRef.current[w.type] || w.elevationImage || null,
     }));
     setPlacedModules(grid);
     setWalls(loadedWalls);
