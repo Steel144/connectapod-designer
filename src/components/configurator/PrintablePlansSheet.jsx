@@ -65,16 +65,28 @@ export default function PrintablePlansSheet({ placedModules }) {
 
                 return (
                   <g key={mod.id}>
-                    {/* Module rectangle */}
+                    {/* Module background */}
                     <rect
                       x={x}
                       y={y}
                       width={w}
                       height={h}
-                      fill="#f0f0f0"
+                      fill="white"
                       stroke="#111"
                       strokeWidth="2"
                     />
+
+                    {/* Floor plan image if available */}
+                    {mod.floorPlanImage && (
+                      <image
+                        x={x + 4}
+                        y={y + 4}
+                        width={w - 8}
+                        height={h - 24}
+                        href={mod.floorPlanImage}
+                        preserveAspectRatio="xMidYMid slice"
+                      />
+                    )}
 
                     {/* Grid lines inside */}
                     {[...Array(mod.w)].map((_, i) => (
@@ -86,6 +98,7 @@ export default function PrintablePlansSheet({ placedModules }) {
                         y2={y + h}
                         stroke="#e5e7eb"
                         strokeWidth="0.5"
+                        opacity="0.5"
                       />
                     ))}
                     {[...Array(mod.h)].map((_, i) => (
@@ -97,39 +110,29 @@ export default function PrintablePlansSheet({ placedModules }) {
                         y2={y + (i + 1) * CELL_SIZE}
                         stroke="#e5e7eb"
                         strokeWidth="0.5"
+                        opacity="0.5"
                       />
                     ))}
 
                     {/* Module label */}
+                    <rect
+                      x={x}
+                      y={y + h - 20}
+                      width={w}
+                      height={20}
+                      fill="white"
+                      stroke="#e5e7eb"
+                      strokeWidth="1"
+                    />
                     <text
                       x={x + w / 2}
-                      y={y + h / 2 - 8}
+                      y={y + h - 6}
                       textAnchor="middle"
-                      fontSize="10"
+                      fontSize="9"
                       fontWeight="bold"
                       fill="#111"
                     >
-                      {mod.label || mod.type}
-                    </text>
-                    <text
-                      x={x + w / 2}
-                      y={y + h / 2 + 6}
-                      textAnchor="middle"
-                      fontSize="8"
-                      fill="#666"
-                    >
-                      {mod.type}
-                    </text>
-
-                    {/* Dimensions */}
-                    <text
-                      x={x + w / 2}
-                      y={y + h + 14}
-                      textAnchor="middle"
-                      fontSize="7"
-                      fill="#333"
-                    >
-                      {mod.w}m × {mod.h}m
+                      {mod.label || mod.type} • {mod.type}
                     </text>
                   </g>
                 );
