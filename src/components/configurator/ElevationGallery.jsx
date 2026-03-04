@@ -252,15 +252,16 @@ export default function ElevationGallery({ walls = [] }) {
         </div>
       </div>
 
-      {/* Preview on hover */}
+      {/* Preview on hover — positioned absolutely in document */}
       {hoveredWall?.elevationImage && (
         <div
-          className="fixed bg-white border-2 border-gray-300 shadow-2xl rounded-lg p-2 z-50"
+          className="absolute bg-white border-2 border-gray-300 shadow-2xl rounded-lg p-2 z-50 pointer-events-none"
           style={{
             left: `${hoverPos.x}px`,
             top: `${hoverPos.y}px`,
             maxWidth: "400px",
             maxHeight: "600px",
+            position: "fixed",
           }}
         >
           <img
