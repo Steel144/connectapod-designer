@@ -326,21 +326,22 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
         
         // Move walls attached to this module (Z, X, W, Y faces)
         walls.forEach((wall) => {
+          const WALL_OFFSET = 0.308;
           // Z face walls (left side)
-          if (wall.face === "Z" && wall.y === mod.y && wall.x === mod.x) {
+          if (wall.face === "Z" && Math.abs(wall.y - mod.y) < 0.01 && Math.abs(wall.x - mod.x) < 0.01) {
             if (onMoveWall) onMoveWall(wall.id, mod.x + deltaX, mod.y + deltaY);
           }
           // X face walls (right side)
-          if (wall.face === "X" && wall.y === mod.y && Math.abs(wall.x - (mod.x + mod.w - 0.31)) < 0.01) {
-            if (onMoveWall) onMoveWall(wall.id, mod.x + mod.w + deltaX - 0.31, mod.y + deltaY);
+          if (wall.face === "X" && Math.abs(wall.y - mod.y) < 0.01 && Math.abs(wall.x - (mod.x + mod.w - WALL_OFFSET)) < 0.01) {
+            if (onMoveWall) onMoveWall(wall.id, mod.x + mod.w + deltaX - WALL_OFFSET, mod.y + deltaY);
           }
           // W face walls (top)
-          if (wall.face === "W" && wall.y === mod.y - 0.308 && wall.x === mod.x) {
-            if (onMoveWall) onMoveWall(wall.id, mod.x + deltaX, mod.y + deltaY - 0.308);
+          if (wall.face === "W" && Math.abs(wall.y - (mod.y - WALL_OFFSET)) < 0.01 && Math.abs(wall.x - (mod.x - WALL_OFFSET)) < 0.01) {
+            if (onMoveWall) onMoveWall(wall.id, mod.x + deltaX - WALL_OFFSET, mod.y + deltaY - WALL_OFFSET);
           }
           // Y face walls (bottom)
-          if (wall.face === "Y" && wall.y === mod.y + mod.h && wall.x === mod.x) {
-            if (onMoveWall) onMoveWall(wall.id, mod.x + deltaX, mod.y + mod.h + deltaY);
+          if (wall.face === "Y" && Math.abs(wall.y - (mod.y + mod.h)) < 0.01 && Math.abs(wall.x - (mod.x - WALL_OFFSET)) < 0.01) {
+            if (onMoveWall) onMoveWall(wall.id, mod.x + deltaX - WALL_OFFSET, mod.y + mod.h + deltaY);
           }
         });
       }
