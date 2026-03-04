@@ -60,9 +60,9 @@ export default function PrintableElevationsSheet({ walls, onClose }) {
                     <>
                       {walls.filter(w => w.face === "Z" || (w.orientation === "vertical" && !w.face && w.x < 5)).map(wall => (
                         <div key={wall.id} className="flex flex-col items-center gap-2 shrink-0">
-                          <div className="border-2 border-gray-900 bg-white flex items-center justify-center" style={{ height: "280px", width: "150px" }}>
+                          <div className="bg-white flex items-center justify-center" style={{ height: "280px", width: "150px" }}>
                             {wall.elevationImage && (
-                              <img src={wall.elevationImage} alt={wall.label} className="h-full w-full object-contain p-1" />
+                              <img src={wall.elevationImage} alt={wall.label} className="h-full w-full object-cover" />
                             )}
                           </div>
                           <p className="text-xs font-bold text-gray-900 text-center whitespace-nowrap">{wall.label || wall.type}</p>
@@ -74,10 +74,10 @@ export default function PrintableElevationsSheet({ walls, onClose }) {
 
                   {/* Middle walls - tightly joined */}
                   {walls.filter(w => w.face === face || (w.orientation === "horizontal" && !w.face)).map((wall, idx) => (
-                    <div key={wall.id} className="flex flex-col items-center gap-2 shrink-0">
-                      <div className="border-2 border-gray-900 bg-white flex items-center justify-center" style={{ height: "280px", width: "150px", marginLeft: idx > 0 ? "-2px" : 0 }}>
+                    <div key={wall.id} className="flex flex-col items-center gap-2 shrink-0" style={{ marginLeft: idx > 0 ? "-1px" : 0 }}>
+                      <div className="bg-white flex items-center justify-center" style={{ height: "280px", width: "150px" }}>
                         {wall.elevationImage && (
-                          <img src={wall.elevationImage} alt={wall.label} className="h-full w-full object-contain p-1" />
+                          <img src={wall.elevationImage} alt={wall.label} className="h-full w-full object-cover" />
                         )}
                       </div>
                       <p className="text-xs font-bold text-gray-900 text-center whitespace-nowrap">{wall.label || wall.type}</p>
@@ -90,9 +90,9 @@ export default function PrintableElevationsSheet({ walls, onClose }) {
                       <div className="w-6 shrink-0" />
                       {walls.filter(w => w.face === "X" || (w.orientation === "vertical" && !w.face && w.x >= 5)).map(wall => (
                         <div key={wall.id} className="flex flex-col items-center gap-2 shrink-0">
-                          <div className="border-2 border-gray-900 bg-white flex items-center justify-center" style={{ height: "280px", width: "150px" }}>
+                          <div className="bg-white flex items-center justify-center" style={{ height: "280px", width: "150px" }}>
                             {wall.elevationImage && (
-                              <img src={wall.elevationImage} alt={wall.label} className="h-full w-full object-contain p-1" />
+                              <img src={wall.elevationImage} alt={wall.label} className="h-full w-full object-cover" />
                             )}
                           </div>
                           <p className="text-xs font-bold text-gray-900 text-center whitespace-nowrap">{wall.label || wall.type}</p>
