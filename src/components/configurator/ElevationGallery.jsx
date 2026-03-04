@@ -136,18 +136,18 @@ export default function ElevationGallery({ walls = [] }) {
           <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{rowLabel}</span>
           <div className="flex-1 h-px bg-gray-200" />
         </div>
-        <div className="flex items-start" style={{ marginLeft: "-1px" }}>
+        <div className="flex items-start">
           {/* Z end — left, separated */}
           {endLeft && (
-            <div className="flex items-end shrink-0">
-              <ElevationImage wall={endLeft} label={endLeft.type || "End"} face={endLeft.face || "Z"} />
+            <div className="flex items-end shrink-0" style={{ marginRight: "-1px" }}>
+              <ElevationImage wall={endLeft} label={endLeft.type || "End"} face={endLeft.face || "Z"} tight />
             </div>
           )}
 
           {/* Middle walls joined tightly — no gap between */}
-          <div className="flex items-end" style={{ marginLeft: "-1px" }}>
+          <div className="flex items-end">
             {midWalls.map((wall, idx) => (
-              <div key={wall.id} className="flex items-end" style={{ marginLeft: "-1px" }}>
+              <div key={wall.id} className="flex items-end" style={{ marginRight: "-1px" }}>
                 <ElevationImage wall={wall} label={wall.type || "Wall"} face={wall.face} tight />
               </div>
             ))}
@@ -156,7 +156,7 @@ export default function ElevationGallery({ walls = [] }) {
           {/* X end — right, separated */}
           {endRight && (
             <div className="flex items-end shrink-0" style={{ marginLeft: "-1px" }}>
-              <ElevationImage wall={endRight} label={endRight.type || "End"} face={endRight.face || "X"} />
+              <ElevationImage wall={endRight} label={endRight.type || "End"} face={endRight.face || "X"} tight />
             </div>
           )}
         </div>
