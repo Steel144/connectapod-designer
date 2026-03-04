@@ -16,13 +16,45 @@ export default function ElevationGallery({ walls = [] }) {
     }
   };
 
-  // Group walls by face
+  // Group walls by face — with fallback for walls missing the face property
   const { wWalls, yWalls, zWall, xWall, hasAny } = useMemo(() => {
     const withImage = walls.filter(w => w.elevationImage);
-    const w = withImage.filter(w => w.face === "W").sort((a, b) => a.x - b.x);
-    const y = withImage.filter(w => w.face === "Y").sort((a, b) => a.x - b.x);
-    const z = withImage.find(w => w.face === "Z") || null;
-    const x = withImage.find(w => w.face === "X") || null;
+
+    // Infer face from orientation if missing
+    const inferFace = (w) => {
+      if (w.face) return w.face;
+      if (w.orientation === "vertical") return "Z"; // treat all vertical end walls as Z (left end)
+      // horizontal: no reliable way to distinguish W vs Y without grid context
+      // use a heuristic: if this wall's y is the smallest among horizontal walls, it's W (top)
+      return null;
+    };
+
+    // For walls without face, split horizontal ones by relative y position
+    const horizontal = withImage.filter(w => w.orientation === "horizontal" || w.face === "W" || w.face === "Y");
+    const vertical = withImage.filter(w => w.orientation === "vertical" || w.face === "Z" || w.face === "X");
+
+    // Determine midpoint y to split W (top) from Y (bottom)
+    const ys = horizontal.map(w => w.y);
+    const midY = ys.length > 0 ? (Math.min(...ys) + Math.max(...ys)) / 2 : 0;
+
+    const getFace = (w) => {
+      if (w.face) return w.face;
+      if (w.orientation === "vertical") return "Z";
+      return w.y <= midY ? "W" : "Y";
+    };
+
+    const w = horizontal.filter(w => getFace(w) === "W").sort((a, b) => a.x - b.x);
+    const y = horizontal.filter(w => getFace(w) === "Y").sort((a, b) => a.x - b.x);
+
+    // For vertical/end walls, split by x position (left vs right)
+    const vertXs = vertical.map(w => w.x);
+    const midX = vertXs.length > 0 ? (Math.min(...vertXs) + Math.max(...vertXs)) / 2 : 0;
+    const zCandidates = vertical.filter(w => w.face === "Z" || (!w.face && w.x <= midX));
+    const xCandidates = vertical.filter(w => w.face === "X" || (!w.face && w.x > midX));
+
+    const z = zCandidates[0] || null;
+    const x = xCandidates[0] || null;
+
     return {
       wWalls: w,
       yWalls: y,
