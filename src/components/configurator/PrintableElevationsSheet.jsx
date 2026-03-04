@@ -16,12 +16,12 @@ export default function PrintableElevationsSheet({ walls, onClose }) {
     return () => clearTimeout(timer);
   }, [onClose]);
 
-  // Group by face, treating undefined face as horizontal vs vertical
+  // Group by face
   const groupedByFace = {
-    W: elevations.filter(w => w.face === "W" || (w.orientation === "horizontal" && !w.face && w.y < 5)).sort((a, b) => a.x - b.x),
-    Y: elevations.filter(w => w.face === "Y" || (w.orientation === "horizontal" && !w.face && w.y >= 5)).sort((a, b) => a.x - b.x),
-    Z: elevations.filter(w => w.face === "Z" || (w.orientation === "vertical" && !w.face && w.x < 5)),
-    X: elevations.filter(w => w.face === "X" || (w.orientation === "vertical" && !w.face && w.x >= 5)),
+    W: elevations.filter(w => w.face === "W").sort((a, b) => a.x - b.x),
+    Y: elevations.filter(w => w.face === "Y").sort((a, b) => a.x - b.x),
+    Z: elevations.filter(w => w.face === "Z"),
+    X: elevations.filter(w => w.face === "X"),
   };
 
   const faceLabels = {
