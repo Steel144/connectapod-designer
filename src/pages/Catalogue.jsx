@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { ChevronLeft } from "lucide-react";
 
 // wallElevations: { Z, W, Y, X } — compatible wall codes per face
 const CATALOGUE = [
