@@ -3,6 +3,31 @@ import { ZoomIn, ZoomOut, Maximize2 } from "lucide-react";
 
 export default function ElevationGallery({ walls = [] }) {
   const [zoom, setZoom] = useState(100);
+  const [pan, setPan] = useState({ x: 0, y: 0 });
+  const isPanning = useRef(false);
+  const panStart = useRef({ x: 0, y: 0 });
+  const panOrigin = useRef({ x: 0, y: 0 });
+
+  const handleCanvasMouseDown = useCallback((e) => {
+    if (e.button !== 0) return;
+    isPanning.current = true;
+    panStart.current = { x: e.clientX, y: e.clientY };
+    panOrigin.current = { ...pan };
+    e.currentTarget.style.cursor = "grabbing";
+  }, [pan]);
+
+  const handleCanvasMouseMove = useCallback((e) => {
+    if (!isPanning.current) return;
+    setPan({
+      x: panOrigin.current.x + (e.clientX - panStart.current.x),
+      y: panOrigin.current.y + (e.clientY - panStart.current.y),
+    });
+  }, []);
+
+  const handleCanvasMouseUp = useCallback((e) => {
+    isPanning.current = false;
+    e.currentTarget.style.cursor = "grab";
+  }, []);
 
   const zoomLevels = [50, 75, 100, 125, 150, 200, 300];
 
