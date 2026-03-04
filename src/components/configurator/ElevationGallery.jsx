@@ -108,8 +108,8 @@ export default function ElevationGallery({ walls = [] }) {
   const ElevationImage = ({ wall, label, face, tight }) => (
     <div className={`flex flex-col items-center ${tight ? "gap-0" : "gap-2"} shrink-0`}>
       <div
-        className={`bg-white overflow-hidden ${tight ? "border-y border-gray-200" : "border border-gray-200 shadow-sm"}`}
-        style={{ height: `${imgHeight}px` }}
+        className={`bg-white overflow-hidden ${tight ? "border-none" : "border border-gray-200 shadow-sm"}`}
+        style={{ height: `${imgHeight}px`, margin: tight ? "-1px" : "0" }}
       >
         <img
           src={wall.elevationImage}
