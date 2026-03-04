@@ -42,9 +42,9 @@ export default function PrintablePlansSheet({ placedModules, onClose }) {
       >
         Close
       </button>
-      <div className="flex flex-col p-0" style={{ pageBreakAfter: "always", height: "100vh" }}>
+      <div className="bg-white flex flex-col p-0" style={{ pageBreakAfter: "always", minHeight: "100vh" }}>
         {/* Logo */}
-        <div className="absolute top-4 right-4 z-40 print:relative print:top-0 print:right-0 print:mb-0">
+        <div className="fixed top-4 right-4 z-40 print:absolute print:top-4 print:right-4">
           <img 
             src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69a55c0c222e61cb3fbc417c/1ae4d27f6_Untitled-1-01.png" 
             alt="Connectapod Logo" 
@@ -53,7 +53,7 @@ export default function PrintablePlansSheet({ placedModules, onClose }) {
         </div>
         
         {/* Main content */}
-        <div className="flex-1 flex flex-col p-12 pt-20">
+        <div className="flex-1 flex flex-col p-8">
           {/* Grid view */}
           <div className="flex-1 flex items-center justify-center overflow-hidden mb-8">
             <svg
