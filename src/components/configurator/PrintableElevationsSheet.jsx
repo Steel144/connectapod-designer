@@ -85,7 +85,7 @@ export default function PrintableElevationsSheet({ walls, onClose }) {
                             <img src={wall.elevationImage} alt={wall.label} className="h-full w-full object-contain" />
                           )}
                         </div>
-                        <p className="text-xs font-bold text-gray-900 text-center whitespace-nowrap">{wall.label || wall.type}</p>
+                        <p className="text-xs font-bold text-gray-900 text-center whitespace-nowrap">{wall.type}</p>
                       </div>
                     ))}
                   </div>
