@@ -2,7 +2,7 @@ import React, { useState, useMemo } from "react";
 import { ZoomIn, ZoomOut } from "lucide-react";
 
 export default function ElevationGallery({ walls = [] }) {
-  const [zoom, setZoom] = useState(100);
+  const [zoom, setZoom] = useState(150);
 
   // Flatten all walls with elevation images into a single list
   const allElevations = useMemo(() => {
