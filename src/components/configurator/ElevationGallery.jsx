@@ -27,7 +27,7 @@ export default function ElevationGallery({ walls = [] }) {
   }
 
   return (
-    <div className="w-full h-full bg-black flex flex-col">
+    <div className="w-full h-full bg-white flex flex-col">
       {/* Zoom controls */}
       <div className="flex items-center justify-center gap-3 px-4 py-3 border-b border-gray-700 bg-gray-900">
         <button
