@@ -184,9 +184,9 @@ export default function ElevationGallery({ walls = [] }) {
             <ZoomOut size={15} />
           </button>
           <button
-            onClick={() => setZoom(100)}
+            onClick={() => { setZoom(100); setPan({ x: 0, y: 0 }); }}
             className="min-w-[52px] text-center text-xs font-semibold text-gray-600 hover:text-[#F15A22] py-1 px-2 rounded hover:bg-white transition-all"
-            title="Reset zoom"
+            title="Reset zoom & position"
           >
             {zoom}%
           </button>
