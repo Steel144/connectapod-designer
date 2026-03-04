@@ -93,7 +93,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
     const newSelected = selected.has(mod.id) ? selected : new Set([mod.id]);
     setSelected(newSelected);
     setSelectedModId(mod.id);
-    setSelectedWallId(null); // deselect wall when clicking a module
+    setSelectedWallIds(new Set()); // deselect walls when clicking a module
     
     setDragging({ mod, offsetX, offsetY, cursorX: e.clientX, cursorY: e.clientY, isPlaced: true, selectedIds: newSelected, wasSelected: selected.has(mod.id) });
   };
