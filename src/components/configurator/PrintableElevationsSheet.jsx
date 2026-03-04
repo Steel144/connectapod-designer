@@ -64,11 +64,13 @@ export default function PrintableElevationsSheet({ walls, onClose }) {
           style={{ height: "72px", width: "auto" }}
         />
       </div>
-      {Object.entries(groupedByFace).map(([face, walls]) => {
+      {Object.entries(groupedByFace).map(([face, walls], idx) => {
         if (walls.length === 0) return null;
+        
+        const isLast = Object.entries(groupedByFace).filter(([, w]) => w.length > 0).length === idx + 1;
 
         return (
-          <div key={face} className="bg-white flex flex-col p-0" style={{ pageBreakAfter: "always", minHeight: "100vh" }}>
+          <div key={face} className="bg-white flex flex-col p-0" style={{ pageBreakAfter: isLast ? "avoid" : "always", minHeight: "100vh" }}>
             {/* Main content */}
             <div className="flex-1 flex flex-col p-8">
               {/* Elevations grid */}
