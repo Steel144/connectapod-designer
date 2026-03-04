@@ -187,7 +187,7 @@ export default function ElevationGallery({ walls = [] }) {
           }
         }}
       >
-        <div className="flex flex-col gap-12" style={{ width: "max-content" }}>
+        <div className="flex flex-col gap-16" style={{ width: "max-content" }}>
           <ElevationRow
             endLeft={zWall}
             midWalls={wWalls}
