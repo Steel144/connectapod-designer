@@ -43,66 +43,62 @@ export default function PrintableElevationsSheet({ walls, onClose }) {
         if (walls.length === 0) return null;
 
         return (
-          <div key={face} className="h-screen flex flex-col p-0" style={{ pageBreakAfter: "always" }}>
+          <div key={face} className="bg-white flex flex-col p-0" style={{ pageBreakAfter: "always", minHeight: "100vh" }}>
             {/* Main content */}
-            <div className="flex-1 flex flex-col p-16">
+            <div className="flex-1 flex flex-col p-8">
               {/* Title */}
-              <div className="text-center mb-8">
+              <div className="text-center mb-6">
                 <p className="text-xs text-gray-500 uppercase tracking-widest">Elevation Drawing</p>
-                <h1 className="text-3xl font-bold text-gray-900 mt-2">{faceLabels[face]}</h1>
+                <h1 className="text-2xl font-bold text-gray-900 mt-1">{faceLabels[face]}</h1>
               </div>
 
               {/* Elevations grid */}
-              <div className="flex-1 flex items-center justify-center">
-                <div className="flex items-end gap-6">
+              <div className="flex-1 flex items-center justify-center overflow-x-auto">
+                <div className="flex items-end">
                   {/* Z (left end) - separated */}
                   {walls.find(w => w.face === "Z" || w.orientation === "vertical") && (
-                    <div className="flex flex-col items-center gap-2">
+                    <>
                       {walls.filter(w => w.face === "Z" || (w.orientation === "vertical" && !w.face && w.x < 5)).map(wall => (
-                        <div key={wall.id}>
-                          <div className="border-2 border-gray-900 bg-white flex items-center justify-center" style={{ height: "300px", width: "200px" }}>
+                        <div key={wall.id} className="flex flex-col items-center gap-2 shrink-0">
+                          <div className="border-2 border-gray-900 bg-white flex items-center justify-center" style={{ height: "280px", width: "150px" }}>
                             {wall.elevationImage && (
-                              <img src={wall.elevationImage} alt={wall.label} className="h-full w-full object-contain p-2" />
+                              <img src={wall.elevationImage} alt={wall.label} className="h-full w-full object-contain p-1" />
                             )}
                           </div>
-                          <p className="text-xs font-bold text-gray-900 mt-2">{wall.label || wall.type}</p>
+                          <p className="text-xs font-bold text-gray-900 text-center whitespace-nowrap">{wall.label || wall.type}</p>
                         </div>
                       ))}
-                    </div>
+                      <div className="w-6 shrink-0" />
+                    </>
                   )}
-                  
-                  <div className="w-12" />
 
                   {/* Middle walls - tightly joined */}
-                  <div className="flex items-end">
-                    {walls.filter(w => w.face === face || (w.orientation === "horizontal" && !w.face)).map((wall, idx) => (
-                      <div key={wall.id} className="flex flex-col items-center gap-2">
-                        <div className="border-2 border-gray-900 bg-white flex items-center justify-center" style={{ height: "300px", width: "200px", marginLeft: idx > 0 ? "-2px" : 0 }}>
-                          {wall.elevationImage && (
-                            <img src={wall.elevationImage} alt={wall.label} className="h-full w-full object-contain p-2" />
-                          )}
-                        </div>
-                        <p className="text-xs font-bold text-gray-900 mt-2">{wall.label || wall.type}</p>
+                  {walls.filter(w => w.face === face || (w.orientation === "horizontal" && !w.face)).map((wall, idx) => (
+                    <div key={wall.id} className="flex flex-col items-center gap-2 shrink-0">
+                      <div className="border-2 border-gray-900 bg-white flex items-center justify-center" style={{ height: "280px", width: "150px", marginLeft: idx > 0 ? "-2px" : 0 }}>
+                        {wall.elevationImage && (
+                          <img src={wall.elevationImage} alt={wall.label} className="h-full w-full object-contain p-1" />
+                        )}
                       </div>
-                    ))}
-                  </div>
-
-                  <div className="w-12" />
+                      <p className="text-xs font-bold text-gray-900 text-center whitespace-nowrap">{wall.label || wall.type}</p>
+                    </div>
+                  ))}
 
                   {/* X (right end) - separated */}
                   {walls.find(w => w.face === "X" || w.orientation === "vertical") && (
-                    <div className="flex flex-col items-center gap-2">
+                    <>
+                      <div className="w-6 shrink-0" />
                       {walls.filter(w => w.face === "X" || (w.orientation === "vertical" && !w.face && w.x >= 5)).map(wall => (
-                        <div key={wall.id}>
-                          <div className="border-2 border-gray-900 bg-white flex items-center justify-center" style={{ height: "300px", width: "200px" }}>
+                        <div key={wall.id} className="flex flex-col items-center gap-2 shrink-0">
+                          <div className="border-2 border-gray-900 bg-white flex items-center justify-center" style={{ height: "280px", width: "150px" }}>
                             {wall.elevationImage && (
-                              <img src={wall.elevationImage} alt={wall.label} className="h-full w-full object-contain p-2" />
+                              <img src={wall.elevationImage} alt={wall.label} className="h-full w-full object-contain p-1" />
                             )}
                           </div>
-                          <p className="text-xs font-bold text-gray-900 mt-2">{wall.label || wall.type}</p>
+                          <p className="text-xs font-bold text-gray-900 text-center whitespace-nowrap">{wall.label || wall.type}</p>
                         </div>
                       ))}
-                    </div>
+                    </>
                   )}
                 </div>
               </div>
