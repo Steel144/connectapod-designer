@@ -71,12 +71,6 @@ export default function PrintableElevationsSheet({ walls, onClose }) {
           <div key={face} className="bg-white flex flex-col p-0" style={{ pageBreakAfter: "always", minHeight: "100vh" }}>
             {/* Main content */}
             <div className="flex-1 flex flex-col p-8">
-              {/* Title */}
-              <div className="text-center mb-6">
-                <p className="text-xs text-gray-500 uppercase tracking-widest">Elevation Drawing</p>
-                <h1 className="text-2xl font-bold text-gray-900 mt-1">{faceLabels[face]}</h1>
-              </div>
-
               {/* Elevations grid */}
               <div className="flex-1 flex items-center justify-center overflow-x-auto">
                 {(face === "W" || face === "Y") ? (
