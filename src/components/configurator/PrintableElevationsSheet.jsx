@@ -53,57 +53,58 @@ export default function PrintableElevationsSheet({ walls, onClose }) {
               </div>
 
               {/* Elevations grid */}
-              <div className="flex-1 flex flex-col gap-8 justify-center">
-                {walls.map((wall, idx) => (
-                  <div key={wall.id} className="flex gap-8 items-start">
-                    {/* Image */}
-                    <div className="flex-1 border-2 border-gray-900 bg-white aspect-video flex items-center justify-center">
-                      {wall.elevationImage && (
-                        <img
-                          src={wall.elevationImage}
-                          alt={wall.label}
-                          className="w-full h-full object-contain p-6"
-                        />
-                      )}
+              <div className="flex-1 flex items-center justify-center">
+                <div className="flex items-end gap-6">
+                  {/* Z (left end) - separated */}
+                  {walls.find(w => w.face === "Z" || w.orientation === "vertical") && (
+                    <div className="flex flex-col items-center gap-2">
+                      {walls.filter(w => w.face === "Z" || (w.orientation === "vertical" && !w.face && w.x < 5)).map(wall => (
+                        <div key={wall.id}>
+                          <div className="border-2 border-gray-900 bg-white flex items-center justify-center" style={{ height: "300px", width: "200px" }}>
+                            {wall.elevationImage && (
+                              <img src={wall.elevationImage} alt={wall.label} className="h-full w-full object-contain p-2" />
+                            )}
+                          </div>
+                          <p className="text-xs font-bold text-gray-900 mt-2">{wall.label || wall.type}</p>
+                        </div>
+                      ))}
                     </div>
+                  )}
+                  
+                  <div className="w-12" />
 
-                    {/* Specifications */}
-                    <div className="w-48">
-                      <h3 className="text-sm font-bold text-gray-900 mb-4">{wall.label || wall.type}</h3>
-                      
-                      <div className="space-y-4 text-xs border-l-2 border-gray-900 pl-4">
-                        <div>
-                          <p className="uppercase text-gray-500 text-[10px] font-bold tracking-widest">Code</p>
-                          <p className="text-gray-900 font-mono font-bold text-sm">{wall.type}</p>
+                  {/* Middle walls - tightly joined */}
+                  <div className="flex items-end">
+                    {walls.filter(w => w.face === face || (w.orientation === "horizontal" && !w.face)).map((wall, idx) => (
+                      <div key={wall.id} className="flex flex-col items-center gap-2">
+                        <div className="border-2 border-gray-900 bg-white flex items-center justify-center" style={{ height: "300px", width: "200px", marginLeft: idx > 0 ? "-2px" : 0 }}>
+                          {wall.elevationImage && (
+                            <img src={wall.elevationImage} alt={wall.label} className="h-full w-full object-contain p-2" />
+                          )}
                         </div>
-                        
-                        <div>
-                          <p className="uppercase text-gray-500 text-[10px] font-bold tracking-widest">Length</p>
-                          <p className="text-gray-900 font-bold">{wall.length}m</p>
-                        </div>
-
-                        <div>
-                          <p className="uppercase text-gray-500 text-[10px] font-bold tracking-widest">Orientation</p>
-                          <p className="text-gray-900 capitalize font-bold">{wall.orientation}</p>
-                        </div>
-
-                        {wall.thickness && (
-                          <div>
-                            <p className="uppercase text-gray-500 text-[10px] font-bold tracking-widest">Thickness</p>
-                            <p className="text-gray-900 font-bold">{wall.thickness}mm</p>
-                          </div>
-                        )}
-
-                        <div className="pt-2 border-t border-gray-300">
-                          <p className="uppercase text-gray-500 text-[10px] font-bold tracking-widest mb-1">Face</p>
-                          <div className="bg-[#F15A22] text-white text-xs font-bold px-2 py-1 rounded text-center inline-block">
-                            {wall.face || "N/A"}
-                          </div>
-                        </div>
+                        <p className="text-xs font-bold text-gray-900 mt-2">{wall.label || wall.type}</p>
                       </div>
-                    </div>
+                    ))}
                   </div>
-                ))}
+
+                  <div className="w-12" />
+
+                  {/* X (right end) - separated */}
+                  {walls.find(w => w.face === "X" || w.orientation === "vertical") && (
+                    <div className="flex flex-col items-center gap-2">
+                      {walls.filter(w => w.face === "X" || (w.orientation === "vertical" && !w.face && w.x >= 5)).map(wall => (
+                        <div key={wall.id}>
+                          <div className="border-2 border-gray-900 bg-white flex items-center justify-center" style={{ height: "300px", width: "200px" }}>
+                            {wall.elevationImage && (
+                              <img src={wall.elevationImage} alt={wall.label} className="h-full w-full object-contain p-2" />
+                            )}
+                          </div>
+                          <p className="text-xs font-bold text-gray-900 mt-2">{wall.label || wall.type}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
 
