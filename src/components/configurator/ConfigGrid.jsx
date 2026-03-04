@@ -325,11 +325,11 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
         onMove(id, mod.x + deltaX, mod.y + deltaY);
         
         // Move walls attached to this module
-        const WALL_THRESHOLD = 0.3;
+        const WALL_THRESHOLD = 0.5;
         walls.forEach((wall) => {
           if (wall.orientation === "horizontal") {
-            // Wall must be directly above or below AND have same x start AND match length
-            if (Math.abs(wall.x - (mod.x - 0.308)) < WALL_THRESHOLD && Math.abs(wall.length - mod.w) < 0.1) {
+            // Wall must have same x start AND match length
+            if (Math.abs(wall.x - mod.x) < WALL_THRESHOLD && Math.abs(wall.length - mod.w) < 0.1) {
               // Above (W face)
               if (Math.abs(wall.y - (mod.y - wall.thickness)) < WALL_THRESHOLD) {
                 if (onMoveWall) onMoveWall(wall.id, wall.x + deltaX, wall.y + deltaY);
@@ -340,7 +340,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
               }
             }
           } else if (wall.orientation === "vertical") {
-            // Wall must be directly left or right AND have same y start AND match length
+            // Wall must have same y start AND match length
             if (Math.abs(wall.y - mod.y) < WALL_THRESHOLD && Math.abs(wall.length - mod.h) < 0.1) {
               // Left (Z face)
               if (Math.abs(wall.x - mod.x) < WALL_THRESHOLD) {
