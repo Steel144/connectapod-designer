@@ -519,6 +519,26 @@ export default function Configurator() {
           </button>
           {placedModules.length > 0 && (
             <button
+              onClick={() => setPrintMode("plans")}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-gray-600 bg-white border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22] transition-all"
+              title="Print floor plans sheet"
+            >
+              <Save size={13} />
+              Print Plans
+            </button>
+          )}
+          {walls.some(w => w.elevationImage) && (
+            <button
+              onClick={() => setPrintMode("elevations")}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-gray-600 bg-white border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22] transition-all"
+              title="Print elevations sheet"
+            >
+              <Save size={13} />
+              Print Elevations
+            </button>
+          )}
+          {placedModules.length > 0 && (
+            <button
               onClick={handleClear}
               className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-gray-500 bg-white border border-gray-200 hover:border-red-300 hover:text-red-500 transition-all"
             >
