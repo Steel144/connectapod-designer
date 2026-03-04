@@ -42,7 +42,7 @@ export default function PrintablePlansSheet({ placedModules, onClose }) {
       >
         Close
       </button>
-      <div className="bg-white flex flex-col p-0" style={{ pageBreakAfter: "always", minHeight: "100vh" }}>
+      <div className="bg-white flex flex-col p-0" style={{ minHeight: "100vh" }}>
         {/* Logo */}
         <div className="fixed top-4 right-4 z-40 print:absolute print:top-4 print:right-4">
           <img 
