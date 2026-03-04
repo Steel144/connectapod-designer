@@ -52,13 +52,6 @@ export default function PrintablePlansSheet({ placedModules, onClose }) {
       </div>
       <div className="h-screen flex flex-col p-0" style={{ pageBreakAfter: "always" }}>
         <div className="flex-1 flex flex-col p-12">
-
-          {/* Header */}
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-900">connectapod</h1>
-            <p className="text-xl text-gray-600 mt-1">FLOOR PLAN - SITE LAYOUT</p>
-          </div>
-
           {/* Grid view */}
           <div className="flex-1 flex items-center justify-center overflow-hidden mb-8">
             <svg
