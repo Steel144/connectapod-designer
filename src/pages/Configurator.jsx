@@ -284,12 +284,25 @@ export default function Configurator() {
   };
 
   const handleSave = (name) => {
-    const totalSqm = placedModules.reduce((s, m) => s + m.sqm, 0);
-    const estimatedPrice = placedModules.reduce((s, m) => s + m.price, 0);
+    const totalSqm = placedModules.reduce((s, m) => s + (m.sqm || 0), 0);
+    const estimatedPrice = placedModules.reduce((s, m) => s + (m.price || 0), 0);
+    // Strip large/non-serializable fields, ensure type is saved
+    const gridToSave = placedModules.map(m => ({
+      id: m.id, type: m.type, label: m.label, x: m.x, y: m.y, w: m.w, h: m.h,
+      sqm: m.sqm, price: m.price, color: m.color, border: m.border,
+      chassis: m.chassis, widthCode: m.widthCode, room: m.room,
+      baseW: m.baseW, baseH: m.baseH, rotation: m.rotation, flipped: m.flipped,
+      groupKey: m.groupKey,
+    }));
+    const wallsToSave = walls.map(w => ({
+      id: w.id, type: w.type, label: w.label, x: w.x, y: w.y,
+      orientation: w.orientation, length: w.length, thickness: w.thickness,
+      face: w.face, rotation: w.rotation,
+    }));
     saveMutation.mutate({
       name,
-      grid: placedModules,
-      walls,
+      grid: gridToSave,
+      walls: wallsToSave,
       totalSqm,
       estimatedPrice,
       moduleCount: placedModules.length,
