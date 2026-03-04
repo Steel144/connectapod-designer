@@ -2,7 +2,6 @@ import React, { useState, useMemo } from "react";
 import { ChevronLeft, ChevronRight, ZoomIn, ZoomOut } from "lucide-react";
 
 export default function ElevationGallery({ walls = [] }) {
-  const [currentIndex, setCurrentIndex] = useState(0);
   const [zoom, setZoom] = useState(100);
 
   // Flatten all walls with elevation images into a single list
@@ -26,18 +25,6 @@ export default function ElevationGallery({ walls = [] }) {
       </div>
     );
   }
-
-  const current = allElevations[currentIndex];
-  const hasNext = currentIndex < allElevations.length - 1;
-  const hasPrev = currentIndex > 0;
-
-  const handleNext = () => {
-    if (hasNext) setCurrentIndex(currentIndex + 1);
-  };
-
-  const handlePrev = () => {
-    if (hasPrev) setCurrentIndex(currentIndex - 1);
-  };
 
   return (
     <div className="w-full h-full bg-black flex flex-col">
@@ -68,38 +55,24 @@ export default function ElevationGallery({ walls = [] }) {
         </button>
       </div>
 
-      {/* Current elevation */}
-      <div className="flex-1 overflow-auto flex flex-col items-center justify-center gap-3" onWheel={(e) => {
+      {/* All elevations joined side by side */}
+      <div className="flex-1 overflow-auto flex items-center" onWheel={(e) => {
         if (e.ctrlKey || e.metaKey) {
           e.preventDefault();
           setZoom(Math.max(50, Math.min(200, zoom + (e.deltaY > 0 ? -5 : 5))));
         }
       }}>
-        <p className="text-white text-sm">{current.label}</p>
-        <div style={{ transform: `scale(${zoom / 100})`, transformOrigin: 'center', transition: 'transform 0.2s' }}>
-          <img src={current.image} alt={current.label} className="max-w-full max-h-[calc(100vh-200px)] object-contain" />
+        <div className="flex items-stretch" style={{ transform: `scale(${zoom / 100})`, transformOrigin: 'left center', transition: 'transform 0.2s' }}>
+          {allElevations.map((elev) => (
+            <img
+              key={elev.id}
+              src={elev.image}
+              alt={elev.label}
+              className="h-auto max-h-[calc(100vh-120px)] object-contain block"
+              style={{ display: 'block' }}
+            />
+          ))}
         </div>
-      </div>
-
-      {/* Navigation */}
-      <div className="absolute bottom-6 flex items-center gap-4">
-        <button
-          onClick={handlePrev}
-          disabled={!hasPrev}
-          className="text-white hover:text-gray-300 disabled:text-gray-600 disabled:cursor-not-allowed transition-colors"
-        >
-          <ChevronLeft size={32} />
-        </button>
-        <p className="text-white text-sm min-w-20 text-center">
-          {currentIndex + 1} / {allElevations.length}
-        </p>
-        <button
-          onClick={handleNext}
-          disabled={!hasNext}
-          className="text-white hover:text-gray-300 disabled:text-gray-600 disabled:cursor-not-allowed transition-colors"
-        >
-          <ChevronRight size={32} />
-        </button>
       </div>
     </div>
   );
