@@ -117,14 +117,12 @@ export default function ElevationGallery({ walls = [] }) {
           style={{ height: "100%", width: "auto", display: "block" }}
         />
       </div>
-      {!tight && (
-        <div className="text-center">
-          <span className="inline-block bg-[#F15A22] text-white text-[10px] font-bold px-2 py-0.5 rounded mb-1">
-            {face}
-          </span>
-          <p className="text-[11px] font-medium text-gray-500 whitespace-nowrap">{label}</p>
-        </div>
-      )}
+      <div className="text-center">
+        <span className="inline-block bg-[#F15A22] text-white text-[10px] font-bold px-2 py-0.5 rounded mb-1">
+          {face}
+        </span>
+        <p className="text-[11px] font-medium text-gray-500 whitespace-nowrap">{label}</p>
+      </div>
     </div>
   );
 
