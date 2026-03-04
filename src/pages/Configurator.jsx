@@ -116,25 +116,7 @@ export default function Configurator() {
     return () => window.removeEventListener("keydown", onKey);
   }, [handleUndo]);
 
-  // Update walls with images when wallImages changes
-  useEffect(() => {
-    setWalls((prev) =>
-      prev.map((w) => ({
-        ...w,
-        elevationImage: wallImages[w.type] || w.elevationImage || null,
-      }))
-    );
-  }, [wallImages]);
 
-  // Update modules with images when floorPlanImages changes
-  useEffect(() => {
-    setPlacedModules((prev) =>
-      prev.map((m) => ({
-        ...m,
-        floorPlanImage: floorPlanImages[m.type] || m.floorPlanImage || null,
-      }))
-    );
-  }, [floorPlanImages]);
 
   const handlePlace = (mod, x, y) => {
     pushHistory(placedModules, walls);
