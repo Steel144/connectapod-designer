@@ -42,13 +42,16 @@ export default function PrintablePlansSheet({ placedModules, onClose }) {
       >
         Close
       </button>
+      {/* Logo */}
+      <div className="fixed top-4 right-20 z-40 print:absolute print:top-4 print:right-4 print:fixed:none">
+        <img 
+          src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69a55c0c222e61cb3fbc417c/1ae4d27f6_Untitled-1-01.png" 
+          alt="Connectapod Logo" 
+          style={{ height: "72px", width: "auto" }}
+        />
+      </div>
       <div className="h-screen flex flex-col p-0" style={{ pageBreakAfter: "always" }}>
         <div className="flex-1 flex flex-col p-12">
-          {/* Header */}
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-900">connectapod</h1>
-            <p className="text-xl text-gray-600 mt-1">FLOOR PLAN - SITE LAYOUT</p>
-          </div>
 
           {/* Grid view */}
           <div className="flex-1 flex items-center justify-center overflow-hidden mb-8">
