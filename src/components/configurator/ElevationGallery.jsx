@@ -201,29 +201,45 @@ export default function ElevationGallery({ walls = [] }) {
         </div>
       </div>
 
-      {/* Content */}
+      {/* Canvas — pannable & zoomable */}
       <div
-        className="flex-1 overflow-auto p-8"
+        className="flex-1 overflow-hidden relative select-none"
+        style={{ cursor: "grab" }}
+        onMouseDown={handleCanvasMouseDown}
+        onMouseMove={handleCanvasMouseMove}
+        onMouseUp={handleCanvasMouseUp}
+        onMouseLeave={handleCanvasMouseUp}
         onWheel={(e) => {
+          e.preventDefault();
           if (e.ctrlKey || e.metaKey) {
-            e.preventDefault();
             adjustZoom(e.deltaY < 0 ? 1 : -1);
+          } else {
+            setPan(p => ({ x: p.x - e.deltaX, y: p.y - e.deltaY }));
           }
         }}
       >
-        <div className="flex flex-col gap-16" style={{ width: "max-content" }}>
-          <ElevationRow
-            endLeft={zWall}
-            midWalls={wWalls}
-            endRight={xWall}
-            rowLabel="W face (outside / top)"
-          />
-          <ElevationRow
-            endLeft={zWall}
-            midWalls={yWalls}
-            endRight={xWall}
-            rowLabel="Y face (outside / bottom)"
-          />
+        <div
+          style={{
+            transform: `translate(${pan.x}px, ${pan.y}px)`,
+            position: "absolute",
+            top: 40,
+            left: 40,
+          }}
+        >
+          <div className="flex flex-col gap-16" style={{ width: "max-content" }}>
+            <ElevationRow
+              endLeft={zWall}
+              midWalls={wWalls}
+              endRight={xWall}
+              rowLabel="W face (outside / top)"
+            />
+            <ElevationRow
+              endLeft={zWall}
+              midWalls={yWalls}
+              endRight={xWall}
+              rowLabel="Y face (outside / bottom)"
+            />
+          </div>
         </div>
       </div>
     </div>
