@@ -57,7 +57,7 @@ export default function PrintablePlansSheet({ placedModules, onClose }) {
             <svg
               width={canvasWidth}
               height={canvasHeight}
-              style={{ border: "2px solid #111", maxWidth: "100%", height: "auto" }}
+              style={{ maxWidth: "100%", height: "auto" }}
               viewBox={`0 0 ${canvasWidth} ${canvasHeight}`}
             >
               {/* Grid background */}
