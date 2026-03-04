@@ -226,7 +226,7 @@ export default function ElevationGallery({ walls = [] }) {
             left: 40,
           }}
         >
-          <div className="flex flex-col gap-16" style={{ width: "max-content" }}>
+          <div className="flex flex-col" style={{ width: "max-content", gap: `${Math.round((zoom / 100) * 64)}px` }}>
             <ElevationRow
               endLeft={zWall}
               midWalls={wWalls}
