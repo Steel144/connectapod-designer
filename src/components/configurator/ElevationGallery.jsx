@@ -62,14 +62,14 @@ export default function ElevationGallery({ walls = [] }) {
           setZoom(Math.max(50, Math.min(200, zoom + (e.deltaY > 0 ? -5 : 5))));
         }
       }}>
-        <div className="flex items-stretch" style={{ transform: `scale(${zoom / 100})`, transformOrigin: 'left center', transition: 'transform 0.2s' }}>
+        <div className="flex items-stretch" style={{ transform: `scale(${zoom / 100})`, transformOrigin: 'left top', transition: 'transform 0.2s', minWidth: 'max-content' }}>
           {allElevations.map((elev) => (
             <img
               key={elev.id}
               src={elev.image}
               alt={elev.label}
-              className="h-auto max-h-[calc(100vh-120px)] object-contain block"
-              style={{ display: 'block' }}
+              className="object-contain block"
+              style={{ display: 'block', height: `${zoom * 5}px`, width: 'auto' }}
             />
           ))}
         </div>
