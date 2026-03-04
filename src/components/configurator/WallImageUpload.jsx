@@ -11,11 +11,10 @@ export default function WallImageUpload({ wall, onImageAssigned }) {
   const [imageUrl, setImageUrl] = useState(wall?.elevationImage || null);
   const queryClient = useQueryClient();
 
-  // Fetch saved image for this wall type
+  // Fetch saved image for this wall type (only if wall has a type)
   const { data: savedImage } = useQuery({
     queryKey: ["wallImage", wall?.type],
     queryFn: async () => {
-      if (!wall?.type) return null;
       const images = await base44.entities.WallImage.filter({ wallType: wall.type });
       return images[0]?.imageUrl || null;
     },
@@ -25,7 +24,7 @@ export default function WallImageUpload({ wall, onImageAssigned }) {
   // Update local state if wall elevationImage or savedImage changes
   useEffect(() => {
     setImageUrl(wall?.elevationImage || savedImage || null);
-  }, [wall?.elevationImage, savedImage]);
+  }, [wall?.id, wall?.elevationImage, savedImage]);
 
   const handleImageUpload = async (e) => {
     const file = e.target.files?.[0];
