@@ -316,11 +316,15 @@ export default function Configurator() {
     console.log("design.grid:", design.grid);
     console.log("design.walls:", design.walls);
     // Re-hydrate full module data from MODULE_TYPES + re-attach images
-    // Support both 'type' and legacy 'moduleType' field names
+    // Support 'type', legacy 'moduleType', and label-based fallback for old broken saves
     const grid = (design.grid || []).map(m => {
       const moduleType = m.type || m.moduleType;
-      const full = MODULE_TYPES.find(mt => mt.type === moduleType) || {};
-      return { ...full, ...m, type: moduleType, floorPlanImage: imgs[moduleType] || null };
+      let full = moduleType ? MODULE_TYPES.find(mt => mt.type === moduleType) : null;
+      // Fallback: match by label if type lookup failed
+      if (!full && m.label) full = MODULE_TYPES.find(mt => mt.label === m.label);
+      full = full || {};
+      const resolvedType = moduleType || full.type || null;
+      return { ...full, ...m, type: resolvedType, floorPlanImage: imgs[resolvedType] || null };
     });
     const loadedWalls = (design.walls || []).map(w => ({
       ...w,
