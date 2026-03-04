@@ -312,9 +312,13 @@ export default function Configurator() {
   const handleLoad = (design) => {
     const imgs = floorPlanImagesRef.current;
     const wImgs = wallImagesRef.current;
+    console.log("handleLoad imgs:", imgs, "wImgs:", wImgs);
+    console.log("design.grid:", design.grid);
+    console.log("design.walls:", design.walls);
     // Re-hydrate full module data from MODULE_TYPES + re-attach images
     const grid = (design.grid || []).map(m => {
       const full = MODULE_TYPES.find(mt => mt.type === m.type) || {};
+      console.log("module type:", m.type, "img:", imgs[m.type]);
       return { ...full, ...m, floorPlanImage: imgs[m.type] || null };
     });
     const loadedWalls = (design.walls || []).map(w => ({
