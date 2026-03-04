@@ -156,9 +156,9 @@ export default function PrintablePlansSheet({ placedModules, onClose }) {
           </div>
 
           {/* Header */}
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-900">connectapod</h1>
-            <p className="text-xl text-gray-600 mt-1">FLOOR PLAN - SITE LAYOUT</p>
+          <div className="text-center mb-4">
+            <h1 className="text-2xl font-bold text-gray-900">connectapod</h1>
+            <p className="text-sm text-gray-600 mt-1">FLOOR PLAN - SITE LAYOUT</p>
           </div>
         </div>
 
