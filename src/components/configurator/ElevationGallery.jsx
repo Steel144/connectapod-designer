@@ -2,7 +2,7 @@ import React, { useState, useMemo, useRef, useCallback } from "react";
 import { ZoomIn, ZoomOut, Maximize2 } from "lucide-react";
 
 export default function ElevationGallery({ walls = [] }) {
-  const [zoom, setZoom] = useState(15);
+  const [zoom, setZoom] = useState(50);
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const isPanning = useRef(false);
   const panStart = useRef({ x: 0, y: 0 });
