@@ -56,10 +56,10 @@ export default function ElevationGallery({ walls = [] }) {
       </div>
 
       {/* All elevations joined side by side */}
-      <div className="flex-1 overflow-auto flex items-center bg-white" onWheel={(e) => {
+      <div className="flex-1 overflow-auto flex items-start bg-white p-4" onWheel={(e) => {
         if (e.ctrlKey || e.metaKey) {
           e.preventDefault();
-          setZoom(Math.max(50, Math.min(200, zoom + (e.deltaY > 0 ? -5 : 5))));
+          setZoom(Math.max(50, Math.min(400, zoom + (e.deltaY > 0 ? -10 : 10))));
         }
       }}>
         <div className="flex items-stretch" style={{ transform: `scale(${zoom / 100})`, transformOrigin: 'left top', transition: 'transform 0.2s', minWidth: 'max-content' }}>
