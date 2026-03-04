@@ -158,29 +158,6 @@ export default function PrintablePlansSheet({ placedModules, onClose }) {
             <h1 className="text-3xl font-bold text-gray-900">connectapod</h1>
             <p className="text-xl text-gray-600 mt-1">FLOOR PLAN - SITE LAYOUT</p>
           </div>
-
-          {/* Summary box */}
-          <div className="border-2 border-gray-900 p-6 bg-gray-50">
-            <p className="text-xs text-gray-500 uppercase tracking-widest font-bold mb-4">PROJECT SUMMARY</p>
-            <div className="grid grid-cols-4 gap-6">
-              <div>
-                <p className="text-xs text-gray-500 uppercase tracking-widest font-bold">Modules</p>
-                <p className="text-3xl font-bold text-gray-900 mt-1">{modules.length}</p>
-              </div>
-              <div>
-                <p className="text-xs text-gray-500 uppercase tracking-widest font-bold">Total Area</p>
-                <p className="text-3xl font-bold text-gray-900 mt-1">{totalSqm.toFixed(1)} sqm</p>
-              </div>
-              <div>
-                <p className="text-xs text-gray-500 uppercase tracking-widest font-bold">Est. Price</p>
-                <p className="text-3xl font-bold text-gray-900 mt-1">${(totalPrice / 1000).toFixed(1)}k</p>
-              </div>
-              <div>
-                <p className="text-xs text-gray-500 uppercase tracking-widest font-bold">Scale</p>
-                <p className="text-sm font-bold text-gray-900 mt-1">1:100</p>
-              </div>
-            </div>
-          </div>
         </div>
 
         {/* Title block footer */}
