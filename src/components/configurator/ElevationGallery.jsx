@@ -110,8 +110,14 @@ export default function ElevationGallery({ walls = [] }) {
   const ElevationImage = ({ wall, label, face, tight }) => (
     <div className={`flex flex-col items-center ${tight ? "gap-0" : "gap-2"} shrink-0`} style={{ margin: tight ? "-1px 0" : "0" }}>
       <div
-        className={`bg-white overflow-hidden ${tight ? "border-none" : "border border-gray-200 shadow-sm"}`}
+        className={`bg-white overflow-hidden ${tight ? "border-none" : "border border-gray-200 shadow-sm cursor-pointer"} transition-shadow hover:shadow-lg`}
         style={{ height: `${imgHeight}px` }}
+        onMouseEnter={(e) => {
+          setHoveredWall(wall);
+          const rect = e.currentTarget.getBoundingClientRect();
+          setHoverPos({ x: rect.right + 10, y: rect.top });
+        }}
+        onMouseLeave={() => setHoveredWall(null)}
       >
         <img
           src={wall.elevationImage}
