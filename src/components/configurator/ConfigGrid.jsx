@@ -103,7 +103,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
     // Deselect when clicking empty space
     setSelected(new Set());
     setSelectedModId(null);
-    setSelectedWallId(null);
+    setSelectedWallIds(new Set());
     const rect = gridRef.current.getBoundingClientRect();
     setSelectionBox({ startX: e.clientX - rect.left, startY: e.clientY - rect.top, cursorX: e.clientX - rect.left, cursorY: e.clientY - rect.top });
   };
