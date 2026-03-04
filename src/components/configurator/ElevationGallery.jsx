@@ -29,27 +29,27 @@ export default function ElevationGallery({ walls = [] }) {
   return (
     <div className="w-full h-full bg-white flex flex-col">
       {/* Zoom controls */}
-      <div className="flex items-center justify-center gap-3 px-4 py-3 border-b border-gray-700 bg-gray-900">
+      <div className="flex items-center justify-center gap-3 px-4 py-3 border-b border-gray-200 bg-white">
         <button
           onClick={() => setZoom(Math.max(50, zoom - 10))}
-          className="p-1.5 hover:bg-gray-700 rounded transition-colors text-gray-400 hover:text-white"
+          className="p-1.5 hover:bg-gray-100 rounded transition-colors text-gray-500 hover:text-gray-800"
           title="Zoom out"
         >
           <ZoomOut size={18} />
         </button>
-        <div className="w-12 text-center text-xs font-medium text-gray-400 bg-gray-800 py-1 rounded">
+        <div className="w-12 text-center text-xs font-medium text-gray-600 bg-gray-100 py-1 rounded">
           {zoom}%
         </div>
         <button
           onClick={() => setZoom(Math.min(200, zoom + 10))}
-          className="p-1.5 hover:bg-gray-700 rounded transition-colors text-gray-400 hover:text-white"
+          className="p-1.5 hover:bg-gray-100 rounded transition-colors text-gray-500 hover:text-gray-800"
           title="Zoom in"
         >
           <ZoomIn size={18} />
         </button>
         <button
           onClick={() => setZoom(100)}
-          className="ml-2 px-2 py-1 text-xs bg-gray-700 hover:bg-gray-600 rounded transition-colors text-gray-300 font-medium"
+          className="ml-2 px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded transition-colors text-gray-600 font-medium"
         >
           Reset
         </button>
