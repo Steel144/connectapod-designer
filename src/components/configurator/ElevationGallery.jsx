@@ -113,9 +113,10 @@ export default function ElevationGallery({ walls = [] }) {
         className={`bg-white overflow-hidden ${tight ? "border-none" : "border border-gray-200 shadow-sm cursor-pointer"} transition-shadow hover:shadow-lg`}
         style={{ height: `${imgHeight}px` }}
         onMouseEnter={(e) => {
-          setHoveredWall(wall);
+          setHoveredWall({ ...wall });
           const rect = e.currentTarget.getBoundingClientRect();
-          setHoverPos({ x: rect.right + 10, y: rect.top });
+          console.log("hover rect:", rect);
+          setHoverPos({ x: Math.max(0, rect.right + 10), y: Math.max(0, rect.top) });
         }}
         onMouseLeave={() => setHoveredWall(null)}
       >
