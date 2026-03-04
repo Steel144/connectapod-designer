@@ -201,66 +201,70 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
       const hasMoved = movedX > 0.1 || movedY > 0.1;
       
       if (hasMoved) {
-        const SNAP_THRESHOLD = 1.5; // cells
-        let snapped = null;
-        const wall = draggingWall.wall;
+        draggingWall.selectedIds.forEach((wallId) => {
+          const wall = walls.find(w => w.id === wallId);
+          if (!wall) return;
 
-        // Snap to module faces
-        const WALL_OFFSET = 0.308; // 185mm offset
-        if (wall.orientation === "horizontal") {
-          for (const mod of placedModules) {
-            const distToYFace = Math.abs(exactY - (mod.y + mod.h));
-            const distToWFace = Math.abs(exactY - mod.y);
+          const SNAP_THRESHOLD = 1.5; // cells
+          let snapped = null;
+          const WALL_OFFSET = 0.308; // 185mm offset
+          const wallExactX = exactX + (wall.x - draggingWall.wall.x);
+          const wallExactY = exactY + (wall.y - draggingWall.wall.y);
 
-            if (distToYFace <= SNAP_THRESHOLD && exactX >= mod.x - SNAP_THRESHOLD && exactX <= mod.x + mod.w + SNAP_THRESHOLD) {
-              snapped = { x: mod.x - WALL_OFFSET, y: mod.y + mod.h, length: mod.w, face: "Y" };
-              break;
-            }
-            if (distToWFace <= SNAP_THRESHOLD && exactX >= mod.x - SNAP_THRESHOLD && exactX <= mod.x + mod.w + SNAP_THRESHOLD) {
-              snapped = { x: mod.x - WALL_OFFSET, y: mod.y - WALL_OFFSET, length: mod.w, face: "W", rotation: 180 };
-              break;
-            }
-          }
-        } else {
-          for (const mod of placedModules) {
-            if (Math.abs(exactX - mod.x) <= SNAP_THRESHOLD && exactY >= mod.y - SNAP_THRESHOLD && exactY <= mod.y + mod.h + SNAP_THRESHOLD) {
-              snapped = { x: mod.x, y: mod.y, length: mod.h, face: "Z" };
-              break;
-            }
-            if (Math.abs(exactX - (mod.x + mod.w)) <= SNAP_THRESHOLD && exactY >= mod.y - SNAP_THRESHOLD && exactY <= mod.y + mod.h + SNAP_THRESHOLD) {
-              snapped = { x: mod.x + mod.w - 0.31, y: mod.y, length: mod.h, face: "X" };
-              break;
-            }
-          }
-        }
+          if (wall.orientation === "horizontal") {
+            for (const mod of placedModules) {
+              const distToYFace = Math.abs(wallExactY - (mod.y + mod.h));
+              const distToWFace = Math.abs(wallExactY - mod.y);
 
-        if (snapped) {
-          // Check if the snapped module is selected
-          const snappedModule = placedModules.find(mod => {
-            const isLongFace = wall.orientation === "horizontal";
-            if (isLongFace) {
-              return (snapped.face === "Y" && snapped.x === mod.x && snapped.y === mod.y + mod.h) ||
-                     (snapped.face === "W" && snapped.x === mod.x && Math.abs(snapped.y - (mod.y - 0.308)) < 0.01);
-            } else {
-              return (snapped.face === "Z" && snapped.y === mod.y && snapped.x === mod.x) ||
-                     (snapped.face === "X" && snapped.y === mod.y && Math.abs(snapped.x - (mod.x + mod.w - 0.31)) < 0.01);
+              if (distToYFace <= SNAP_THRESHOLD && wallExactX >= mod.x - SNAP_THRESHOLD && wallExactX <= mod.x + mod.w + SNAP_THRESHOLD) {
+                snapped = { x: mod.x - WALL_OFFSET, y: mod.y + mod.h, length: mod.w, face: "Y" };
+                break;
+              }
+              if (distToWFace <= SNAP_THRESHOLD && wallExactX >= mod.x - SNAP_THRESHOLD && wallExactX <= mod.x + mod.w + SNAP_THRESHOLD) {
+                snapped = { x: mod.x - WALL_OFFSET, y: mod.y - WALL_OFFSET, length: mod.w, face: "W", rotation: 180 };
+                break;
+              }
             }
-          });
-          
-          if (snappedModule && selected.has(snappedModule.id)) {
-            const wallUpdate = { length: snapped.length, face: snapped.face };
-            if (snapped.rotation) wallUpdate.rotation = snapped.rotation;
-            if (onMoveWall) onMoveWall(wall.id, snapped.x, snapped.y, wallUpdate);
           } else {
-            const newX = Math.max(0, exactX);
-            const newY = Math.max(0, exactY);
+            for (const mod of placedModules) {
+              if (Math.abs(wallExactX - mod.x) <= SNAP_THRESHOLD && wallExactY >= mod.y - SNAP_THRESHOLD && wallExactY <= mod.y + mod.h + SNAP_THRESHOLD) {
+                snapped = { x: mod.x, y: mod.y, length: mod.h, face: "Z" };
+                break;
+              }
+              if (Math.abs(wallExactX - (mod.x + mod.w)) <= SNAP_THRESHOLD && wallExactY >= mod.y - SNAP_THRESHOLD && wallExactY <= mod.y + mod.h + SNAP_THRESHOLD) {
+                snapped = { x: mod.x + mod.w - 0.31, y: mod.y, length: mod.h, face: "X" };
+                break;
+              }
+            }
+          }
+
+          if (snapped) {
+            const snappedModule = placedModules.find(mod => {
+              const isLongFace = wall.orientation === "horizontal";
+              if (isLongFace) {
+                return (snapped.face === "Y" && snapped.x === mod.x && snapped.y === mod.y + mod.h) ||
+                       (snapped.face === "W" && snapped.x === mod.x && Math.abs(snapped.y - (mod.y - 0.308)) < 0.01);
+              } else {
+                return (snapped.face === "Z" && snapped.y === mod.y && snapped.x === mod.x) ||
+                       (snapped.face === "X" && snapped.y === mod.y && Math.abs(snapped.x - (mod.x + mod.w - 0.31)) < 0.01);
+              }
+            });
+            
+            if (snappedModule && selected.has(snappedModule.id)) {
+              const wallUpdate = { length: snapped.length, face: snapped.face };
+              if (snapped.rotation) wallUpdate.rotation = snapped.rotation;
+              if (onMoveWall) onMoveWall(wall.id, snapped.x, snapped.y, wallUpdate);
+            } else {
+              const newX = Math.max(0, wallExactX);
+              const newY = Math.max(0, wallExactY);
+              if (onMoveWall) onMoveWall(wall.id, newX, newY);
+            }
+          } else {
+            const newX = Math.max(0, wallExactX);
+            const newY = Math.max(0, wallExactY);
             if (onMoveWall) onMoveWall(wall.id, newX, newY);
           }
-        } else {
-          const newX = Math.max(0, exactX);
-          const newY = Math.max(0, exactY);
-          if (onMoveWall) onMoveWall(wall.id, newX, newY);
-        }
+        });
       }
       setDraggingWall(null);
       return;
