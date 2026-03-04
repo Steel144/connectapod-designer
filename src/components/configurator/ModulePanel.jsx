@@ -530,7 +530,7 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
         <WallSuggestions selectedModule={selectedModule} selectedWall={selectedWall} placedModules={placedModules} />
       )}
 
-      {/* Magnified preview on hover */}
+      {/* Magnified preview on hover — modules */}
       {hoveredModule && (
         <div
           className="fixed z-[100] bg-white border-2 border-[#F15A22] shadow-xl rounded pointer-events-none flex flex-col"
@@ -549,6 +549,26 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
               <FloorPlanSVG code={hoveredModule.type} className="w-full h-full" />
             )}
           </div>
+        </div>
+      )}
+
+      {/* Magnified preview on hover — walls */}
+      {hoveredWall?.elevationImage && (
+        <div
+          className="fixed z-[100] bg-white border-2 border-[#F15A22] shadow-xl rounded pointer-events-none"
+          style={{
+            maxWidth: "320px",
+            maxHeight: "400px",
+            top: "48px",
+            right: "20px",
+            padding: "4px",
+          }}
+        >
+          <img 
+            src={hoveredWall.elevationImage} 
+            alt={hoveredWall.label} 
+            className="w-auto h-auto max-w-[312px] max-h-[392px] object-contain" 
+          />
         </div>
       )}
     </div>
