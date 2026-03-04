@@ -39,6 +39,7 @@ export default function Configurator() {
   const [summaryCollapsed, setSummaryCollapsed] = useState(false);
   const [selectedWall, setSelectedWall] = useState(null);
   const [selectedModule, setSelectedModule] = useState(null);
+  const [printMode, setPrintMode] = useState(null); // "plans" | "elevations" | null
   const queryClient = useQueryClient();
 
   const { data: designs = [] } = useQuery({
