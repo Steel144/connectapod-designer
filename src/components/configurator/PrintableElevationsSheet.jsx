@@ -99,7 +99,7 @@ export default function PrintableElevationsSheet({ walls, onClose }) {
                              <img src={wall.elevationImage} alt={wall.label} className="h-auto w-auto max-h-full object-contain" />
                            )}
                          </div>
-                         <p className="text-xs font-bold text-gray-900 text-center whitespace-nowrap">{wall.label || wall.type}</p>
+                         <p className="text-xs font-bold text-gray-900 text-center whitespace-nowrap relative z-10 bg-white px-2">{wall.label || wall.type}</p>
                        </div>
                      ))}
                    </div>
