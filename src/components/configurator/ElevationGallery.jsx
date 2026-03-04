@@ -31,17 +31,9 @@ export default function ElevationGallery({ walls = [] }) {
       {/* Zoom controls */}
       <div className="flex items-center justify-center gap-3 px-4 py-3 border-b border-gray-200 bg-white">
         <button
-          onClick={() => setZoom(Math.max(50, zoom - 10))}
-          className="p-1.5 hover:bg-gray-100 rounded transition-colors text-gray-500 hover:text-gray-800"
-          title="Zoom out"
-        >
-          <ZoomOut size={18} />
-        </button>
-        <div className="w-12 text-center text-xs font-medium text-gray-600 bg-gray-100 py-1 rounded">
-          {zoom}%
-        </div>
-        <button
-          onClick={() => setZoom(Math.min(200, zoom + 10))}
+          onClick={() => setZoom(Math.max(50, zoom - 25))}
+...
+          onClick={() => setZoom(Math.min(400, zoom + 25))}
           className="p-1.5 hover:bg-gray-100 rounded transition-colors text-gray-500 hover:text-gray-800"
           title="Zoom in"
         >
