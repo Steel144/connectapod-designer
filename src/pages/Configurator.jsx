@@ -309,8 +309,16 @@ export default function Configurator() {
   };
 
   const handleLoad = (design) => {
-    setPlacedModules(design.grid || []);
-    setWalls(design.walls || []);
+    const grid = (design.grid || []).map(m => ({
+      ...m,
+      floorPlanImage: floorPlanImages[m.type] || m.floorPlanImage || null,
+    }));
+    const loadedWalls = (design.walls || []).map(w => ({
+      ...w,
+      elevationImage: wallImages[w.type] || w.elevationImage || null,
+    }));
+    setPlacedModules(grid);
+    setWalls(loadedWalls);
     setShowSaved(false);
     toast.success(`Loaded "${design.name}"`);
   };
