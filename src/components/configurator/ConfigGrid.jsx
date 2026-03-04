@@ -501,27 +501,33 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
               <span className="absolute text-[9px] font-semibold text-slate-700 text-center leading-tight px-0.5 py-0.5 truncate" style={{ bottom: '-36px', left: '50%', transform: 'translateX(-50%)', width: '100%' }}>
                 {mod.label}
               </span>
-              <button
-                onMouseDown={(e) => e.stopPropagation()}
-                onClick={() => onRotate(mod.id)}
-                className="absolute top-0.5 left-0.5 opacity-0 group-hover:opacity-100 transition-opacity bg-white rounded-full p-0.5 shadow-sm hover:bg-orange-50 z-10"
-              >
-                <RotateCw size={10} className="text-[#F15A22]" />
-              </button>
-              <button
-                onMouseDown={(e) => e.stopPropagation()}
-                onClick={() => onFlip?.(mod.id)}
-                className="absolute top-0.5 left-7 opacity-0 group-hover:opacity-100 transition-opacity bg-white rounded-full p-0.5 shadow-sm hover:bg-orange-50 z-10"
-              >
-                <FlipHorizontal size={10} className="text-[#F15A22]" />
-              </button>
-              <button
-                onMouseDown={(e) => e.stopPropagation()}
-                onClick={() => onRemove(mod.id)}
-                className="absolute top-0.5 right-0.5 opacity-0 group-hover:opacity-100 transition-opacity bg-white rounded-full p-0.5 shadow-sm hover:bg-red-50 z-10"
-              >
-                <X size={10} className="text-red-400" />
-              </button>
+              {/* Action buttons above the module, same distance as label below */}
+              <div className="absolute opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1" style={{ top: '-26px', left: '50%', transform: 'translateX(-50%)', whiteSpace: 'nowrap' }}>
+                <button
+                  onMouseDown={(e) => e.stopPropagation()}
+                  onClick={() => onRotate(mod.id)}
+                  className="bg-white rounded-full p-1 shadow-sm hover:bg-orange-50 z-10"
+                  title="Rotate"
+                >
+                  <RotateCw size={10} className="text-[#F15A22]" />
+                </button>
+                <button
+                  onMouseDown={(e) => e.stopPropagation()}
+                  onClick={() => onFlip?.(mod.id)}
+                  className="bg-white rounded-full p-1 shadow-sm hover:bg-orange-50 z-10"
+                  title="Flip"
+                >
+                  <FlipHorizontal size={10} className="text-[#F15A22]" />
+                </button>
+                <button
+                  onMouseDown={(e) => e.stopPropagation()}
+                  onClick={() => onRemove(mod.id)}
+                  className="bg-white rounded-full p-1 shadow-sm hover:bg-red-50 z-10"
+                  title="Delete"
+                >
+                  <X size={10} className="text-red-400" />
+                </button>
+              </div>
 
               {/* WXYZ corner labels - larger, bold, 30% black */}
               {!hasModAbove && <span className="absolute text-2xl font-bold" style={{ left: '50%', top: '-96px', transform: 'translateX(-50%)', color: 'rgba(0, 0, 0, 0.3)' }}>W</span>}
