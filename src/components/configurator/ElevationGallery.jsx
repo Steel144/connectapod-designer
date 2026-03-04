@@ -156,7 +156,6 @@ export default function ElevationGallery({ walls = [] }) {
           {/* X end — right, separated */}
           {endRight && (
             <div className="flex items-end shrink-0">
-              <div className="w-10 shrink-0" />
               <ElevationImage wall={endRight} label={endRight.type || "End"} face={endRight.face || "X"} />
             </div>
           )}
