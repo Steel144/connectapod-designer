@@ -55,7 +55,7 @@ export default function PrintablePlansSheet({ placedModules, onClose }) {
         {/* Main content */}
         <div className="flex-1 flex flex-col p-8">
           {/* Grid view */}
-          <div className="flex-1 flex items-center justify-center overflow-hidden mb-8">
+          <div className="flex-1 flex items-center justify-center overflow-hidden mb-6">
             <svg
               width={canvasWidth}
               height={canvasHeight}
