@@ -251,6 +251,25 @@ export default function ElevationGallery({ walls = [] }) {
           </div>
         </div>
       </div>
+
+      {/* Preview on hover */}
+      {hoveredWall?.elevationImage && (
+        <div
+          className="fixed bg-white border-2 border-gray-300 shadow-2xl rounded-lg p-2 z-50"
+          style={{
+            left: `${hoverPos.x}px`,
+            top: `${hoverPos.y}px`,
+            maxWidth: "400px",
+            maxHeight: "600px",
+          }}
+        >
+          <img
+            src={hoveredWall.elevationImage}
+            alt="Preview"
+            className="h-auto max-h-[550px] object-contain"
+          />
+        </div>
+      )}
     </div>
   );
 }
