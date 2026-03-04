@@ -326,10 +326,12 @@ export default function Configurator() {
       const resolvedType = moduleType || full.type || null;
       return { ...full, ...m, type: resolvedType, floorPlanImage: imgs[resolvedType] || null };
     });
-    const loadedWalls = (design.walls || []).map(w => ({
-      ...w,
-      elevationImage: w.elevationImage || wImgs[w.type] || null,
-    }));
+    const loadedWalls = (design.walls || []).map(w => {
+      // If wall has no type but has an elevationImage saved, keep it
+      // If wall has a type, look up from DB images
+      const elevationImage = w.elevationImage || (w.type ? wImgs[w.type] : null) || null;
+      return { ...w, elevationImage };
+    });
     setPlacedModules(grid);
     setWalls(loadedWalls);
     setShowSaved(false);
