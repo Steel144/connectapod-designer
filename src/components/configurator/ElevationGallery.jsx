@@ -1,23 +1,12 @@
 import React, { useState, useMemo } from "react";
-import { ZoomIn, ZoomOut, RotateCcw, Maximize2 } from "lucide-react";
+import { ZoomIn, ZoomOut, Maximize2 } from "lucide-react";
 
 export default function ElevationGallery({ walls = [] }) {
   const [zoom, setZoom] = useState(100);
 
-  const allElevations = useMemo(() => {
-    return walls.filter(w => w.elevationImage).map(wall => ({
-      id: wall.id,
-      image: wall.elevationImage,
-      type: wall.type,
-      face: wall.face,
-      label: wall.label || wall.type || "Wall",
-    }));
-  }, [walls]);
-
   const zoomLevels = [50, 75, 100, 125, 150, 200, 300];
 
   const adjustZoom = (delta) => {
-    const idx = zoomLevels.findIndex(z => z >= zoom);
     if (delta > 0) {
       const next = zoomLevels.find(z => z > zoom);
       if (next) setZoom(next);
@@ -27,7 +16,23 @@ export default function ElevationGallery({ walls = [] }) {
     }
   };
 
-  if (allElevations.length === 0) {
+  // Group walls by face
+  const { wWalls, yWalls, zWall, xWall, hasAny } = useMemo(() => {
+    const withImage = walls.filter(w => w.elevationImage);
+    const w = withImage.filter(w => w.face === "W").sort((a, b) => a.x - b.x);
+    const y = withImage.filter(w => w.face === "Y").sort((a, b) => a.x - b.x);
+    const z = withImage.find(w => w.face === "Z") || null;
+    const x = withImage.find(w => w.face === "X") || null;
+    return {
+      wWalls: w,
+      yWalls: y,
+      zWall: z,
+      xWall: x,
+      hasAny: withImage.length > 0,
+    };
+  }, [walls]);
+
+  if (!hasAny) {
     return (
       <div className="w-full h-full flex items-center justify-center bg-gray-50">
         <div className="text-center text-gray-400 max-w-xs">
@@ -43,15 +48,76 @@ export default function ElevationGallery({ walls = [] }) {
 
   const imgHeight = Math.round((zoom / 100) * 480);
 
+  const ElevationImage = ({ wall, label, face }) => (
+    <div className="flex flex-col items-center gap-2 shrink-0">
+      <div
+        className="bg-white border border-gray-200 shadow-sm overflow-hidden"
+        style={{ height: `${imgHeight}px` }}
+      >
+        <img
+          src={wall.elevationImage}
+          alt={label}
+          style={{ height: "100%", width: "auto", display: "block" }}
+        />
+      </div>
+      <div className="text-center">
+        <span className="inline-block bg-[#F15A22] text-white text-[10px] font-bold px-2 py-0.5 rounded mb-1">
+          {face}
+        </span>
+        <p className="text-[11px] font-medium text-gray-500 whitespace-nowrap">{label}</p>
+      </div>
+    </div>
+  );
+
+  const ElevationRow = ({ endLeft, midWalls, endRight, rowLabel }) => {
+    const hasContent = endLeft || midWalls.length > 0 || endRight;
+    if (!hasContent) return null;
+
+    return (
+      <div className="flex flex-col gap-3">
+        <div className="flex items-center gap-2">
+          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{rowLabel}</span>
+          <div className="flex-1 h-px bg-gray-200" />
+        </div>
+        <div className="flex items-end gap-0">
+          {/* Z end — left */}
+          {endLeft && (
+            <div className="flex items-end gap-0 shrink-0">
+              <ElevationImage wall={endLeft} label={endLeft.type || "End"} face={endLeft.face} />
+              {midWalls.length > 0 && <div className="w-px self-stretch bg-gray-300 mb-8" />}
+            </div>
+          )}
+
+          {/* Middle walls joined */}
+          {midWalls.map((wall, idx) => (
+            <div key={wall.id} className="flex items-end gap-0">
+              <ElevationImage wall={wall} label={wall.type || "Wall"} face={wall.face} />
+              {idx < midWalls.length - 1 && (
+                <div className="w-px self-stretch bg-gray-300 mb-8" />
+              )}
+            </div>
+          ))}
+
+          {/* X end — right */}
+          {endRight && (
+            <div className="flex items-end gap-0 shrink-0">
+              {midWalls.length > 0 && <div className="w-px self-stretch bg-gray-300 mb-8" />}
+              <ElevationImage wall={endRight} label={endRight.type || "End"} face={endRight.face} />
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="w-full h-full bg-gray-50 flex flex-col">
       {/* Toolbar */}
       <div className="flex items-center justify-between px-6 py-3 bg-white border-b border-gray-200 shrink-0">
-        <div className="flex items-center gap-1.5">
-          <span className="text-xs font-semibold text-gray-500 uppercase tracking-widest mr-2">Elevations</span>
-          <span className="text-xs text-gray-400">{allElevations.length} wall{allElevations.length !== 1 ? "s" : ""}</span>
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-semibold text-gray-500 uppercase tracking-widest">Elevations</span>
+          <span className="text-xs text-gray-400">{walls.filter(w => w.elevationImage).length} wall{walls.filter(w => w.elevationImage).length !== 1 ? "s" : ""}</span>
         </div>
-        {/* Zoom controls */}
         <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-1">
           <button
             onClick={() => adjustZoom(-1)}
@@ -79,7 +145,7 @@ export default function ElevationGallery({ walls = [] }) {
         </div>
       </div>
 
-      {/* Elevations scroll area */}
+      {/* Content */}
       <div
         className="flex-1 overflow-auto p-8"
         onWheel={(e) => {
@@ -89,31 +155,19 @@ export default function ElevationGallery({ walls = [] }) {
           }
         }}
       >
-        <div className="flex items-end gap-10" style={{ width: "max-content", minHeight: "100%" }}>
-          {allElevations.map((elev, idx) => (
-            <div key={elev.id} className="flex flex-col items-center gap-3">
-              {/* Image */}
-              <div
-                className="bg-white border border-gray-200 shadow-sm overflow-hidden"
-                style={{ height: `${imgHeight}px` }}
-              >
-                <img
-                  src={elev.image}
-                  alt={elev.label}
-                  style={{ height: "100%", width: "auto", display: "block" }}
-                />
-              </div>
-              {/* Label */}
-              <div className="text-center">
-                {elev.face && (
-                  <span className="inline-block bg-[#F15A22] text-white text-[10px] font-bold px-2 py-0.5 rounded mb-1">
-                    {elev.face}
-                  </span>
-                )}
-                <p className="text-xs font-medium text-gray-600">{elev.label}</p>
-              </div>
-            </div>
-          ))}
+        <div className="flex flex-col gap-12" style={{ width: "max-content" }}>
+          <ElevationRow
+            endLeft={zWall}
+            midWalls={wWalls}
+            endRight={xWall}
+            rowLabel="W face (outside / top)"
+          />
+          <ElevationRow
+            endLeft={zWall}
+            midWalls={yWalls}
+            endRight={xWall}
+            rowLabel="Y face (outside / bottom)"
+          />
         </div>
       </div>
     </div>
