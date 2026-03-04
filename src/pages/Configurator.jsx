@@ -356,9 +356,11 @@ export default function Configurator() {
   };
 
   const handleWallImageUpdate = async (wallId, imageUrl) => {
+    let wallType = null;
     setWalls((prev) => {
       return prev.map((w) => {
         if (w.id === wallId) {
+          wallType = w.type;
           return { ...w, elevationImage: imageUrl };
         }
         return w;
@@ -366,7 +368,8 @@ export default function Configurator() {
     });
 
     // Save image to database for this wall type
-    const wall = walls.find(w => w.id === wallId);
+    if (wallType) {
+      const wall = { type: wallType };
     if (wall && wall.type) {
       const existing = await base44.entities.WallImage.filter({ wallType: wall.type });
       if (existing.length > 0) {
