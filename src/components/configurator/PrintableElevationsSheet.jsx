@@ -93,13 +93,13 @@ export default function PrintableElevationsSheet({ walls, onClose }) {
                    // Vertical end elevations (Z and X) - displayed separately
                    <div className="flex flex-col gap-8">
                      {walls.map(wall => (
-                       <div key={wall.id} className="flex flex-col items-center gap-2">
+                       <div key={wall.id} className="flex flex-col items-center gap-3">
                          <div className="bg-white flex items-center justify-center" style={{ maxHeight: "87px", maxWidth: "350px" }}>
                            {wall.elevationImage && (
                              <img src={wall.elevationImage} alt={wall.label} className="h-auto w-auto max-h-full object-contain" />
                            )}
                          </div>
-                         <p className="text-xs font-bold text-gray-900 text-center">{wall.label || wall.type}</p>
+                         <p className="text-xs font-bold text-gray-900 text-center whitespace-nowrap">{wall.label || wall.type}</p>
                        </div>
                      ))}
                    </div>
