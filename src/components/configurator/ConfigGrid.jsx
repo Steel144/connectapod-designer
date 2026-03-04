@@ -117,11 +117,13 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
   const startDragWall = (e, wall) => {
     e.preventDefault();
     e.stopPropagation();
-    setSelectedWallId(wall.id);
+    const newWallSelection = selectedWallIds.has(wall.id) ? selectedWallIds : new Set([wall.id]);
+    setSelectedWallIds(newWallSelection);
+    setSelectedModId(null);
     const rect = gridRef.current.getBoundingClientRect();
     const offsetX = e.clientX - rect.left - wall.x * CELL_W;
     const offsetY = e.clientY - rect.top - wall.y * CELL_H;
-    setDraggingWall({ wall, offsetX, offsetY, cursorX: e.clientX, cursorY: e.clientY });
+    setDraggingWall({ wall, offsetX, offsetY, cursorX: e.clientX, cursorY: e.clientY, selectedIds: newWallSelection });
   };
 
   const onMouseMove = useCallback((e) => {
