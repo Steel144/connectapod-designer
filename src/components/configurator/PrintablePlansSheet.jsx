@@ -162,21 +162,21 @@ export default function PrintablePlansSheet({ placedModules, onClose }) {
 
         {/* Title block footer */}
         <div className="border-t-2 border-gray-900 grid grid-cols-4 text-[10px] text-gray-600">
-          <div className="border-r border-gray-900 p-3">
-            <p className="uppercase font-bold text-gray-900 text-[9px]">Project</p>
-            <p className="mt-0.5">connectapod Design</p>
+          <div className="border-r border-gray-900 p-4">
+            <p className="uppercase font-bold text-gray-900">Project</p>
+            <p className="mt-1">connectapod Design</p>
           </div>
-          <div className="border-r border-gray-900 p-3">
-            <p className="uppercase font-bold text-gray-900 text-[9px]">Sheet</p>
-            <p className="mt-0.5">Floor Plan</p>
+          <div className="border-r border-gray-900 p-4">
+            <p className="uppercase font-bold text-gray-900">Sheet</p>
+            <p className="mt-1">Floor Plan</p>
           </div>
-          <div className="border-r border-gray-900 p-3">
-            <p className="uppercase font-bold text-gray-900 text-[9px]">Date</p>
-            <p className="mt-0.5">{new Date().toLocaleDateString()}</p>
+          <div className="border-r border-gray-900 p-4">
+            <p className="uppercase font-bold text-gray-900">Date</p>
+            <p className="mt-1">{new Date().toLocaleDateString()}</p>
           </div>
-          <div className="p-3">
-            <p className="uppercase font-bold text-gray-900 text-[9px]">Scale</p>
-            <p className="mt-0.5">1:100</p>
+          <div className="p-4">
+            <p className="uppercase font-bold text-gray-900">Scale</p>
+            <p className="mt-1">1:100</p>
           </div>
         </div>
       </div>
