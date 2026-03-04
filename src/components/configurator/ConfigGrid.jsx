@@ -33,13 +33,13 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
     const onKey = (e) => {
       if (e.key === "Delete" || e.key === "Backspace") {
         if (selected.size > 0) {
-          selected.forEach((id) => onRemove(id));
-          setSelected(new Set());
-        }
-        if (selectedWallId) {
-          onRemoveWall && onRemoveWall(selectedWallId);
-          setSelectedWallId(null);
-        }
+             selected.forEach((id) => onRemove(id));
+             setSelected(new Set());
+           }
+           if (selectedWallIds.size > 0) {
+             selectedWallIds.forEach((id) => onRemoveWall && onRemoveWall(id));
+             setSelectedWallIds(new Set());
+           }
       }
     };
     window.addEventListener("keydown", onKey);
