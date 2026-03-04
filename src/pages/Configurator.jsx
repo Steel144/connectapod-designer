@@ -316,10 +316,11 @@ export default function Configurator() {
     console.log("design.grid:", design.grid);
     console.log("design.walls:", design.walls);
     // Re-hydrate full module data from MODULE_TYPES + re-attach images
+    // Support both 'type' and legacy 'moduleType' field names
     const grid = (design.grid || []).map(m => {
-      const full = MODULE_TYPES.find(mt => mt.type === m.type) || {};
-      console.log("module type:", m.type, "img:", imgs[m.type]);
-      return { ...full, ...m, floorPlanImage: imgs[m.type] || null };
+      const moduleType = m.type || m.moduleType;
+      const full = MODULE_TYPES.find(mt => mt.type === moduleType) || {};
+      return { ...full, ...m, type: moduleType, floorPlanImage: imgs[moduleType] || null };
     });
     const loadedWalls = (design.walls || []).map(w => ({
       ...w,
