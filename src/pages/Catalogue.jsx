@@ -150,9 +150,19 @@ export default function Catalogue() {
     <div className="min-h-screen bg-[#F5F5F3]">
       {/* Header */}
       <div className="bg-white border-b border-gray-200 px-6 py-5">
-        <div className="max-w-7xl mx-auto">
-          <h1 className="text-2xl font-bold text-gray-900 tracking-tight">connectapod</h1>
-          <p className="text-sm text-gray-500 mt-0.5">Module Catalogue — Moduletec MP-48 System</p>
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900 tracking-tight">connectapod</h1>
+            <p className="text-sm text-gray-500 mt-0.5">Module Catalogue — Moduletec MP-48 System</p>
+          </div>
+          <button
+            onClick={() => navigate(-1)}
+            className="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22] transition-all"
+            title="Go back"
+          >
+            <ChevronLeft size={16} />
+            Exit
+          </button>
         </div>
       </div>
 
