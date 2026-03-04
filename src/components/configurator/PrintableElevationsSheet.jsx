@@ -16,12 +16,29 @@ export default function PrintableElevationsSheet({ walls, onClose }) {
     return () => clearTimeout(timer);
   }, [onClose]);
 
-  // Group by face, infer from orientation and position if no face property
+  // Group by face with dynamic position-based inference
+  const horizontal = elevations.filter(w => w.orientation === "horizontal" || w.face === "W" || w.face === "Y");
+  const vertical = elevations.filter(w => w.orientation === "vertical" || w.face === "Z" || w.face === "X");
+
+  // Calculate midpoint for horizontal walls to split W (top) from Y (bottom)
+  const ys = horizontal.map(w => w.y).filter(y => y !== undefined);
+  const midY = ys.length > 0 ? (Math.min(...ys) + Math.max(...ys)) / 2 : 0;
+
+  // Calculate midpoint for vertical walls to split Z (left) from X (right)
+  const xs = vertical.map(w => w.x).filter(x => x !== undefined);
+  const midX = xs.length > 0 ? (Math.min(...xs) + Math.max(...xs)) / 2 : 0;
+
+  const getFace = (w) => {
+    if (w.face) return w.face;
+    if (w.orientation === "vertical") return w.x <= midX ? "Z" : "X";
+    return w.y <= midY ? "W" : "Y";
+  };
+
   const groupedByFace = {
-    W: elevations.filter(w => w.face === "W" || (w.orientation === "horizontal" && !w.face && w.y < 5)).sort((a, b) => a.x - b.x),
-    Y: elevations.filter(w => w.face === "Y" || (w.orientation === "horizontal" && !w.face && w.y >= 5)).sort((a, b) => a.x - b.x),
-    Z: elevations.filter(w => w.face === "Z" || (w.orientation === "vertical" && !w.face && w.x < 5)),
-    X: elevations.filter(w => w.face === "X" || (w.orientation === "vertical" && !w.face && w.x >= 5)),
+    W: horizontal.filter(w => getFace(w) === "W").sort((a, b) => a.x - b.x),
+    Y: horizontal.filter(w => getFace(w) === "Y").sort((a, b) => a.x - b.x),
+    Z: vertical.filter(w => getFace(w) === "Z"),
+    X: vertical.filter(w => getFace(w) === "X"),
   };
 
   const faceLabels = {
