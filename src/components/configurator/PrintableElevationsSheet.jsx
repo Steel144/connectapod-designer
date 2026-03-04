@@ -61,7 +61,7 @@ export default function PrintableElevationsSheet({ walls, onClose }) {
         <img 
           src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69a55c0c222e61cb3fbc417c/1ae4d27f6_Untitled-1-01.png" 
           alt="Connectapod Logo" 
-          style={{ height: "60px", width: "auto" }}
+          style={{ height: "72px", width: "auto" }}
         />
       </div>
       {Object.entries(groupedByFace).map(([face, walls]) => {
