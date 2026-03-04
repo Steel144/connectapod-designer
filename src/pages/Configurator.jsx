@@ -310,13 +310,16 @@ export default function Configurator() {
   };
 
   const handleLoad = (design) => {
-    const grid = (design.grid || []).map(m => ({
-      ...m,
-      floorPlanImage: floorPlanImagesRef.current[m.type] || m.floorPlanImage || null,
-    }));
+    const imgs = floorPlanImagesRef.current;
+    const wImgs = wallImagesRef.current;
+    // Re-hydrate full module data from MODULE_TYPES + re-attach images
+    const grid = (design.grid || []).map(m => {
+      const full = MODULE_TYPES.find(mt => mt.type === m.type) || {};
+      return { ...full, ...m, floorPlanImage: imgs[m.type] || null };
+    });
     const loadedWalls = (design.walls || []).map(w => ({
       ...w,
-      elevationImage: wallImagesRef.current[w.type] || w.elevationImage || null,
+      elevationImage: wImgs[w.type] || null,
     }));
     setPlacedModules(grid);
     setWalls(loadedWalls);
