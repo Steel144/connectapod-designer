@@ -106,10 +106,10 @@ export default function ElevationGallery({ walls = [] }) {
   const imgHeight = Math.round((zoom / 100) * 480);
 
   const ElevationImage = ({ wall, label, face, tight }) => (
-    <div className={`flex flex-col items-center ${tight ? "gap-0" : "gap-2"} shrink-0`}>
+    <div className={`flex flex-col items-center ${tight ? "gap-0" : "gap-2"} shrink-0`} style={{ margin: tight ? "-1px 0" : "0" }}>
       <div
         className={`bg-white overflow-hidden ${tight ? "border-none" : "border border-gray-200 shadow-sm"}`}
-        style={{ height: `${imgHeight}px`, margin: tight ? "-1px" : "0" }}
+        style={{ height: `${imgHeight}px` }}
       >
         <img
           src={wall.elevationImage}
@@ -117,12 +117,14 @@ export default function ElevationGallery({ walls = [] }) {
           style={{ height: "100%", width: "auto", display: "block" }}
         />
       </div>
-      <div className="text-center">
-        <span className="inline-block bg-[#F15A22] text-white text-[10px] font-bold px-2 py-0.5 rounded mb-1">
-          {face}
-        </span>
-        <p className="text-[11px] font-medium text-gray-500 whitespace-nowrap">{label}</p>
-      </div>
+      {!tight && (
+        <div className="text-center">
+          <span className="inline-block bg-[#F15A22] text-white text-[10px] font-bold px-2 py-0.5 rounded mb-1">
+            {face}
+          </span>
+          <p className="text-[11px] font-medium text-gray-500 whitespace-nowrap">{label}</p>
+        </div>
+      )}
     </div>
   );
 
