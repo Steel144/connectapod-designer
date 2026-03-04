@@ -44,7 +44,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [selected, selectedWallId, onRemove, onRemoveWall]);
+  }, [selected, selectedWallIds, onRemove, onRemoveWall]);
 
   const getCellFromClient = (clientX, clientY) => {
     const rect = gridRef.current.getBoundingClientRect();
