@@ -328,7 +328,7 @@ export default function Configurator() {
     });
     const loadedWalls = (design.walls || []).map(w => ({
       ...w,
-      elevationImage: wImgs[w.type] || null,
+      elevationImage: w.elevationImage || wImgs[w.type] || null,
     }));
     setPlacedModules(grid);
     setWalls(loadedWalls);
