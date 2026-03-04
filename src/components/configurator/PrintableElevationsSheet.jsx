@@ -77,7 +77,7 @@ export default function PrintableElevationsSheet({ walls, onClose }) {
                <div className="flex-1 flex items-center justify-center overflow-x-auto">
                 {(face === "W" || face === "Y") ? (
                   // Horizontal elevations layout
-                  <div className="flex items-end gap-0">
+                  <div className="flex items-start gap-0">
                     {walls.map((wall, idx) => (
                       <div key={wall.id} className="flex flex-col items-center shrink-0" style={{ marginLeft: idx > 0 ? "-1px" : 0 }}>
                         <div className="bg-white flex items-center justify-center" style={{ height: "280px", width: "150px" }}>
