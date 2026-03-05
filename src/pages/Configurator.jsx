@@ -476,12 +476,12 @@ export default function Configurator() {
       onMouseLeave={handleMouseUp}
     >
       {/* Top bar */}
-      <div className="absolute top-0 left-0 right-0 z-30 flex items-center justify-between px-4 py-2.5 bg-white/80 backdrop-blur border-b border-gray-200">
-        <div>
+      <div className="absolute top-0 left-0 right-0 z-30 flex items-center px-4 py-2.5 bg-white/80 backdrop-blur border-b border-gray-200 overflow-x-auto gap-4 min-w-0">
+        <div className="shrink-0">
           <span className="text-base font-bold text-gray-900 tracking-tight">connectapod</span>
           <span className="ml-2 text-xs text-gray-400">Design Studio</span>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 ml-auto shrink-0">
           {/* 2D / 3D toggle */}
           <div className="flex border border-gray-200 overflow-hidden">
             <button
