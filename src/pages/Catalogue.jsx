@@ -202,14 +202,23 @@ export default function Catalogue() {
             <h1 className="text-2xl font-bold text-gray-900 tracking-tight">connectapod</h1>
             <p className="text-sm text-gray-500 mt-0.5">Module Catalogue — Moduletec MP-48 System</p>
           </div>
-          <button
-            onClick={() => navigate(-1)}
-            className="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22] transition-all"
-            title="Go back"
-          >
-            <ChevronLeft size={16} />
-            Exit
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setEditMode(e => !e)}
+              className={`flex items-center gap-2 px-3 py-2 text-sm border transition-all ${editMode ? "bg-[#F15A22] text-white border-[#F15A22]" : "text-gray-600 border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22]"}`}
+            >
+              <Pencil size={14} />
+              {editMode ? "Done Editing" : "Edit Images"}
+            </button>
+            <button
+              onClick={() => navigate(-1)}
+              className="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22] transition-all"
+            >
+              <ChevronLeft size={16} />
+              Exit
+            </button>
+          </div>
+          <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
         </div>
       </div>
 
