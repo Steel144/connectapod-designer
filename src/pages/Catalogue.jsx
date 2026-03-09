@@ -292,7 +292,7 @@ export default function Catalogue() {
               className={`flex items-center gap-2 px-3 py-2 text-sm border transition-all ${editMode ? "bg-[#F15A22] text-white border-[#F15A22]" : "text-gray-600 border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22]"}`}
             >
               <Pencil size={14} />
-              {editMode ? "Done Editing" : "Edit Images"}
+              {editMode ? "Done Editing" : "Edit Catalogue"}
             </button>
             <button
               onClick={() => navigate(-1)}
