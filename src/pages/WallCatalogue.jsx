@@ -237,6 +237,7 @@ export default function WallCatalogue() {
   const [activeGroup, setActiveGroup] = useState("all");
   const [editMode, setEditMode] = useState(false);
   const [uploading, setUploading] = useState(null);
+  const [addingToGroup, setAddingToGroup] = useState(null);
   const queryClient = useQueryClient();
   const fileInputRef = useRef(null);
   const [pendingUploadCode, setPendingUploadCode] = useState(null);
@@ -248,6 +249,24 @@ export default function WallCatalogue() {
       return Object.fromEntries(images.map(img => [img.wallType, img.imageUrl]));
     },
   });
+
+  const { data: customWalls = [] } = useQuery({
+    queryKey: ["wallEntries"],
+    queryFn: () => base44.entities.WallEntry.list(),
+  });
+
+  const handleAddWall = async (data) => {
+    await base44.entities.WallEntry.create(data);
+    queryClient.invalidateQueries({ queryKey: ["wallEntries"] });
+    setAddingToGroup(null);
+    toast.success("Wall added");
+  };
+
+  const handleDeleteWall = async (entryId) => {
+    await base44.entities.WallEntry.delete(entryId);
+    queryClient.invalidateQueries({ queryKey: ["wallEntries"] });
+    toast.success("Wall removed");
+  };
 
   const handleUploadClick = (code) => {
     setPendingUploadCode(code);
