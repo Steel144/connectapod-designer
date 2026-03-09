@@ -433,20 +433,30 @@ export default function WallCatalogue() {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {group.walls.map(wall => (
-                <div key={wall.code} className="bg-white border border-gray-200 p-4 hover:border-[#F15A22] transition-colors group relative">
+                <div key={wall.code} className={`bg-white border p-4 transition-colors group relative ${wall._deleted ? "border-red-200 opacity-50" : "border-gray-200 hover:border-[#F15A22]"}`}>
                   {/* Width badge + delete */}
                   <div className="flex items-start justify-between mb-2">
                     <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${widthColors[wall.width] || "bg-gray-100 text-gray-600"}`}>
                       {(wall.width / 1000).toFixed(1)}m
                     </span>
-                    {editMode && wall._custom && (
-                      <button
-                        onClick={() => handleDeleteWall(wall._id)}
-                        className="text-gray-300 hover:text-red-500 transition-colors"
-                        title="Remove this wall"
-                      >
-                        <Trash2 size={13} />
-                      </button>
+                    {editMode && (
+                      wall._deleted ? (
+                        <button
+                          onClick={() => handleRestoreWall(wall.code)}
+                          className="text-xs text-green-600 hover:underline"
+                          title="Restore this wall"
+                        >
+                          Restore
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => wall._custom ? handleDeleteWall(wall._id) : handleDeleteBuiltinWall(wall.code)}
+                          className="text-gray-300 hover:text-red-500 transition-colors"
+                          title="Remove this wall"
+                        >
+                          <Trash2 size={13} />
+                        </button>
+                      )
                     )}
                   </div>
 
