@@ -299,7 +299,20 @@ export default function WallCatalogue() {
     }
   };
 
-  const filtered = WALL_GROUPS
+  // Merge hardcoded + custom entries per group
+  const allGroups = WALL_GROUPS.map(g => ({
+    ...g,
+    walls: [
+      ...g.walls.map(w => ({ ...w, _custom: false })),
+      ...customWalls.filter(c => c.groupKey === g.key).map(c => ({
+        code: c.code, name: c.name, width: c.width || 3000,
+        description: c.description || "", variants: c.variants || [],
+        _custom: true, _id: c.id,
+      })),
+    ],
+  }));
+
+  const filtered = allGroups
     .filter(g => activeGroup === "all" || g.key === activeGroup)
     .map(g => ({
       ...g,
@@ -307,12 +320,12 @@ export default function WallCatalogue() {
         search === "" ||
         w.code.toLowerCase().includes(search.toLowerCase()) ||
         w.name.toLowerCase().includes(search.toLowerCase()) ||
-        w.description.toLowerCase().includes(search.toLowerCase())
+        (w.description || "").toLowerCase().includes(search.toLowerCase())
       )
     }))
-    .filter(g => g.walls.length > 0);
+    .filter(g => g.walls.length > 0 || editMode);
 
-  const totalWalls = WALL_GROUPS.reduce((s, g) => s + g.walls.length, 0);
+  const totalWalls = allGroups.reduce((s, g) => s + g.walls.length, 0);
 
   return (
     <div className="min-h-screen bg-[#F5F5F3]">
