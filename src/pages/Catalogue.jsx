@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ChevronLeft } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { base44 } from "@/api/base44Client";
 
 // wallElevations: { Z, W, Y, X } — compatible wall codes per face
 const CATALOGUE = [
