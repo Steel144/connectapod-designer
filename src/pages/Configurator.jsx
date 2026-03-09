@@ -270,6 +270,8 @@ export default function Configurator() {
     pushHistory(placedModules, walls);
     setPlacedModules([]);
     setWalls([]);
+    localStorage.removeItem("configurator_modules");
+    localStorage.removeItem("configurator_walls");
   };
 
   const handlePlaceWall = (wallData, x, y) => {
