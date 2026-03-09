@@ -1,9 +1,10 @@
 import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { ChevronLeft, Pencil, Upload, X, Loader2 } from "lucide-react";
+import { ChevronLeft, Pencil, Upload, X, Loader2, Plus, Trash2 } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { toast } from "sonner";
+import AddModuleModal from "@/components/catalogue/AddModuleModal";
 
 // wallElevations: { Z, W, Y, X } — compatible wall codes per face
 const CATALOGUE = [
