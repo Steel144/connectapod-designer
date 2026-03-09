@@ -5,6 +5,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { toast } from "sonner";
 import AddModuleModal from "@/components/catalogue/AddModuleModal";
+import EditModuleModal from "@/components/catalogue/EditModuleModal";
 
 // wallElevations: { Z, W, Y, X } — compatible wall codes per face
 const CATALOGUE = [
