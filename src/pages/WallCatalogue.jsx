@@ -520,7 +520,7 @@ export default function WallCatalogue() {
       </div>
 
       <div className="text-center py-6 text-xs text-gray-400 border-t border-gray-200 bg-white mt-8">
-        Moduletec Catalogue © 2022-SEP-b · {totalWalls} wall panels across {WALL_GROUPS.length} series
+        connectapod Catalogue © 2022-SEP-b · {totalWalls} wall panels across {WALL_GROUPS.length} series
       </div>
     </div>
   );
