@@ -323,12 +323,16 @@ export default function WallCatalogue() {
                     </span>
                   </div>
 
-                  {/* Wall visual placeholder */}
-                  <div className="h-16 bg-gray-50 border border-gray-100 flex items-center justify-center mb-3">
-                    <div
-                      className="bg-gray-300 border border-gray-400"
-                      style={{ width: `${Math.min(80, (wall.width / 5200) * 80 + 20)}%`, height: "80%" }}
-                    />
+                  {/* Wall image */}
+                  <div className="h-24 bg-gray-50 border border-gray-100 flex items-center justify-center mb-3 overflow-hidden">
+                    {wallImages[wall.code] ? (
+                      <img src={wallImages[wall.code]} alt={wall.name} className="w-full h-full object-contain" />
+                    ) : (
+                      <div
+                        className="bg-gray-300 border border-gray-400"
+                        style={{ width: `${Math.min(80, (wall.width / 5200) * 80 + 20)}%`, height: "60%" }}
+                      />
+                    )}
                   </div>
 
                   <p className="text-xs font-semibold text-gray-800 leading-tight mb-1 group-hover:text-[#F15A22] transition-colors">{wall.name}</p>
