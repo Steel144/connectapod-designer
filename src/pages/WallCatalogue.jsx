@@ -320,15 +320,15 @@ export default function WallCatalogue() {
     }
   };
 
-  // Merge hardcoded + custom entries per group
+  // Merge hardcoded + custom entries per group, filtering out deleted built-ins
   const allGroups = WALL_GROUPS.map(g => ({
     ...g,
     walls: [
-      ...g.walls.map(w => ({ ...w, _custom: false })),
+      ...g.walls.filter(w => editMode || !deletedCodes.has(w.code)).map(w => ({ ...w, _custom: false, _deleted: deletedCodes.has(w.code) })),
       ...customWalls.filter(c => c.groupKey === g.key).map(c => ({
         code: c.code, name: c.name, width: c.width || 3000,
         description: c.description || "", variants: c.variants || [],
-        _custom: true, _id: c.id,
+        _custom: true, _id: c.id, _deleted: false,
       })),
     ],
   }));
