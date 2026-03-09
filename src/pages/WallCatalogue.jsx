@@ -255,6 +255,27 @@ export default function WallCatalogue() {
     queryFn: () => base44.entities.WallEntry.list(),
   });
 
+  const { data: deletedWalls = [] } = useQuery({
+    queryKey: ["deletedWalls"],
+    queryFn: () => base44.entities.DeletedWall.list(),
+  });
+  const deletedCodes = new Set(deletedWalls.map(d => d.wallCode));
+
+  const handleDeleteBuiltinWall = async (code) => {
+    await base44.entities.DeletedWall.create({ wallCode: code });
+    queryClient.invalidateQueries({ queryKey: ["deletedWalls"] });
+    toast.success("Wall hidden");
+  };
+
+  const handleRestoreWall = async (code) => {
+    const entry = deletedWalls.find(d => d.wallCode === code);
+    if (entry) {
+      await base44.entities.DeletedWall.delete(entry.id);
+      queryClient.invalidateQueries({ queryKey: ["deletedWalls"] });
+      toast.success("Wall restored");
+    }
+  };
+
   const handleAddWall = async (data) => {
     await base44.entities.WallEntry.create(data);
     queryClient.invalidateQueries({ queryKey: ["wallEntries"] });
