@@ -412,12 +412,21 @@ export default function WallCatalogue() {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {group.walls.map(wall => (
-                <div key={wall.code} className="bg-white border border-gray-200 p-4 hover:border-[#F15A22] transition-colors group">
-                  {/* Width badge */}
+                <div key={wall.code} className="bg-white border border-gray-200 p-4 hover:border-[#F15A22] transition-colors group relative">
+                  {/* Width badge + delete */}
                   <div className="flex items-start justify-between mb-2">
                     <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${widthColors[wall.width] || "bg-gray-100 text-gray-600"}`}>
                       {(wall.width / 1000).toFixed(1)}m
                     </span>
+                    {editMode && wall._custom && (
+                      <button
+                        onClick={() => handleDeleteWall(wall._id)}
+                        className="text-gray-300 hover:text-red-500 transition-colors"
+                        title="Remove this wall"
+                      >
+                        <Trash2 size={13} />
+                      </button>
+                    )}
                   </div>
 
                   {/* Wall image */}
