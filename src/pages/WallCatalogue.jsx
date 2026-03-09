@@ -234,6 +234,14 @@ export default function WallCatalogue() {
   const [search, setSearch] = useState("");
   const [activeGroup, setActiveGroup] = useState("all");
 
+  const { data: wallImages = {} } = useQuery({
+    queryKey: ["wallImages"],
+    queryFn: async () => {
+      const images = await base44.entities.WallImage.list();
+      return Object.fromEntries(images.map(img => [img.wallType, img.imageUrl]));
+    },
+  });
+
   const filtered = WALL_GROUPS
     .filter(g => activeGroup === "all" || g.key === activeGroup)
     .map(g => ({
