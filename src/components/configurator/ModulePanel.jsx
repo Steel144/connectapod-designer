@@ -181,7 +181,7 @@ const WALL_TYPES = [
   // 2.4m Module Walls
   { type: "W200/Y200",  label: "2400mm Standard Wall",             mpCode: "W200/Y200",   width: 2.4, orientation: "horizontal", length: 4, thickness: 0.31 },
   { type: "W201D/Y201D",label: "2400mm Deck Wall – Opening 1822",  mpCode: "W201D/Y201D", width: 2.4, orientation: "horizontal", length: 4, thickness: 0.31 },
-  { type: "W202/Y202",  label: "2400mm Wall – Louvre 1822",        mpCode: "W202/Y202",   width: 2.4, orientation: "horizontal", length: 4, thickness: 0.31 },
+  { type: "W202/Y202",  label: "2400mm Deck Wall Window 1822",     mpCode: "W202/Y202",   width: 2.4, orientation: "horizontal", length: 4, thickness: 0.31 },
   // 3.0m Module Walls – Series 500
   { type: "W500/Y500",  label: "3000mm Standard Wall",             mpCode: "W500/Y500",   width: 3.0, orientation: "horizontal", length: 5, thickness: 0.31 },
   { type: "W501/Y501",  label: "3000mm Wall – Louvre 2122",        mpCode: "W501/Y501",   width: 3.0, orientation: "horizontal", length: 5, thickness: 0.31 },
