@@ -234,6 +234,11 @@ const widthColors = {
 export default function WallCatalogue() {
   const [search, setSearch] = useState("");
   const [activeGroup, setActiveGroup] = useState("all");
+  const [editMode, setEditMode] = useState(false);
+  const [uploading, setUploading] = useState(null);
+  const queryClient = useQueryClient();
+  const fileInputRef = useRef(null);
+  const [pendingUploadCode, setPendingUploadCode] = useState(null);
 
   const { data: wallImages = {} } = useQuery({
     queryKey: ["wallImages"],
@@ -242,6 +247,37 @@ export default function WallCatalogue() {
       return Object.fromEntries(images.map(img => [img.wallType, img.imageUrl]));
     },
   });
+
+  const handleUploadClick = (code) => {
+    setPendingUploadCode(code);
+    fileInputRef.current.click();
+  };
+
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file || !pendingUploadCode) return;
+    e.target.value = "";
+    setUploading(pendingUploadCode);
+    const { file_url } = await base44.integrations.Core.UploadFile({ file });
+    const existing = await base44.entities.WallImage.filter({ wallType: pendingUploadCode });
+    if (existing.length > 0) {
+      await base44.entities.WallImage.update(existing[0].id, { imageUrl: file_url });
+    } else {
+      await base44.entities.WallImage.create({ wallType: pendingUploadCode, imageUrl: file_url });
+    }
+    queryClient.invalidateQueries({ queryKey: ["wallImages"] });
+    setUploading(null);
+    toast.success("Image updated");
+  };
+
+  const handleRemoveImage = async (code) => {
+    const existing = await base44.entities.WallImage.filter({ wallType: code });
+    if (existing.length > 0) {
+      await base44.entities.WallImage.delete(existing[0].id);
+      queryClient.invalidateQueries({ queryKey: ["wallImages"] });
+      toast.success("Image removed");
+    }
+  };
 
   const filtered = WALL_GROUPS
     .filter(g => activeGroup === "all" || g.key === activeGroup)
