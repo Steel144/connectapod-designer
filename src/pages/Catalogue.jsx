@@ -136,10 +136,29 @@ export default function Catalogue() {
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState("All");
   const [editMode, setEditMode] = useState(false);
-  const [uploading, setUploading] = useState(null); // code currently uploading
+  const [uploading, setUploading] = useState(null);
+  const [addingToCategory, setAddingToCategory] = useState(null);
   const queryClient = useQueryClient();
   const fileInputRef = useRef(null);
   const [pendingUploadCode, setPendingUploadCode] = useState(null);
+
+  const { data: customModules = [] } = useQuery({
+    queryKey: ["moduleEntries"],
+    queryFn: () => base44.entities.ModuleEntry.list(),
+  });
+
+  const handleAddModule = async (data) => {
+    await base44.entities.ModuleEntry.create(data);
+    queryClient.invalidateQueries({ queryKey: ["moduleEntries"] });
+    setAddingToCategory(null);
+    toast.success("Module added");
+  };
+
+  const handleDeleteModule = async (entryId) => {
+    await base44.entities.ModuleEntry.delete(entryId);
+    queryClient.invalidateQueries({ queryKey: ["moduleEntries"] });
+    toast.success("Module removed");
+  };
 
   const { data: floorPlanImages = {} } = useQuery({
     queryKey: ["floorPlanImages"],
