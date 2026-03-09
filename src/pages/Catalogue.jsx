@@ -291,13 +291,31 @@ export default function Catalogue() {
           ))}
         </div>
 
+        {addingToCategory && (
+          <AddModuleModal
+            category={addingToCategory.category}
+            onSave={handleAddModule}
+            onClose={() => setAddingToCategory(null)}
+          />
+        )}
+
         {/* Catalogue Sections */}
         <div className="space-y-10">
           {filtered.map(cat => (
             <div key={cat.category}>
-              <div className="mb-4">
-                <h2 className="text-lg font-bold text-gray-900">{cat.category}</h2>
-                <p className="text-sm text-gray-500 mt-0.5">{cat.description}</p>
+              <div className="mb-4 flex items-start justify-between gap-4">
+                <div>
+                  <h2 className="text-lg font-bold text-gray-900">{cat.category}</h2>
+                  <p className="text-sm text-gray-500 mt-0.5">{cat.description}</p>
+                </div>
+                {editMode && (
+                  <button
+                    onClick={() => setAddingToCategory(cat)}
+                    className="shrink-0 flex items-center gap-1 px-2 py-1 text-xs text-[#F15A22] border border-[#F15A22] hover:bg-[#F15A22] hover:text-white transition-colors"
+                  >
+                    <Plus size={11} /> Add Module
+                  </button>
+                )}
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {cat.modules.map(mod => (
