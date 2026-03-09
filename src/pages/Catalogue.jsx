@@ -149,6 +149,12 @@ export default function Catalogue() {
     queryFn: () => base44.entities.ModuleEntry.list(),
   });
 
+  const { data: deletedModules = [] } = useQuery({
+    queryKey: ["deletedModules"],
+    queryFn: () => base44.entities.DeletedModule.list(),
+  });
+  const deletedCodes = new Set(deletedModules.map(d => d.moduleCode));
+
   const handleAddModule = async (data) => {
     await base44.entities.ModuleEntry.create(data);
     queryClient.invalidateQueries({ queryKey: ["moduleEntries"] });
@@ -160,6 +166,42 @@ export default function Catalogue() {
     await base44.entities.ModuleEntry.delete(entryId);
     queryClient.invalidateQueries({ queryKey: ["moduleEntries"] });
     toast.success("Module removed");
+  };
+
+  const handleDeleteBuiltinModule = async (code) => {
+    await base44.entities.DeletedModule.create({ moduleCode: code });
+    queryClient.invalidateQueries({ queryKey: ["deletedModules"] });
+    toast.success("Module hidden");
+  };
+
+  const handleRestoreModule = async (code) => {
+    const entry = deletedModules.find(d => d.moduleCode === code);
+    if (entry) {
+      await base44.entities.DeletedModule.delete(entry.id);
+      queryClient.invalidateQueries({ queryKey: ["deletedModules"] });
+      toast.success("Module restored");
+    }
+  };
+
+  const handleEditModule = async (data) => {
+    if (editingModule._custom) {
+      await base44.entities.ModuleEntry.update(editingModule._id, {
+        ...data,
+        category: editingModule.category,
+      });
+      queryClient.invalidateQueries({ queryKey: ["moduleEntries"] });
+    } else {
+      // For built-in: hide the original and create a custom override
+      await handleDeleteBuiltinModule(editingModule.code);
+      await base44.entities.ModuleEntry.create({
+        ...data,
+        category: editingModule.category,
+      });
+      queryClient.invalidateQueries({ queryKey: ["moduleEntries"] });
+      queryClient.invalidateQueries({ queryKey: ["deletedModules"] });
+    }
+    setEditingModule(null);
+    toast.success("Module updated");
   };
 
   const { data: floorPlanImages = {} } = useQuery({
