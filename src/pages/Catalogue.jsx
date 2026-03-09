@@ -134,6 +134,14 @@ export default function Catalogue() {
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState("All");
 
+  const { data: floorPlanImages = {} } = useQuery({
+    queryKey: ["floorPlanImages"],
+    queryFn: async () => {
+      const images = await base44.entities.FloorPlanImage.list();
+      return Object.fromEntries(images.map(img => [img.moduleType, img.imageUrl]));
+    },
+  });
+
   const categories = ["All", ...CATALOGUE.map(c => c.category)];
 
   const filtered = CATALOGUE
