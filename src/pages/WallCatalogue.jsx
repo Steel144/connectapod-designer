@@ -371,14 +371,34 @@ export default function WallCatalogue() {
                   </div>
 
                   {/* Wall image */}
-                  <div className="h-24 bg-gray-50 border border-gray-100 flex items-center justify-center mb-3 overflow-hidden">
-                    {wallImages[wall.code] ? (
+                  <div className="h-24 bg-gray-50 border border-gray-100 flex items-center justify-center mb-3 overflow-hidden relative">
+                    {uploading === wall.code ? (
+                      <Loader2 size={20} className="animate-spin text-[#F15A22]" />
+                    ) : wallImages[wall.code] ? (
                       <img src={wallImages[wall.code]} alt={wall.name} className="w-full h-full object-contain" />
                     ) : (
                       <div
                         className="bg-gray-300 border border-gray-400"
                         style={{ width: `${Math.min(80, (wall.width / 5200) * 80 + 20)}%`, height: "60%" }}
                       />
+                    )}
+                    {editMode && uploading !== wall.code && (
+                      <div className="absolute inset-0 bg-black/40 flex items-center justify-center gap-2">
+                        <button
+                          onClick={() => handleUploadClick(wall.code)}
+                          className="flex items-center gap-1 px-2 py-1 bg-white text-gray-800 text-xs font-medium hover:bg-[#F15A22] hover:text-white transition-colors"
+                        >
+                          <Upload size={11} /> Upload
+                        </button>
+                        {wallImages[wall.code] && (
+                          <button
+                            onClick={() => handleRemoveImage(wall.code)}
+                            className="flex items-center gap-1 px-2 py-1 bg-white text-red-600 text-xs font-medium hover:bg-red-600 hover:text-white transition-colors"
+                          >
+                            <X size={11} /> Remove
+                          </button>
+                        )}
+                      </div>
                     )}
                   </div>
 
