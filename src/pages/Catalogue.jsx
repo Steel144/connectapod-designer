@@ -271,7 +271,7 @@ export default function Catalogue() {
             className="flex-1 border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:border-[#F15A22]"
           />
           <div className="flex items-center gap-2 text-sm text-gray-500 bg-white border border-gray-200 px-4 py-2.5">
-            <span className="font-bold text-gray-800">{CATALOGUE.reduce((s, c) => s + c.modules.length, 0)}</span> module layouts across
+            <span className="font-bold text-gray-800">{totalModules}</span> module layouts across
             <span className="font-bold text-gray-800">{CATALOGUE.length}</span> categories
           </div>
         </div>
