@@ -271,25 +271,39 @@ export default function Catalogue() {
                   >
                     {/* Visual preview */}
                     <div
-                      className="w-full mb-3 flex items-center justify-center border border-gray-100 overflow-hidden"
-                      style={{
-                        height: 100,
-                        backgroundColor: CATEGORY_COLORS[cat.category] || "#F5F5F3",
-                      }}
+                      className="w-full mb-3 relative flex items-center justify-center border border-gray-100 overflow-hidden"
+                      style={{ height: 100, backgroundColor: CATEGORY_COLORS[cat.category] || "#F5F5F3" }}
                     >
-                      {floorPlanImages[mod.code] ? (
+                      {uploading === mod.code ? (
+                        <Loader2 size={20} className="animate-spin text-[#F15A22]" />
+                      ) : floorPlanImages[mod.code] ? (
                         <img src={floorPlanImages[mod.code]} alt={mod.name} className="w-full h-full object-contain" />
                       ) : (
                         <div
                           className="border-2 border-gray-400 group-hover:border-[#F15A22] transition-colors flex items-center justify-center"
-                          style={{
-                            width: Math.min(60, (mod.width / 3) * 60),
-                            height: 60,
-                          }}
+                          style={{ width: Math.min(60, (mod.width / 3) * 60), height: 60 }}
                         >
                           <span className="text-xs font-mono text-gray-400 group-hover:text-[#F15A22]">
                             {mod.width}×{mod.depth}
                           </span>
+                        </div>
+                      )}
+                      {editMode && uploading !== mod.code && (
+                        <div className="absolute inset-0 bg-black/40 flex items-center justify-center gap-2">
+                          <button
+                            onClick={() => handleUploadClick(mod.code)}
+                            className="flex items-center gap-1 px-2 py-1 bg-white text-gray-800 text-xs font-medium hover:bg-[#F15A22] hover:text-white transition-colors"
+                          >
+                            <Upload size={11} /> Upload
+                          </button>
+                          {floorPlanImages[mod.code] && (
+                            <button
+                              onClick={() => handleRemoveImage(mod.code)}
+                              className="flex items-center gap-1 px-2 py-1 bg-white text-red-600 text-xs font-medium hover:bg-red-600 hover:text-white transition-colors"
+                            >
+                              <X size={11} /> Remove
+                            </button>
+                          )}
                         </div>
                       )}
                     </div>
