@@ -418,7 +418,7 @@ export default function Catalogue() {
                       ) : (
                         <div
                           className="border-2 border-gray-400 group-hover:border-[#F15A22] transition-colors flex items-center justify-center"
-                          style={{ width: Math.min(60, (mod.width / 3) * 60), height: 60 }}
+                          style={{ width: Math.min(55, (mod.width / 3) * 55), height: Math.min(55, (mod.width / 3) * 55) * (4.8 / mod.width) }}
                         >
                           <span className="text-xs font-mono text-gray-400 group-hover:text-[#F15A22]">
                             {mod.width}×{mod.depth}
