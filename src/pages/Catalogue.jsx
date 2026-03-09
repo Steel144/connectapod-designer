@@ -200,8 +200,6 @@ export default function Catalogue() {
   };
 
   const categories = ["All", ...CATALOGUE.map(c => c.category)];
-  // use allCatalogue for total count
-  const totalModules = allCatalogue.reduce((s, c) => s + c.modules.length, 0);
 
   // Merge hardcoded + custom modules per category
   const allCatalogue = CATALOGUE.map(cat => ({
