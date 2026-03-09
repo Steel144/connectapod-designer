@@ -384,6 +384,15 @@ export default function WallCatalogue() {
         </div>
       </div>
 
+      {addingToGroup && (
+        <AddWallModal
+          groupKey={addingToGroup.key}
+          groupLabel={addingToGroup.label}
+          onSave={handleAddWall}
+          onClose={() => setAddingToGroup(null)}
+        />
+      )}
+
       {/* Content */}
       <div className="max-w-7xl mx-auto px-6 py-8 space-y-10">
         {filtered.map(group => (
@@ -392,6 +401,14 @@ export default function WallCatalogue() {
               <h2 className="text-base font-bold text-gray-800">{group.label}</h2>
               <span className="text-xs text-gray-400 font-mono">{group.series}</span>
               <span className="ml-auto text-xs text-gray-400">{group.walls.length} panels</span>
+              {editMode && (
+                <button
+                  onClick={() => setAddingToGroup(group)}
+                  className="flex items-center gap-1 px-2 py-1 text-xs text-[#F15A22] border border-[#F15A22] hover:bg-[#F15A22] hover:text-white transition-colors"
+                >
+                  <Plus size={11} /> Add Wall
+                </button>
+              )}
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {group.walls.map(wall => (
