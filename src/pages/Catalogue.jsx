@@ -217,6 +217,8 @@ export default function Catalogue() {
     ],
   }));
 
+  const totalModules = allCatalogue.reduce((s, c) => s + c.modules.length, 0);
+
   const filtered = allCatalogue
     .filter(cat => activeCategory === "All" || cat.category === activeCategory)
     .map(cat => ({
