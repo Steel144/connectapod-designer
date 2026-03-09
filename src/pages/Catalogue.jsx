@@ -201,17 +201,33 @@ export default function Catalogue() {
 
   const categories = ["All", ...CATALOGUE.map(c => c.category)];
 
-  const filtered = CATALOGUE
+  // Merge hardcoded + custom modules per category
+  const allCatalogue = CATALOGUE.map(cat => ({
+    ...cat,
+    modules: [
+      ...cat.modules.map(m => ({ ...m, _custom: false })),
+      ...customModules.filter(c => c.category === cat.category).map(c => ({
+        code: c.code, name: c.name, width: c.width || 3.0, depth: c.depth || 4.8,
+        sqm: c.sqm || parseFloat(((c.width || 3.0) * (c.depth || 4.8)).toFixed(1)),
+        description: c.description || "",
+        chassisCodes: c.chassisCodes || [],
+        wallElevations: { Z: c.wallElevationZ || "N/A", W: c.wallElevationW || "", Y: c.wallElevationY || "", X: c.wallElevationX || "N/A" },
+        _custom: true, _id: c.id,
+      })),
+    ],
+  }));
+
+  const filtered = allCatalogue
     .filter(cat => activeCategory === "All" || cat.category === activeCategory)
     .map(cat => ({
       ...cat,
       modules: cat.modules.filter(m =>
         m.name.toLowerCase().includes(search.toLowerCase()) ||
         m.code.toLowerCase().includes(search.toLowerCase()) ||
-        m.description.toLowerCase().includes(search.toLowerCase())
+        (m.description || "").toLowerCase().includes(search.toLowerCase())
       ),
     }))
-    .filter(cat => cat.modules.length > 0);
+    .filter(cat => cat.modules.length > 0 || editMode);
 
   return (
     <div className="min-h-screen bg-[#F5F5F3]">
