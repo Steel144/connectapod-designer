@@ -321,8 +321,17 @@ export default function Catalogue() {
                 {cat.modules.map(mod => (
                   <div
                     key={mod.code}
-                    className="bg-white border border-gray-200 p-4 hover:shadow-md hover:border-[#F15A22] transition-all group"
+                    className="bg-white border border-gray-200 p-4 hover:shadow-md hover:border-[#F15A22] transition-all group relative"
                   >
+                    {editMode && mod._custom && (
+                      <button
+                        onClick={() => handleDeleteModule(mod._id)}
+                        className="absolute top-2 right-2 text-gray-300 hover:text-red-500 transition-colors z-10"
+                        title="Remove this module"
+                      >
+                        <Trash2 size={13} />
+                      </button>
+                    )}
                     {/* Visual preview */}
                     <div
                       className="w-full mb-3 relative flex items-center justify-center border border-gray-100"
