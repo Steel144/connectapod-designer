@@ -21,8 +21,12 @@ const generateWallId = () => `wall-${Math.random().toString(36).substr(2, 9)}`;
 export default function Configurator() {
   const MAX_HISTORY = 10;
   const [history, setHistory] = useState([]); // stack of {placedModules, walls}
-  const [placedModules, setPlacedModules] = useState([]);
-  const [walls, setWalls] = useState([]);
+  const [placedModules, setPlacedModules] = useState(() => {
+    try { return JSON.parse(localStorage.getItem("configurator_modules") || "[]"); } catch { return []; }
+  });
+  const [walls, setWalls] = useState(() => {
+    try { return JSON.parse(localStorage.getItem("configurator_walls") || "[]"); } catch { return []; }
+  });
 
   const pushHistory = useCallback((modules, w) => {
     setHistory((prev) => [...prev.slice(-MAX_HISTORY + 1), { placedModules: modules, walls: w }]);
