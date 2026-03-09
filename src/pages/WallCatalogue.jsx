@@ -371,7 +371,7 @@ export default function WallCatalogue() {
                   </div>
 
                   {/* Wall image */}
-                  <div className="h-24 bg-gray-50 border border-gray-100 flex items-center justify-center mb-3 overflow-hidden relative">
+                  <div className="h-24 bg-gray-50 border border-gray-100 flex items-center justify-center mb-3 relative">
                     {uploading === wall.code ? (
                       <Loader2 size={20} className="animate-spin text-[#F15A22]" />
                     ) : wallImages[wall.code] ? (
