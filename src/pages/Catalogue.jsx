@@ -249,7 +249,9 @@ export default function Catalogue() {
   const allCatalogue = CATALOGUE.map(cat => ({
     ...cat,
     modules: [
-      ...cat.modules.map(m => ({ ...m, _custom: false })),
+      ...cat.modules
+        .filter(m => editMode || !deletedCodes.has(m.code))
+        .map(m => ({ ...m, _custom: false, _deleted: deletedCodes.has(m.code) })),
       ...customModules.filter(c => c.category === cat.category).map(c => ({
         code: c.code, name: c.name, width: c.width || 3.0, depth: c.depth || 4.8,
         sqm: c.sqm || parseFloat(((c.width || 3.0) * (c.depth || 4.8)).toFixed(1)),
