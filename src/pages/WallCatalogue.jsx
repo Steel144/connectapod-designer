@@ -461,15 +461,15 @@ export default function WallCatalogue() {
                   </div>
 
                   {/* Wall image */}
-                  <div className="h-24 bg-gray-50 border border-gray-100 flex items-center justify-center mb-3 relative">
+                  <div className="w-full bg-gray-50 border border-gray-100 flex items-center justify-center mb-3 relative" style={{ aspectRatio: "9/16" }}>
                     {uploading === wall.code ? (
                       <Loader2 size={20} className="animate-spin text-[#F15A22]" />
                     ) : wallImages[wall.code] ? (
-                      <img src={wallImages[wall.code]} alt={wall.name} className="w-full h-full object-contain overflow-hidden" />
+                      <img src={wallImages[wall.code]} alt={wall.name} className="w-full h-full object-contain" />
                     ) : (
                       <div
                         className="bg-gray-300 border border-gray-400"
-                        style={{ width: `${Math.min(80, (wall.width / 5200) * 80 + 20)}%`, height: "60%" }}
+                        style={{ width: "60%", height: `${Math.min(70, (wall.width / 5200) * 50 + 20)}%` }}
                       />
                     )}
                     {editMode && uploading !== wall.code && (
