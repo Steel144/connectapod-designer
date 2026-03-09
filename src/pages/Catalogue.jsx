@@ -134,6 +134,11 @@ export default function Catalogue() {
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState("All");
+  const [editMode, setEditMode] = useState(false);
+  const [uploading, setUploading] = useState(null); // code currently uploading
+  const queryClient = useQueryClient();
+  const fileInputRef = useRef(null);
+  const [pendingUploadCode, setPendingUploadCode] = useState(null);
 
   const { data: floorPlanImages = {} } = useQuery({
     queryKey: ["floorPlanImages"],
@@ -142,6 +147,37 @@ export default function Catalogue() {
       return Object.fromEntries(images.map(img => [img.moduleType, img.imageUrl]));
     },
   });
+
+  const handleUploadClick = (code) => {
+    setPendingUploadCode(code);
+    fileInputRef.current.click();
+  };
+
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file || !pendingUploadCode) return;
+    e.target.value = "";
+    setUploading(pendingUploadCode);
+    const { file_url } = await base44.integrations.Core.UploadFile({ file });
+    const existing = await base44.entities.FloorPlanImage.filter({ moduleType: pendingUploadCode });
+    if (existing.length > 0) {
+      await base44.entities.FloorPlanImage.update(existing[0].id, { imageUrl: file_url });
+    } else {
+      await base44.entities.FloorPlanImage.create({ moduleType: pendingUploadCode, imageUrl: file_url });
+    }
+    queryClient.invalidateQueries({ queryKey: ["floorPlanImages"] });
+    setUploading(null);
+    toast.success("Image updated");
+  };
+
+  const handleRemoveImage = async (code) => {
+    const existing = await base44.entities.FloorPlanImage.filter({ moduleType: code });
+    if (existing.length > 0) {
+      await base44.entities.FloorPlanImage.delete(existing[0].id);
+      queryClient.invalidateQueries({ queryKey: ["floorPlanImages"] });
+      toast.success("Image removed");
+    }
+  };
 
   const categories = ["All", ...CATALOGUE.map(c => c.category)];
 
