@@ -480,13 +480,22 @@ export default function WallCatalogue() {
                           Restore
                         </button>
                       ) : (
-                        <button
-                          onClick={() => wall._custom ? handleDeleteWall(wall._id) : handleDeleteBuiltinWall(wall.code)}
-                          className="text-gray-300 hover:text-red-500 transition-colors"
-                          title="Remove this wall"
-                        >
-                          <Trash2 size={13} />
-                        </button>
+                        <div className="flex items-center gap-1">
+                          <button
+                            onClick={() => setEditingWall(wall)}
+                            className="text-gray-300 hover:text-[#F15A22] transition-colors"
+                            title="Edit this wall"
+                          >
+                            <Pencil size={13} />
+                          </button>
+                          <button
+                            onClick={() => wall._custom ? handleDeleteWall(wall._id) : handleDeleteBuiltinWall(wall.code)}
+                            className="text-gray-300 hover:text-red-500 transition-colors"
+                            title="Remove this wall"
+                          >
+                            <Trash2 size={13} />
+                          </button>
+                        </div>
                       )
                     )}
                   </div>
