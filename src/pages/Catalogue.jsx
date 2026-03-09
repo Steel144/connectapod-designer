@@ -271,7 +271,7 @@ export default function Catalogue() {
                   >
                     {/* Visual preview */}
                     <div
-                      className="w-full mb-3 relative flex items-center justify-center border border-gray-100 overflow-hidden"
+                      className="w-full mb-3 relative flex items-center justify-center border border-gray-100"
                       style={{ height: 100, backgroundColor: CATEGORY_COLORS[cat.category] || "#F5F5F3" }}
                     >
                       {uploading === mod.code ? (
