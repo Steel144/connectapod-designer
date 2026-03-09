@@ -127,6 +127,14 @@ export default function Configurator() {
 
 
 
+  // Persist design to localStorage so it survives page navigation
+  useEffect(() => {
+    localStorage.setItem("configurator_modules", JSON.stringify(placedModules));
+  }, [placedModules]);
+  useEffect(() => {
+    localStorage.setItem("configurator_walls", JSON.stringify(walls));
+  }, [walls]);
+
   // Use refs to hold latest images so handlers can access them without stale closures
   const wallImagesRef = useRef(wallImages);
   const floorPlanImagesRef = useRef(floorPlanImages);
