@@ -310,16 +310,26 @@ export default function WallCatalogue() {
               <span className="ml-2 text-xs text-gray-400">Wall Catalogue</span>
             </div>
           </div>
-          <div className="relative w-72">
-            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search by code or name…"
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-              className="w-full pl-8 pr-3 py-1.5 text-sm border border-gray-200 rounded-none bg-gray-50 focus:outline-none focus:border-[#F15A22]"
-            />
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setEditMode(e => !e)}
+              className={`flex items-center gap-2 px-3 py-1.5 text-sm border transition-all ${editMode ? "bg-[#F15A22] text-white border-[#F15A22]" : "text-gray-600 border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22]"}`}
+            >
+              <Pencil size={13} />
+              {editMode ? "Done Editing" : "Edit Images"}
+            </button>
+            <div className="relative w-64">
+              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search by code or name…"
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+                className="w-full pl-8 pr-3 py-1.5 text-sm border border-gray-200 rounded-none bg-gray-50 focus:outline-none focus:border-[#F15A22]"
+              />
+            </div>
           </div>
+          <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
         </div>
         {/* Group filter */}
         <div className="max-w-7xl mx-auto px-6 pb-2 flex gap-2 overflow-x-auto">
