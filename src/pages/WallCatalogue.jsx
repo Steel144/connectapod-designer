@@ -347,11 +347,11 @@ export default function WallCatalogue() {
   const allGroups = WALL_GROUPS.map(g => ({
     ...g,
     walls: [
-      ...g.walls.filter(w => editMode || !deletedCodes.has(w.code)).map(w => ({ ...w, _custom: false, _deleted: deletedCodes.has(w.code) })),
+      ...g.walls.filter(w => editMode || !deletedCodes.has(w.code)).map(w => ({ ...w, _custom: false, _deleted: deletedCodes.has(w.code), _groupKey: g.key })),
       ...customWalls.filter(c => c.groupKey === g.key).map(c => ({
         code: c.code, name: c.name, width: c.width || 3000,
         description: c.description || "", variants: c.variants || [],
-        _custom: true, _id: c.id, _deleted: false,
+        _custom: true, _id: c.id, _deleted: false, _groupKey: g.key,
       })),
     ],
   }));
