@@ -239,6 +239,7 @@ export default function WallCatalogue() {
   const [editMode, setEditMode] = useState(false);
   const [uploading, setUploading] = useState(null);
   const [addingToGroup, setAddingToGroup] = useState(null);
+  const [editingWall, setEditingWall] = useState(null);
   const queryClient = useQueryClient();
   const fileInputRef = useRef(null);
   const [pendingUploadCode, setPendingUploadCode] = useState(null);
