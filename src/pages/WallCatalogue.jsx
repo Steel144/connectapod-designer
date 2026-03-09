@@ -428,6 +428,14 @@ export default function WallCatalogue() {
         </div>
       </div>
 
+      {editingWall && (
+        <EditWallModal
+          wall={editingWall}
+          onSave={handleEditWall}
+          onClose={() => setEditingWall(null)}
+        />
+      )}
+
       {addingToGroup && (
         <AddWallModal
           groupKey={addingToGroup.key}
