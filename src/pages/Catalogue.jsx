@@ -238,7 +238,7 @@ export default function Catalogue() {
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-gray-900 tracking-tight">connectapod</h1>
-            <p className="text-sm text-gray-500 mt-0.5">Module Catalogue — Moduletec MP-48 System</p>
+            <p className="text-sm text-gray-500 mt-0.5">Module Catalogue — connectapod MP-48 System</p>
           </div>
           <div className="flex items-center gap-2">
             <button
