@@ -349,7 +349,7 @@ export default function WallCatalogue() {
   const totalWalls = allGroups.reduce((s, g) => s + g.walls.length, 0);
 
   return (
-    <div className="min-h-screen bg-[#F5F5F3]">
+    <div className="min-h-screen bg-white">
       {/* Header */}
       <div className="bg-white border-b border-gray-200 sticky top-0 z-20">
         <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between gap-4">
