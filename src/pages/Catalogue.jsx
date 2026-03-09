@@ -339,6 +339,14 @@ export default function Catalogue() {
           ))}
         </div>
 
+        {editingModule && (
+          <EditModuleModal
+            module={editingModule}
+            onSave={handleEditModule}
+            onClose={() => setEditingModule(null)}
+          />
+        )}
+
         {addingToCategory && (
           <AddModuleModal
             category={addingToCategory.category}
