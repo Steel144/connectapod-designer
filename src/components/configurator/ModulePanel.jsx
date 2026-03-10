@@ -445,6 +445,68 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
         );
       })}
 
+      {/* Custom Walls section */}
+      {customWallTypes.length > 0 && (
+        <div className="border border-gray-200 bg-white overflow-hidden mt-1">
+          <button
+            className="w-full flex items-center gap-3 p-3 hover:bg-gray-50 transition-colors text-left"
+            onClick={() => setOpenGroup(openGroup === "custom-walls" ? null : "custom-walls")}
+          >
+            <span className="flex items-center justify-center w-5 h-5 shrink-0">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#F15A22" strokeWidth="2" width="18" height="18">
+                <line x1="3" y1="12" x2="21" y2="12" strokeWidth="3"/>
+              </svg>
+            </span>
+            <span className="flex-1 text-sm font-semibold text-gray-800">
+              Custom Walls <span className="text-[10px] font-normal text-[#F15A22]">· from catalogue</span>
+            </span>
+            <span className="text-gray-400 shrink-0">
+              {openGroup === "custom-walls" ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+            </span>
+          </button>
+
+          {openGroup === "custom-walls" && (
+            <div className="border-t border-gray-100 max-h-64 overflow-y-auto">
+              {customWallTypes.map((wall) => (
+                <div
+                  key={wall.type}
+                  draggable
+                  onDragStart={(e) => {
+                    e.dataTransfer.effectAllowed = "copy";
+                    e.dataTransfer.setData("wallType", wall.type);
+                    onDragStart(e, wall);
+                  }}
+                  onDragEnd={onDragEnd}
+                  onMouseEnter={() => setHoveredWall({ ...wall, elevationImage: wallImages[wall.type] })}
+                  onMouseLeave={() => setHoveredWall(null)}
+                  className="flex items-center gap-3 px-3 py-2 cursor-grab active:cursor-grabbing hover:bg-orange-50 border-b border-gray-50 last:border-0 transition-colors"
+                >
+                  <div className="shrink-0 w-10 h-8 border border-gray-200 bg-white flex items-center justify-center relative">
+                    <div 
+                      style={{
+                        width: wall.orientation === "horizontal" ? "90%" : `${wall.thickness * 2}px`,
+                        height: wall.orientation === "vertical" ? "90%" : `${wall.thickness * 2}px`,
+                        backgroundColor: "#4B5563",
+                      }}
+                    />
+                    {wall.elevationImage && (
+                      <div className="absolute top-0 right-0 bg-[#F15A22] rounded-full p-0.5">
+                        <ImageIcon size={8} className="text-white" />
+                      </div>
+                    )}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-xs font-medium text-gray-700 leading-tight">{wall.label}</p>
+                    <p className="text-[10px] font-mono text-[#F15A22] mt-0.5 truncate" title={wall.mpCode}>{wall.mpCode}</p>
+                    <p className="text-[10px] text-gray-400">{wall.width.toFixed(1)}m wide</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Walls section — shown when a module or wall is selected */}
       {(selectedModule || selectedWall) && (
         <div className="border border-gray-200 bg-white overflow-hidden mt-1">
