@@ -586,7 +586,7 @@ export default function WallCatalogue() {
                   {(wall.windowStyle || wall.openingPanes != null || wall.price != null) && (
                     <div className="flex flex-wrap gap-x-3 gap-y-1 mb-2 text-[10px] text-gray-500 border-t border-gray-100 pt-2">
                       {wall.windowStyle && <span><span className="font-semibold text-gray-700">Style:</span> {wall.windowStyle}</span>}
-                      {wall.openingPanes != null && <span><span className="font-semibold text-gray-700">Panes:</span> {wall.openingPanes}</span>}
+                      {wall.openingPanes != null && <span><span className="font-semibold text-gray-700">Opening Panes:</span> {wall.openingPanes}</span>}
                       {wall.price != null && <span><span className="font-semibold text-gray-700">Price:</span> ${wall.price.toLocaleString()}</span>}
                     </div>
                   )}
