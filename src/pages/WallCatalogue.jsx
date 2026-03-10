@@ -590,16 +590,25 @@ export default function WallCatalogue() {
                   <p className="text-[11px] text-gray-500 mb-2 leading-relaxed">{wall.description}</p>
                   {(wall.windowStyle || wall.openingPanes != null || wall.windowHeight != null || wall.windowWidth != null || wall.doorStyle || wall.doorHeight != null || wall.doorWidth != null || wall.price != null) && (
                     <div className="flex flex-wrap gap-x-3 gap-y-1 mb-2 text-[10px] text-gray-500 border-t border-gray-100 pt-2">
-                      {(wall.windowHeight != null || wall.windowWidth != null) && (
-                        <span><span className="font-semibold text-gray-700">Window:</span> {wall.windowHeight ?? "—"}×{wall.windowWidth ?? "—"}mm</span>
-                      )}
-                      {wall.windowStyle && <span><span className="font-semibold text-gray-700">Style:</span> {wall.windowStyle}</span>}
-                      {wall.openingPanes != null && <span><span className="font-semibold text-gray-700">Panes:</span> {wall.openingPanes}</span>}
-                      {(wall.doorHeight != null || wall.doorWidth != null) && (
-                        <span><span className="font-semibold text-gray-700">Door:</span> {wall.doorHeight ?? "—"}×{wall.doorWidth ?? "—"}mm</span>
-                      )}
-                      {wall.doorStyle && <span><span className="font-semibold text-gray-700">Door Style:</span> {wall.doorStyle}</span>}
-                      {wall.price != null && <span><span className="font-semibold text-gray-700">Price:</span> ${wall.price.toLocaleString()}</span>}
+                      {(() => {
+                        const descParts = (wall.description || "").split(",").map(s => s.trim()).filter(Boolean);
+                        const hasWindow = descParts.includes("Window");
+                        const hasDoor = descParts.includes("Door");
+                        return (
+                          <>
+                            {hasWindow && (wall.windowHeight != null || wall.windowWidth != null) && (
+                              <span><span className="font-semibold text-gray-700">Window:</span> {wall.windowHeight ?? "—"}×{wall.windowWidth ?? "—"}mm</span>
+                            )}
+                            {hasWindow && wall.windowStyle && <span><span className="font-semibold text-gray-700">Style:</span> {wall.windowStyle}</span>}
+                            {hasWindow && wall.openingPanes != null && <span><span className="font-semibold text-gray-700">Panes:</span> {wall.openingPanes}</span>}
+                            {hasDoor && (wall.doorHeight != null || wall.doorWidth != null) && (
+                              <span><span className="font-semibold text-gray-700">Door:</span> {wall.doorHeight ?? "—"}×{wall.doorWidth ?? "—"}mm</span>
+                            )}
+                            {hasDoor && wall.doorStyle && <span><span className="font-semibold text-gray-700">Door Style:</span> {wall.doorStyle}</span>}
+                            {wall.price != null && <span><span className="font-semibold text-gray-700">Price:</span> ${wall.price.toLocaleString()}</span>}
+                          </>
+                        );
+                      })()}
                     </div>
                   )}
 
