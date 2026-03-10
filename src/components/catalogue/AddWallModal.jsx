@@ -18,7 +18,21 @@ export default function AddWallModal({ groupKey, groupLabel, onSave, onClose }) 
     price: "",
   });
 
-  const setField = (k, v) => setForm(f => ({ ...f, [k]: v }));
+  const buildAutoName = (f) => {
+    const parts = [];
+    if (f.width) parts.push(`${f.width}mm`);
+    parts.push("Wall");
+    if (f.windowStyle) parts.push(f.windowStyle);
+    if (f.windowHeight || f.windowWidth) parts.push(`${f.windowHeight || "—"}×${f.windowWidth || "—"}mm`);
+    if (f.doorStyle) parts.push(f.doorStyle);
+    if (f.doorHeight || f.doorWidth) parts.push(`${f.doorHeight || "—"}×${f.doorWidth || "—"}mm`);
+    return parts.join(" ");
+  };
+
+  const setField = (k, v) => setForm(f => {
+    const updated = { ...f, [k]: v };
+    return { ...updated, name: buildAutoName(updated) };
+  });
 
   const setVariant = (i, v) => {
     const variants = [...form.variants];
