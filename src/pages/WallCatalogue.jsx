@@ -362,9 +362,16 @@ export default function WallCatalogue() {
   // Deleted codes that have a custom override (stored via originalCode field)
   const overriddenCodes = new Set(customWalls.filter(c => c.originalCode).map(c => c.originalCode));
 
-  // Helper: extract leading number from a code string for sorting
+  // Helper: extract the primary numeric part from a wall code for sorting.
+  // Handles codes like "W003", "WS003/YS003 (W66A1S)", "WY-W-003" etc.
+  // Prefers the first 3-digit number (series code), falls back to first number found.
   const codeNum = (code) => {
-    const m = code.match(/\d+/);
+    const str = String(code);
+    // Try to find a standalone 3+ digit number that looks like a series code (e.g. 003, 004, 500)
+    const m3 = str.match(/\b(\d{3,})\b/);
+    if (m3) return parseInt(m3[1], 10);
+    // Fallback: first number found
+    const m = str.match(/\d+/);
     return m ? parseInt(m[0], 10) : 9999;
   };
 
