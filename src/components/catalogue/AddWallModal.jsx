@@ -37,6 +37,8 @@ export default function AddWallModal({ groupKey, groupLabel, onSave, onClose }) 
       variants: form.variants.filter(v => v.trim()),
       windowStyle: form.windowStyle.trim() || undefined,
       openingPanes: form.openingPanes !== "" ? parseInt(form.openingPanes) : undefined,
+      windowHeight: form.windowHeight !== "" ? parseInt(form.windowHeight) : undefined,
+      windowWidth: form.windowWidth !== "" ? parseInt(form.windowWidth) : undefined,
       price: form.price !== "" ? parseFloat(form.price) : undefined,
     });
   };

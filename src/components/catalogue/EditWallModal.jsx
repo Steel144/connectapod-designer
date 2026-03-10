@@ -25,6 +25,8 @@ export default function EditWallModal({ wall, onSave, onClose }) {
       variants: form.variants.split("\n").map(s => s.trim()).filter(Boolean),
       windowStyle: form.windowStyle || undefined,
       openingPanes: form.openingPanes !== "" ? parseInt(form.openingPanes) : undefined,
+      windowHeight: form.windowHeight !== "" ? parseInt(form.windowHeight) : undefined,
+      windowWidth: form.windowWidth !== "" ? parseInt(form.windowWidth) : undefined,
       price: form.price !== "" ? parseFloat(form.price) : undefined,
     });
   };
