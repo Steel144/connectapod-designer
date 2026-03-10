@@ -110,7 +110,7 @@ export default function AddWallModal({ groupKey, groupLabel, onSave, onClose }) 
           <div>
             <label className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide block mb-1">Name</label>
             <div className="w-full border border-gray-200 px-3 py-2 text-sm bg-gray-50 text-gray-700 min-h-[34px]">
-              {form.name || <span className="text-gray-400">Auto-populated from fields below</span>}
+              {autoName || <span className="text-gray-400">Auto-populated from fields below</span>}
             </div>
           </div>
           <div>
