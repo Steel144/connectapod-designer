@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { X, Plus, Trash2 } from "lucide-react";
+import { X } from "lucide-react";
 
 export default function EditModuleModal({ module: mod, onSave, onClose }) {
   const [form, setForm] = useState({
@@ -8,7 +8,6 @@ export default function EditModuleModal({ module: mod, onSave, onClose }) {
     width: mod.width ?? 3.0,
     depth: mod.depth ?? 4.8,
     description: mod.description || "",
-    chassisCodes: (mod.chassisCodes || []).join(", "),
     wallElevationZ: !!(mod.wallElevations?.Z || mod.wallElevationZ),
     wallElevationW: !!(mod.wallElevations?.W || mod.wallElevationW),
     wallElevationY: !!(mod.wallElevations?.Y || mod.wallElevationY),
@@ -26,7 +25,6 @@ export default function EditModuleModal({ module: mod, onSave, onClose }) {
       depth: parseFloat(form.depth) || 4.8,
       sqm,
       description: form.description,
-      chassisCodes: form.chassisCodes.split(",").map(s => s.trim()).filter(Boolean),
       wallElevationZ: form.wallElevationZ ? "Z" : undefined,
       wallElevationW: form.wallElevationW ? "W" : undefined,
       wallElevationY: form.wallElevationY ? "Y" : undefined,
@@ -63,7 +61,6 @@ export default function EditModuleModal({ module: mod, onSave, onClose }) {
           <div className="bg-gray-50 p-3 text-xs text-gray-500 border border-gray-200">
             <span className="font-semibold text-gray-700">{sqm.toFixed(1)} m²</span> — {form.width}m wide × {form.depth}m deep
           </div>
-          {field("Chassis Codes (comma separated)", "chassisCodes")}
           <div>
             <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Wall Elevations</p>
             <div className="flex gap-4">

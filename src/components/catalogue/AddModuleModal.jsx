@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { X, Plus, Trash2 } from "lucide-react";
+import { X } from "lucide-react";
 
 export default function AddModuleModal({ category, onSave, onClose }) {
   const [form, setForm] = useState({
@@ -8,7 +8,6 @@ export default function AddModuleModal({ category, onSave, onClose }) {
     width: 3.0,
     depth: 4.8,
     description: "",
-    chassisCodes: [""],
     wallZ: false,
     wallW: false,
     wallY: false,
@@ -18,12 +17,6 @@ export default function AddModuleModal({ category, onSave, onClose }) {
   const sqm = parseFloat((Number(form.width) * Number(form.depth)).toFixed(1));
 
   const setField = (k, v) => setForm(f => ({ ...f, [k]: v }));
-
-  const setChassis = (i, v) => {
-    const chassisCodes = [...form.chassisCodes];
-    chassisCodes[i] = v;
-    setForm(f => ({ ...f, chassisCodes }));
-  };
 
   const handleSave = () => {
     if (!form.code.trim() || !form.name.trim()) return;
@@ -36,7 +29,6 @@ export default function AddModuleModal({ category, onSave, onClose }) {
       depth: Number(form.depth),
       sqm,
       description: form.description.trim(),
-      chassisCodes: form.chassisCodes.filter(c => c.trim()),
       wallElevationZ: form.wallZ ? "Z" : undefined,
       wallElevationW: form.wallW ? "W" : undefined,
       wallElevationY: form.wallY ? "Y" : undefined,
@@ -78,24 +70,6 @@ export default function AddModuleModal({ category, onSave, onClose }) {
           </div>
           <div className="bg-gray-50 p-3 text-xs text-gray-500 border border-gray-200">
             <span className="font-semibold text-gray-700">{sqm.toFixed(1)} m²</span> — {form.width}m wide × {form.depth}m deep
-          </div>
-          <div>
-            <div className="flex items-center justify-between mb-1">
-              <label className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Chassis Codes</label>
-              <button onClick={() => setForm(f => ({ ...f, chassisCodes: [...f.chassisCodes, ""] }))} className="text-[#F15A22] hover:opacity-70">
-                <Plus size={14} />
-              </button>
-            </div>
-            <div className="space-y-1.5">
-              {form.chassisCodes.map((c, i) => (
-                <div key={i} className="flex gap-2">
-                  <input value={c} onChange={e => setChassis(i, e.target.value)} placeholder="e.g. MP-48-SF30" className="flex-1 border border-gray-200 px-3 py-1.5 text-sm focus:outline-none focus:border-[#F15A22]" />
-                  <button onClick={() => setForm(f => ({ ...f, chassisCodes: f.chassisCodes.filter((_, idx) => idx !== i) }))} className="text-gray-300 hover:text-red-500 transition-colors">
-                    <Trash2 size={13} />
-                  </button>
-                </div>
-              ))}
-            </div>
           </div>
           <div>
             <label className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide block mb-2">Wall Elevations</label>
