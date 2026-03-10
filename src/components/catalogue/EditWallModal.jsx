@@ -139,14 +139,13 @@ export default function EditWallModal({ wall, onSave, onClose }) {
             <>
               <div>
                 <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Door Style</label>
-                <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1">
+                <div className="flex flex-col gap-1 mt-1">
                   {["Ranch Slider", "Stacker Slider", "French", "Bi-Fold"].map(style => (
                     <label key={style} className="flex items-center gap-2 text-sm cursor-pointer">
                       <input
-                        type="radio"
-                        name="doorStyle"
+                        type="checkbox"
                         checked={form.doorStyle === style}
-                        onChange={() => setForm(f => ({ ...f, doorStyle: style }))}
+                        onChange={e => setForm(f => ({ ...f, doorStyle: e.target.checked ? style : "" }))}
                         className="accent-[#F15A22]"
                       />
                       {style}
