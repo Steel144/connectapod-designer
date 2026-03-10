@@ -362,25 +362,37 @@ export default function WallCatalogue() {
   // Deleted codes that have a custom override (stored via originalCode field)
   const overriddenCodes = new Set(customWalls.filter(c => c.originalCode).map(c => c.originalCode));
 
+  // Helper: extract leading number from a code string for sorting
+  const codeNum = (code) => {
+    const m = code.match(/\d+/);
+    return m ? parseInt(m[0], 10) : 9999;
+  };
+
   // Merge hardcoded + custom entries per group, filtering out deleted built-ins
-  const allGroups = WALL_GROUPS.map(g => ({
-    ...g,
-    walls: [
-      ...g.walls
-        .filter(w => {
-          if (overriddenCodes.has(w.code)) return false; // has a custom replacement, always hide
-          if (!deletedCodes.has(w.code)) return true; // not deleted
-          return editMode; // deleted with no override: show greyed only in edit mode
-        })
-        .map(w => ({ ...w, _custom: false, _deleted: deletedCodes.has(w.code), _groupKey: g.key })),
-      ...customWalls.filter(c => c.groupKey === g.key).map(c => ({
-        code: c.code, name: c.name, width: c.width || 3000,
-        description: c.description || "", variants: c.variants || [],
-        originalCode: c.originalCode || undefined,
-        _custom: true, _id: c.id, _deleted: false, _groupKey: g.key,
-      })),
-    ],
-  }));
+  const allGroups = WALL_GROUPS.map(g => {
+    const builtins = g.walls
+      .filter(w => {
+        if (overriddenCodes.has(w.code)) return false;
+        if (!deletedCodes.has(w.code)) return true;
+        return editMode;
+      })
+      .map(w => ({ ...w, _custom: false, _deleted: deletedCodes.has(w.code), _groupKey: g.key }));
+
+    const customs = customWalls.filter(c => c.groupKey === g.key).map(c => ({
+      code: c.code, name: c.name, width: c.width || 3000,
+      description: c.description || "", variants: c.variants || [],
+      originalCode: c.originalCode || undefined,
+      _custom: true, _id: c.id, _deleted: false, _groupKey: g.key,
+    }));
+
+    const merged = [...builtins, ...customs];
+    merged.sort((a, b) => {
+      if (a.width !== b.width) return a.width - b.width;
+      return codeNum(a.originalCode || a.code) - codeNum(b.originalCode || b.code);
+    });
+
+    return { ...g, walls: merged };
+  });
 
   const filtered = allGroups
     .filter(g => activeGroup === "all" || g.key === activeGroup)
