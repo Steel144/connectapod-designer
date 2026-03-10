@@ -10,6 +10,8 @@ export default function AddWallModal({ groupKey, groupLabel, onSave, onClose }) 
     variants: [""],
     windowStyle: "",
     openingPanes: "",
+    windowHeight: "",
+    windowWidth: "",
     price: "",
   });
 
