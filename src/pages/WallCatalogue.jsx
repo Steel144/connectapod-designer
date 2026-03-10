@@ -393,7 +393,9 @@ export default function WallCatalogue() {
     const merged = [...builtins, ...customs];
     merged.sort((a, b) => {
       if (a.width !== b.width) return a.width - b.width;
-      return codeNum(a.originalCode || a.code) - codeNum(b.originalCode || b.code);
+      // For custom entries, always sort by their own code (e.g. WY-W-003)
+      // For built-ins, sort by their code
+      return codeNum(a.code) - codeNum(b.code);
     });
 
     return { ...g, walls: merged };
