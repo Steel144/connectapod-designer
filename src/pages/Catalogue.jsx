@@ -258,12 +258,19 @@ export default function Catalogue() {
 
   const categories = ["All", ...CATALOGUE.map(c => c.category)];
 
+  // Codes that have a custom override via originalCode
+  const overriddenModuleCodes = new Set(customModules.filter(c => c.originalCode).map(c => c.originalCode));
+
   // Merge hardcoded + custom modules per category
   const allCatalogue = CATALOGUE.map(cat => ({
     ...cat,
     modules: [
       ...cat.modules
-        .filter(m => editMode || !deletedCodes.has(m.code))
+        .filter(m => {
+          if (overriddenModuleCodes.has(m.code)) return false;
+          if (!deletedCodes.has(m.code)) return true;
+          return editMode;
+        })
         .map(m => ({ ...m, _custom: false, _deleted: deletedCodes.has(m.code) })),
       ...customModules.filter(c => c.category === cat.category).map(c => ({
         code: c.code, name: c.name, width: c.width || 3.0, depth: c.depth || 4.8,
@@ -271,6 +278,7 @@ export default function Catalogue() {
         description: c.description || "",
         chassisCodes: c.chassisCodes || [],
         wallElevations: { Z: c.wallElevationZ || "N/A", W: c.wallElevationW || "", Y: c.wallElevationY || "", X: c.wallElevationX || "N/A" },
+        originalCode: c.originalCode || undefined,
         _custom: true, _id: c.id,
       })),
     ],
