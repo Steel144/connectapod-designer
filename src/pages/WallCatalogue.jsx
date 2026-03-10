@@ -376,6 +376,7 @@ export default function WallCatalogue() {
       ...customWalls.filter(c => c.groupKey === g.key).map(c => ({
         code: c.code, name: c.name, width: c.width || 3000,
         description: c.description || "", variants: c.variants || [],
+        originalCode: c.originalCode || undefined,
         _custom: true, _id: c.id, _deleted: false, _groupKey: g.key,
       })),
     ],
