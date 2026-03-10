@@ -27,10 +27,10 @@ export default function EditModuleModal({ module: mod, onSave, onClose }) {
       sqm,
       description: form.description,
       chassisCodes: form.chassisCodes.split(",").map(s => s.trim()).filter(Boolean),
-      wallElevationZ: form.wallElevationZ,
-      wallElevationW: form.wallElevationW,
-      wallElevationY: form.wallElevationY,
-      wallElevationX: form.wallElevationX,
+      wallElevationZ: form.wallElevationZ ? "Z" : undefined,
+      wallElevationW: form.wallElevationW ? "W" : undefined,
+      wallElevationY: form.wallElevationY ? "Y" : undefined,
+      wallElevationX: form.wallElevationX ? "X" : undefined,
     });
   };
 
