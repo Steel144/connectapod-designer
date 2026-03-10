@@ -261,18 +261,22 @@ export default function Catalogue() {
   // Codes that have a custom override via originalCode
   const overriddenModuleCodes = new Set(customModules.filter(c => c.originalCode).map(c => c.originalCode));
 
+  const moduleCodeNum = (code) => {
+    const m = String(code).match(/\d+/);
+    return m ? parseInt(m[0], 10) : 9999;
+  };
+
   // Merge hardcoded + custom modules per category
-  const allCatalogue = CATALOGUE.map(cat => ({
-    ...cat,
-    modules: [
-      ...cat.modules
-        .filter(m => {
-          if (overriddenModuleCodes.has(m.code)) return false;
-          if (!deletedCodes.has(m.code)) return true;
-          return editMode;
-        })
-        .map(m => ({ ...m, _custom: false, _deleted: deletedCodes.has(m.code) })),
-      ...customModules.filter(c => c.category === cat.category).map(c => ({
+  const allCatalogue = CATALOGUE.map(cat => {
+    const builtins = cat.modules
+      .filter(m => {
+        if (overriddenModuleCodes.has(m.code)) return false;
+        if (!deletedCodes.has(m.code)) return true;
+        return editMode;
+      })
+      .map(m => ({ ...m, _custom: false, _deleted: deletedCodes.has(m.code) }));
+
+    const customs = customModules.filter(c => c.category === cat.category).map(c => ({
         code: c.code, name: c.name, width: c.width || 3.0, depth: c.depth || 4.8,
         sqm: c.sqm || parseFloat(((c.width || 3.0) * (c.depth || 4.8)).toFixed(1)),
         description: c.description || "",
