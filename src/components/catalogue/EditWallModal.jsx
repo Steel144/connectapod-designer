@@ -86,7 +86,12 @@ export default function EditWallModal({ wall, onSave, onClose }) {
         </div>
         <div className="space-y-3">
           <div className="grid grid-cols-2 gap-3">
-            {field("Name", "name")}
+            <div>
+              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Name</label>
+              <div className="w-full border border-gray-200 px-3 py-1.5 text-sm bg-gray-50 text-gray-700 min-h-[34px] flex items-center">
+                {buildAutoName(form) || <span className="text-gray-400">Auto-generated</span>}
+              </div>
+            </div>
             {field("Code", "code")}
           </div>
           {field("Width (mm)", "width", "number")}
