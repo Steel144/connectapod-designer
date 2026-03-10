@@ -304,6 +304,7 @@ export default function WallCatalogue() {
       await base44.entities.WallEntry.create({
         ...data,
         groupKey: editingWall._groupKey,
+        originalCode: editingWall.code,
       });
       queryClient.invalidateQueries({ queryKey: ["wallEntries"] });
       queryClient.invalidateQueries({ queryKey: ["deletedWalls"] });
