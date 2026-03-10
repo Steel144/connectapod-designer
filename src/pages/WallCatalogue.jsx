@@ -344,47 +344,27 @@ export default function WallCatalogue() {
     }
   };
 
-  // Codes that are deleted AND have a custom override — hide the original entirely
-  const overriddenCodes = new Set(
-    deletedWalls
-      .filter(d => customWalls.some(c => c.groupKey && deletedCodes.has(d.wallCode)))
-      .map(d => d.wallCode)
-  );
-  // More precisely: deleted codes where a custom wall exists in the same group
-  const deletedWithOverride = new Set(
-    WALL_GROUPS.flatMap(g =>
-      g.walls
-        .filter(w => deletedCodes.has(w.code))
-        .filter(w => customWalls.some(c => c.groupKey === g.key))
-        .map(w => w.code)
-    )
-  );
+  // Deleted codes that have a custom override (stored via originalCode field)
+  const overriddenCodes = new Set(customWalls.filter(c => c.originalCode).map(c => c.originalCode));
 
   // Merge hardcoded + custom entries per group, filtering out deleted built-ins
-  const allGroups = WALL_GROUPS.map(g => {
-    const groupCustomWalls = customWalls.filter(c => c.groupKey === g.key);
-    // A deleted built-in is "overridden" if there's any custom wall in the same group that was clearly added as a replacement
-    // We track this via _originalCode stored on the custom wall, but since we don't have that,
-    // simply hide deleted built-ins that have at least one custom wall matching the same group
-    // Better approach: store originalCode on the custom wall during edit
-    return {
-      ...g,
-      walls: [
-        ...g.walls
-          .filter(w => {
-            if (!deletedCodes.has(w.code)) return true; // not deleted, always show
-            if (editMode && !deletedWithOverride.has(w.code)) return true; // deleted but no override, show greyed in edit mode
-            return false; // deleted with an override OR not in edit mode: hide
-          })
-          .map(w => ({ ...w, _custom: false, _deleted: deletedCodes.has(w.code), _groupKey: g.key })),
-        ...groupCustomWalls.map(c => ({
-          code: c.code, name: c.name, width: c.width || 3000,
-          description: c.description || "", variants: c.variants || [],
-          _custom: true, _id: c.id, _deleted: false, _groupKey: g.key,
-        })),
-      ],
-    };
-  });
+  const allGroups = WALL_GROUPS.map(g => ({
+    ...g,
+    walls: [
+      ...g.walls
+        .filter(w => {
+          if (overriddenCodes.has(w.code)) return false; // has a custom replacement, always hide
+          if (!deletedCodes.has(w.code)) return true; // not deleted
+          return editMode; // deleted with no override: show greyed only in edit mode
+        })
+        .map(w => ({ ...w, _custom: false, _deleted: deletedCodes.has(w.code), _groupKey: g.key })),
+      ...customWalls.filter(c => c.groupKey === g.key).map(c => ({
+        code: c.code, name: c.name, width: c.width || 3000,
+        description: c.description || "", variants: c.variants || [],
+        _custom: true, _id: c.id, _deleted: false, _groupKey: g.key,
+      })),
+    ],
+  }));
 
   const filtered = allGroups
     .filter(g => activeGroup === "all" || g.key === activeGroup)
