@@ -56,7 +56,21 @@ export default function EditWallModal({ wall, onSave, onClose }) {
             {field("Code", "code")}
           </div>
           {field("Width (mm)", "width", "number")}
-          {field("Description", "description")}
+          <div>
+            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Description</label>
+            <div className="flex gap-2">
+              {["Blank Wall", "Window", "Door"].map(opt => (
+                <button
+                  key={opt}
+                  type="button"
+                  onClick={() => setForm(f => ({ ...f, description: opt }))}
+                  className={`px-3 py-1.5 text-xs border transition-colors ${form.description === opt ? "bg-[#F15A22] text-white border-[#F15A22]" : "bg-white text-gray-600 border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22]"}`}
+                >
+                  {opt}
+                </button>
+              ))}
+            </div>
+          </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Window Style</label>

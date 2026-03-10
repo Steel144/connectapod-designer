@@ -86,12 +86,18 @@ export default function AddWallModal({ groupKey, groupLabel, onSave, onClose }) 
           </div>
           <div>
             <label className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide block mb-1">Description</label>
-            <textarea
-              value={form.description}
-              onChange={e => setField("description", e.target.value)}
-              rows={2}
-              className="w-full border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:border-[#F15A22] resize-none"
-            />
+            <div className="flex gap-2">
+              {["Blank Wall", "Window", "Door"].map(opt => (
+                <button
+                  key={opt}
+                  type="button"
+                  onClick={() => setField("description", opt)}
+                  className={`px-3 py-1.5 text-xs border transition-colors ${form.description === opt ? "bg-[#F15A22] text-white border-[#F15A22]" : "bg-white text-gray-600 border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22]"}`}
+                >
+                  {opt}
+                </button>
+              ))}
+            </div>
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
