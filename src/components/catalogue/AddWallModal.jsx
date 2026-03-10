@@ -2,34 +2,40 @@ import React, { useState } from "react";
 import { X, Plus, Trash2 } from "lucide-react";
 
 const buildAutoName = (f) => {
-  const parts = [];
-  if (f.width) parts.push(`${f.width}mm`);
-  parts.push("Wall");
+  let name = `${f.width}mm Wall`;
   
-  // Add description selections
   const descParts = f.description.split(",").map(s => s.trim()).filter(Boolean);
   if (descParts.includes("Blank Wall")) {
-    parts.push("Blank");
-    return parts.join(" ");
+    return `${name} Blank`;
   }
-  if (descParts.includes("Window")) parts.push("Window");
-  if (descParts.includes("Door")) parts.push("Door");
   
-  // Add window details
-  const winStyle = typeof f.windowStyle === "string" ? f.windowStyle.trim() : "";
-  if (winStyle) parts.push(winStyle);
-  const wh = f.windowHeight !== "" ? f.windowHeight : null;
-  const ww = f.windowWidth !== "" ? f.windowWidth : null;
-  if (wh || ww) parts.push(`${wh || "—"}×${ww || "—"}mm`);
+  // Window section
+  if (descParts.includes("Window")) {
+    const winStyle = typeof f.windowStyle === "string" ? f.windowStyle.trim() : "";
+    const wh = f.windowHeight !== "" ? f.windowHeight : null;
+    const ww = f.windowWidth !== "" ? f.windowWidth : null;
+    const sizeStr = (wh || ww) ? ` ${wh || "—"}×${ww || "—"}mm` : "";
+    if (winStyle) {
+      name += `, Window - ${winStyle}${sizeStr}`;
+    } else if (sizeStr) {
+      name += `, Window${sizeStr}`;
+    }
+  }
   
-  // Add door details
-  const dStyle = typeof f.doorStyle === "string" ? f.doorStyle.trim() : "";
-  if (dStyle) parts.push(dStyle);
-  const dh = f.doorHeight !== "" ? f.doorHeight : null;
-  const dw = f.doorWidth !== "" ? f.doorWidth : null;
-  if (dh || dw) parts.push(`${dh || "—"}×${dw || "—"}mm`);
+  // Door section
+  if (descParts.includes("Door")) {
+    const dStyle = typeof f.doorStyle === "string" ? f.doorStyle.trim() : "";
+    const dh = f.doorHeight !== "" ? f.doorHeight : null;
+    const dw = f.doorWidth !== "" ? f.doorWidth : null;
+    const sizeStr = (dh || dw) ? ` ${dh || "—"}×${dw || "—"}mm` : "";
+    if (dStyle) {
+      name += `, Door - ${dStyle}${sizeStr}`;
+    } else if (sizeStr) {
+      name += `, Door${sizeStr}`;
+    }
+  }
   
-  return parts.join(" ");
+  return name;
 };
 
 const DEFAULTS = {
