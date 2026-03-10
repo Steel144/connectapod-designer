@@ -188,18 +188,31 @@ export default function Catalogue() {
       await base44.entities.ModuleEntry.update(editingModule._id, {
         ...data,
         category: editingModule.category,
+        originalCode: editingModule.originalCode || undefined,
       });
-      queryClient.invalidateQueries({ queryKey: ["moduleEntries"] });
     } else {
-      // For built-in: hide the original and create a custom override
-      await handleDeleteBuiltinModule(editingModule.code);
-      await base44.entities.ModuleEntry.create({
-        ...data,
-        category: editingModule.category,
-      });
-      queryClient.invalidateQueries({ queryKey: ["moduleEntries"] });
-      queryClient.invalidateQueries({ queryKey: ["deletedModules"] });
+      const existingOverride = customModules.find(c => c.originalCode === editingModule.code);
+      if (existingOverride) {
+        await base44.entities.ModuleEntry.update(existingOverride.id, {
+          ...data,
+          category: editingModule.category,
+          originalCode: editingModule.code,
+        });
+      } else {
+        await Promise.all([
+          base44.entities.DeletedModule.create({ moduleCode: editingModule.code }),
+          base44.entities.ModuleEntry.create({
+            ...data,
+            category: editingModule.category,
+            originalCode: editingModule.code,
+          }),
+        ]);
+      }
     }
+    await Promise.all([
+      queryClient.refetchQueries({ queryKey: ["moduleEntries"] }),
+      queryClient.refetchQueries({ queryKey: ["deletedModules"] }),
+    ]);
     setEditingModule(null);
     toast.success("Module updated");
   };
