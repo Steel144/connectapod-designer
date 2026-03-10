@@ -585,13 +585,13 @@ export default function WallCatalogue() {
                   <p className="text-xs font-semibold text-gray-800 leading-tight mb-1 group-hover:text-[#F15A22] transition-colors">{wall.name}</p>
                   <p className="text-[10px] font-mono text-gray-400 mb-2">{wall.code}</p>
                   <p className="text-[11px] text-gray-500 mb-2 leading-relaxed">{wall.description}</p>
-                  {(wall.windowStyle || wall.openingPanes != null || wall.price != null) && (
+                  {(wall.windowStyle || wall.openingPanes != null || wall.windowHeight != null || wall.windowWidth != null || wall.price != null) && (
                     <div className="flex flex-wrap gap-x-3 gap-y-1 mb-2 text-[10px] text-gray-500 border-t border-gray-100 pt-2">
-                      {wall.windowStyle && <span><span className="font-semibold text-gray-700">Style:</span> {wall.windowStyle}</span>}
-                      {wall.openingPanes != null && <span><span className="font-semibold text-gray-700">Opening Panes:</span> {wall.openingPanes}</span>}
                       {(wall.windowHeight != null || wall.windowWidth != null) && (
                         <span><span className="font-semibold text-gray-700">Window:</span> {wall.windowHeight ?? "—"}×{wall.windowWidth ?? "—"}mm</span>
                       )}
+                      {wall.windowStyle && <span><span className="font-semibold text-gray-700">Style:</span> {wall.windowStyle}</span>}
+                      {wall.openingPanes != null && <span><span className="font-semibold text-gray-700">Opening Panes:</span> {wall.openingPanes}</span>}
                       {wall.price != null && <span><span className="font-semibold text-gray-700">Price:</span> ${wall.price.toLocaleString()}</span>}
                     </div>
                   )}
