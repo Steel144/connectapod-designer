@@ -99,12 +99,17 @@ export default function AddModuleModal({ category, onSave, onClose }) {
           </div>
           <div>
             <label className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide block mb-2">Wall Elevations</label>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="flex gap-4">
               {[["wallZ", "Z"], ["wallW", "W"], ["wallY", "Y"], ["wallX", "X"]].map(([field, face]) => (
-                <div key={face}>
-                  <label className="text-[10px] font-bold text-[#F15A22] block mb-0.5">{face}</label>
-                  <input value={form[field]} onChange={e => setField(field, e.target.value)} className="w-full border border-gray-200 px-2 py-1.5 text-xs focus:outline-none focus:border-[#F15A22]" />
-                </div>
+                <label key={face} className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={form[field]}
+                    onChange={e => setField(field, e.target.checked)}
+                    className="accent-[#F15A22]"
+                  />
+                  <span className="text-sm font-semibold text-gray-700">{face}</span>
+                </label>
               ))}
             </div>
           </div>
