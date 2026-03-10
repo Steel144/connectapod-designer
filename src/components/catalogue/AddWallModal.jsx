@@ -34,12 +34,11 @@ const DEFAULTS = {
 };
 
 export default function AddWallModal({ groupKey, groupLabel, onSave, onClose }) {
-  const [form, setForm] = useState({ ...DEFAULTS, name: buildAutoName(DEFAULTS) });
+  const [form, setForm] = useState({ ...DEFAULTS });
 
-  const setField = (k, v) => setForm(f => {
-    const updated = { ...f, [k]: v };
-    return { ...updated, name: buildAutoName(updated) };
-  });
+  const autoName = buildAutoName(form);
+
+  const setField = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
   const setVariant = (i, v) => {
     const variants = [...form.variants];
