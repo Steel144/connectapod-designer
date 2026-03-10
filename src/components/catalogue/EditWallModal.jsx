@@ -54,7 +54,26 @@ export default function EditWallModal({ wall, onSave, onClose }) {
           {field("Width (mm)", "width", "number")}
           {field("Description", "description")}
           <div className="grid grid-cols-2 gap-3">
-            {field("Window Style", "windowStyle")}
+            <div>
+              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Window Style</label>
+              <div className="flex flex-col gap-1">
+                {["Casement", "Fixed", "Awning"].map(style => (
+                  <label key={style} className="flex items-center gap-2 text-sm cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={form.windowStyle.split(",").map(s => s.trim()).includes(style)}
+                      onChange={e => {
+                        const current = form.windowStyle.split(",").map(s => s.trim()).filter(Boolean);
+                        const updated = e.target.checked ? [...current, style] : current.filter(s => s !== style);
+                        setForm(f => ({ ...f, windowStyle: updated.join(", ") }));
+                      }}
+                      className="accent-[#F15A22]"
+                    />
+                    {style}
+                  </label>
+                ))}
+              </div>
+            </div>
             {field("Opening Panes", "openingPanes", "number")}
           </div>
           {field("Price ($)", "price", "number")}

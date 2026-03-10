@@ -92,12 +92,23 @@ export default function AddWallModal({ groupKey, groupLabel, onSave, onClose }) 
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide block mb-1">Window Style</label>
-              <input
-                value={form.windowStyle}
-                onChange={e => setField("windowStyle", e.target.value)}
-                placeholder="e.g. Awning"
-                className="w-full border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:border-[#F15A22]"
-              />
+              <div className="flex flex-col gap-1 mt-1">
+                {["Casement", "Fixed", "Awning"].map(style => (
+                  <label key={style} className="flex items-center gap-2 text-sm cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={form.windowStyle.split(",").map(s => s.trim()).includes(style)}
+                      onChange={e => {
+                        const current = form.windowStyle.split(",").map(s => s.trim()).filter(Boolean);
+                        const updated = e.target.checked ? [...current, style] : current.filter(s => s !== style);
+                        setField("windowStyle", updated.join(", "));
+                      }}
+                      className="accent-[#F15A22]"
+                    />
+                    {style}
+                  </label>
+                ))}
+              </div>
             </div>
             <div>
               <label className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide block mb-1">Opening Panes</label>
