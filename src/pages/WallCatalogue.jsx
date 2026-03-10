@@ -601,7 +601,7 @@ export default function WallCatalogue() {
                             {hasWindow && wall.windowStyle && <span><span className="font-semibold text-gray-700">Style:</span> {wall.windowStyle}</span>}
                             {hasWindow && wall.openingPanes != null && <span><span className="font-semibold text-gray-700">Panes:</span> {wall.openingPanes}</span>}
                             {hasDoor && (wall.doorHeight != null || wall.doorWidth != null) && (
-                              <span><span className="font-semibold text-gray-700">Door:</span> {wall.doorHeight ?? "—"}×{wall.doorWidth ?? "—"}mm</span>
+                              <span><span className="font-semibold text-gray-700">Door:</span> {wall.doorWidth ?? "—"}×{wall.doorHeight ?? "—"}mm</span>
                             )}
                             {hasDoor && wall.doorStyle && <span><span className="font-semibold text-gray-700">Door Style:</span> {wall.doorStyle}</span>}
                             {wall.price != null && <span><span className="font-semibold text-gray-700">Price:</span> ${wall.price.toLocaleString()}</span>}
