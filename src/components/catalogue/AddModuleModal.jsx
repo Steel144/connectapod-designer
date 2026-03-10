@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { X, Plus, Trash2 } from "lucide-react";
 
+import { X, Plus, Trash2 } from "lucide-react";
+
 export default function AddModuleModal({ category, onSave, onClose }) {
   const [form, setForm] = useState({
     code: "",
@@ -14,6 +16,8 @@ export default function AddModuleModal({ category, onSave, onClose }) {
     wallY: "",
     wallX: "N/A",
   });
+
+  const sqm = parseFloat((Number(form.width) * Number(form.depth)).toFixed(1));
 
   const setField = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
@@ -72,7 +76,10 @@ export default function AddModuleModal({ category, onSave, onClose }) {
           </div>
           <div>
             <label className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide block mb-1">Description</label>
-            <textarea value={form.description} onChange={e => setField("description", e.target.value)} rows={2} className="w-full border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:border-[#F15A22] resize-none" />
+            <textarea value={form.description} onChange={e => setField("description", e.target.value)} rows={2} placeholder="e.g. Full-width standard open module" className="w-full border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:border-[#F15A22] resize-none" />
+          </div>
+          <div className="bg-gray-50 p-3 text-xs text-gray-500 border border-gray-200">
+            <span className="font-semibold text-gray-700">{sqm.toFixed(1)} m²</span> — {form.width}m wide × {form.depth}m deep
           </div>
           <div>
             <div className="flex items-center justify-between mb-1">
