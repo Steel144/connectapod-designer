@@ -596,7 +596,7 @@ export default function WallCatalogue() {
                         return (
                           <>
                             {hasWindow && (wall.windowHeight != null || wall.windowWidth != null) && (
-                              <span><span className="font-semibold text-gray-700">Window:</span> {wall.windowHeight ?? "—"}×{wall.windowWidth ?? "—"}mm</span>
+                              <span><span className="font-semibold text-gray-700">Window:</span> {wall.windowWidth ?? "—"}×{wall.windowHeight ?? "—"}mm</span>
                             )}
                             {hasWindow && wall.windowStyle && <span><span className="font-semibold text-gray-700">Style:</span> {wall.windowStyle}</span>}
                             {hasWindow && wall.openingPanes != null && <span><span className="font-semibold text-gray-700">Panes:</span> {wall.openingPanes}</span>}
