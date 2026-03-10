@@ -90,8 +90,8 @@ export default function AddWallModal({ groupKey, groupLabel, onSave, onClose }) 
             <label className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide block mb-1">Name *</label>
             <input
               value={form.name}
-              onChange={e => setField("name", e.target.value)}
-              placeholder="e.g. 3000mm Standard Wall"
+              onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
+              placeholder="Auto-populated from fields below"
               className="w-full border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:border-[#F15A22]"
             />
           </div>
