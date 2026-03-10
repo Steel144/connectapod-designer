@@ -8,6 +8,7 @@ export default function EditModuleModal({ module: mod, onSave, onClose }) {
     width: mod.width ?? 3.0,
     depth: mod.depth ?? 4.8,
     description: mod.description || "",
+    variants: mod.variants || [],
     wallElevationZ: !!(mod.wallElevations?.Z || mod.wallElevationZ),
     wallElevationW: !!(mod.wallElevations?.W || mod.wallElevationW),
     wallElevationY: !!(mod.wallElevations?.Y || mod.wallElevationY),
@@ -25,6 +26,7 @@ export default function EditModuleModal({ module: mod, onSave, onClose }) {
       depth: parseFloat(form.depth) || 4.8,
       sqm,
       description: form.description,
+      variants: form.variants,
       wallElevationZ: form.wallElevationZ ? "Z" : undefined,
       wallElevationW: form.wallElevationW ? "W" : undefined,
       wallElevationY: form.wallElevationY ? "Y" : undefined,
@@ -60,6 +62,27 @@ export default function EditModuleModal({ module: mod, onSave, onClose }) {
           {field("Description", "description")}
           <div className="bg-gray-50 p-3 text-xs text-gray-500 border border-gray-200">
             <span className="font-semibold text-gray-700">{sqm.toFixed(1)} m²</span> — {form.width}m wide × {form.depth}m deep
+          </div>
+          <div>
+            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Variants</p>
+            <div className="flex flex-col gap-1 mt-1">
+              {["Standard", "End", "Deck"].map(variant => (
+                <label key={variant} className="flex items-center gap-2 text-sm cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={form.variants.includes(variant)}
+                    onChange={e => {
+                      const updated = e.target.checked
+                        ? [...form.variants, variant]
+                        : form.variants.filter(v => v !== variant);
+                      setForm(f => ({ ...f, variants: updated }));
+                    }}
+                    className="accent-[#F15A22]"
+                  />
+                  {variant}
+                </label>
+              ))}
+            </div>
           </div>
           <div>
             <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Wall Elevations</p>

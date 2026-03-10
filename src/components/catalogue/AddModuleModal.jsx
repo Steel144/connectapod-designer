@@ -8,6 +8,7 @@ export default function AddModuleModal({ category, onSave, onClose }) {
     width: 3.0,
     depth: 4.8,
     description: "",
+    variants: [],
     wallZ: false,
     wallW: false,
     wallY: false,
@@ -29,6 +30,7 @@ export default function AddModuleModal({ category, onSave, onClose }) {
       depth: Number(form.depth),
       sqm,
       description: form.description.trim(),
+      variants: form.variants,
       wallElevationZ: form.wallZ ? "Z" : undefined,
       wallElevationW: form.wallW ? "W" : undefined,
       wallElevationY: form.wallY ? "Y" : undefined,
@@ -70,6 +72,27 @@ export default function AddModuleModal({ category, onSave, onClose }) {
           </div>
           <div className="bg-gray-50 p-3 text-xs text-gray-500 border border-gray-200">
             <span className="font-semibold text-gray-700">{sqm.toFixed(1)} m²</span> — {form.width}m wide × {form.depth}m deep
+          </div>
+          <div>
+            <label className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide block mb-1">Variants</label>
+            <div className="flex flex-col gap-1 mt-1">
+              {["Standard", "End", "Deck"].map(variant => (
+                <label key={variant} className="flex items-center gap-2 text-sm cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={form.variants.includes(variant)}
+                    onChange={e => {
+                      const updated = e.target.checked
+                        ? [...form.variants, variant]
+                        : form.variants.filter(v => v !== variant);
+                      setField("variants", updated);
+                    }}
+                    className="accent-[#F15A22]"
+                  />
+                  {variant}
+                </label>
+              ))}
+            </div>
           </div>
           <div>
             <label className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide block mb-2">Wall Elevations</label>
