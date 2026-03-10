@@ -478,7 +478,7 @@ export default function WallCatalogue() {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {group.walls.map(wall => (
-                <div key={wall.code} className={`bg-white border p-4 transition-colors group relative ${wall._deleted ? "border-red-200 opacity-50" : "border-gray-200 hover:border-[#F15A22]"}`}>
+                <div key={wall._custom ? `custom-${wall._id}` : wall.code} className={`bg-white border p-4 transition-colors group relative ${wall._deleted ? "border-red-200 opacity-50" : "border-gray-200 hover:border-[#F15A22]"}`}>
                   {/* Width badge + delete */}
                   <div className="flex items-start justify-between mb-2">
                     <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${widthColors[wall.width] || "bg-gray-100 text-gray-600"}`}>
