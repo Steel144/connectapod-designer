@@ -167,12 +167,12 @@ export default function EditWallModal({ wall, onSave, onClose }) {
                 <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Window Size (mm)</label>
                 <div className="grid grid-cols-2 gap-2">
                   <div className="relative">
-                    <span className="absolute left-2 top-1/2 -translate-y-1/2 text-[10px] text-gray-400 font-semibold">H</span>
-                    <input type="number" value={form.windowHeight} onChange={e => setForm(f => ({ ...f, windowHeight: e.target.value }))} placeholder="e.g. 1520" className="w-full border border-gray-200 pl-6 pr-3 py-1.5 text-sm focus:outline-none focus:border-[#F15A22]" />
-                  </div>
-                  <div className="relative">
                     <span className="absolute left-2 top-1/2 -translate-y-1/2 text-[10px] text-gray-400 font-semibold">W</span>
                     <input type="number" value={form.windowWidth} onChange={e => setForm(f => ({ ...f, windowWidth: e.target.value }))} placeholder="e.g. 620" className="w-full border border-gray-200 pl-6 pr-3 py-1.5 text-sm focus:outline-none focus:border-[#F15A22]" />
+                  </div>
+                  <div className="relative">
+                    <span className="absolute left-2 top-1/2 -translate-y-1/2 text-[10px] text-gray-400 font-semibold">H</span>
+                    <input type="number" value={form.windowHeight} onChange={e => setForm(f => ({ ...f, windowHeight: e.target.value }))} placeholder="e.g. 1520" className="w-full border border-gray-200 pl-6 pr-3 py-1.5 text-sm focus:outline-none focus:border-[#F15A22]" />
                   </div>
                 </div>
               </div>
@@ -200,12 +200,12 @@ export default function EditWallModal({ wall, onSave, onClose }) {
                 <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Door Size (mm)</label>
                 <div className="grid grid-cols-2 gap-2">
                   <div className="relative">
-                    <span className="absolute left-2 top-1/2 -translate-y-1/2 text-[10px] text-gray-400 font-semibold">H</span>
-                    <input type="number" value={form.doorHeight} onChange={e => setForm(f => ({ ...f, doorHeight: e.target.value }))} placeholder="e.g. 2100" className="w-full border border-gray-200 pl-6 pr-3 py-1.5 text-sm focus:outline-none focus:border-[#F15A22]" />
-                  </div>
-                  <div className="relative">
                     <span className="absolute left-2 top-1/2 -translate-y-1/2 text-[10px] text-gray-400 font-semibold">W</span>
                     <input type="number" value={form.doorWidth} onChange={e => setForm(f => ({ ...f, doorWidth: e.target.value }))} placeholder="e.g. 900" className="w-full border border-gray-200 pl-6 pr-3 py-1.5 text-sm focus:outline-none focus:border-[#F15A22]" />
+                  </div>
+                  <div className="relative">
+                    <span className="absolute left-2 top-1/2 -translate-y-1/2 text-[10px] text-gray-400 font-semibold">H</span>
+                    <input type="number" value={form.doorHeight} onChange={e => setForm(f => ({ ...f, doorHeight: e.target.value }))} placeholder="e.g. 2100" className="w-full border border-gray-200 pl-6 pr-3 py-1.5 text-sm focus:outline-none focus:border-[#F15A22]" />
                   </div>
                 </div>
               </div>
