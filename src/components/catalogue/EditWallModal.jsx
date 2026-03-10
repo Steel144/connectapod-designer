@@ -8,6 +8,9 @@ export default function EditWallModal({ wall, onSave, onClose }) {
     width: wall.width ?? 3000,
     description: wall.description || "",
     variants: (wall.variants || []).join("\n"),
+    windowStyle: wall.windowStyle || "",
+    openingPanes: wall.openingPanes ?? "",
+    price: wall.price ?? "",
   });
 
   const handleSubmit = () => {
@@ -18,6 +21,9 @@ export default function EditWallModal({ wall, onSave, onClose }) {
       width: parseInt(form.width) || 3000,
       description: form.description,
       variants: form.variants.split("\n").map(s => s.trim()).filter(Boolean),
+      windowStyle: form.windowStyle || undefined,
+      openingPanes: form.openingPanes !== "" ? parseInt(form.openingPanes) : undefined,
+      price: form.price !== "" ? parseFloat(form.price) : undefined,
     });
   };
 
@@ -47,6 +53,11 @@ export default function EditWallModal({ wall, onSave, onClose }) {
           </div>
           {field("Width (mm)", "width", "number")}
           {field("Description", "description")}
+          <div className="grid grid-cols-2 gap-3">
+            {field("Window Style", "windowStyle")}
+            {field("Opening Panes", "openingPanes", "number")}
+          </div>
+          {field("Price ($)", "price", "number")}
           <div>
             <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Variants (one per line)</label>
             <textarea

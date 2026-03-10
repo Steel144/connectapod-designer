@@ -8,6 +8,9 @@ export default function AddWallModal({ groupKey, groupLabel, onSave, onClose }) 
     width: 3000,
     description: "",
     variants: [""],
+    windowStyle: "",
+    openingPanes: "",
+    price: "",
   });
 
   const setField = (k, v) => setForm(f => ({ ...f, [k]: v }));
@@ -30,6 +33,9 @@ export default function AddWallModal({ groupKey, groupLabel, onSave, onClose }) 
       width: Number(form.width),
       description: form.description.trim(),
       variants: form.variants.filter(v => v.trim()),
+      windowStyle: form.windowStyle.trim() || undefined,
+      openingPanes: form.openingPanes !== "" ? parseInt(form.openingPanes) : undefined,
+      price: form.price !== "" ? parseFloat(form.price) : undefined,
     });
   };
 
@@ -83,6 +89,37 @@ export default function AddWallModal({ groupKey, groupLabel, onSave, onClose }) 
               className="w-full border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:border-[#F15A22] resize-none"
             />
           </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide block mb-1">Window Style</label>
+              <input
+                value={form.windowStyle}
+                onChange={e => setField("windowStyle", e.target.value)}
+                placeholder="e.g. Awning"
+                className="w-full border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:border-[#F15A22]"
+              />
+            </div>
+            <div>
+              <label className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide block mb-1">Opening Panes</label>
+              <input
+                type="number"
+                value={form.openingPanes}
+                onChange={e => setField("openingPanes", e.target.value)}
+                placeholder="e.g. 2"
+                className="w-full border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:border-[#F15A22]"
+              />
+            </div>
+          </div>
+          <div>
+            <label className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide block mb-1">Price ($)</label>
+            <input
+              type="number"
+              value={form.price}
+              onChange={e => setField("price", e.target.value)}
+              placeholder="e.g. 1200"
+              className="w-full border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:border-[#F15A22]"
+            />
+          </div>
           <div>
             <div className="flex items-center justify-between mb-1">
               <label className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Variants</label>
@@ -96,7 +133,7 @@ export default function AddWallModal({ groupKey, groupLabel, onSave, onClose }) 
                   <input
                     value={v}
                     onChange={e => setVariant(i, e.target.value)}
-                    placeholder={`e.g. Standard (W500/Y500)`}
+                    placeholder="e.g. Standard (W500/Y500)"
                     className="flex-1 border border-gray-200 px-3 py-1.5 text-sm focus:outline-none focus:border-[#F15A22]"
                   />
                   <button onClick={() => removeVariant(i)} className="text-gray-300 hover:text-red-500 transition-colors">
