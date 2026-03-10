@@ -100,7 +100,7 @@ export default function AddModuleModal({ category, onSave, onClose }) {
           <div>
             <label className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide block mb-2">Wall Elevations</label>
             <div className="flex gap-4">
-              {[["wallZ", "Z end"], ["wallW", "W side"], ["wallY", "Y side"], ["wallX", "X end"]].map(([field, face]) => (
+              {[["wallW", "W side"], ["wallX", "X end"], ["wallY", "Y side"], ["wallZ", "Z end"]].map(([field, face]) => (
                 <label key={field} className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="checkbox"

@@ -67,7 +67,7 @@ export default function EditModuleModal({ module: mod, onSave, onClose }) {
           <div>
             <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Wall Elevations</p>
             <div className="flex gap-4">
-              {[["wallElevationZ", "Z end"], ["wallElevationW", "W side"], ["wallElevationY", "Y side"], ["wallElevationX", "X end"]].map(([key, face]) => (
+              {[["wallElevationW", "W side"], ["wallElevationX", "X end"], ["wallElevationY", "Y side"], ["wallElevationZ", "Z end"]].map(([key, face]) => (
                 <label key={key} className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="checkbox"
