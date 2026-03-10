@@ -12,6 +12,9 @@ export default function EditWallModal({ wall, onSave, onClose }) {
     openingPanes: wall.openingPanes ?? "",
     windowHeight: wall.windowHeight ?? "",
     windowWidth: wall.windowWidth ?? "",
+    doorStyle: wall.doorStyle || "",
+    doorHeight: wall.doorHeight ?? "",
+    doorWidth: wall.doorWidth ?? "",
     price: wall.price ?? "",
   });
 

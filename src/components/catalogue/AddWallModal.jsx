@@ -12,6 +12,9 @@ export default function AddWallModal({ groupKey, groupLabel, onSave, onClose }) 
     openingPanes: "",
     windowHeight: "",
     windowWidth: "",
+    doorStyle: "",
+    doorHeight: "",
+    doorWidth: "",
     price: "",
   });
 
