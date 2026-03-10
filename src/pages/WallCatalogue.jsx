@@ -321,8 +321,8 @@ export default function WallCatalogue() {
       }
     }
     await Promise.all([
-      queryClient.invalidateQueries({ queryKey: ["wallEntries"] }),
-      queryClient.invalidateQueries({ queryKey: ["deletedWalls"] }),
+      queryClient.refetchQueries({ queryKey: ["wallEntries"] }),
+      queryClient.refetchQueries({ queryKey: ["deletedWalls"] }),
     ]);
     setEditingWall(null);
     toast.success("Wall updated");
