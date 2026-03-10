@@ -65,12 +65,19 @@ export default function EditModuleModal({ module: mod, onSave, onClose }) {
           </div>
           {field("Chassis Codes (comma separated)", "chassisCodes")}
           <div>
-            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Wall Elevations</p>
-            <div className="grid grid-cols-2 gap-3">
-              {field("Z face", "wallElevationZ")}
-              {field("W face", "wallElevationW")}
-              {field("Y face", "wallElevationY")}
-              {field("X face", "wallElevationX")}
+            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Wall Elevations</p>
+            <div className="flex gap-4">
+              {[["wallElevationZ", "Z"], ["wallElevationW", "W"], ["wallElevationY", "Y"], ["wallElevationX", "X"]].map(([key, face]) => (
+                <label key={face} className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={form[key]}
+                    onChange={e => setForm(f => ({ ...f, [key]: e.target.checked }))}
+                    className="accent-[#F15A22]"
+                  />
+                  <span className="text-sm font-semibold text-gray-700">{face}</span>
+                </label>
+              ))}
             </div>
           </div>
         </div>
