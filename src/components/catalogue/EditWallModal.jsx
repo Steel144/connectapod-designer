@@ -47,9 +47,10 @@ export default function EditWallModal({ wall, onSave, onClose }) {
   });
 
   const handleSubmit = () => {
-    if (!form.name || !form.code) return;
+    const autoName = buildAutoName(form);
+    if (!autoName || !form.code) return;
     onSave({
-      name: form.name,
+      name: autoName,
       code: form.code,
       width: parseInt(form.width) || 3000,
       description: form.description,
