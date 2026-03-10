@@ -2,22 +2,6 @@ import React, { useState } from "react";
 import { X, Plus, Trash2 } from "lucide-react";
 
 export default function AddWallModal({ groupKey, groupLabel, onSave, onClose }) {
-  const initialForm = {
-    code: "",
-    name: "",
-    width: 3000,
-    description: "",
-    variants: [""],
-    windowStyle: "",
-    openingPanes: "",
-    windowHeight: "",
-    windowWidth: "",
-    doorStyle: "",
-    doorHeight: "",
-    doorWidth: "",
-    price: "",
-  };
-
   const buildAutoName = (f) => {
     const parts = [];
     if (f.width) parts.push(`${f.width}mm`);
@@ -29,33 +13,8 @@ export default function AddWallModal({ groupKey, groupLabel, onSave, onClose }) 
     return parts.join(" ");
   };
 
-  const [form, setForm] = useState({ ...initialForm, name: buildAutoName(initialForm) });
-
-  // placeholder to keep shape — real width: 3000 is in initialForm above
-  const _unused = {
-    width: 3000,
-    description: "",
-    variants: [""],
-    windowStyle: "",
-    openingPanes: "",
-    windowHeight: "",
-    windowWidth: "",
-    doorStyle: "",
-    doorHeight: "",
-    doorWidth: "",
-    price: "",
-  });
-
-  const buildAutoName = (f) => {
-    const parts = [];
-    if (f.width) parts.push(`${f.width}mm`);
-    parts.push("Wall");
-    if (f.windowStyle) parts.push(f.windowStyle);
-    if (f.windowHeight || f.windowWidth) parts.push(`${f.windowHeight || "—"}×${f.windowWidth || "—"}mm`);
-    if (f.doorStyle) parts.push(f.doorStyle);
-    if (f.doorHeight || f.doorWidth) parts.push(`${f.doorHeight || "—"}×${f.doorWidth || "—"}mm`);
-    return parts.join(" ");
-  };
+  const DEFAULTS = { code: "", width: 3000, description: "", variants: [""], windowStyle: "", openingPanes: "", windowHeight: "", windowWidth: "", doorStyle: "", doorHeight: "", doorWidth: "", price: "" };
+  const [form, setForm] = useState({ ...DEFAULTS, name: buildAutoName(DEFAULTS) });
 
   const setField = (k, v) => setForm(f => {
     const updated = { ...f, [k]: v };
