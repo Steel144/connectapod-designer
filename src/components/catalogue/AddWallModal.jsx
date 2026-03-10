@@ -50,11 +50,11 @@ export default function AddWallModal({ groupKey, groupLabel, onSave, onClose }) 
   const removeVariant = (i) => setForm(f => ({ ...f, variants: f.variants.filter((_, idx) => idx !== i) }));
 
   const handleSave = () => {
-    if (!form.code.trim() || !form.name) return;
+    if (!form.code.trim() || !autoName) return;
     onSave({
       groupKey,
       code: form.code.trim(),
-      name: form.name,
+      name: autoName,
       width: Number(form.width),
       description: form.description.trim(),
       variants: form.variants.filter(v => v.trim()),
