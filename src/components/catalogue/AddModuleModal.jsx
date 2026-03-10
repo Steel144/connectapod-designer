@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import { X, Plus, Trash2 } from "lucide-react";
 
-import { X, Plus, Trash2 } from "lucide-react";
-
 export default function AddModuleModal({ category, onSave, onClose }) {
   const [form, setForm] = useState({
     code: "",
