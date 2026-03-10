@@ -1,19 +1,33 @@
 import React, { useState } from "react";
 import { X, Plus, Trash2 } from "lucide-react";
 
-export default function AddWallModal({ groupKey, groupLabel, onSave, onClose }) {
-  const buildAutoName = (f) => {
-    const parts = [];
-    if (f.width) parts.push(`${f.width}mm`);
-    parts.push("Wall");
-    if (f.windowStyle) parts.push(f.windowStyle);
-    if (f.windowHeight || f.windowWidth) parts.push(`${f.windowHeight || "—"}×${f.windowWidth || "—"}mm`);
-    if (f.doorStyle) parts.push(f.doorStyle);
-    if (f.doorHeight || f.doorWidth) parts.push(`${f.doorHeight || "—"}×${f.doorWidth || "—"}mm`);
-    return parts.join(" ");
-  };
+const buildAutoName = (f) => {
+  const parts = [];
+  if (f.width) parts.push(`${f.width}mm`);
+  parts.push("Wall");
+  if (f.windowStyle) parts.push(f.windowStyle);
+  if (f.windowHeight || f.windowWidth) parts.push(`${f.windowHeight || "—"}×${f.windowWidth || "—"}mm`);
+  if (f.doorStyle) parts.push(f.doorStyle);
+  if (f.doorHeight || f.doorWidth) parts.push(`${f.doorHeight || "—"}×${f.doorWidth || "—"}mm`);
+  return parts.join(" ");
+};
 
-  const DEFAULTS = { code: "", width: 3000, description: "", variants: [""], windowStyle: "", openingPanes: "", windowHeight: "", windowWidth: "", doorStyle: "", doorHeight: "", doorWidth: "", price: "" };
+const DEFAULTS = {
+  code: "",
+  width: 3000,
+  description: "",
+  variants: [""],
+  windowStyle: "",
+  openingPanes: "",
+  windowHeight: "",
+  windowWidth: "",
+  doorStyle: "",
+  doorHeight: "",
+  doorWidth: "",
+  price: "",
+};
+
+export default function AddWallModal({ groupKey, groupLabel, onSave, onClose }) {
   const [form, setForm] = useState({ ...DEFAULTS, name: buildAutoName(DEFAULTS) });
 
   const setField = (k, v) => setForm(f => {
@@ -31,11 +45,11 @@ export default function AddWallModal({ groupKey, groupLabel, onSave, onClose }) 
   const removeVariant = (i) => setForm(f => ({ ...f, variants: f.variants.filter((_, idx) => idx !== i) }));
 
   const handleSave = () => {
-    if (!form.code.trim() || !form.name.trim()) return;
+    if (!form.code.trim() || !form.name) return;
     onSave({
       groupKey,
       code: form.code.trim(),
-      name: form.name.trim(),
+      name: form.name,
       width: Number(form.width),
       description: form.description.trim(),
       variants: form.variants.filter(v => v.trim()),
@@ -48,6 +62,21 @@ export default function AddWallModal({ groupKey, groupLabel, onSave, onClose }) 
       doorWidth: form.doorWidth !== "" ? parseInt(form.doorWidth) : undefined,
       price: form.price !== "" ? parseFloat(form.price) : undefined,
     });
+  };
+
+  const descParts = form.description.split(",").map(s => s.trim()).filter(Boolean);
+  const isBlank = descParts.includes("Blank Wall");
+  const hasWindow = descParts.includes("Window");
+  const hasDoor = descParts.includes("Door");
+
+  const toggleDesc = (opt) => {
+    if (opt === "Blank Wall") {
+      setField("description", isBlank ? "" : "Blank Wall");
+    } else {
+      if (isBlank) return;
+      const updated = descParts.includes(opt) ? descParts.filter(p => p !== opt) : [...descParts, opt];
+      setField("description", updated.join(", "));
+    }
   };
 
   return (
@@ -74,7 +103,7 @@ export default function AddWallModal({ groupKey, groupLabel, onSave, onClose }) 
             />
           </div>
           <div>
-            <label className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide block mb-1">Name *</label>
+            <label className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide block mb-1">Name</label>
             <div className="w-full border border-gray-200 px-3 py-2 text-sm bg-gray-50 text-gray-700 min-h-[34px]">
               {form.name || <span className="text-gray-400">Auto-populated from fields below</span>}
             </div>
@@ -91,37 +120,25 @@ export default function AddWallModal({ groupKey, groupLabel, onSave, onClose }) 
           <div>
             <label className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide block mb-1">Description</label>
             <div className="flex gap-2">
-              {(() => {
-                const parts = form.description.split(",").map(s => s.trim()).filter(Boolean);
-                const isBlank = parts.includes("Blank Wall");
-                const toggle = (opt) => {
-                  if (opt === "Blank Wall") {
-                    setField("description", isBlank ? "" : "Blank Wall");
-                  } else {
-                    if (isBlank) return;
-                    const updated = parts.includes(opt) ? parts.filter(p => p !== opt) : [...parts, opt];
-                    setField("description", updated.join(", "));
-                  }
-                };
-                return ["Blank Wall", "Window", "Door"].map(opt => {
-                  const active = parts.includes(opt);
-                  const disabled = opt !== "Blank Wall" && isBlank;
-                  return (
-                    <button
-                      key={opt}
-                      type="button"
-                      onClick={() => toggle(opt)}
-                      disabled={disabled}
-                      className={`px-3 py-1.5 text-xs border transition-colors ${active ? "bg-[#F15A22] text-white border-[#F15A22]" : disabled ? "bg-gray-50 text-gray-300 border-gray-100 cursor-not-allowed" : "bg-white text-gray-600 border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22]"}`}
-                    >
-                      {opt}
-                    </button>
-                  );
-                });
-              })()}
+              {["Blank Wall", "Window", "Door"].map(opt => {
+                const active = descParts.includes(opt);
+                const disabled = opt !== "Blank Wall" && isBlank;
+                return (
+                  <button
+                    key={opt}
+                    type="button"
+                    onClick={() => toggleDesc(opt)}
+                    disabled={disabled}
+                    className={`px-3 py-1.5 text-xs border transition-colors ${active ? "bg-[#F15A22] text-white border-[#F15A22]" : disabled ? "bg-gray-50 text-gray-300 border-gray-100 cursor-not-allowed" : "bg-white text-gray-600 border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22]"}`}
+                  >
+                    {opt}
+                  </button>
+                );
+              })}
             </div>
           </div>
-          {form.description.split(",").map(s => s.trim()).includes("Window") && (
+
+          {hasWindow && (
             <>
               <div className="grid grid-cols-2 gap-3">
                 <div>
@@ -170,7 +187,8 @@ export default function AddWallModal({ groupKey, groupLabel, onSave, onClose }) 
               </div>
             </>
           )}
-          {form.description.split(",").map(s => s.trim()).includes("Door") && (
+
+          {hasDoor && (
             <>
               <div>
                 <label className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide block mb-1">Door Style</label>
@@ -203,6 +221,7 @@ export default function AddWallModal({ groupKey, groupLabel, onSave, onClose }) 
               </div>
             </>
           )}
+
           <div>
             <label className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide block mb-1">Price ($)</label>
             <input
