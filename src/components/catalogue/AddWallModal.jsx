@@ -174,13 +174,10 @@ export default function AddWallModal({ groupKey, groupLabel, onSave, onClose }) 
               {["Ranch Slider", "Stacker Slider", "French", "Bi-Fold"].map(style => (
                 <label key={style} className="flex items-center gap-2 text-sm cursor-pointer">
                   <input
-                    type="checkbox"
-                    checked={form.doorStyle.split(",").map(s => s.trim()).includes(style)}
-                    onChange={e => {
-                      const current = form.doorStyle.split(",").map(s => s.trim()).filter(Boolean);
-                      const updated = e.target.checked ? [...current, style] : current.filter(s => s !== style);
-                      setField("doorStyle", updated.join(", "));
-                    }}
+                    type="radio"
+                    name="doorStyle"
+                    checked={form.doorStyle === style}
+                    onChange={() => setField("doorStyle", style)}
                     className="accent-[#F15A22]"
                   />
                   {style}
