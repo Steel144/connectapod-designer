@@ -390,7 +390,7 @@ export default function WallCatalogue() {
       openingPanes: c.openingPanes != null ? c.openingPanes : undefined,
       windowHeight: c.windowHeight != null ? c.windowHeight : undefined,
       windowWidth: c.windowWidth != null ? c.windowWidth : undefined,
-      doorStyle: c.doorStyle || undefined,
+      doorStyle: c.doorStyle || null,
       doorHeight: c.doorHeight != null ? c.doorHeight : undefined,
       doorWidth: c.doorWidth != null ? c.doorWidth : undefined,
       price: c.price != null ? c.price : undefined,
