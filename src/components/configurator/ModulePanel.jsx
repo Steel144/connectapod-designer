@@ -252,6 +252,7 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
     .map(w => ({
       type: w.code,
       label: w.name,
+      description: w.description || "",
       mpCode: w.code,
       width: w.width ? w.width / 1000 : 3.0,
       orientation: "horizontal",
@@ -481,23 +482,23 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
                   onMouseLeave={() => setHoveredWall(null)}
                   className="flex items-center gap-3 px-3 py-2 cursor-grab active:cursor-grabbing hover:bg-orange-50 border-b border-gray-50 last:border-0 transition-colors"
                 >
-                  <div className="shrink-0 w-10 h-8 border border-gray-200 bg-white flex items-center justify-center relative">
-                    <div 
-                      style={{
-                        width: wall.orientation === "horizontal" ? "90%" : `${wall.thickness * 2}px`,
-                        height: wall.orientation === "vertical" ? "90%" : `${wall.thickness * 2}px`,
-                        backgroundColor: "#4B5563",
-                      }}
-                    />
-                    {wall.elevationImage && (
-                      <div className="absolute top-0 right-0 bg-[#F15A22] rounded-full p-0.5">
-                        <ImageIcon size={8} className="text-white" />
-                      </div>
+                  <div className="shrink-0 w-10 h-16 border border-gray-200 bg-gray-50 flex items-center justify-center relative overflow-hidden" style={{ aspectRatio: "9/16" }}>
+                    {wallImages[wall.type] ? (
+                      <img src={wallImages[wall.type]} alt={wall.label} className="w-full h-full object-contain" />
+                    ) : (
+                      <div 
+                        style={{
+                          width: wall.orientation === "horizontal" ? "90%" : `${wall.thickness * 2}px`,
+                          height: wall.orientation === "vertical" ? "90%" : `${wall.thickness * 2}px`,
+                          backgroundColor: "#4B5563",
+                        }}
+                      />
                     )}
                   </div>
                   <div className="min-w-0">
                     <p className="text-xs font-medium text-gray-700 leading-tight">{wall.label}</p>
                     <p className="text-[10px] font-mono text-[#F15A22] mt-0.5 truncate" title={wall.mpCode}>{wall.mpCode}</p>
+                    {wall.description && <p className="text-[10px] text-gray-500 mt-0.5 truncate">{wall.description}</p>}
                     <p className="text-[10px] text-gray-400">{wall.width.toFixed(1)}m wide</p>
                   </div>
                 </div>
