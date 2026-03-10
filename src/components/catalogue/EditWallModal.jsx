@@ -217,7 +217,7 @@ export default function EditWallModal({ wall, onSave, onClose }) {
           <button onClick={onClose} className="px-4 py-2 text-sm border border-gray-200 text-gray-600 hover:border-gray-400 transition-colors">Cancel</button>
           <button
             onClick={handleSubmit}
-            disabled={!form.name || !form.code}
+            disabled={!buildAutoName(form) || !form.code}
             className="px-4 py-2 text-sm bg-[#F15A22] text-white hover:bg-[#d44e1c] disabled:opacity-40 transition-colors"
           >
             Save
