@@ -30,7 +30,7 @@ export default function EditWallModal({ wall, onSave, onClose }) {
       openingPanes: form.openingPanes !== "" ? parseInt(form.openingPanes) : undefined,
       windowHeight: form.windowHeight !== "" ? parseInt(form.windowHeight) : undefined,
       windowWidth: form.windowWidth !== "" ? parseInt(form.windowWidth) : undefined,
-      doorStyle: form.doorStyle || undefined,
+      doorStyle: form.doorStyle || null,
       doorHeight: form.doorHeight !== "" ? parseInt(form.doorHeight) : undefined,
       doorWidth: form.doorWidth !== "" ? parseInt(form.doorWidth) : undefined,
       price: form.price !== "" ? parseFloat(form.price) : undefined,
