@@ -5,10 +5,16 @@ const buildAutoName = (f) => {
   const parts = [];
   if (f.width) parts.push(`${f.width}mm`);
   parts.push("Wall");
-  if (f.windowStyle) parts.push(f.windowStyle);
-  if (f.windowHeight || f.windowWidth) parts.push(`${f.windowHeight || "—"}×${f.windowWidth || "—"}mm`);
-  if (f.doorStyle) parts.push(f.doorStyle);
-  if (f.doorHeight || f.doorWidth) parts.push(`${f.doorHeight || "—"}×${f.doorWidth || "—"}mm`);
+  const winStyle = typeof f.windowStyle === "string" ? f.windowStyle.trim() : "";
+  if (winStyle) parts.push(winStyle);
+  const wh = f.windowHeight !== "" ? f.windowHeight : null;
+  const ww = f.windowWidth !== "" ? f.windowWidth : null;
+  if (wh || ww) parts.push(`${wh || "—"}×${ww || "—"}mm`);
+  const dStyle = typeof f.doorStyle === "string" ? f.doorStyle.trim() : "";
+  if (dStyle) parts.push(dStyle);
+  const dh = f.doorHeight !== "" ? f.doorHeight : null;
+  const dw = f.doorWidth !== "" ? f.doorWidth : null;
+  if (dh || dw) parts.push(`${dh || "—"}×${dw || "—"}mm`);
   return parts.join(" ");
 };
 
