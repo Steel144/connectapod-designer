@@ -388,6 +388,8 @@ export default function WallCatalogue() {
       description: c.description || "", variants: c.variants || [],
       windowStyle: c.windowStyle || undefined,
       openingPanes: c.openingPanes != null ? c.openingPanes : undefined,
+      windowHeight: c.windowHeight != null ? c.windowHeight : undefined,
+      windowWidth: c.windowWidth != null ? c.windowWidth : undefined,
       price: c.price != null ? c.price : undefined,
       originalCode: c.originalCode || undefined,
       _custom: true, _id: c.id, _deleted: false, _groupKey: g.key,
