@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { X, Plus, Trash2 } from "lucide-react";
 
 export default function EditModuleModal({ module: mod, onSave, onClose }) {
   const [form, setForm] = useState({
@@ -14,6 +15,8 @@ export default function EditModuleModal({ module: mod, onSave, onClose }) {
     wallElevationX: mod.wallElevations?.X || mod.wallElevationX || "",
   });
 
+  const sqm = parseFloat((parseFloat(form.width || 3) * parseFloat(form.depth || 4.8)).toFixed(1));
+
   const handleSubmit = () => {
     if (!form.name || !form.code) return;
     onSave({
@@ -21,7 +24,7 @@ export default function EditModuleModal({ module: mod, onSave, onClose }) {
       code: form.code,
       width: parseFloat(form.width) || 3.0,
       depth: parseFloat(form.depth) || 4.8,
-      sqm: parseFloat((parseFloat(form.width || 3) * parseFloat(form.depth || 4.8)).toFixed(1)),
+      sqm,
       description: form.description,
       chassisCodes: form.chassisCodes.split(",").map(s => s.trim()).filter(Boolean),
       wallElevationZ: form.wallElevationZ,
@@ -57,6 +60,9 @@ export default function EditModuleModal({ module: mod, onSave, onClose }) {
             {field("Depth (m)", "depth", "number")}
           </div>
           {field("Description", "description")}
+          <div className="bg-gray-50 p-3 text-xs text-gray-500 border border-gray-200">
+            <span className="font-semibold text-gray-700">{sqm.toFixed(1)} m²</span> — {form.width}m wide × {form.depth}m deep
+          </div>
           {field("Chassis Codes (comma separated)", "chassisCodes")}
           <div>
             <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Wall Elevations</p>
