@@ -296,19 +296,23 @@ export default function WallCatalogue() {
       await base44.entities.WallEntry.update(editingWall._id, {
         ...data,
         groupKey: editingWall._groupKey,
+        originalCode: editingWall.originalCode || undefined,
       });
-      queryClient.invalidateQueries({ queryKey: ["wallEntries"] });
     } else {
       // Hide built-in and create a custom override
-      await base44.entities.DeletedWall.create({ wallCode: editingWall.code });
-      await base44.entities.WallEntry.create({
-        ...data,
-        groupKey: editingWall._groupKey,
-        originalCode: editingWall.code,
-      });
-      queryClient.invalidateQueries({ queryKey: ["wallEntries"] });
-      queryClient.invalidateQueries({ queryKey: ["deletedWalls"] });
+      await Promise.all([
+        base44.entities.DeletedWall.create({ wallCode: editingWall.code }),
+        base44.entities.WallEntry.create({
+          ...data,
+          groupKey: editingWall._groupKey,
+          originalCode: editingWall.code,
+        }),
+      ]);
     }
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: ["wallEntries"] }),
+      queryClient.invalidateQueries({ queryKey: ["deletedWalls"] }),
+    ]);
     setEditingWall(null);
     toast.success("Wall updated");
   };
