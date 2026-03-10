@@ -5,16 +5,30 @@ const buildAutoName = (f) => {
   const parts = [];
   if (f.width) parts.push(`${f.width}mm`);
   parts.push("Wall");
+  
+  // Add description selections
+  const descParts = f.description.split(",").map(s => s.trim()).filter(Boolean);
+  if (descParts.includes("Blank Wall")) {
+    parts.push("Blank");
+    return parts.join(" ");
+  }
+  if (descParts.includes("Window")) parts.push("Window");
+  if (descParts.includes("Door")) parts.push("Door");
+  
+  // Add window details
   const winStyle = typeof f.windowStyle === "string" ? f.windowStyle.trim() : "";
   if (winStyle) parts.push(winStyle);
   const wh = f.windowHeight !== "" ? f.windowHeight : null;
   const ww = f.windowWidth !== "" ? f.windowWidth : null;
   if (wh || ww) parts.push(`${wh || "—"}×${ww || "—"}mm`);
+  
+  // Add door details
   const dStyle = typeof f.doorStyle === "string" ? f.doorStyle.trim() : "";
   if (dStyle) parts.push(dStyle);
   const dh = f.doorHeight !== "" ? f.doorHeight : null;
   const dw = f.doorWidth !== "" ? f.doorWidth : null;
   if (dh || dw) parts.push(`${dh || "—"}×${dw || "—"}mm`);
+  
   return parts.join(" ");
 };
 
