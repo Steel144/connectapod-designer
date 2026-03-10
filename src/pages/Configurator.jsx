@@ -67,16 +67,6 @@ export default function Configurator() {
     },
   });
 
-  const { data: customWalls = [] } = useQuery({
-    queryKey: ["wallEntries"],
-    queryFn: () => base44.entities.WallEntry.list(),
-  });
-
-  const { data: deletedWalls = [] } = useQuery({
-    queryKey: ["deletedWalls"],
-    queryFn: () => base44.entities.DeletedWall.list(),
-  });
-
   const saveMutation = useMutation({
     mutationFn: (data) => base44.entities.HomeDesign.create(data),
     onSuccess: () => {
@@ -615,7 +605,7 @@ export default function Configurator() {
             <p className="text-[11px] text-gray-400 mt-0.5">Expand a category · drag to place</p>
           </div>
           <div className="flex-1 overflow-y-auto p-3">
-            <ModulePanel onDragStart={handleDragStart} onDragEnd={handleDragEnd} selectedWall={selectedWall} selectedModule={selectedModule} placedModules={placedModules} onModuleImageUpdate={handleModuleImageUpdate} onWallImageUpdate={handleWallImageUpdate} floorPlanImages={floorPlanImages} wallImages={wallImages} customWalls={customWalls} deletedWalls={deletedWalls} />
+            <ModulePanel onDragStart={handleDragStart} onDragEnd={handleDragEnd} selectedWall={selectedWall} selectedModule={selectedModule} placedModules={placedModules} onModuleImageUpdate={handleModuleImageUpdate} onWallImageUpdate={handleWallImageUpdate} floorPlanImages={floorPlanImages} wallImages={wallImages} />
           </div>
         </div>
 
