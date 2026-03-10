@@ -299,15 +299,26 @@ export default function WallCatalogue() {
         originalCode: editingWall.originalCode || undefined,
       });
     } else {
-      // Hide built-in and create a custom override
-      await Promise.all([
-        base44.entities.DeletedWall.create({ wallCode: editingWall.code }),
-        base44.entities.WallEntry.create({
+      // Check if there's already a custom override for this built-in
+      const existingOverride = customWalls.find(c => c.originalCode === editingWall.code);
+      if (existingOverride) {
+        // Update the existing override
+        await base44.entities.WallEntry.update(existingOverride.id, {
           ...data,
           groupKey: editingWall._groupKey,
           originalCode: editingWall.code,
-        }),
-      ]);
+        });
+      } else {
+        // First time editing this built-in: hide it and create override
+        await Promise.all([
+          base44.entities.DeletedWall.create({ wallCode: editingWall.code }),
+          base44.entities.WallEntry.create({
+            ...data,
+            groupKey: editingWall._groupKey,
+            originalCode: editingWall.code,
+          }),
+        ]);
+      }
     }
     await Promise.all([
       queryClient.invalidateQueries({ queryKey: ["wallEntries"] }),
