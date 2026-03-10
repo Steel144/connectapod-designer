@@ -386,6 +386,9 @@ export default function WallCatalogue() {
     const customs = customWalls.filter(c => c.groupKey === g.key).map(c => ({
       code: c.code, name: c.name, width: c.width || 3000,
       description: c.description || "", variants: c.variants || [],
+      windowStyle: c.windowStyle || undefined,
+      openingPanes: c.openingPanes != null ? c.openingPanes : undefined,
+      price: c.price != null ? c.price : undefined,
       originalCode: c.originalCode || undefined,
       _custom: true, _id: c.id, _deleted: false, _groupKey: g.key,
     }));
