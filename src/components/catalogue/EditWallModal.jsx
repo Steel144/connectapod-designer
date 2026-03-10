@@ -144,6 +144,26 @@ export default function EditWallModal({ wall, onSave, onClose }) {
             </div>
             {field("Opening Panes", "openingPanes", "number")}
           </div>
+          <div>
+            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Door Style</label>
+            <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1">
+              {["Ranch Slider", "Stacker Slider", "French", "Bi-Fold"].map(style => (
+                <label key={style} className="flex items-center gap-2 text-sm cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={form.doorStyle.split(",").map(s => s.trim()).includes(style)}
+                    onChange={e => {
+                      const current = form.doorStyle.split(",").map(s => s.trim()).filter(Boolean);
+                      const updated = e.target.checked ? [...current, style] : current.filter(s => s !== style);
+                      setForm(f => ({ ...f, doorStyle: updated.join(", ") }));
+                    }}
+                    className="accent-[#F15A22]"
+                  />
+                  {style}
+                </label>
+              ))}
+            </div>
+          </div>
           {field("Price ($)", "price", "number")}
           <div>
             <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Variants (one per line)</label>

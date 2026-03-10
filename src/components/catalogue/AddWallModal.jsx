@@ -182,6 +182,26 @@ export default function AddWallModal({ groupKey, groupLabel, onSave, onClose }) 
             </div>
           </div>
           <div>
+            <label className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide block mb-1">Door Style</label>
+            <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1">
+              {["Ranch Slider", "Stacker Slider", "French", "Bi-Fold"].map(style => (
+                <label key={style} className="flex items-center gap-2 text-sm cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={form.doorStyle.split(",").map(s => s.trim()).includes(style)}
+                    onChange={e => {
+                      const current = form.doorStyle.split(",").map(s => s.trim()).filter(Boolean);
+                      const updated = e.target.checked ? [...current, style] : current.filter(s => s !== style);
+                      setField("doorStyle", updated.join(", "));
+                    }}
+                    className="accent-[#F15A22]"
+                  />
+                  {style}
+                </label>
+              ))}
+            </div>
+          </div>
+          <div>
             <label className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide block mb-1">Price ($)</label>
             <input
               type="number"
