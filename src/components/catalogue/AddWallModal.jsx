@@ -87,16 +87,34 @@ export default function AddWallModal({ groupKey, groupLabel, onSave, onClose }) 
           <div>
             <label className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide block mb-1">Description</label>
             <div className="flex gap-2">
-              {["Blank Wall", "Window", "Door"].map(opt => (
-                <button
-                  key={opt}
-                  type="button"
-                  onClick={() => setField("description", opt)}
-                  className={`px-3 py-1.5 text-xs border transition-colors ${form.description === opt ? "bg-[#F15A22] text-white border-[#F15A22]" : "bg-white text-gray-600 border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22]"}`}
-                >
-                  {opt}
-                </button>
-              ))}
+              {(() => {
+                const parts = form.description.split(",").map(s => s.trim()).filter(Boolean);
+                const isBlank = parts.includes("Blank Wall");
+                const toggle = (opt) => {
+                  if (opt === "Blank Wall") {
+                    setField("description", isBlank ? "" : "Blank Wall");
+                  } else {
+                    if (isBlank) return;
+                    const updated = parts.includes(opt) ? parts.filter(p => p !== opt) : [...parts, opt];
+                    setField("description", updated.join(", "));
+                  }
+                };
+                return ["Blank Wall", "Window", "Door"].map(opt => {
+                  const active = parts.includes(opt);
+                  const disabled = opt !== "Blank Wall" && isBlank;
+                  return (
+                    <button
+                      key={opt}
+                      type="button"
+                      onClick={() => toggle(opt)}
+                      disabled={disabled}
+                      className={`px-3 py-1.5 text-xs border transition-colors ${active ? "bg-[#F15A22] text-white border-[#F15A22]" : disabled ? "bg-gray-50 text-gray-300 border-gray-100 cursor-not-allowed" : "bg-white text-gray-600 border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22]"}`}
+                    >
+                      {opt}
+                    </button>
+                  );
+                });
+              })()}
             </div>
           </div>
           <div className="grid grid-cols-2 gap-3">
