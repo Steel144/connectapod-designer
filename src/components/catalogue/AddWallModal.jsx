@@ -127,7 +127,7 @@ export default function AddWallModal({ groupKey, groupLabel, onSave, onClose }) 
             <div>
               <label className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide block mb-1">Window Style</label>
               <div className="flex flex-col gap-1 mt-1">
-                {["Casement", "Fixed", "Awning"].map(style => (
+                {["Fixed", "Casement", "Awning"].map(style => (
                   <label key={style} className="flex items-center gap-2 text-sm cursor-pointer">
                     <input
                       type="checkbox"

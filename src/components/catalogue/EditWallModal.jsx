@@ -99,7 +99,7 @@ export default function EditWallModal({ wall, onSave, onClose }) {
             <div>
               <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Window Style</label>
               <div className="flex flex-col gap-1">
-                {["Casement", "Fixed", "Awning"].map(style => (
+                {["Fixed", "Casement", "Awning"].map(style => (
                   <label key={style} className="flex items-center gap-2 text-sm cursor-pointer">
                     <input
                       type="checkbox"
