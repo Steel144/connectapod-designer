@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { ChevronDown, ChevronRight, Image as ImageIcon } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { base44 } from "@/api/base44Client";
 import FloorPlanSVG from "./FloorPlanSVG.jsx";
 import WallSuggestions from "./WallSuggestions.jsx";
 import WallImageUpload from "./WallImageUpload.jsx";
@@ -240,11 +242,22 @@ const WALL_TYPES = [
 
 export { MODULE_TYPES, GROUP_ICONS, WALL_TYPES };
 
-export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, selectedModule, placedModules = [], onModuleImageUpdate, onWallImageUpdate, floorPlanImages = {}, wallImages = {}, customWalls = [], deletedWalls = [] }) {
+export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, selectedModule, placedModules = [], onModuleImageUpdate, onWallImageUpdate, floorPlanImages = {}, wallImages = {} }) {
   const [openGroup, setOpenGroup] = useState(null);
   const [hoveredModule, setHoveredModule] = useState(null);
   const [hoveredWall, setHoveredWall] = useState(null);
   const [showWallSuggestions, setShowWallSuggestions] = useState(true);
+
+  // Fetch custom walls and deleted walls
+  const { data: customWalls = [] } = useQuery({
+    queryKey: ["wallEntries"],
+    queryFn: () => base44.entities.WallEntry.list(),
+  });
+
+  const { data: deletedWalls = [] } = useQuery({
+    queryKey: ["deletedWalls"],
+    queryFn: () => base44.entities.DeletedWall.list(),
+  });
 
   // Build custom wall types from database
   const customWallTypes = customWalls
