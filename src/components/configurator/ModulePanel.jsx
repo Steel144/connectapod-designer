@@ -240,11 +240,24 @@ const WALL_TYPES = [
 
 export { MODULE_TYPES, GROUP_ICONS, WALL_TYPES };
 
-export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, selectedModule, placedModules = [], onModuleImageUpdate, onWallImageUpdate, floorPlanImages = {}, wallImages = {} }) {
+export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, selectedModule, placedModules = [], onModuleImageUpdate, onWallImageUpdate, floorPlanImages = {}, wallImages = {}, customWalls = [], deletedWalls = [] }) {
   const [openGroup, setOpenGroup] = useState(null);
   const [hoveredModule, setHoveredModule] = useState(null);
   const [hoveredWall, setHoveredWall] = useState(null);
   const [showWallSuggestions, setShowWallSuggestions] = useState(true);
+
+  // Build custom wall types from database
+  const customWallTypes = customWalls
+    .filter(w => !deletedWalls.some(d => d.wallCode === w.code))
+    .map(w => ({
+      type: w.code,
+      label: w.name,
+      mpCode: w.code,
+      width: w.width ? w.width / 1000 : 3.0,
+      orientation: "horizontal",
+      length: Math.round((w.width || 3000) / 600),
+      thickness: 0.31,
+    }));
 
   // Auto-open walls section when a wall or module is selected on the grid
   React.useEffect(() => {
@@ -289,7 +302,8 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
       face = "W"; // default to long face when only module is selected (no face known yet)
     }
 
-    if (!attachedMod) return { compatibleWalls: WALL_TYPES, filterReason: null };
+    const allWalls = [...WALL_TYPES, ...customWallTypes];
+    if (!attachedMod) return { compatibleWalls: allWalls, filterReason: null };
 
     // Resolve chassis and width — placed modules have chassis/widthCode from MODULE_TYPES spread
     // but fall back to deriving from MODULE_TYPES lookup if missing
@@ -318,7 +332,7 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
       return { compatibleWalls: [], filterReason: `Face ${face} only on End chassis (module is ${chassis})` };
     }
 
-    let filtered = WALL_TYPES;
+    let filtered = allWalls;
 
     if (!isLongFace) {
       // Gable end walls only, matching depth
@@ -368,7 +382,7 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
     const context = selectedWall ? `Face ${face}` : `${chassis} module`;
     const reason = `${context} · ${faceWidthM.toFixed(1)}m wide · ${filtered.length} wall${filtered.length !== 1 ? "s" : ""}`;
     return { compatibleWalls: filtered, filterReason: reason };
-  }, [selectedWall, selectedModule, placedModules]);
+  }, [selectedWall, selectedModule, placedModules, customWallTypes]);
 
   return (
     <div className="flex flex-col gap-1 relative">
