@@ -44,7 +44,7 @@ export default function EditWallModal({ wall, onSave, onClose }) {
     code: wall.code || "",
     width: wall.width ?? 3000,
     description: wall.description || "",
-    variants: (wall.variants || []).join("\n"),
+    variants: (wall.variants || []),
     windowStyle: wall.windowStyle || "",
     openingPanes: wall.openingPanes ?? "",
     windowHeight: wall.windowHeight ?? "",
@@ -63,7 +63,7 @@ export default function EditWallModal({ wall, onSave, onClose }) {
       code: form.code,
       width: parseInt(form.width) || 3000,
       description: form.description,
-      variants: form.variants.split("\n").map(s => s.trim()).filter(Boolean),
+      variants: form.variants,
       windowStyle: form.windowStyle || undefined,
       openingPanes: form.openingPanes !== "" ? parseInt(form.openingPanes) : undefined,
       windowHeight: form.windowHeight !== "" ? parseInt(form.windowHeight) : undefined,
@@ -213,13 +213,25 @@ export default function EditWallModal({ wall, onSave, onClose }) {
           )}
           {field("Price ($)", "price", "number")}
           <div>
-            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Variants (one per line)</label>
-            <textarea
-              value={form.variants}
-              onChange={e => setForm(f => ({ ...f, variants: e.target.value }))}
-              rows={4}
-              className="w-full border border-gray-200 px-3 py-1.5 text-sm focus:outline-none focus:border-[#F15A22] resize-none"
-            />
+            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Variants</label>
+            <div className="flex flex-col gap-1 mt-1">
+              {["Standard", "End", "Deck"].map(variant => (
+                <label key={variant} className="flex items-center gap-2 text-sm cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={form.variants.includes(variant)}
+                    onChange={e => {
+                      const updated = e.target.checked
+                        ? [...form.variants, variant]
+                        : form.variants.filter(v => v !== variant);
+                      setForm(f => ({ ...f, variants: updated }));
+                    }}
+                    className="accent-[#F15A22]"
+                  />
+                  {variant}
+                </label>
+              ))}
+            </div>
           </div>
         </div>
         <div className="flex justify-end gap-2 mt-5">

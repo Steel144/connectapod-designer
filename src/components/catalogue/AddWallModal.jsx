@@ -42,7 +42,7 @@ const DEFAULTS = {
   code: "",
   width: 3000,
   description: "",
-  variants: [""],
+  variants: [],
   windowStyle: "",
   openingPanes: "",
   windowHeight: "",
@@ -60,14 +60,7 @@ export default function AddWallModal({ groupKey, groupLabel, onSave, onClose }) 
 
   const setField = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
-  const setVariant = (i, v) => {
-    const variants = [...form.variants];
-    variants[i] = v;
-    setForm(f => ({ ...f, variants }));
-  };
 
-  const addVariant = () => setForm(f => ({ ...f, variants: [...f.variants, ""] }));
-  const removeVariant = (i) => setForm(f => ({ ...f, variants: f.variants.filter((_, idx) => idx !== i) }));
 
   const handleSave = () => {
     if (!form.code.trim() || !autoName) return;
@@ -77,7 +70,7 @@ export default function AddWallModal({ groupKey, groupLabel, onSave, onClose }) 
       name: autoName,
       width: Number(form.width),
       description: form.description.trim(),
-      variants: form.variants.filter(v => v.trim()),
+      variants: form.variants,
       windowStyle: form.windowStyle.trim() || undefined,
       openingPanes: form.openingPanes !== "" ? parseInt(form.openingPanes) : undefined,
       windowHeight: form.windowHeight !== "" ? parseInt(form.windowHeight) : undefined,
@@ -258,25 +251,23 @@ export default function AddWallModal({ groupKey, groupLabel, onSave, onClose }) 
             />
           </div>
           <div>
-            <div className="flex items-center justify-between mb-1">
-              <label className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Variants</label>
-              <button onClick={addVariant} className="text-[#F15A22] hover:opacity-70 transition-opacity">
-                <Plus size={14} />
-              </button>
-            </div>
-            <div className="space-y-1.5">
-              {form.variants.map((v, i) => (
-                <div key={i} className="flex items-center gap-2">
+            <label className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide block mb-1">Variants</label>
+            <div className="flex flex-col gap-1 mt-1">
+              {["Standard", "End", "Deck"].map(variant => (
+                <label key={variant} className="flex items-center gap-2 text-sm cursor-pointer">
                   <input
-                    value={v}
-                    onChange={e => setVariant(i, e.target.value)}
-                    placeholder="e.g. Standard (W500/Y500)"
-                    className="flex-1 border border-gray-200 px-3 py-1.5 text-sm focus:outline-none focus:border-[#F15A22]"
+                    type="checkbox"
+                    checked={form.variants.includes(variant)}
+                    onChange={e => {
+                      const updated = e.target.checked
+                        ? [...form.variants, variant]
+                        : form.variants.filter(v => v !== variant);
+                      setField("variants", updated);
+                    }}
+                    className="accent-[#F15A22]"
                   />
-                  <button onClick={() => removeVariant(i)} className="text-gray-300 hover:text-red-500 transition-colors">
-                    <Trash2 size={13} />
-                  </button>
-                </div>
+                  {variant}
+                </label>
               ))}
             </div>
           </div>
