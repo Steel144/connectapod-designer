@@ -284,9 +284,12 @@ export default function Catalogue() {
         wallElevations: { Z: c.wallElevationZ || "N/A", W: c.wallElevationW || "", Y: c.wallElevationY || "", X: c.wallElevationX || "N/A" },
         originalCode: c.originalCode || undefined,
         _custom: true, _id: c.id,
-      })),
-    ],
-  }));
+      }));
+
+    const merged = [...builtins, ...customs];
+    merged.sort((a, b) => moduleCodeNum(a.originalCode || a.code) - moduleCodeNum(b.originalCode || b.code));
+    return { ...cat, modules: merged };
+  });
 
   const totalModules = allCatalogue.reduce((s, c) => s + c.modules.length, 0);
 
