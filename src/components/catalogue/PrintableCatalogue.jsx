@@ -12,15 +12,12 @@ export default function PrintableCatalogue({ title, categories, onClose }) {
     <div className="p-8 bg-white" style={{ fontFamily: "Arial, sans-serif" }}>
       <style>{`
         @media print {
-          @page { size: A4; margin: 10mm; }
-          body { margin: 0; padding: 0; }
-          .print-page { page-break-after: always; padding-bottom: 20mm; }
-          .print-page:last-child { page-break-after: avoid; }
-          .no-print { display: none; }
-          .print-header { border-bottom: 3pt solid #F15A22; padding-bottom: 6mm; margin-bottom: 8mm; display: flex; align-items: center; justify-content: space-between; }
-          .print-header-logo { height: 32pt; width: auto; }
-          .print-header-title { font-size: 18pt; font-weight: bold; color: #1a1a1a; }
-          .print-header-subtitle { font-size: 9pt; color: #666; margin-top: 2mm; }
+           @page { size: A4; margin: 10mm; }
+           body { margin: 0; padding: 0; }
+           .print-page { page-break-after: always; padding-bottom: 20mm; }
+           .print-page:last-child { page-break-after: avoid; }
+           .no-print { display: none; }
+           img { max-width: 100%; height: auto; }
           h1 { margin: 0 0 6mm 0; font-size: 18pt; color: #F15A22; font-weight: bold; border-left: 3pt solid #F15A22; padding-left: 4mm; }
           h2 { margin: 8mm 0 4mm 0; font-size: 14pt; color: #1a1a1a; font-weight: bold; }
           p { color: #666; }
