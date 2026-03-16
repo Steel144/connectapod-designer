@@ -8,6 +8,7 @@ export default function AddModuleModal({ category, onSave, onClose }) {
     width: 3.0,
     depth: 4.8,
     description: "",
+    price: "",
     variants: [],
     wallElevations: [],
   });

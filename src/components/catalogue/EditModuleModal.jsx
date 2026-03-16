@@ -8,6 +8,7 @@ export default function EditModuleModal({ module: mod, onSave, onClose }) {
     width: mod.width ?? 3.0,
     depth: mod.depth ?? 4.8,
     description: mod.description || "",
+    price: mod.price ?? "",
     variants: Array.isArray(mod.variants) ? mod.variants : [],
     wallElevations: Array.isArray(mod.wallElevations_list) ? mod.wallElevations_list : [],
   });
