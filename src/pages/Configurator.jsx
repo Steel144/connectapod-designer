@@ -139,6 +139,13 @@ export default function Configurator() {
   useEffect(() => { floorPlanImagesRef.current = floorPlanImages; }, [floorPlanImages]);
 
   const handlePlace = (mod, x, y) => {
+    // Check if placing deck/soffit on non-end module
+    const isDeckOrSoffit = mod.type?.toLowerCase().includes("deck") || mod.type?.toLowerCase().includes("soffit");
+    if (isDeckOrSoffit && (mod.chassis !== "EF" && mod.chassis !== "ER" && mod.chassis !== "LF" && mod.chassis !== "RF")) {
+      toast.error("Deck and Soffit can only be added to end modules");
+      return;
+    }
+    
     pushHistory(placedModules, walls);
     const fullMod = MODULE_TYPES.find(m => m.type === mod.type) || mod;
     const newMod = { ...fullMod, ...mod, id: generateId(), x, y };
