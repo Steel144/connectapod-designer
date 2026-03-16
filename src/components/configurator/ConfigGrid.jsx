@@ -687,6 +687,27 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
 
       </div>
 
+      {/* Module floor plan preview on hover */}
+      {hoveredModuleId && (() => {
+        const mod = placedModules.find(m => m.id === hoveredModuleId);
+        return mod?.floorPlanImage ? (
+          <div
+            className="fixed z-[100] bg-white border-2 border-[#F15A22] shadow-xl rounded pointer-events-none flex flex-col"
+            style={{
+              width: "210px",
+              height: "330px",
+              top: "48px",
+              right: "20px",
+              padding: "4px",
+            }}
+          >
+            <div className="flex-1 bg-gray-50 rounded overflow-hidden">
+              <img src={mod.floorPlanImage} alt={mod.label} className="w-full h-full object-contain" />
+            </div>
+          </div>
+        ) : null;
+      })()}
+
       {/* Wall elevation preview on hover */}
       {hoveredWallId && (() => {
         const wall = walls.find(w => w.id === hoveredWallId);
