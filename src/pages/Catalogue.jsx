@@ -182,13 +182,15 @@ export default function Catalogue() {
       const customModule = customModules.find(m => m.code === code);
       if (customModule) {
         await base44.entities.ModuleEntry.delete(customModule.id);
-      } else {
-        // For builtin modules, delete the DeletedModule record to permanently purge
-        const existing = await base44.entities.DeletedModule.filter({ moduleCode: code });
-        if (existing.length > 0) {
-          await base44.entities.DeletedModule.delete(existing[0].id);
+        // If it was overriding a builtin, ensure builtin stays hidden
+        if (customModule.originalCode) {
+          const existing = await base44.entities.DeletedModule.filter({ moduleCode: customModule.originalCode });
+          if (existing.length === 0) {
+            await base44.entities.DeletedModule.create({ moduleCode: customModule.originalCode });
+          }
         }
       }
+      // For builtin modules, DeletedModule record already exists (keeping it hidden)
       
       // Always remove images
       const images = await base44.entities.FloorPlanImage.filter({ moduleType: code });
