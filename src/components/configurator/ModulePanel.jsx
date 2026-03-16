@@ -442,11 +442,6 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
                          ) : (
                            <FloorPlanSVG code={item.code} className="w-full h-full" />
                          )}
-                         {(floorPlanImages[mod.type] || floorPlanImages[item.originalCode]) && (
-                           <div className="absolute top-0 right-0 bg-[#F15A22] rounded-full p-0.5">
-                             <ImageIcon size={8} className="text-white" />
-                           </div>
-                         )}
                        </div>
                        <div className="min-w-0">
                          <p className="text-xs font-medium text-gray-700 leading-tight">{item.name}</p>
