@@ -9,6 +9,7 @@ export default function AddModuleModal({ category, onSave, onClose }) {
     depth: 4.8,
     description: "",
     price: "",
+    categories: [],
     variants: [],
     wallElevations: [],
   });
