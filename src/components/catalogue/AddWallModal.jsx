@@ -102,7 +102,6 @@ export default function AddWallModal({ groupKey, groupLabel, onSave, onClose, ex
     });
   };
 
-  const descParts = form.description.split(",").map(s => s.trim()).filter(Boolean);
   const isBlank = descParts.includes("Blank Wall");
   const hasWindow = descParts.includes("Window");
   const hasDoor = descParts.includes("Door");
