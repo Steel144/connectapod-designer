@@ -220,7 +220,8 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
       });
       
       const customItems = categoryModules.map(m => {
-        const isEnd = m.code?.includes("LF") || m.code?.includes("RF") || m.code?.includes("LR") || m.code?.includes("RR");
+        const variantStr = (m.variants || []).join(",").toLowerCase();
+        const isEnd = variantStr.includes("end");
         return {
           code: m.code,
           name: m.name,
