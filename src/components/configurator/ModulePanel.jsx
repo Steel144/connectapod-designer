@@ -540,7 +540,7 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
         >
           <div className="flex-1 bg-gray-50 rounded overflow-hidden flex items-center justify-center">
             {hoveredModule.floorPlanImage ? (
-              <img src={hoveredModule.floorPlanImage} alt={hoveredModule.label} className="w-auto h-auto max-w-[312px] max-h-[392px] object-contain" />
+              <img src={hoveredModule.floorPlanImage} alt={hoveredModule.label} className="w-auto h-auto max-w-[312px] max-h-[392px] object-contain" style={{ transform: `rotate(${hoveredModule.rotation || 0}deg) ${hoveredModule.flipped ? 'scaleX(-1)' : ''}` }} />
             ) : (
               <FloorPlanSVG code={hoveredModule.type} className="w-full h-full" />
             )}
