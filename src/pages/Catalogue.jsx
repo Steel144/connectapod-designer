@@ -190,16 +190,17 @@ export default function Catalogue() {
           }
         }
       } else {
-        // Otherwise delete the DeletedModule record (unhides builtin)
+        // It's a deleted builtin — permanently delete it by removing the DeletedModule entry permanently
         const entry = deletedModules.find(d => d.moduleCode === code);
         if (entry) {
           await base44.entities.DeletedModule.delete(entry.id);
         }
       }
       
+      // Always remove images regardless
       const images = await base44.entities.FloorPlanImage.filter({ moduleType: code });
-      if (images.length > 0) {
-        await base44.entities.FloorPlanImage.delete(images[0].id);
+      for (const img of images) {
+        await base44.entities.FloorPlanImage.delete(img.id);
       }
       
       queryClient.invalidateQueries({ queryKey: ["moduleEntries"] });
