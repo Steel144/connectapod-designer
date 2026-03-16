@@ -17,6 +17,14 @@ export default function AddModuleModal({ category, onSave, onClose }) {
 
   const setField = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
+  const generateName = () => {
+    const descriptions = form.description.split(",").map(s => s.trim()).filter(Boolean);
+    const desc = descriptions.length > 0 ? descriptions.join(" + ") : "Module";
+    const variant = form.variants.length > 0 ? ` (${form.variants.join(", ")})` : "";
+    const size = ` ${form.width}m`;
+    return `${desc}${variant}${size}`;
+  };
+
   const handleSave = () => {
     if (!form.code.trim() || !form.name.trim()) return;
     onSave({
