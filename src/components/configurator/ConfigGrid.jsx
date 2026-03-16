@@ -1,6 +1,6 @@
 import React, { useState, useRef, useCallback, useEffect } from "react";
 import { X, RotateCw, FlipHorizontal } from "lucide-react";
-import { MODULE_TYPES, WALL_TYPES } from "./ModulePanel.jsx";
+import { MODULE_TYPES } from "./ModulePanel.jsx";
 import { FloorPlanSVG } from "./FloorPlanSVG.jsx";
 
 const CELL_SIZE = 24;
