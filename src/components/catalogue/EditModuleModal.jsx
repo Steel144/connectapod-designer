@@ -25,7 +25,6 @@ export default function EditModuleModal({ module: mod, onSave, onClose }) {
       depth: parseFloat(form.depth) || 4.8,
       sqm,
       description: form.description,
-      chassisCodes: form.chassisCodes,
       wallElevationZ: form.wallElevationZ || undefined,
       wallElevationW: form.wallElevationW || undefined,
       wallElevationY: form.wallElevationY || undefined,
