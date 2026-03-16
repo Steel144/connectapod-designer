@@ -339,7 +339,7 @@ export default function Catalogue() {
           />
           <div className="flex items-center gap-2 text-sm text-gray-500 bg-white border border-gray-200 px-4 py-2.5">
             <span className="font-bold text-gray-800">{totalModules}</span> module layouts across
-            <span className="font-bold text-gray-800">{CATALOGUE.length}</span> categories
+            <span className="font-bold text-gray-800">{categories.length - 1}</span> categories
           </div>
         </div>
 
