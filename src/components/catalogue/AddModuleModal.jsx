@@ -28,6 +28,10 @@ export default function AddModuleModal({ category, onSave, onClose }) {
       description: form.description.trim(),
       variants: form.variants,
       wallElevations_list: form.wallElevations,
+      wallElevationZ: undefined,
+      wallElevationW: undefined,
+      wallElevationY: undefined,
+      wallElevationX: undefined,
     });
   };
 

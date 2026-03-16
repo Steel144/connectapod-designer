@@ -25,6 +25,10 @@ export default function EditModuleModal({ module: mod, onSave, onClose }) {
       description: form.description,
       variants: form.variants,
       wallElevations_list: form.wallElevations,
+      wallElevationZ: undefined,
+      wallElevationW: undefined,
+      wallElevationY: undefined,
+      wallElevationX: undefined,
     });
   };
 
