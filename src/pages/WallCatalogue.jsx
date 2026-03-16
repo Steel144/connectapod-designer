@@ -109,21 +109,7 @@ const WALL_GROUPS = [
   },
 
 
-  {
-    key: "3.0m-851",
-    label: "3.0m Module Walls – Series 851/951 (Corner Windows)",
-    series: "WY851-860/951-960",
-    walls: [
-      { code: "W851/Y851 (W1212AF2)", name: "3000mm Wall – Corner AF2 Left", width: 3000, variants: ["Standard (W851/Y851)", "Left End (W851L/Y851L)", "Right End (W851R/Y851R)"], description: "390+1220+1390mm, 2-pane awning left" },
-      { code: "W852/Y852 (W1212FA2)", name: "3000mm Wall – Corner FA2 Left", width: 3000, variants: ["Standard (W852/Y852)", "Left End (W852L/Y852L)", "Right End (W852R/Y852R)"], description: "400+1200+1400mm, fixed+awning left" },
-      { code: "W853/Y853 (W1212F1)", name: "3000mm Wall – Fixed 1212 Left", width: 3000, variants: ["Standard (W853/Y853)", "Left End (W853L/Y853L)", "Right End (W853R/Y853R)"], description: "390+1220+1390mm, fixed window left" },
-      { code: "W951/Y951 (W1212AF2)", name: "3000mm Wall – Corner AF2 Right", width: 3000, variants: ["Standard (W951/Y951)", "Left End (W951L/Y951L)", "Right End (W951R/Y951R)"], description: "1329+1220+451mm, 2-pane awning right" },
-      { code: "W952/Y952 (W1212FA2)", name: "3000mm Wall – Corner FA2 Right", width: 3000, variants: ["Standard (W952/Y952)", "Left End (W952L/Y952L)", "Right End (W952R/Y952R)"], description: "1390+1220+390mm, fixed+awning right" },
-      { code: "W953/Y953 (W1212F1)", name: "3000mm Wall – Fixed 1212 Right", width: 3000, variants: ["Standard (W953/Y953)", "Left End (W953L/Y953L)", "Right End (W953R/Y953R)"], description: "1390+1220+390mm, fixed window right" },
-      { code: "W861/Y861", name: "3000mm Wall – Highlight 861", width: 3000, variants: ["Standard (W861/Y861)", "Left End (W861L)"], description: "Highlight window panel, bifold/stacked TBC" },
-      { code: "W961/Y961", name: "3000mm Wall – Highlight 961 (2250×320)", width: 3000, variants: ["Standard (W961/Y961)", "Left End (W961L/Y961L)", "Right End (W961R/Y961R)"], description: "2250+320+430mm highlight window" },
-    ]
-  },
+
   {
     key: "3.0m-871",
     label: "3.0m Module Walls – Series 871/971 (Large Opening)",
