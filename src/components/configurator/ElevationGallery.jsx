@@ -233,16 +233,16 @@ export default function ElevationGallery({ walls = [] }) {
         >
           <div className="flex flex-col" style={{ width: "max-content", gap: `${Math.round((zoom / 100) * 64)}px` }}>
             <ElevationRow
-              endLeft={zWall}
-              midWalls={wWalls}
-              endRight={xWall}
-              rowLabel="W face (outside / top)"
+              endLeft={xWall}
+              midWalls={yWalls}
+              endRight={zWall}
+              rowLabel="Y face (outside / top)"
             />
             <ElevationRow
-              endLeft={zWall}
-              midWalls={yWalls}
-              endRight={xWall}
-              rowLabel="Y face (outside / bottom)"
+              endLeft={xWall}
+              midWalls={wWalls}
+              endRight={zWall}
+              rowLabel="W face (outside / bottom)"
             />
           </div>
         </div>
