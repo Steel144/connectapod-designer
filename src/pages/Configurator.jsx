@@ -550,22 +550,23 @@ export default function Configurator() {
           </div>
         )}
         <ConfigGrid
-          placedModules={placedModules}
-          onPlace={handlePlace}
-          onRemove={handleRemove}
-          onMove={handleMove}
-          onRotate={handleRotate}
-          onFlip={handleFlip}
-          draggingMod={draggingMod}
-          walls={walls}
-          wallTypes={availableWallTypes}
-          onPlaceWall={handlePlaceWall}
-          onRemoveWall={handleRemoveWall}
-          onMoveWall={handleMoveWall}
-          onWallSelect={setSelectedWall}
-          onModuleSelect={setSelectedModule}
-          hidden={viewMode === "3d" || viewMode === "elevations"}
-        />
+           placedModules={placedModules}
+           onPlace={handlePlace}
+           onRemove={handleRemove}
+           onMove={handleMove}
+           onRotate={handleRotate}
+           onFlip={handleFlip}
+           draggingMod={draggingMod}
+           walls={walls}
+           wallTypes={availableWallTypes}
+           onPlaceWall={handlePlaceWall}
+           onRemoveWall={handleRemoveWall}
+           onMoveWall={handleMoveWall}
+           onWallSelect={setSelectedWall}
+           onModuleSelect={setSelectedModule}
+           hidden={viewMode === "3d" || viewMode === "elevations"}
+           customModules={customModules}
+         />
       </div>
 
       {/* Floating left panel — Module picker */}
