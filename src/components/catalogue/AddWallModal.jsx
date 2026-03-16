@@ -297,7 +297,7 @@ export default function AddWallModal({ groupKey, groupLabel, onSave, onClose, ex
           </button>
           <button
             onClick={handleSave}
-            disabled={!form.code.trim() || !autoName}
+            disabled={!autoName}
             className="px-4 py-2 text-sm bg-[#F15A22] text-white hover:bg-[#d94e1b] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
           >
             Add Wall
