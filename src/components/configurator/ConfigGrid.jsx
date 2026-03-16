@@ -568,7 +568,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                 height: mod.h * CELL_H,
                 opacity: isDragging ? 0 : 1,
                 userSelect: "none",
-                border: isSelected ? "3px solid #4F46E5" : "2px solid #F15A22",
+                border: isSelected ? "3px solid #4F46E5" : "none",
                 boxShadow: isSelected ? "inset 0 0 0 1px #4F46E5" : "none",
               }}
             >
