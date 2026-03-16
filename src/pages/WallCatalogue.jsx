@@ -547,17 +547,17 @@ export default function WallCatalogue() {
                   </div>
 
                   {/* Wall image */}
-                  <div className="w-full bg-gray-50 border border-gray-100 flex items-center justify-center mb-3 relative" style={{ aspectRatio: "9/16" }}>
-                    {uploading === wall.code ? (
-                      <Loader2 size={20} className="animate-spin text-[#F15A22]" />
-                    ) : (wallImages[wall.code] || wallImages[wall.originalCode]) ? (
-                      <img src={wallImages[wall.code] || wallImages[wall.originalCode]} alt={wall.name} className="w-full h-full object-contain" />
-                    ) : (
-                      <div
-                        className="bg-gray-300 border border-gray-400"
-                        style={{ width: "60%", height: `${Math.min(70, (wall.width / 5200) * 50 + 20)}%` }}
-                      />
-                    )}
+                   <div className="w-full bg-gray-50 border border-gray-100 flex items-center justify-center mb-3 relative" style={{ height: "240px" }}>
+                     {uploading === wall.code ? (
+                       <Loader2 size={20} className="animate-spin text-[#F15A22]" />
+                     ) : (wallImages[wall.code] || wallImages[wall.originalCode]) ? (
+                       <img src={wallImages[wall.code] || wallImages[wall.originalCode]} alt={wall.name} className="w-auto h-full object-contain" />
+                     ) : (
+                       <div
+                         className="bg-gray-300 border border-gray-400"
+                         style={{ width: `${(wall.width / 3000) * 60}%`, height: "80%" }}
+                       />
+                     )}
                     {editMode && uploading !== wall.code && (
                       <div className="absolute inset-0 bg-black/40 flex items-center justify-center gap-2">
                         <button
