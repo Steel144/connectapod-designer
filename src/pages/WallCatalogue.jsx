@@ -269,12 +269,12 @@ export default function WallCatalogue() {
     toast.success("Wall hidden");
   };
 
-  const handleRestoreWall = async (code) => {
+  const handlePermanentlyDeleteWall = async (code) => {
     const entry = deletedWalls.find(d => d.wallCode === code);
     if (entry) {
       await base44.entities.DeletedWall.delete(entry.id);
       queryClient.invalidateQueries({ queryKey: ["deletedWalls"] });
-      toast.success("Wall restored");
+      toast.success("Wall permanently deleted");
     }
   };
 
