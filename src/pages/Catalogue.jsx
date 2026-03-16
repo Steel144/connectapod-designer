@@ -177,10 +177,14 @@ export default function Catalogue() {
   };
 
   const handlePermanentlyDeleteModule = async (code) => {
+    console.log("Purge called for code:", code);
     try {
+      console.log("Finding custom module with code:", code);
       // If it's a custom module, delete the ModuleEntry itself
       const customModule = customModules.find(m => m.code === code);
+      console.log("Custom module found:", customModule);
       if (customModule) {
+        console.log("Deleting custom module:", customModule.id);
         await base44.entities.ModuleEntry.delete(customModule.id);
         // If this custom module was overriding a builtin (has originalCode), hide the builtin
         if (customModule.originalCode) {
@@ -193,14 +197,18 @@ export default function Catalogue() {
       // For deleted builtins, the DeletedModule record already hides them permanently — no action needed
       
       // Always remove images regardless
+      console.log("Removing images for code:", code);
       const images = await base44.entities.FloorPlanImage.filter({ moduleType: code });
+      console.log("Found images:", images.length);
       for (const img of images) {
         await base44.entities.FloorPlanImage.delete(img.id);
       }
       
+      console.log("Invalidating queries");
       queryClient.invalidateQueries({ queryKey: ["moduleEntries"] });
       queryClient.invalidateQueries({ queryKey: ["deletedModules"] });
       queryClient.invalidateQueries({ queryKey: ["floorPlanImages"] });
+      console.log("Purge complete");
       toast.success("Module purged");
     } catch (error) {
       console.error("Purge failed:", error);
