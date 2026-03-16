@@ -73,6 +73,9 @@ export default function EditModuleModal({ module: mod, onSave, onClose }) {
             <span className="font-semibold text-gray-700">{sqm.toFixed(1)} m²</span> — {form.width}m wide × {form.depth}m deep
           </div>
 
+          {/* Price */}
+          {field("Price ($)", "price", "number", "e.g. 25000")}
+
           {/* Description */}
           <div>
             <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Description</label>
