@@ -234,7 +234,10 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
       
       return {
         ...group,
-        items: [...group.items, ...customItems],
+        items: [
+          ...group.items.filter(item => !item.mpCode?.startsWith("MP-")),
+          ...customItems
+        ],
       };
     });
   }, [customModules, deletedModules]);
