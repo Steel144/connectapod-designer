@@ -203,8 +203,8 @@ export default function Catalogue() {
       }
     }
     await Promise.all([
-      queryClient.refetchQueries({ queryKey: ["moduleEntries"] }),
-      queryClient.refetchQueries({ queryKey: ["deletedModules"] }),
+      queryClient.invalidateQueries({ queryKey: ["moduleEntries"] }),
+      queryClient.invalidateQueries({ queryKey: ["deletedModules"] }),
     ]);
     setEditingModule(null);
     toast.success("Module updated");
