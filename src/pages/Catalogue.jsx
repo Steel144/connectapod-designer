@@ -21,7 +21,7 @@ const CATALOGUE = [
     ],
   },
   {
-    category: "General — End Cap Layouts",
+    category: "Bedroom",
     description: "End-of-row modules with finished end walls. Available in left-hand (LF/LR) and right-hand (RF/RR) configurations.",
     modules: [
       { code: "001", name: "End Cap 0.6m", width: 0.6, depth: 4.8, sqm: 2.9, description: "Narrow end cap, 600mm wide", chassisCodes: ["MP-48-LF06", "MP-48-LR06", "MP-48-RF06", "MP-48-RR06"], wallElevations: { Z: "All available", W: "W000L", Y: "Y000L", X: "N/A" } },
