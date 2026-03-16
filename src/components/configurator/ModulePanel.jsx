@@ -198,60 +198,60 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
   });
 
   // Merge custom modules with PANEL_GROUPS by category, supporting multi-category modules
-  const dynamicPanelGroups = useMemo(() => {
-    const deletedCodes = new Set(deletedModules.map(d => d.moduleCode));
-    const categoryAbbreviations = {
-      "Living": ["LV", "living"],
-      "Bedroom": ["B0", "B1", "B2", "B3", "B4", "bedroom"],
-      "Bathroom": ["W", "bathroom"],
-      "Kitchen": ["K", "kitchen"],
-      "Laundry": ["L", "laundry"],
-      "Deck": ["DK", "D", "deck"],
-      "Soffit": ["SO", "soffit"],
-    };
-    
-    return PANEL_GROUPS.map(group => {
-      const categoryModules = customModules.filter(m => {
-        if (deletedCodes.has(m.code)) return false;
-        const descriptions = (m.description || "").split(",").map(s => s.trim()).filter(Boolean);
-        return descriptions.includes(group.label) || m.category === group.label;
-      });
-      
-      const customItems = categoryModules.map(m => {
-        const variantStr = (m.variants || []).join(",").toLowerCase();
-        const isEnd = variantStr.includes("end");
-        return {
-          code: m.code,
-          name: m.name,
-          mpCode: m.code,
-          width: m.width || 3.0,
-          depth: m.depth || 4.8,
-          sqm: m.sqm || parseFloat(((m.width || 3.0) * (m.depth || 4.8)).toFixed(1)),
-          description: m.description || "",
-          chassis: isEnd ? "LF" : "SF",
-          widthCode: "30",
-          room: "G",
-          originalCode: m.originalCode || undefined,
-        };
-      });
-      
-      const sorted = customItems.sort((a, b) => {
-        const aIsEnd = a.chassis === "EF" || a.chassis === "ER" || a.chassis === "LF" || a.chassis === "RF";
-        const bIsEnd = b.chassis === "EF" || b.chassis === "ER" || b.chassis === "LF" || b.chassis === "RF";
-        const aIsDeck = a.description?.includes("Deck") || a.description?.includes("Soffit");
-        const bIsDeck = b.description?.includes("Deck") || b.description?.includes("Soffit");
-        
-        if (aIsEnd !== bIsEnd) return aIsEnd ? -1 : 1;
-        if (aIsDeck !== bIsDeck) return aIsDeck ? 1 : -1;
-        return a.width - b.width;
-      });
-      
-      return {
-        ...group,
-        items: sorted,
-      };
-    });
-  }, [customModules, deletedModules]);
+   const dynamicPanelGroups = React.useMemo(() => {
+     const deletedCodes = new Set(deletedModules.map(d => d.moduleCode));
+     const categoryAbbreviations = {
+       "Living": ["LV", "living"],
+       "Bedroom": ["B0", "B1", "B2", "B3", "B4", "bedroom"],
+       "Bathroom": ["W", "bathroom"],
+       "Kitchen": ["K", "kitchen"],
+       "Laundry": ["L", "laundry"],
+       "Deck": ["DK", "D", "deck"],
+       "Soffit": ["SO", "soffit"],
+     };
+
+     return PANEL_GROUPS.map(group => {
+       const categoryModules = customModules.filter(m => {
+         if (deletedCodes.has(m.code)) return false;
+         const descriptions = (m.description || "").split(",").map(s => s.trim()).filter(Boolean);
+         return descriptions.includes(group.label) || m.category === group.label;
+       });
+
+       const customItems = categoryModules.map(m => {
+         const variantStr = (m.variants || []).join(",").toLowerCase();
+         const isEnd = variantStr.includes("end");
+         return {
+           code: m.code,
+           name: m.name,
+           mpCode: m.code,
+           width: m.width || 3.0,
+           depth: m.depth || 4.8,
+           sqm: m.sqm || parseFloat(((m.width || 3.0) * (m.depth || 4.8)).toFixed(1)),
+           description: m.description || "",
+           chassis: isEnd ? "LF" : "SF",
+           widthCode: "30",
+           room: "G",
+           originalCode: m.originalCode || undefined,
+         };
+       });
+
+       const sorted = customItems.sort((a, b) => {
+         const aIsEnd = a.chassis === "EF" || a.chassis === "ER" || a.chassis === "LF" || a.chassis === "RF";
+         const bIsEnd = b.chassis === "EF" || b.chassis === "ER" || b.chassis === "LF" || b.chassis === "RF";
+         const aIsDeck = a.description?.includes("Deck") || a.description?.includes("Soffit");
+         const bIsDeck = b.description?.includes("Deck") || b.description?.includes("Soffit");
+
+         if (aIsEnd !== bIsEnd) return aIsEnd ? -1 : 1;
+         if (aIsDeck !== bIsDeck) return aIsDeck ? 1 : -1;
+         return a.width - b.width;
+       });
+
+       return {
+         ...group,
+         items: sorted,
+       };
+     });
+   }, [customModules, deletedModules]);
 
   const customWallTypes = customWalls
     .filter(w => !deletedWalls.some(d => d.wallCode === w.code))
