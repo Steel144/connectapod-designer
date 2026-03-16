@@ -329,7 +329,7 @@ export default function Catalogue() {
               {editMode ? "Done Editing" : "Edit Catalogue"}
             </button>
             <button
-              onClick={() => navigate(-1)}
+              onClick={() => navigate("/Configurator")}
               className="flex items-center gap-2 px-3 py-1.5 text-xs text-gray-600 border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22] transition-all"
             >
               <ChevronLeft size={16} />
