@@ -53,20 +53,40 @@ const DEFAULTS = {
   price: "",
 };
 
-export default function AddWallModal({ groupKey, groupLabel, onSave, onClose }) {
+// Build auto code: {face}{widthCode}-{content}-{version}
+// face: WY for horizontal (width < 4800mm), ZX for gable/end (width >= 4800mm)
+// widthCode: width in mm / 100, zero-padded to 2 digits (3000 → 30, 4800 → 48)
+// content: D=Door, W=Window, B=Blank
+// version: auto-incremented 3-digit zero-padded
+const buildAutoCode = (widthMm, descParts, existingWalls) => {
+  const face = widthMm >= 4800 ? "ZX" : "WY";
+  const widthCode = String(Math.round(widthMm / 100)).padStart(2, "0");
+  const hasDoor = descParts.includes("Door");
+  const hasWindow = descParts.includes("Window");
+  const content = hasDoor ? "D" : hasWindow ? "W" : "B";
+  const prefix = `${face}${widthCode}-${content}-`;
+  const existing = (existingWalls || []).filter(w => w.code && w.code.startsWith(prefix));
+  const maxVersion = existing.reduce((max, w) => {
+    const m = w.code.match(/-(\d+)$/);
+    return m ? Math.max(max, parseInt(m[1], 10)) : max;
+  }, 0);
+  return `${prefix}${String(maxVersion + 1).padStart(3, "0")}`;
+};
+
+export default function AddWallModal({ groupKey, groupLabel, onSave, onClose, existingWalls = [] }) {
   const [form, setForm] = useState({ ...DEFAULTS });
 
   const autoName = buildAutoName(form);
+  const descParts = form.description.split(",").map(s => s.trim()).filter(Boolean);
+  const autoCode = buildAutoCode(Number(form.width), descParts, existingWalls);
 
   const setField = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
-
-
   const handleSave = () => {
-    if (!form.code.trim() || !autoName) return;
+    if (!autoName) return;
     onSave({
       groupKey,
-      code: form.code.trim(),
+      code: autoCode,
       name: autoName,
       width: Number(form.width),
       description: form.description.trim(),
