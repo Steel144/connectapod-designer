@@ -70,8 +70,8 @@ export default function ElevationGallery({ walls = [] }) {
       return w.y <= midY ? "W" : "Y";
     };
 
-    const w = horizontal.filter(w => getFace(w) === "W").sort((a, b) => a.x - b.x);
-    const y = horizontal.filter(w => getFace(w) === "Y").sort((a, b) => b.x - a.x);
+    const w = horizontal.filter(w => getFace(w) === "W").sort((a, b) => a.x - b.x).reverse();
+    const y = horizontal.filter(w => getFace(w) === "Y").sort((a, b) => b.x - a.x).reverse();
 
     // For vertical/end walls, split by x position (left vs right)
     const vertXs = vertical.map(w => w.x);
