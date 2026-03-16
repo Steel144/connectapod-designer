@@ -24,11 +24,11 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
   const [hoveredModuleId, setHoveredModuleId] = useState(null);
   // Notify parent when selected wall changes
   const selectedWall = selectedWallIds.size === 1 ? walls.find(w => w.id === Array.from(selectedWallIds)[0]) || null : null;
-  React.useEffect(() => { onWallSelect && onWallSelect(selectedWall); }, [selectedWallIds]);
+  React.useEffect(() => { onWallSelect && onWallSelect(hoveredWallId ? walls.find(w => w.id === hoveredWallId) : selectedWall); }, [hoveredWallId, selectedWallIds, walls]);
 
   const [selectedModId, setSelectedModId] = useState(null);
-  const selectedModObj = placedModules.find(m => m.id === selectedModId) || null;
-  React.useEffect(() => { onModuleSelect && onModuleSelect(selectedModObj); }, [selectedModId]);
+  const selectedModObj = hoveredModuleId ? placedModules.find(m => m.id === hoveredModuleId) : placedModules.find(m => m.id === selectedModId);
+  React.useEffect(() => { onModuleSelect && onModuleSelect(selectedModObj || null); }, [hoveredModuleId, selectedModId, placedModules]);
   // { wall, offsetX, offsetY, cursorX, cursorY }
 
   useEffect(() => {
