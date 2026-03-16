@@ -254,7 +254,7 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
       face = "W"; // default to long face when only module is selected (no face known yet)
     }
 
-    const allWalls = [...WALL_TYPES, ...customWallTypes];
+    const allWalls = [...customWallTypes];
     if (!attachedMod) return { compatibleWalls: allWalls, filterReason: null };
 
     // Resolve chassis and width — placed modules have chassis/widthCode from MODULE_TYPES spread
