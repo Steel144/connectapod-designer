@@ -566,7 +566,9 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                 }}
               >
                 {mod.floorPlanImage ? (
-                    <img src={mod.floorPlanImage} alt={mod.label} className="w-full h-full object-contain" style={{ transform: mod.flipped ? 'scaleX(-1)' : 'none' }} />
+                    <div className="w-full h-full flex items-center justify-center">
+                      <img src={mod.floorPlanImage} alt={mod.label} className="w-auto h-auto" style={{ transform: mod.flipped ? 'scaleX(-1)' : 'none' }} />
+                    </div>
                   ) : (
                     <FloorPlanSVG code={mod.type} className="w-full h-full" style={{ transform: mod.flipped ? 'scaleX(-1)' : 'none' }} />
                   )}
