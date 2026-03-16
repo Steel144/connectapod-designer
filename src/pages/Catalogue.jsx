@@ -495,7 +495,10 @@ export default function Catalogue() {
                                className="text-xs text-green-600 hover:underline"
                              >Restore</button>
                              <button
-                               onClick={() => handlePermanentlyDeleteModule(mod.code)}
+                               onClick={(e) => {
+                                 e.stopPropagation();
+                                 handlePermanentlyDeleteModule(mod.code);
+                               }}
                                className="text-xs text-red-600 hover:underline"
                              >Purge</button>
                            </>
