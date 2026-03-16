@@ -252,7 +252,27 @@ export default function ElevationGallery({ walls = [] }) {
         </div>
       </div>
 
-
+      {/* Preview on hover */}
+      {hoveredWall && (
+        <div
+          className="fixed z-50 bg-white border-2 border-[#F15A22] shadow-2xl rounded pointer-events-none"
+          style={{
+            width: "280px",
+            height: "360px",
+            left: `${previewPos.x + 16}px`,
+            top: `${previewPos.y - 180}px`,
+            padding: "4px",
+          }}
+        >
+          <div className="w-full h-full bg-gray-50 rounded flex items-center justify-center overflow-hidden">
+            <img 
+              src={hoveredWall.elevationImage} 
+              alt={hoveredWall.label}
+              className="w-auto h-full object-contain"
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
