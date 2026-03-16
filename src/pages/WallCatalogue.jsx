@@ -427,55 +427,58 @@ export default function WallCatalogue() {
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 sticky top-0 z-20">
-        <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <Link to="/Configurator" className="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22] transition-all">
-              <ChevronLeft size={16} />
-              Exit
-            </Link>
-            <span className="text-gray-300">|</span>
-            <div>
-              <span className="text-base font-bold text-gray-900 tracking-tight">connectapod</span>
-              <span className="ml-2 text-xs text-gray-400">Wall Catalogue</span>
-            </div>
+      <div className="bg-white border-b border-gray-200 px-6 py-5">
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900 tracking-tight">connectapod</h1>
+            <p className="text-sm text-gray-500 mt-0.5">Wall Catalogue — connectapod MP-48 System</p>
           </div>
           <div className="flex items-center gap-2">
             <button
               onClick={() => setEditMode(e => !e)}
-              className={`flex items-center gap-2 px-3 py-1.5 text-sm border transition-all ${editMode ? "bg-[#F15A22] text-white border-[#F15A22]" : "text-gray-600 border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22]"}`}
+              className={`flex items-center gap-2 px-3 py-2 text-sm border transition-all ${editMode ? "bg-[#F15A22] text-white border-[#F15A22]" : "text-gray-600 border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22]"}`}
             >
-              <Pencil size={13} />
-              {editMode ? "Done Editing" : "Edit Images"}
+              <Pencil size={14} />
+              {editMode ? "Done Editing" : "Edit Catalogue"}
             </button>
-            <div className="relative w-64">
-              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search by code or name…"
-                value={search}
-                onChange={e => setSearch(e.target.value)}
-                className="w-full pl-8 pr-3 py-1.5 text-sm border border-gray-200 rounded-none bg-gray-50 focus:outline-none focus:border-[#F15A22]"
-              />
-            </div>
+            <Link to="/Configurator" className="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22] transition-all">
+              <ChevronLeft size={16} />
+              Exit
+            </Link>
           </div>
           <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
         </div>
-        {/* Group filter */}
-        <div className="max-w-7xl mx-auto px-6 pb-2 flex gap-2 overflow-x-auto">
+      </div>
+
+      {/* Search + filter bar */}
+      <div className="max-w-7xl mx-auto px-6 pt-8 pb-0">
+        <div className="flex flex-col sm:flex-row gap-4 mb-6">
+          <input
+            type="text"
+            placeholder="Search by code or name…"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            className="flex-1 border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:border-[#F15A22]"
+          />
+          <div className="flex items-center gap-2 text-sm text-gray-500 bg-white border border-gray-200 px-4 py-2.5">
+            <span className="font-bold text-gray-800">{totalWalls}</span> wall panels across
+            <span className="font-bold text-gray-800">{WALL_GROUPS.length}</span> series
+          </div>
+        </div>
+        <div className="flex flex-wrap gap-2 mb-8">
           <button
             onClick={() => setActiveGroup("all")}
-            className={`shrink-0 px-3 py-1 text-xs border transition-all ${activeGroup === "all" ? "bg-[#F15A22] text-white border-[#F15A22]" : "bg-white text-gray-600 border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22]"}`}
+            className={`px-3 py-1.5 text-xs font-medium border transition-all ${activeGroup === "all" ? "bg-[#F15A22] text-white border-[#F15A22]" : "bg-white text-gray-600 border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22]"}`}
           >
-            All ({totalWalls})
+            All Series
           </button>
           {WALL_GROUPS.map(g => (
             <button
               key={g.key}
               onClick={() => setActiveGroup(g.key)}
-              className={`shrink-0 px-3 py-1 text-xs border transition-all ${activeGroup === g.key ? "bg-[#F15A22] text-white border-[#F15A22]" : "bg-white text-gray-600 border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22]"}`}
+              className={`px-3 py-1.5 text-xs font-medium border transition-all ${activeGroup === g.key ? "bg-[#F15A22] text-white border-[#F15A22]" : "bg-white text-gray-600 border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22]"}`}
             >
-              {g.label.split("–")[0].trim()} ({g.walls.length})
+              {g.label.split("–")[0].trim()}
             </button>
           ))}
         </div>
