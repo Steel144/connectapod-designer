@@ -175,24 +175,8 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
        });
 
        const customItems = categoryModules.map(m => {
-         const variantStr = (m.variants || []).join(",").toLowerCase();
-         const descStr = (m.description || "").toLowerCase();
-         const codeStr = (m.code || "").toLowerCase();
-         
-         // Parse chassis from code (e.g., "cp48-06e-b01-lv01" → "06e" → EF/ER = end)
-         let chassis = "SF";
-         const codeParts = codeStr.split("-");
-         if (codeParts.length >= 2) {
-           const chassisCode = codeParts[1].toLowerCase();
-           if (chassisCode.includes("e") && (chassisCode.includes("f") || chassisCode.includes("r"))) {
-             chassis = "LF"; // Treat end-like as LF
-           }
-         }
-         
-         // Fallback to variant-based detection
-         if (variantStr.includes("end")) {
-           chassis = "LF";
-         }
+         const variants = (m.variants || []).map(v => v.toLowerCase());
+         const chassis = variants.includes("end") ? "LF" : "SF";
          
          return {
            code: m.code,
