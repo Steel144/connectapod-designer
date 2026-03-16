@@ -299,11 +299,15 @@ export default function Configurator() {
           const attachedMod = placedModules.find(mod => {
             const isEndChassis = mod.chassis === "EF" || mod.chassis === "ER" || mod.chassis === "LF" || mod.chassis === "RF";
             if (!isEndChassis) return false;
-            if (wallData.face === "Z") return Math.abs(mod.y - y) < 0.5 && Math.abs(mod.x - x) < 0.5;
-            if (wallData.face === "X") return Math.abs(mod.y - y) < 0.5 && Math.abs((mod.x + mod.w) - x) < 1.0;
+            if (wallData.face === "Z") return Math.abs(mod.y - y) < 1.0 && Math.abs(mod.x - x) < 1.0;
+            if (wallData.face === "X") return Math.abs(mod.y - y) < 1.0 && Math.abs((mod.x + mod.w - 0.31) - x) < 1.0;
           });
           if (attachedMod) {
-            const oppositeAlreadyWalled = prev.some(w => w.face === opposingFace && Math.abs(w.y - attachedMod.y) < 0.5);
+            const oppositeAlreadyWalled = prev.some(w => {
+              if (w.face !== opposingFace) return false;
+              if (opposingFace === "Z") return Math.abs(w.y - attachedMod.y) < 1.0 && Math.abs(w.x - attachedMod.x) < 1.0;
+              if (opposingFace === "X") return Math.abs(w.y - attachedMod.y) < 1.0 && Math.abs(w.x - (attachedMod.x + attachedMod.w - 0.31)) < 1.0;
+            });
             if (oppositeAlreadyWalled) {
               toast.error("One end must remain open on end modules.");
               return prev;
