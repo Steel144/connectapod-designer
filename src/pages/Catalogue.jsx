@@ -309,7 +309,7 @@ export default function Catalogue() {
         (m.description || "").toLowerCase().includes(search.toLowerCase())
       ),
     }))
-    .filter(cat => cat.modules.length > 0 || editMode);
+    .filter(cat => cat.modules.length > 0);
 
   return (
     <div className="min-h-screen bg-[#F5F5F3]">
