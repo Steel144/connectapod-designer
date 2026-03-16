@@ -377,6 +377,7 @@ export default function WallCatalogue() {
         specs: `${(w.width / 1000).toFixed(1)}m`,
         description: w.description || "—",
         variants: w.variants || [],
+        imageUrl: wallImages[w.code] || wallImages[w.originalCode] || null,
       })),
     }));
 
