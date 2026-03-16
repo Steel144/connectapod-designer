@@ -178,20 +178,24 @@ export default function Catalogue() {
 
   const handleEditModule = async (data) => {
     if (editingModule._custom) {
+      // For custom modules, just update directly
       await base44.entities.ModuleEntry.update(editingModule._id, {
         ...data,
         category: editingModule.category,
         originalCode: editingModule.originalCode || undefined,
       });
     } else {
+      // For builtin modules, we need to create/update an override
       const existingOverride = customModules.find(c => c.originalCode === editingModule.code);
       if (existingOverride) {
+        // Update existing override
         await base44.entities.ModuleEntry.update(existingOverride.id, {
           ...data,
           category: editingModule.category,
           originalCode: editingModule.code,
         });
       } else {
+        // Create new override and hide the builtin
         await Promise.all([
           base44.entities.DeletedModule.create({ moduleCode: editingModule.code }),
           base44.entities.ModuleEntry.create({
