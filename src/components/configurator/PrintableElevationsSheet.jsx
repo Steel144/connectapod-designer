@@ -129,11 +129,12 @@ export default function PrintableElevationsSheet({ walls, onClose }) {
       })}
 
       <style>{`
-        @page { margin: 0; size: A4 landscape; }
-        @media print {
-          body { margin: 0; padding: 0; }
-        }
-      `}</style>
+         @page { margin: 0; size: A4 landscape; }
+         @media print {
+           body { margin: 0; padding: 0; }
+           img { max-width: 100%; height: auto; }
+         }
+       `}</style>
     </div>
   );
 }
