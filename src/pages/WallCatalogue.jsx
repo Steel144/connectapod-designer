@@ -1,12 +1,13 @@
 import React, { useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { ChevronLeft, Pencil, Upload, X, Loader2, Plus, Trash2 } from "lucide-react";
+import { ChevronLeft, Pencil, Upload, X, Loader2, Plus, Trash2, Printer } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { toast } from "sonner";
 import AddWallModal from "@/components/catalogue/AddWallModal";
 import EditWallModal from "@/components/catalogue/EditWallModal";
+import PrintableCatalogue from "@/components/catalogue/PrintableCatalogue";
 
 const WALL_GROUPS = [
   {
