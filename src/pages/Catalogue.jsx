@@ -253,6 +253,29 @@ export default function Catalogue() {
     }
   };
 
+  const handleDuplicateModule = async (mod, category) => {
+    // Generate a new code with suffix
+    const baseCodes = customModules.filter(m => m.code.startsWith(mod.code)).map(m => m.code);
+    const nextSuffix = baseCodes.length > 0 ? String.fromCharCode(97 + baseCodes.length) : "a"; // a, b, c...
+    const newCode = `${mod.code}${nextSuffix}`;
+
+    const newModule = {
+      category,
+      code: newCode,
+      name: mod.name,
+      width: mod.width,
+      depth: mod.depth,
+      description: mod.description,
+      price: mod.price,
+      variants: mod.variants || [],
+      wallElevations_list: mod.wallElevations_list || [],
+    };
+
+    await base44.entities.ModuleEntry.create(newModule);
+    queryClient.invalidateQueries({ queryKey: ["moduleEntries"] });
+    toast.success(`Duplicated as ${newCode}`);
+  };
+
   const categories = ["All", ...Array.from(new Set(CATALOGUE.map(c => c.category)))];
 
   // Codes that have a custom override via originalCode
