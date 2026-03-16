@@ -222,7 +222,7 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
 
        // Find custom modules for this category
        const categoryModules = customModules.filter(m => {
-         if (deletedCodes.has(m.code)) return false;
+         if (deletedCodes.has(m.code) || purgedCodes.has(m.code)) return false;
          const descriptions = (m.description || "").split(",").map(s => s.trim()).filter(Boolean);
          return descriptions.includes(group.label) || m.category === group.label;
        });
