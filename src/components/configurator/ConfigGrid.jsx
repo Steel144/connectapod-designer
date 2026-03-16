@@ -68,7 +68,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
         if (isOccupied(cx + dx, cy + dy, excludeId)) return false;
     
     // Check deck/soffit adjacency rules
-    const isDeckOrSoffit = (mod.type && (mod.type.startsWith("DK") || mod.type.startsWith("SO"))) || mod.groupKey === "Deck" || mod.groupKey === "Soffit";
+    const isDeckOrSoffit = mod.description && (mod.description.includes("Deck") || mod.description.includes("Soffit"));
     if (isDeckOrSoffit) {
       for (const other of placedModules) {
         if (other.id === excludeId) continue;
