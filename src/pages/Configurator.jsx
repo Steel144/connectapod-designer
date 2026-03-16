@@ -377,17 +377,7 @@ export default function Configurator() {
       return { ...full, ...m, type: resolvedType, floorPlanImage: imgs[resolvedType] || null };
     });
     const loadedWalls = (design.walls || []).map(w => {
-      // If wall has a type, look up from DB images
       if (w.type && wImgs[w.type]) return { ...w, elevationImage: wImgs[w.type] };
-      // If wall has no type, try to infer type by matching orientation+length against WALL_TYPES
-      if (!w.type) {
-        const match = WALL_TYPES.find(wt =>
-          wt.orientation === w.orientation &&
-          Math.abs(wt.length - w.length) < 0.5 &&
-          wImgs[wt.type]
-        );
-        if (match) return { ...w, type: match.type, elevationImage: wImgs[match.type] };
-      }
       return { ...w, elevationImage: w.elevationImage || null };
     });
     setPlacedModules(grid);
