@@ -123,6 +123,29 @@ export default function AddModuleModal({ category, onSave, onClose }) {
           </div>
         </div>
 
+          {/* Variants */}
+          <div>
+            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Variants</label>
+            <div className="flex flex-col gap-1 mt-1">
+              {["Standard", "End", "Deck"].map(variant => (
+                <label key={variant} className="flex items-center gap-2 text-sm cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={form.variants.includes(variant)}
+                    onChange={e => {
+                      const updated = e.target.checked
+                        ? [...form.variants, variant]
+                        : form.variants.filter(v => v !== variant);
+                      setField("variants", updated);
+                    }}
+                    className="accent-[#F15A22]"
+                  />
+                  {variant}
+                </label>
+              ))}
+            </div>
+          </div>
+
         <div className="flex justify-end gap-2 mt-5">
           <button onClick={onClose} className="px-4 py-2 text-sm border border-gray-200 text-gray-600 hover:border-gray-400 transition-colors">Cancel</button>
           <button
