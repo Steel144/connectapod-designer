@@ -66,6 +66,22 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
     for (let dx = 0; dx < mod.w; dx++)
       for (let dy = 0; dy < mod.h; dy++)
         if (isOccupied(cx + dx, cy + dy, excludeId)) return false;
+    
+    // Check deck/soffit adjacency rules
+    const isDeckOrSoffit = mod.groupKey === "Deck" || mod.groupKey === "Soffit";
+    if (isDeckOrSoffit) {
+      for (const other of placedModules) {
+        if (other.id === excludeId) continue;
+        const isAdjacent = (other.x === cx + mod.w && other.y < cy + mod.h && other.y + other.h > cy) ||
+                          (other.x + other.w === cx && other.y < cy + mod.h && other.y + other.h > cy) ||
+                          (other.y === cy + mod.h && other.x < cx + mod.w && other.x + mod.w > cx) ||
+                          (other.y + other.h === cy && other.x < cx + mod.w && other.x + mod.w > cx);
+        if (isAdjacent) {
+          const otherIsEnd = other.chassis === "EF" || other.chassis === "ER" || other.chassis === "LF" || other.chassis === "RF";
+          if (!otherIsEnd) return false;
+        }
+      }
+    }
     return true;
   };
 
