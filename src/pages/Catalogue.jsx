@@ -203,9 +203,11 @@ export default function Catalogue() {
         await base44.entities.FloorPlanImage.delete(img.id);
       }
       
-      queryClient.invalidateQueries({ queryKey: ["moduleEntries"] });
-      queryClient.invalidateQueries({ queryKey: ["deletedModules"] });
-      queryClient.invalidateQueries({ queryKey: ["floorPlanImages"] });
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["moduleEntries"] }),
+        queryClient.invalidateQueries({ queryKey: ["deletedModules"] }),
+        queryClient.invalidateQueries({ queryKey: ["floorPlanImages"] })
+      ]);
       toast.success("Module purged");
     } catch (error) {
       console.error("Purge failed:", error);
