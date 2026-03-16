@@ -178,9 +178,16 @@ export default function Catalogue() {
 
   const handlePermanentlyDeleteModule = async (code) => {
     try {
-      const entry = deletedModules.find(d => d.moduleCode === code);
-      if (entry) {
-        await base44.entities.DeletedModule.delete(entry.id);
+      // If it's a custom module, delete the ModuleEntry itself
+      const customModule = customModules.find(m => m.code === code);
+      if (customModule) {
+        await base44.entities.ModuleEntry.delete(customModule.id);
+      } else {
+        // Otherwise delete the DeletedModule record (unhides builtin)
+        const entry = deletedModules.find(d => d.moduleCode === code);
+        if (entry) {
+          await base44.entities.DeletedModule.delete(entry.id);
+        }
       }
       
       const images = await base44.entities.FloorPlanImage.filter({ moduleType: code });
@@ -188,6 +195,7 @@ export default function Catalogue() {
         await base44.entities.FloorPlanImage.delete(images[0].id);
       }
       
+      queryClient.invalidateQueries({ queryKey: ["moduleEntries"] });
       queryClient.invalidateQueries({ queryKey: ["deletedModules"] });
       queryClient.invalidateQueries({ queryKey: ["floorPlanImages"] });
       toast.success("Module purged");
