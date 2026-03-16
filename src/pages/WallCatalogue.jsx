@@ -551,7 +551,19 @@ export default function WallCatalogue() {
                      {uploading === wall.code ? (
                        <Loader2 size={20} className="animate-spin text-[#F15A22]" />
                      ) : (wallImages[wall.code] || wallImages[wall.originalCode]) ? (
-                       <img src={wallImages[wall.code] || wallImages[wall.originalCode]} alt={wall.name} className="w-auto h-full object-contain" style={{ backgroundColor: 'white' }} />
+                       <>
+                         <img src={wallImages[wall.code] || wallImages[wall.originalCode]} alt={wall.name} className="w-auto h-full object-contain" style={{ backgroundColor: 'white' }} />
+                         {wallImages[wall.code] && (
+                           <div className="absolute top-2 right-2 bg-green-500 text-white text-[10px] px-1.5 py-0.5 rounded flex items-center gap-1">
+                             <span>✓</span> Matched
+                           </div>
+                         )}
+                         {!wallImages[wall.code] && wallImages[wall.originalCode] && (
+                           <div className="absolute top-2 right-2 bg-yellow-500 text-white text-[10px] px-1.5 py-0.5 rounded flex items-center gap-1" title="Using original code image">
+                             <span>⚠</span> Original
+                           </div>
+                         )}
+                       </>
                      ) : (
                        <div
                          className="bg-white border border-gray-300"
