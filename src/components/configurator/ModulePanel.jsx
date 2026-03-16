@@ -426,12 +426,12 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
                        className="flex items-center gap-3 px-3 py-2 cursor-grab active:cursor-grabbing hover:bg-orange-50 border-b border-gray-50 last:border-0 transition-colors"
                      >
                        <div className="shrink-0 w-10 h-16 border border-gray-200 bg-white overflow-hidden relative">
-                         {floorPlanImages[mod.type] ? (
-                           <img src={floorPlanImages[mod.type]} alt={item.name} className="w-full h-full object-contain" />
+                         {floorPlanImages[mod.type] || floorPlanImages[item.originalCode] ? (
+                           <img src={floorPlanImages[mod.type] || floorPlanImages[item.originalCode]} alt={item.name} className="w-full h-full object-contain" />
                          ) : (
                            <FloorPlanSVG code={item.code} className="w-full h-full" />
                          )}
-                         {floorPlanImages[mod.type] && (
+                         {(floorPlanImages[mod.type] || floorPlanImages[item.originalCode]) && (
                            <div className="absolute top-0 right-0 bg-[#F15A22] rounded-full p-0.5">
                              <ImageIcon size={8} className="text-white" />
                            </div>
