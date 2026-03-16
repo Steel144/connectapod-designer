@@ -145,15 +145,17 @@ export default function Configurator() {
       toast.error("Deck and Soffit can only be added to end modules");
       return;
     }
-    
+
     pushHistory(placedModules, walls);
     const fullMod = MODULE_TYPES.find(m => m.type === mod.type) || mod;
     const newMod = { ...fullMod, ...mod, id: generateId(), x, y };
-    // Check for image using both the code and originalCode (for overrides)
+    // Check for image using the type, originalCode, or custom module code
     if (floorPlanImages[mod.type]) {
       newMod.floorPlanImage = floorPlanImages[mod.type];
     } else if (mod.originalCode && floorPlanImages[mod.originalCode]) {
       newMod.floorPlanImage = floorPlanImages[mod.originalCode];
+    } else if (floorPlanImages[newMod.type]) {
+      newMod.floorPlanImage = floorPlanImages[newMod.type];
     }
     setPlacedModules((prev) => [...prev, newMod]);
   };
