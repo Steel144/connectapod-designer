@@ -126,29 +126,6 @@ export default function EditModuleModal({ module: mod, onSave, onClose }) {
             </div>
           </div>
 
-          {/* Additional Categories */}
-          <div>
-            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Also Show In</label>
-            <div className="flex flex-wrap gap-2">
-              {["Living", "Bedroom", "Bathroom", "Laundry", "Kitchen", "Soffit", "Deck"].map(cat => {
-                const active = form.categories.includes(cat);
-                return (
-                  <button
-                    key={cat}
-                    type="button"
-                    onClick={() => {
-                      const updated = active ? form.categories.filter(c => c !== cat) : [...form.categories, cat];
-                      setForm(f => ({ ...f, categories: updated }));
-                    }}
-                    className={`px-3 py-1.5 text-xs border transition-colors ${active ? "bg-blue-600 text-white border-blue-600" : "bg-white text-gray-600 border-gray-200 hover:border-blue-600 hover:text-blue-600"}`}
-                  >
-                    {cat}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
           {/* Wall Elevations */}
           <div>
             <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Wall Elevations</label>
