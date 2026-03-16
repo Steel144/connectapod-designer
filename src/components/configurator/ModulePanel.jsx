@@ -483,9 +483,9 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
                   onMouseLeave={() => setHoveredWall(null)}
                   className="flex items-center gap-3 px-3 py-2 cursor-grab active:cursor-grabbing hover:bg-orange-50 border-b border-gray-50 last:border-0 transition-colors"
                 >
-                  <div className="shrink-0 w-12 bg-gray-50 flex items-center justify-center relative border border-gray-200" style={{ aspectRatio: "9/16" }}>
+                  <div className="shrink-0 bg-gray-50 flex items-center justify-center relative border border-gray-200" style={{ height: "76px" }}>
                     {wallImages[wall.type] ? (
-                      <img src={wallImages[wall.type]} alt={wall.label} className="w-full h-full object-contain" />
+                      <img src={wallImages[wall.type]} alt={wall.label} className="w-auto h-full object-contain" />
                     ) : (
                       <div
                         style={{
