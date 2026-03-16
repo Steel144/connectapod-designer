@@ -541,8 +541,8 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
         <div
           className="fixed z-[100] bg-white border-2 border-[#F15A22] shadow-xl rounded pointer-events-none flex flex-col"
           style={{
-            width: "210px",
-            height: "330px",
+            width: "320px",
+            height: "400px",
             top: "48px",
             right: "20px",
             padding: "4px",
@@ -550,7 +550,7 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
         >
           <div className="flex-1 bg-gray-50 rounded overflow-hidden flex items-center justify-center">
             {hoveredModule.floorPlanImage ? (
-              <img src={hoveredModule.floorPlanImage} alt={hoveredModule.label} className="w-auto h-auto max-w-[204px] max-h-[322px] object-contain" />
+              <img src={hoveredModule.floorPlanImage} alt={hoveredModule.label} className="w-auto h-auto max-w-[312px] max-h-[392px] object-contain" />
             ) : (
               <FloorPlanSVG code={hoveredModule.type} className="w-full h-full" />
             )}
