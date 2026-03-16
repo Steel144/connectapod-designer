@@ -478,14 +478,14 @@ export default function Catalogue() {
                      )}
 
                     {/* Visual preview */}
-                    <div
-                      className="w-full mb-3 relative flex items-center justify-center border border-gray-100"
-                      style={{ aspectRatio: "3 / 4.8", backgroundColor: CATEGORY_COLORS[cat.category] || "#F5F5F3" }}
-                    >
-                      {uploading === mod.code ? (
-                        <Loader2 size={20} className="animate-spin text-[#F15A22]" />
-                      ) : (floorPlanImages[mod.code] || floorPlanImages[mod.originalCode]) ? (
-                        <img src={floorPlanImages[mod.code] || floorPlanImages[mod.originalCode]} alt={mod.name} className="w-full h-full object-contain" />
+                     <div
+                       className="w-full mb-3 relative flex items-center justify-center border border-gray-100"
+                       style={{ aspectRatio: "3 / 4.8", backgroundColor: CATEGORY_COLORS[cat.category] || "#F5F5F3" }}
+                     >
+                       {uploading === mod.code ? (
+                         <Loader2 size={20} className="animate-spin text-[#F15A22]" />
+                       ) : (floorPlanImages[mod.code] || floorPlanImages[mod.originalCode]) ? (
+                         <img src={floorPlanImages[mod.code] || floorPlanImages[mod.originalCode]} alt={mod.name} className="w-full h-auto" />
                       ) : (
                         <div
                           className="border-2 border-gray-400 group-hover:border-[#F15A22] transition-colors flex items-center justify-center"
