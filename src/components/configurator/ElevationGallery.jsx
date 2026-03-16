@@ -112,8 +112,12 @@ export default function ElevationGallery({ walls = [] }) {
       <div
         className={`bg-white overflow-hidden ${tight ? "border-none" : "border border-gray-200 shadow-sm cursor-pointer"} transition-shadow hover:shadow-lg`}
         style={{ height: `${imgHeight}px` }}
-        onMouseEnter={() => {}}
-        onMouseLeave={() => {}}
+        onMouseEnter={(e) => {
+          const rect = e.currentTarget.getBoundingClientRect();
+          setHoveredWall(wall);
+          setPreviewPos({ x: rect.left, y: rect.top });
+        }}
+        onMouseLeave={() => setHoveredWall(null)}
       >
         <img
           src={wall.elevationImage}
