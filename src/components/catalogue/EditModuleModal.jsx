@@ -15,6 +15,14 @@ export default function EditModuleModal({ module: mod, onSave, onClose }) {
 
   const sqm = parseFloat((parseFloat(form.width || 3) * parseFloat(form.depth || 4.8)).toFixed(1));
 
+  const generateName = () => {
+    const descriptions = form.description.split(",").map(s => s.trim()).filter(Boolean);
+    const desc = descriptions.length > 0 ? descriptions.join(" + ") : "Module";
+    const variant = form.variants.length > 0 ? ` (${form.variants.join(", ")})` : "";
+    const size = ` ${form.width}m`;
+    return `${desc}${variant}${size}`;
+  };
+
   const handleSubmit = () => {
     if (!form.name || !form.code) return;
     onSave({
