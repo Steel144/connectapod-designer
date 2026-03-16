@@ -301,23 +301,23 @@ export default function Catalogue() {
   return (
     <div className="min-h-screen bg-[#F5F5F3]">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-5">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900 tracking-tight">connectapod</h1>
-            <p className="text-sm text-gray-500 mt-0.5">Module Catalogue — connectapod MP-48 System</p>
+      <div className="sticky top-0 z-30 bg-white/80 backdrop-blur border-b border-gray-200 px-6 py-2.5">
+        <div className="max-w-7xl mx-auto flex items-center gap-4">
+          <div className="shrink-0">
+            <span className="text-base font-bold text-gray-900 tracking-tight">connectapod</span>
+            <span className="ml-2 text-xs text-gray-400">Module Catalogue</span>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 ml-auto">
             <button
               onClick={() => setEditMode(e => !e)}
-              className={`flex items-center gap-2 px-3 py-2 text-sm border transition-all ${editMode ? "bg-[#F15A22] text-white border-[#F15A22]" : "text-gray-600 border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22]"}`}
+              className={`flex items-center gap-2 px-3 py-1.5 text-xs border transition-all ${editMode ? "bg-[#F15A22] text-white border-[#F15A22]" : "text-gray-600 border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22]"}`}
             >
-              <Pencil size={14} />
+              <Pencil size={13} />
               {editMode ? "Done Editing" : "Edit Catalogue"}
             </button>
             <button
               onClick={() => navigate(-1)}
-              className="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22] transition-all"
+              className="flex items-center gap-2 px-3 py-1.5 text-xs text-gray-600 border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22] transition-all"
             >
               <ChevronLeft size={16} />
               Exit
