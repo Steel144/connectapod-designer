@@ -284,10 +284,18 @@ export default function Configurator() {
     if (wallData.face === "W") {
       wallWithImage.rotation = 180;
     }
-    setWalls((prev) => [
-      ...prev,
-      { ...wallWithImage, id: generateWallId(), x, y },
-    ]);
+    const newWall = { ...wallWithImage, id: generateWallId(), x, y };
+
+    setWalls((prev) => {
+      // For end-module faces (Z/X), only allow one wall per face per module.
+      // Replace any existing wall on the same face at the same position.
+      if (wallData.face === "Z" || wallData.face === "X" ||
+          wallData.face === "W" || wallData.face === "Y") {
+        const filtered = prev.filter(w => !(w.face === wallData.face && w.x === x && w.y === y));
+        return [...filtered, newWall];
+      }
+      return [...prev, newWall];
+    });
   };
 
   const handleRemoveWall = (id) => {
