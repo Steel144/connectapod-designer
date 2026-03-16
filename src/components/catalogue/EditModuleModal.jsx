@@ -116,7 +116,7 @@ export default function EditModuleModal({ module: mod, onSave, onClose }) {
         </div>
 
           {/* Variants */}
-          <div>
+          <div className="pt-2">
             <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Variants</label>
             <div className="flex flex-col gap-1 mt-1">
               {["Standard", "End", "Deck"].map(variant => (
