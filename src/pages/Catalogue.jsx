@@ -85,7 +85,7 @@ const CATALOGUE = [
     ],
   },
   {
-    category: "Bathroom End Modules",
+    category: "Laundry",
     description: "Bathroom modules designed for the end of a row, with a finished Z gable end wall.",
     modules: [
       { code: "420-B01", name: "Bathroom End (B01)", width: 3.0, depth: 4.8, sqm: 14.4, description: "DCH760 door. WC zone: 1,089mm. Internal depth: 3,711mm. Frame: 220 + 2,602 + 89mm plan.", chassisCodes: ["MP-48-LF30", "MP-48-LR30", "MP-48-RF30", "MP-48-RR30"], wallElevations: { Z: "Z000 (LF) / N/A (RF)", W: "W500 / W700 / W series", Y: "Y500 / Y530 / Y series", X: "N/A (LF) / X000 (RF)" } },
