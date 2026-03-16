@@ -742,15 +742,25 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
           <div
             className="fixed z-[100] bg-white border-2 border-[#F15A22] shadow-xl rounded pointer-events-none flex flex-col"
             style={{
-              width: "210px",
-              height: "330px",
+              width: "240px",
               top: "48px",
               right: "20px",
-              padding: "4px",
+              padding: "8px",
             }}
           >
-            <div className="flex-1 bg-gray-50 rounded overflow-hidden">
+            <div className="flex items-start justify-between gap-2 mb-2">
+              <div>
+                <p className="text-xs font-semibold text-gray-900">{mod.label}</p>
+                <p className="text-[10px] text-gray-500">{mod.type}</p>
+              </div>
+              <span className="text-[9px] font-mono bg-gray-100 px-1.5 py-0.5 rounded text-gray-600">{mod.type}</span>
+            </div>
+            <div className="bg-gray-50 rounded overflow-hidden mb-2" style={{ height: "180px" }}>
               <img src={mod.floorPlanImage} alt={mod.label} className="w-full h-full object-contain" />
+            </div>
+            <div className="text-[10px] text-gray-600 space-y-1">
+              <div className="flex justify-between"><span>Position:</span><span className="font-mono">{mod.x}, {mod.y}</span></div>
+              <div className="flex justify-between"><span>Size:</span><span className="font-mono">{mod.w}×{mod.h} cells</span></div>
             </div>
           </div>
         ) : null;
