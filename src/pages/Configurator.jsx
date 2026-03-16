@@ -20,7 +20,7 @@ const generateWallId = () => `wall-${Math.random().toString(36).substr(2, 9)}`;
 
 export default function Configurator() {
   const MAX_HISTORY = 10;
-  const [history, setHistory] = useState([]); // stack of {placedModules, walls}
+  const [history, setHistory] = useState([]);
   const [placedModules, setPlacedModules] = useState(() => {
     try { return JSON.parse(localStorage.getItem("configurator_modules") || "[]"); } catch { return []; }
   });
@@ -34,7 +34,7 @@ export default function Configurator() {
   const [draggingMod, setDraggingMod] = useState(null);
   const [saveModalOpen, setSaveModalOpen] = useState(false);
   const [showSaved, setShowSaved] = useState(false);
-  const [viewMode, setViewMode] = useState("2d"); // "2d" | "3d" | "elevations"
+  const [viewMode, setViewMode] = useState("2d");
   const [panelCollapsed, setPanelCollapsed] = useState(false);
   const [panelPos, setPanelPos] = useState({ x: 16, y: 60 });
   const [draggingPanel, setDraggingPanel] = useState(null);
@@ -43,7 +43,8 @@ export default function Configurator() {
   const [summaryCollapsed, setSummaryCollapsed] = useState(false);
   const [selectedWall, setSelectedWall] = useState(null);
   const [selectedModule, setSelectedModule] = useState(null);
-  const [printMode, setPrintMode] = useState(null); // "plans" | "elevations" | null
+  const [printMode, setPrintMode] = useState(null);
+  const [availableWallTypes, setAvailableWallTypes] = useState([]);
   const queryClient = useQueryClient();
 
   const { data: designs = [] } = useQuery({
@@ -88,7 +89,6 @@ export default function Configurator() {
   const handleDragStart = (e, mod) => {
     setIsDraggingFromPanel(true);
     if (mod.orientation) {
-      // Wall — wallType already set by ModulePanel
       return;
     }
     e.dataTransfer.setData("moduleType", mod.type);
@@ -98,8 +98,6 @@ export default function Configurator() {
   const handleDragEnd = () => {
     setIsDraggingFromPanel(false);
   };
-
-
 
   const handleUndo = useCallback(() => {
     setHistory((prev) => {
@@ -123,11 +121,6 @@ export default function Configurator() {
     return () => window.removeEventListener("keydown", onKey);
   }, [handleUndo]);
 
-
-
-
-
-  // Persist design to localStorage so it survives page navigation
   useEffect(() => {
     localStorage.setItem("configurator_modules", JSON.stringify(placedModules));
   }, [placedModules]);
@@ -135,7 +128,6 @@ export default function Configurator() {
     localStorage.setItem("configurator_walls", JSON.stringify(walls));
   }, [walls]);
 
-  // Use refs to hold latest images so handlers can access them without stale closures
   const wallImagesRef = useRef(wallImages);
   const floorPlanImagesRef = useRef(floorPlanImages);
   useEffect(() => { wallImagesRef.current = wallImages; }, [wallImages]);
@@ -143,10 +135,8 @@ export default function Configurator() {
 
   const handlePlace = (mod, x, y) => {
     pushHistory(placedModules, walls);
-    // Ensure chassis, width, etc. are always stored on the placed module
     const fullMod = MODULE_TYPES.find(m => m.type === mod.type) || mod;
     const newMod = { ...fullMod, ...mod, id: generateId(), x, y };
-    // Assign saved floor plan image if it exists for this module type
     if (floorPlanImages[mod.type]) {
       newMod.floorPlanImage = floorPlanImages[mod.type];
     }
@@ -157,19 +147,14 @@ export default function Configurator() {
     pushHistory(placedModules, walls);
     const modToRemove = placedModules.find((m) => m.id === id);
     if (modToRemove) {
-      // Delete walls attached to this module (by position)
       setWalls((prev) =>
         prev.filter((w) => {
           const isLongFace = w.face === "W" || w.face === "Y" || (!w.face && w.orientation === "horizontal");
           if (isLongFace) {
-            // W face (top): x aligns, y is one cell above
             if ((w.face === "W" || !w.face) && w.x === modToRemove.x && w.y === modToRemove.y - 1) return false;
-            // Y face (bottom): x aligns, y is at module bottom edge
             if (w.face === "Y" && w.x === modToRemove.x && w.y === modToRemove.y + modToRemove.h) return false;
           } else {
-            // Z face (left): y aligns, x is one cell inside
             if (w.face === "Z" && w.y === modToRemove.y && w.x === modToRemove.x + 1) return false;
-            // X face (right): y aligns, x is one cell inside from right
             if (w.face === "X" && w.y === modToRemove.y && w.x === modToRemove.x + modToRemove.w - 1) return false;
           }
           return true;
@@ -187,18 +172,14 @@ export default function Configurator() {
     const deltaX = x - oldMod.x;
     const deltaY = y - oldMod.y;
     
-    // Move module
     setPlacedModules((prev) =>
       prev.map((m) => (m.id === id ? { ...m, x, y } : m))
     );
     
-    // Move attached walls by applying delta to their position
+    const WALL_OFFSET = 0.308;
     setWalls((prev) =>
       prev.map((w) => {
         if (!w.face) return w;
-        
-        const WALL_OFFSET = 0.308;
-        
         if (w.face === "Y" && Math.abs(w.x - oldMod.x) < 0.5 && Math.abs(w.y - (oldMod.y + oldMod.h)) < 0.5) {
           return { ...w, x: w.x + deltaX, y: w.y + deltaY };
         }
@@ -228,26 +209,16 @@ export default function Configurator() {
         const newRotation = (currentRotation + 180) % 360;
         const baseW = m.baseW ?? m.w;
         const baseH = m.baseH ?? m.h;
-        return {
-          ...m,
-          baseW,
-          baseH,
-          w: baseW,
-          h: baseH,
-          rotation: newRotation,
-        };
+        return { ...m, baseW, baseH, w: baseW, h: baseH, rotation: newRotation };
       })
     );
     
-    // Rotate attached side walls (Z and X faces)
     setWalls((prev) =>
       prev.map((w) => {
         const WALL_OFFSET = 0.308;
-        // Z wall: left side
         if (w.face === 'Z' && Math.abs(w.y - modToRotate.y) < 0.5 && Math.abs(w.x - modToRotate.x) < 0.5) {
           return { ...w, rotation: (w.rotation || 0) + 180 };
         }
-        // X wall: right side
         if (w.face === 'X' && Math.abs(w.y - modToRotate.y) < 0.5 && Math.abs(w.x - (modToRotate.x + modToRotate.w - WALL_OFFSET)) < 0.5) {
           return { ...w, rotation: (w.rotation || 0) + 180 };
         }
@@ -280,20 +251,16 @@ export default function Configurator() {
       ...wallData, 
       elevationImage: wallImages[wallData.type] || null 
     };
-    // W walls (top/outside) need 180° rotation
     if (wallData.face === "W") {
       wallWithImage.rotation = 180;
     }
     const newWall = { ...wallWithImage, id: generateWallId(), x, y };
 
     setWalls((prev) => {
-      // One wall per face per position (replace existing)
       if (wallData.face === "Z" || wallData.face === "X" ||
           wallData.face === "W" || wallData.face === "Y") {
         const filtered = prev.filter(w => !(w.face === wallData.face && w.x === x && w.y === y));
 
-        // For end-module Z/X faces: enforce only one end can be walled.
-        // If placing on Z, block if X already has a wall on the same module, and vice versa.
         if (wallData.face === "Z" || wallData.face === "X") {
           const opposingFace = wallData.face === "Z" ? "X" : "Z";
           const attachedMod = placedModules.find(mod => {
@@ -336,7 +303,6 @@ export default function Configurator() {
   const handleSave = (name) => {
     const totalSqm = placedModules.reduce((s, m) => s + (m.sqm || 0), 0);
     const estimatedPrice = placedModules.reduce((s, m) => s + (m.price || 0), 0);
-    // Strip large/non-serializable fields, ensure type is saved
     const gridToSave = placedModules.map(m => ({
       id: m.id, type: m.type, label: m.label, x: m.x, y: m.y, w: m.w, h: m.h,
       sqm: m.sqm, price: m.price, color: m.color, border: m.border,
@@ -362,15 +328,9 @@ export default function Configurator() {
   const handleLoad = (design) => {
     const imgs = floorPlanImagesRef.current;
     const wImgs = wallImagesRef.current;
-    console.log("handleLoad imgs:", imgs, "wImgs:", wImgs);
-    console.log("design.grid:", design.grid);
-    console.log("design.walls:", design.walls);
-    // Re-hydrate full module data from MODULE_TYPES + re-attach images
-    // Support 'type', legacy 'moduleType', and label-based fallback for old broken saves
     const grid = (design.grid || []).map(m => {
       const moduleType = m.type || m.moduleType;
       let full = moduleType ? MODULE_TYPES.find(mt => mt.type === moduleType) : null;
-      // Fallback: match by label if type lookup failed
       if (!full && m.label) full = MODULE_TYPES.find(mt => mt.label === m.label);
       full = full || {};
       const resolvedType = moduleType || full.type || null;
@@ -388,12 +348,9 @@ export default function Configurator() {
 
   const handleModuleImageUpdate = async (moduleId, imageUrl) => {
     const module = placedModules.find(m => m.id === moduleId);
-    
     setPlacedModules((prev) =>
       prev.map((m) => (m.id === moduleId ? { ...m, floorPlanImage: imageUrl } : m))
     );
-
-    // Save image to database for this module type
     if (module && module.type) {
       const existing = await base44.entities.FloorPlanImage.filter({ moduleType: module.type });
       if (existing.length > 0) {
@@ -410,8 +367,6 @@ export default function Configurator() {
     setWalls((prev) =>
       prev.map((w) => w.id === wallId ? { ...w, elevationImage: imageUrl } : w)
     );
-
-    // Save image to database for this wall type
     if (wall && wall.type) {
       const existing = await base44.entities.WallImage.filter({ wallType: wall.type });
       if (existing.length > 0) {
@@ -462,7 +417,6 @@ export default function Configurator() {
     });
   };
 
-  // Print modes
   if (printMode === "plans") {
     return <PrintablePlansSheet placedModules={placedModules} onClose={() => setPrintMode(null)} />;
   }
@@ -484,7 +438,6 @@ export default function Configurator() {
           <span className="ml-2 text-xs text-gray-400">Design Studio</span>
         </div>
         <div className="flex items-center gap-2 ml-auto shrink-0">
-          {/* 2D / 3D toggle */}
           <div className="flex border border-gray-200 overflow-hidden">
             <button
               onClick={() => setViewMode("2d")}
@@ -493,7 +446,6 @@ export default function Configurator() {
               <Grid2X2 size={13} />
               2D
             </button>
-
             <button
               onClick={() => setViewMode("elevations")}
               className={`flex items-center gap-1.5 px-3 py-1.5 text-xs transition-all ${viewMode === "elevations" ? "bg-[#F15A22] text-white" : "bg-white text-gray-600 hover:text-[#F15A22]"}`}
@@ -601,6 +553,7 @@ export default function Configurator() {
           onFlip={handleFlip}
           draggingMod={draggingMod}
           walls={walls}
+          wallTypes={availableWallTypes}
           onPlaceWall={handlePlaceWall}
           onRemoveWall={handleRemoveWall}
           onMoveWall={handleMoveWall}
@@ -626,7 +579,18 @@ export default function Configurator() {
             <p className="text-[11px] text-gray-400 mt-0.5">Expand a category · drag to place</p>
           </div>
           <div className="flex-1 overflow-y-auto p-3">
-            <ModulePanel onDragStart={handleDragStart} onDragEnd={handleDragEnd} selectedWall={selectedWall} selectedModule={selectedModule} placedModules={placedModules} onModuleImageUpdate={handleModuleImageUpdate} onWallImageUpdate={handleWallImageUpdate} floorPlanImages={floorPlanImages} wallImages={wallImages} />
+            <ModulePanel
+              onDragStart={handleDragStart}
+              onDragEnd={handleDragEnd}
+              selectedWall={selectedWall}
+              selectedModule={selectedModule}
+              placedModules={placedModules}
+              onModuleImageUpdate={handleModuleImageUpdate}
+              onWallImageUpdate={handleWallImageUpdate}
+              onWallTypesLoaded={setAvailableWallTypes}
+              floorPlanImages={floorPlanImages}
+              wallImages={wallImages}
+            />
           </div>
         </div>
 
