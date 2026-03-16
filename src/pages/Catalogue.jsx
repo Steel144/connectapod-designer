@@ -116,17 +116,13 @@ const CATALOGUE = [
 ];
 
 const CATEGORY_COLORS = {
-  "General — Open Modules": "#E8F4FD",
-  "General — End Cap Layouts": "#F0FDF4",
-  "General — Door Layouts": "#FFF7ED",
-  "General — Corner / L-Shape Layouts": "#F5F3FF",
-  "Kitchen — End Modules": "#FFF1F2",
-  "Kitchen — Standard Modules": "#FFF1F2",
-  "Bathroom — Standard": "#F0F9FF",
-  "Bathroom — Ensuite + Walk-in Robe": "#F0F9FF",
-  "Bathroom End Modules": "#F0F9FF",
-  "Combined Wet Areas": "#FEFCE8",
-  "Deck & Soffit": "#F8FAFC",
+  "Living": "#E8F4FD",
+  "Bedroom": "#F0FDF4",
+  "Bathroom": "#F0F9FF",
+  "Laundry": "#F5F3FF",
+  "Kitchen": "#FFF1F2",
+  "Soffit": "#F8FAFC",
+  "Deck": "#F8FAFC",
 };
 
 export default function Catalogue() {
