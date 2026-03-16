@@ -503,7 +503,7 @@ export default function WallCatalogue() {
       )}
 
       {/* Content */}
-      <div className="max-w-7xl mx-auto px-6 py-8 space-y-10">
+      <div className="max-w-7xl mx-auto px-6 pb-8 space-y-10">
         {filtered.map(group => (
           <div key={group.key}>
             <div className="mb-4 pb-2 border-b border-gray-200 flex items-baseline gap-3">
