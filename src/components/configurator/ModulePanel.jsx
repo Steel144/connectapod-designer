@@ -376,19 +376,34 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
             {isOpen && (
               <div className="border-t border-gray-100 max-h-64 overflow-y-auto">
                 {group.items.map((item) => {
-                  const mod = MODULE_TYPES.find((m) => m.type === item.code);
-                  return (
-                    <div
-                      key={item.code}
-                      draggable
-                      onDragStart={(e) => {
-                        e.dataTransfer.effectAllowed = "copy";
-                        e.dataTransfer.setData("moduleType", mod.type);
-                        onDragStart(e, mod);
-                      }}
-                      onDragEnd={onDragEnd}
-                      onMouseEnter={() => setHoveredModule({ ...mod, floorPlanImage: floorPlanImages[mod.type] })}
-                      onMouseLeave={() => setHoveredModule(null)}
+                   const mod = MODULE_TYPES.find((m) => m.type === item.code) || {
+                     type: item.code,
+                     label: item.name,
+                     mpCode: item.mpCode,
+                     color: group.color,
+                     border: group.border,
+                     w: Math.round(item.width / 0.6),
+                     h: Math.round(item.depth / 0.6),
+                     sqm: item.sqm,
+                     price: group.price,
+                     groupKey: group.key,
+                     chassis: item.chassis || "SF",
+                     widthCode: item.widthCode || "30",
+                     room: item.room || "G",
+                     orientation: item.orientation || 1,
+                   };
+                   return (
+                     <div
+                       key={item.code}
+                       draggable
+                       onDragStart={(e) => {
+                         e.dataTransfer.effectAllowed = "copy";
+                         e.dataTransfer.setData("moduleType", mod.type);
+                         onDragStart(e, mod);
+                       }}
+                       onDragEnd={onDragEnd}
+                       onMouseEnter={() => setHoveredModule({ ...mod, floorPlanImage: floorPlanImages[mod.type] })}
+                       onMouseLeave={() => setHoveredModule(null)}
                        className="flex items-center gap-3 px-3 py-2 cursor-grab active:cursor-grabbing hover:bg-orange-50 border-b border-gray-50 last:border-0 transition-colors"
                      >
                        <div className="shrink-0 w-10 h-16 border border-gray-200 bg-white overflow-hidden relative">
