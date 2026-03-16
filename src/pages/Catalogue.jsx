@@ -488,17 +488,6 @@ export default function Catalogue() {
                       <span><span className="font-semibold text-gray-700">{mod.sqm.toFixed(1)}</span> m²</span>
                     </div>
 
-                    {mod.chassisCodes && (
-                      <div className="mb-2">
-                        <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1">Chassis Codes</p>
-                        <div className="flex flex-wrap gap-1">
-                          {mod.chassisCodes.map(c => (
-                            <span key={c} className="text-[10px] font-mono bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded">{c}</span>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
                     {mod.wallElevations && (
                       <div className="border-t border-gray-100 pt-2 mt-1">
                         <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1.5">Wall Elevations</p>
