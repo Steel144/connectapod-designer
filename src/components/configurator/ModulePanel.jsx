@@ -230,6 +230,7 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
         chassis: "SF",
         widthCode: "30",
         room: "G",
+        originalCode: m.originalCode || undefined,
       }));
       
       return {
