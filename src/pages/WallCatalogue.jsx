@@ -430,7 +430,7 @@ export default function WallCatalogue() {
       <div className="bg-white border-b border-gray-200 sticky top-0 z-20">
         <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <Link to={createPageUrl("Configurator")} className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-[#F15A22] transition-colors">
+            <Link to="/Configurator" className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-[#F15A22] transition-colors">
               <ChevronLeft size={16} />
               Configurator
             </Link>
