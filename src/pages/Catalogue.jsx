@@ -367,20 +367,11 @@ export default function Catalogue() {
   }
 
   const allCatalogue = catalogueByCategory.map(cat => {
-    const builtins = cat.modules
-      .filter(m => {
-        if (purgedCodes.has(m.code)) return false; // Never show purged modules
-        if (overriddenModuleCodes.has(m.code)) return false;
-        if (!deletedCodes.has(m.code)) return true;
-        return editMode; // Only show deleted modules in edit mode
-      })
-      .map(m => ({ ...m, _custom: false, _deleted: deletedCodes.has(m.code) }));
+    let customs = [];
 
-    // Get custom modules for this category (via description selections)
-    const customs = customModules.filter(c => {
-      const descriptions = (c.description || "").split(",").map(s => s.trim()).filter(Boolean);
-      return descriptions.includes(cat.category);
-    }).map(c => ({
+    if (cat.category === "Uncategorized") {
+      // For uncategorized, get modules without valid category assignments
+      customs = uncategorizedCustoms.map(c => ({
         code: c.code, name: c.name, width: c.width || 3.0, depth: c.depth || 4.8,
         sqm: c.sqm || parseFloat(((c.width || 3.0) * (c.depth || 4.8)).toFixed(1)),
         description: c.description || "",
@@ -391,6 +382,32 @@ export default function Catalogue() {
         originalCode: c.originalCode || undefined,
         _custom: true, _id: c.id, _deleted: false,
       }));
+    } else {
+      // For other categories, get custom modules via description selections
+      customs = customModules.filter(c => {
+        const descriptions = (c.description || "").split(",").map(s => s.trim()).filter(Boolean);
+        return descriptions.includes(cat.category);
+      }).map(c => ({
+          code: c.code, name: c.name, width: c.width || 3.0, depth: c.depth || 4.8,
+          sqm: c.sqm || parseFloat(((c.width || 3.0) * (c.depth || 4.8)).toFixed(1)),
+          description: c.description || "",
+          chassisCodes: c.chassisCodes || [],
+          variants: c.variants || [],
+          wallElevations_list: c.wallElevations_list || [],
+          wallElevations: { Z: c.wallElevationZ || "N/A", W: c.wallElevationW || "", Y: c.wallElevationY || "", X: c.wallElevationX || "N/A" },
+          originalCode: c.originalCode || undefined,
+          _custom: true, _id: c.id, _deleted: false,
+        }));
+    }
+
+    const builtins = cat.category !== "Uncategorized" ? cat.modules
+      .filter(m => {
+        if (purgedCodes.has(m.code)) return false; // Never show purged modules
+        if (overriddenModuleCodes.has(m.code)) return false;
+        if (!deletedCodes.has(m.code)) return true;
+        return editMode; // Only show deleted modules in edit mode
+      })
+      .map(m => ({ ...m, _custom: false, _deleted: deletedCodes.has(m.code) })) : [];
 
     const merged = [...builtins, ...customs];
     merged.sort((a, b) => moduleCodeNum(a.originalCode || a.code) - moduleCodeNum(b.originalCode || b.code));
