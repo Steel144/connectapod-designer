@@ -1,11 +1,9 @@
 import React, { useState, useMemo, useRef, useCallback } from "react";
 import { ZoomIn, ZoomOut, Maximize2 } from "lucide-react";
 
-export default function ElevationGallery({ walls = [] }) {
+export default function ElevationGallery({ walls = [], onWallSelect = () => {} }) {
   const [zoom, setZoom] = useState(50);
   const [pan, setPan] = useState({ x: 0, y: 0 });
-  const [hoveredWall, setHoveredWall] = useState(null);
-  const [previewPos, setPreviewPos] = useState({ x: 0, y: 0 });
   const isPanning = useRef(false);
   const panStart = useRef({ x: 0, y: 0 });
   const panOrigin = useRef({ x: 0, y: 0 });
