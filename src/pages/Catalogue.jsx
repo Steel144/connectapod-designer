@@ -347,6 +347,7 @@ export default function Catalogue() {
         specs: `${m.width}m × ${m.depth}m (${m.sqm.toFixed(1)} m²)`,
         description: m.description || "—",
         variants: m.variants || [],
+        imageUrl: floorPlanImages[m.code] || floorPlanImages[m.originalCode] || null,
       })),
     }));
 
