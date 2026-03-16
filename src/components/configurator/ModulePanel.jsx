@@ -176,7 +176,24 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
 
        const customItems = categoryModules.map(m => {
          const variantStr = (m.variants || []).join(",").toLowerCase();
-         const isEnd = variantStr.includes("end");
+         const descStr = (m.description || "").toLowerCase();
+         const codeStr = (m.code || "").toLowerCase();
+         
+         // Parse chassis from code (e.g., "cp48-06e-b01-lv01" → "06e" → EF/ER = end)
+         let chassis = "SF";
+         const codeParts = codeStr.split("-");
+         if (codeParts.length >= 2) {
+           const chassisCode = codeParts[1].toLowerCase();
+           if (chassisCode.includes("e") && (chassisCode.includes("f") || chassisCode.includes("r"))) {
+             chassis = "LF"; // Treat end-like as LF
+           }
+         }
+         
+         // Fallback to variant-based detection
+         if (variantStr.includes("end")) {
+           chassis = "LF";
+         }
+         
          return {
            code: m.code,
            name: m.name,
@@ -185,7 +202,7 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
            depth: m.depth || 4.8,
            sqm: m.sqm || parseFloat(((m.width || 3.0) * (m.depth || 4.8)).toFixed(1)),
            description: m.description || "",
-           chassis: isEnd ? "LF" : "SF",
+           chassis: chassis,
            widthCode: "30",
            room: "G",
            originalCode: m.originalCode || undefined,
