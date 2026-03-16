@@ -561,8 +561,8 @@ export default function WallCatalogue() {
                   <div className="w-full bg-gray-50 border border-gray-100 flex items-center justify-center mb-3 relative" style={{ aspectRatio: "9/16" }}>
                     {uploading === wall.code ? (
                       <Loader2 size={20} className="animate-spin text-[#F15A22]" />
-                    ) : wallImages[wall.code] ? (
-                      <img src={wallImages[wall.code]} alt={wall.name} className="w-full h-full object-contain" />
+                    ) : (wallImages[wall.code] || wallImages[wall.originalCode]) ? (
+                      <img src={wallImages[wall.code] || wallImages[wall.originalCode]} alt={wall.name} className="w-full h-full object-contain" />
                     ) : (
                       <div
                         className="bg-gray-300 border border-gray-400"
@@ -577,7 +577,7 @@ export default function WallCatalogue() {
                         >
                           <Upload size={11} /> Upload
                         </button>
-                        {wallImages[wall.code] && (
+                        {(wallImages[wall.code] || wallImages[wall.originalCode]) && (
                           <button
                             onClick={() => handleRemoveImage(wall.code)}
                             className="flex items-center gap-1 px-2 py-1 bg-white text-red-600 text-xs font-medium hover:bg-red-600 hover:text-white transition-colors"
