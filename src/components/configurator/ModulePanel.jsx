@@ -334,12 +334,21 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
       if (isEnd) {
         const endWalls = allWalls.filter(w =>
           w.orientation === "vertical" &&
-          Math.abs(w.width - 4.8) < 0.05 &&
-          (!w.variants || w.variants.length === 0 || w.variants.includes("End"))
+          Math.abs(w.width - 4.8) < 0.05
         );
         filtered = [...filtered, ...endWalls];
         filtered = Array.from(new Map(filtered.map(w => [w.type, w])).values());
       }
+    }
+
+    // Always include 4.8m walls when an end module is selected, regardless of face
+    if (isEnd && !selectedWall && selectedModule) {
+      const endWalls = allWalls.filter(w =>
+        w.orientation === "vertical" &&
+        Math.abs(w.width - 4.8) < 0.05
+      );
+      filtered = [...filtered, ...endWalls];
+      filtered = Array.from(new Map(filtered.map(w => [w.type, w])).values());
     }
 
     const context = selectedWall ? `Face ${face}` : `${chassis} module`;
