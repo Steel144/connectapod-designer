@@ -56,14 +56,6 @@ export default function PrintableElevationsSheet({ walls, onClose }) {
       >
         Close
       </button>
-      {/* Logo */}
-      <div className="fixed top-4 right-20 z-40 print:absolute print:top-4 print:right-4 print:fixed:none">
-        <img 
-          src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69a55c0c222e61cb3fbc417c/1ae4d27f6_Untitled-1-01.png" 
-          alt="Connectapod Logo" 
-          style={{ height: "72px", width: "auto" }}
-        />
-      </div>
       {Object.entries(groupedByFace).map(([face, walls], idx) => {
         if (walls.length === 0) return null;
         
