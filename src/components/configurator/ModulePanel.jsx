@@ -548,9 +548,9 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
             padding: "4px",
           }}
         >
-          <div className="flex-1 bg-gray-50 rounded overflow-hidden">
+          <div className="flex-1 bg-gray-50 rounded overflow-hidden flex items-center justify-center">
             {hoveredModule.floorPlanImage ? (
-              <img src={hoveredModule.floorPlanImage} alt={hoveredModule.label} className="w-full h-full object-contain" />
+              <img src={hoveredModule.floorPlanImage} alt={hoveredModule.label} className="w-full h-auto" />
             ) : (
               <FloorPlanSVG code={hoveredModule.type} className="w-full h-full" />
             )}
