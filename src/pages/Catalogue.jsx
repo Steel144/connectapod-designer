@@ -454,32 +454,39 @@ export default function Catalogue() {
                     className={`bg-white border p-4 transition-all group relative ${mod._deleted ? "border-red-200 opacity-50" : "border-gray-200 hover:shadow-md hover:border-[#F15A22]"}`}
                   >
                     {editMode && (
-                      <div className="absolute top-2 right-2 flex items-center gap-1 z-10">
-                        {mod._deleted ? (
-                          <button
-                            onClick={() => handleRestoreModule(mod.code)}
-                            className="text-xs text-green-600 hover:underline"
-                          >Restore</button>
-                        ) : (
-                          <>
-                            <button
-                              onClick={() => setEditingModule({ ...mod, category: cat.category })}
-                              className="text-gray-300 hover:text-[#F15A22] transition-colors"
-                              title="Edit module"
-                            >
-                              <Pencil size={13} />
-                            </button>
-                            <button
-                              onClick={() => mod._custom ? handleDeleteModule(mod._id) : handleDeleteBuiltinModule(mod.code)}
-                              className="text-gray-300 hover:text-red-500 transition-colors"
-                              title="Remove module"
-                            >
-                              <Trash2 size={13} />
-                            </button>
-                          </>
-                        )}
-                      </div>
-                    )}
+                       <div className="absolute top-2 right-2 flex items-center gap-1 z-10">
+                         {mod._deleted ? (
+                           <button
+                             onClick={() => handleRestoreModule(mod.code)}
+                             className="text-xs text-green-600 hover:underline"
+                           >Restore</button>
+                         ) : (
+                           <>
+                             <button
+                               onClick={() => handleDuplicateModule(mod, cat.category)}
+                               className="text-gray-300 hover:text-blue-500 transition-colors"
+                               title="Duplicate module"
+                             >
+                               <Copy size={13} />
+                             </button>
+                             <button
+                               onClick={() => setEditingModule({ ...mod, category: cat.category })}
+                               className="text-gray-300 hover:text-[#F15A22] transition-colors"
+                               title="Edit module"
+                             >
+                               <Pencil size={13} />
+                             </button>
+                             <button
+                               onClick={() => mod._custom ? handleDeleteModule(mod._id) : handleDeleteBuiltinModule(mod.code)}
+                               className="text-gray-300 hover:text-red-500 transition-colors"
+                               title="Remove module"
+                             >
+                               <Trash2 size={13} />
+                             </button>
+                           </>
+                         )}
+                       </div>
+                     )}
 
                     {/* Visual preview */}
                     <div
