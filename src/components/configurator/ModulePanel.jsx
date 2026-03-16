@@ -415,11 +415,11 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
                        onMouseLeave={() => setHoveredModule(null)}
                        className="flex items-center gap-3 px-3 py-2 cursor-grab active:cursor-grabbing hover:bg-orange-50 border-b border-gray-50 last:border-0 transition-colors"
                      >
-                       <div className="shrink-0 w-10 h-16 border border-gray-200 bg-white overflow-hidden relative">
+                       <div className="shrink-0 w-16 h-20 border border-gray-200 bg-white overflow-hidden relative flex items-center justify-center">
                          {floorPlanImages[mod.type] || floorPlanImages[item.originalCode] ? (
-                           <img src={floorPlanImages[mod.type] || floorPlanImages[item.originalCode]} alt={item.name} className="w-full h-full object-contain" />
+                           <img src={floorPlanImages[mod.type] || floorPlanImages[item.originalCode]} alt={item.name} className="w-auto h-auto max-w-[60px] max-h-[76px] object-contain" />
                          ) : (
-                           <FloorPlanSVG code={item.code} className="w-full h-full" />
+                           <FloorPlanSVG code={item.code} className="w-auto h-auto max-w-[60px] max-h-[76px]" />
                          )}
                        </div>
                        <div className="min-w-0">
