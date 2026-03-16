@@ -8,6 +8,7 @@ export default function EditModuleModal({ module: mod, onSave, onClose }) {
     width: mod.width ?? 3.0,
     depth: mod.depth ?? 4.8,
     description: mod.description || "",
+    variants: mod.variants || [],
     wallElevationZ: mod.wallElevations?.Z || mod.wallElevationZ || "",
     wallElevationW: mod.wallElevations?.W || mod.wallElevationW || "",
     wallElevationY: mod.wallElevations?.Y || mod.wallElevationY || "",
