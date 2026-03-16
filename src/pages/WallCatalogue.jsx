@@ -495,6 +495,7 @@ export default function WallCatalogue() {
           groupLabel={addingToGroup.label}
           onSave={handleAddWall}
           onClose={() => setAddingToGroup(null)}
+          existingWalls={customWalls}
         />
       )}
 
