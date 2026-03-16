@@ -573,7 +573,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
               }}
             >
               <div
-                className="absolute inset-0 overflow-hidden flex items-center justify-center"
+                className="absolute inset-0 overflow-hidden"
                 style={{
                   transform: `rotate(${mod.rotation || 0}deg)`,
                   width: "100%",
