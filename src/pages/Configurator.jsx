@@ -45,7 +45,7 @@ export default function Configurator() {
   const [selectedModule, setSelectedModule] = useState(null);
   const [printMode, setPrintMode] = useState(null);
   const [availableWallTypes, setAvailableWallTypes] = useState([]);
-  const handleWallTypesLoaded = useCallback((wallTypes) => {
+  const handleWallTypesLoaded = React.useCallback((wallTypes) => {
     setAvailableWallTypes(wallTypes);
   }, []);
   const queryClient = useQueryClient();
