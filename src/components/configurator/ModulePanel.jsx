@@ -92,7 +92,7 @@ const PANEL_GROUPS = [
   },
   {
     key: "bathroom",
-    label: "Bedroom",
+    label: "Bathroom",
     color: "#FDF0EB",
     border: "#F15A22",
     price: 14000,
