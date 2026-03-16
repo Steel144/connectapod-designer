@@ -761,32 +761,20 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
         const wall = walls.find(w => w.id === hoveredWallId);
         return wall?.elevationImage ? (
           <div
-            className="fixed z-[100] bg-white border-2 border-[#F15A22] shadow-xl rounded pointer-events-none flex flex-col"
+            className="fixed z-[100] bg-white border-2 border-[#F15A22] shadow-xl rounded pointer-events-none"
             style={{
-              maxWidth: "340px",
+              maxWidth: "320px",
+              maxHeight: "400px",
               top: "48px",
               right: "20px",
-              padding: "8px",
+              padding: "4px",
             }}
           >
-            <div className="flex items-start justify-between gap-2 mb-2">
-              <div>
-                <p className="text-xs font-semibold text-gray-900">{wall.label}</p>
-                <p className="text-[10px] text-gray-500">Wall {wall.face || 'Elevation'}</p>
-              </div>
-            </div>
-            <div className="bg-gray-50 rounded overflow-hidden mb-2" style={{ maxHeight: "280px" }}>
-              <img 
-                src={wall.elevationImage} 
-                alt={wall.label} 
-                className="w-auto h-auto max-w-[324px] max-h-[280px] object-contain" 
-              />
-            </div>
-            <div className="text-[10px] text-gray-600 space-y-1">
-              <div className="flex justify-between"><span>Position:</span><span className="font-mono">{wall.x}, {wall.y}</span></div>
-              <div className="flex justify-between"><span>Size:</span><span className="font-mono">{wall.length || wall.thickness}×{wall.thickness}</span></div>
-              <div className="flex justify-between"><span>Orient:</span><span className="font-mono capitalize">{wall.orientation}</span></div>
-            </div>
+            <img 
+              src={wall.elevationImage} 
+              alt={wall.label} 
+              className="w-auto h-auto max-w-[312px] max-h-[392px] object-contain" 
+            />
           </div>
         ) : null;
       })()}
