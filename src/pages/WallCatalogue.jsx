@@ -547,14 +547,14 @@ export default function WallCatalogue() {
                   </div>
 
                   {/* Wall image */}
-                   <div className="w-full bg-white border border-gray-100 flex items-center justify-center mb-3 relative" style={{ height: "240px" }}>
+                   <div className="w-full bg-gray-50 border border-gray-100 flex items-center justify-center mb-3 relative" style={{ height: "240px" }}>
                      {uploading === wall.code ? (
                        <Loader2 size={20} className="animate-spin text-[#F15A22]" />
                      ) : (wallImages[wall.code] || wallImages[wall.originalCode]) ? (
                        <img src={wallImages[wall.code] || wallImages[wall.originalCode]} alt={wall.name} className="w-auto h-full object-contain" />
                      ) : (
                        <div
-                         className="bg-gray-300 border border-gray-400"
+                         className="bg-white border border-gray-300"
                          style={{ width: `${(wall.width / 3000) * 60}%`, height: "80%" }}
                        />
                      )}

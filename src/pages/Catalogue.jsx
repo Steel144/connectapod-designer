@@ -479,8 +479,8 @@ export default function Catalogue() {
 
                     {/* Visual preview */}
                      <div
-                       className="w-full mb-3 relative flex items-center justify-center border border-gray-100 bg-white"
-                       style={{ height: "240px" }}
+                       className="w-full mb-3 relative flex items-center justify-center border border-gray-100"
+                       style={{ height: "240px", backgroundColor: CATEGORY_COLORS[cat.category] || "#F5F5F3" }}
                      >
                        {uploading === mod.code ? (
                          <Loader2 size={20} className="animate-spin text-[#F15A22]" />
@@ -488,7 +488,7 @@ export default function Catalogue() {
                          <img src={floorPlanImages[mod.code] || floorPlanImages[mod.originalCode]} alt={mod.name} className="w-auto h-full object-contain" />
                       ) : (
                         <div
-                          className="border-2 border-gray-400 group-hover:border-[#F15A22] transition-colors flex items-center justify-center"
+                          className="bg-white border-2 border-gray-300 group-hover:border-[#F15A22] transition-colors flex items-center justify-center"
                           style={{ width: `${(mod.width / 3) * 60}%`, height: "80%" }}
                         >
                           <span className="text-xs font-mono text-gray-400 group-hover:text-[#F15A22]">
