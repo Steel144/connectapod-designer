@@ -684,8 +684,8 @@ export default function Configurator() {
                        <p className="text-xs font-semibold text-gray-900 break-words">{selectedModule.label}</p>
                        <p className="text-[10px] text-gray-500">{selectedModule.type}</p>
                      </div>
-                     <div className="flex-1 bg-gray-50 rounded overflow-hidden">
-                       <img src={selectedModule.floorPlanImage} alt={selectedModule.label} className="w-full h-full object-contain" />
+                     <div className="flex-1 bg-gray-50 rounded overflow-hidden flex items-center justify-center">
+                       <img src={selectedModule.floorPlanImage} alt={selectedModule.label} className="w-full h-full object-contain" style={{ transform: `rotate(${selectedModule.rotation || 0}deg) ${selectedModule.flipped ? 'scaleX(-1)' : ''}` }} />
                      </div>
                    </div>
                  ) : selectedWall && selectedWall.elevationImage ? (
