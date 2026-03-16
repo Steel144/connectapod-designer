@@ -32,7 +32,7 @@ const CATALOGUE = [
     ],
   },
   {
-    category: "General — Door Layouts",
+    category: "Bathroom",
     description: "Modules with internal door openings (DRH810 / DLH810). Used to connect adjacent rooms.",
     modules: [
       { code: "011-1", name: "Door — Top Left", width: 3.0, depth: 4.8, sqm: 14.4, description: "Single door top-left (DRH810). W000 on W/Y faces only.", chassisCodes: ["MP-48-SF30", "MP-48-SR30"], wallElevations: { Z: "N/A", W: "W000", Y: "Y000", X: "N/A" } },
