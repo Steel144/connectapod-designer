@@ -211,6 +211,10 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
      };
 
      return PANEL_GROUPS.map(group => {
+       // Keep built-in items, filter out deleted ones
+       const builtInItems = group.items.filter(item => !deletedCodes.has(item.code));
+
+       // Find custom modules for this category
        const categoryModules = customModules.filter(m => {
          if (deletedCodes.has(m.code)) return false;
          const descriptions = (m.description || "").split(",").map(s => s.trim()).filter(Boolean);
@@ -235,7 +239,9 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
          };
        });
 
-       const sorted = customItems.sort((a, b) => {
+       // Merge built-in and custom items
+       const allItems = [...builtInItems, ...customItems];
+       const sorted = allItems.sort((a, b) => {
          const aIsEnd = a.chassis === "EF" || a.chassis === "ER" || a.chassis === "LF" || a.chassis === "RF";
          const bIsEnd = b.chassis === "EF" || b.chassis === "ER" || b.chassis === "LF" || b.chassis === "RF";
          const aIsDeck = a.description?.includes("Deck") || a.description?.includes("Soffit");
