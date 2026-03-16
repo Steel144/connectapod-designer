@@ -355,7 +355,7 @@ export default function Catalogue() {
         wallElevations_list: c.wallElevations_list || [],
         wallElevations: { Z: c.wallElevationZ || "N/A", W: c.wallElevationW || "", Y: c.wallElevationY || "", X: c.wallElevationX || "N/A" },
         originalCode: c.originalCode || undefined,
-        _custom: true, _id: c.id,
+        _custom: true, _id: c.id, _deleted: false,
       }));
 
     const merged = [...builtins, ...customs];
