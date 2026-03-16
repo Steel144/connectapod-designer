@@ -197,6 +197,32 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
     queryFn: () => base44.entities.DeletedWall.list(),
   });
 
+  // Merge custom modules with PANEL_GROUPS by category
+  const dynamicPanelGroups = useMemo(() => {
+    const deletedCodes = new Set(deletedModules.map(d => d.moduleCode));
+    
+    return PANEL_GROUPS.map(group => {
+      const categoryModules = customModules.filter(m => m.category === group.label && !deletedCodes.has(m.code));
+      const customItems = categoryModules.map(m => ({
+        code: m.code,
+        name: m.name,
+        mpCode: m.code,
+        width: m.width || 3.0,
+        depth: m.depth || 4.8,
+        sqm: m.sqm || parseFloat(((m.width || 3.0) * (m.depth || 4.8)).toFixed(1)),
+        description: m.description || "",
+        chassis: "SF",
+        widthCode: "30",
+        room: "G",
+      }));
+      
+      return {
+        ...group,
+        items: [...group.items, ...customItems],
+      };
+    });
+  }, [customModules, deletedModules]);
+
   const customWallTypes = customWalls
     .filter(w => !deletedWalls.some(d => d.wallCode === w.code))
     .map(w => {
