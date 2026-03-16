@@ -465,7 +465,7 @@ export default function Catalogue() {
                         </div>
                       )}
                       {editMode && uploading !== mod.code && (
-                        <div className="absolute inset-0 bg-black/40 flex items-center justify-center gap-2">
+                        <div className="absolute inset-0 bg-black/40 items-center justify-center gap-2 hidden group-hover:flex">
                           <button
                             onClick={() => handleUploadClick(mod.code)}
                             className="flex items-center gap-1 px-2 py-1 bg-white text-gray-800 text-xs font-medium hover:bg-[#F15A22] hover:text-white transition-colors"
