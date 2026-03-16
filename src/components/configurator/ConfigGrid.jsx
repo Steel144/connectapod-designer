@@ -421,10 +421,11 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
     e.stopPropagation();
 
     const modType = e.dataTransfer.getData("moduleType");
-    console.log("modType:", modType);
+    const moduleImage = e.dataTransfer.getData("moduleImage");
+    console.log("modType:", modType, "image:", moduleImage);
     if (modType) {
       let mod = MODULE_TYPES.find((m) => m.type === modType);
-      
+
       // If not in MODULE_TYPES, try custom modules
       if (!mod && customModules.length > 0) {
         const customMod = customModules.find(c => c.code === modType);
@@ -443,8 +444,9 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
           };
         }
       }
-      
+
       if (!mod || !gridRef.current) return;
+      if (moduleImage) mod.floorPlanImage = moduleImage;
       const { x, y } = getCellFromClient(e.clientX, e.clientY);
       if (canPlace(mod, x, y)) onPlace(mod, x, y);
       return;
