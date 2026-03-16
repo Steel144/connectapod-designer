@@ -596,7 +596,7 @@ export default function Configurator() {
         )}
         {viewMode === "elevations" && (
           <div className="absolute inset-0 z-10">
-            <ElevationGallery walls={walls} />
+            <ElevationGallery walls={walls} onWallSelect={setSelectedWall} />
           </div>
         )}
         <ConfigGrid
