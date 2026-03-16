@@ -735,59 +735,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
 
       </div>
 
-      {/* Module floor plan preview on hover */}
-      {hoveredModuleId && (() => {
-        const mod = placedModules.find(m => m.id === hoveredModuleId);
-        return mod?.floorPlanImage ? (
-          <div
-            className="fixed z-[100] bg-white border-2 border-[#F15A22] shadow-xl rounded pointer-events-none flex flex-col"
-            style={{
-              width: "260px",
-              height: "360px",
-              top: "48px",
-              right: "20px",
-              padding: "8px",
-            }}
-          >
-            <div className="mb-2 min-h-fit">
-              <p className="text-xs font-semibold text-gray-900 break-words">{mod.label}</p>
-              <p className="text-[10px] text-gray-500 break-words">{mod.type}</p>
-            </div>
-            <div className="flex-1 bg-gray-50 rounded overflow-hidden">
-              <img src={mod.floorPlanImage} alt={mod.label} className="w-full h-full object-contain" />
-            </div>
-          </div>
-        ) : null;
-      })()}
 
-      {/* Wall elevation preview on hover */}
-      {hoveredWallId && (() => {
-        const wall = walls.find(w => w.id === hoveredWallId);
-        return wall?.elevationImage ? (
-          <div
-            className="fixed z-[100] bg-white border-2 border-[#F15A22] shadow-xl rounded pointer-events-none flex flex-col"
-            style={{
-              width: "340px",
-              height: "420px",
-              top: "48px",
-              right: "20px",
-              padding: "8px",
-            }}
-          >
-            <div className="mb-2 min-h-fit">
-              <p className="text-xs font-semibold text-gray-900 break-words">{wall.label}</p>
-              <p className="text-[10px] text-gray-500">Wall Elevation</p>
-            </div>
-            <div className="flex-1 bg-gray-50 rounded overflow-hidden">
-              <img 
-                src={wall.elevationImage} 
-                alt={wall.label} 
-                className="w-full h-full object-contain" 
-              />
-            </div>
-          </div>
-        ) : null;
-      })()}
 
       <p className="text-xs text-slate-400 mt-2 text-center">
         Grid: {GRID_COLS}×{GRID_ROWS} cells · Snap: 600mm
