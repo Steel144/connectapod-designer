@@ -29,6 +29,7 @@ export default function AddModuleModal({ category, onSave, onClose }) {
       depth: Number(form.depth),
       sqm,
       description: form.description.trim(),
+      variants: form.variants,
       wallElevationZ: form.wallElevationZ || undefined,
       wallElevationW: form.wallElevationW || undefined,
       wallElevationY: form.wallElevationY || undefined,
