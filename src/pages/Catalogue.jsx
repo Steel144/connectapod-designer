@@ -7,8 +7,16 @@ import { toast } from "sonner";
 import AddModuleModal from "@/components/catalogue/AddModuleModal";
 import EditModuleModal from "@/components/catalogue/EditModuleModal";
 
-// All built-in modules have been removed — use only custom ModuleEntry entries
-const CATALOGUE = [];
+// Category structure for organizing custom modules — all built-in modules hidden
+const CATALOGUE = [
+  { category: "Living", description: "Standard open modules with no internal partitions. Used for living, dining, sleeping areas.", modules: [] },
+  { category: "Bedroom", description: "End-of-row modules with finished end walls. Available in left-hand (LF/LR) and right-hand (RF/RR) configurations.", modules: [] },
+  { category: "Bathroom", description: "Standard bathroom module with shower, vanity, and toilet.", modules: [] },
+  { category: "Laundry", description: "Modules with offset wall panels to create corner connections between perpendicular rows.", modules: [] },
+  { category: "Kitchen", description: "End-of-row kitchen modules with finished end wall and full cabinetry layout.", modules: [] },
+  { category: "Soffit", description: "Soffit-only modules.", modules: [] },
+  { category: "Deck", description: "Outdoor deck modules with wall panels and soffit options.", modules: [] },
+];
 
 const CATEGORY_COLORS = {
   "Living": "#E8F4FD",
