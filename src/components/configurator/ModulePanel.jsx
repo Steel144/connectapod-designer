@@ -187,6 +187,11 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
     queryFn: () => base44.entities.DeletedModule.list(),
   });
 
+  const { data: purgedModules = [] } = useQuery({
+    queryKey: ["purgedModules"],
+    queryFn: () => base44.entities.PurgedModule.list(),
+  });
+
   const { data: customWalls = [] } = useQuery({
     queryKey: ["wallEntries"],
     queryFn: () => base44.entities.WallEntry.list(),
