@@ -350,9 +350,10 @@ export default function Catalogue() {
   const allCatalogue = catalogueByCategory.map(cat => {
     const builtins = cat.modules
       .filter(m => {
+        if (purgedCodes.has(m.code)) return false; // Never show purged modules
         if (overriddenModuleCodes.has(m.code)) return false;
         if (!deletedCodes.has(m.code)) return true;
-        return editMode;
+        return editMode; // Only show deleted modules in edit mode
       })
       .map(m => ({ ...m, _custom: false, _deleted: deletedCodes.has(m.code) }));
 
