@@ -217,8 +217,8 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
      };
 
      return PANEL_GROUPS.map(group => {
-       // Keep built-in items, filter out deleted ones
-       const builtInItems = group.items.filter(item => !deletedCodes.has(item.code));
+       // Keep built-in items, filter out deleted and purged ones
+       const builtInItems = group.items.filter(item => !deletedCodes.has(item.code) && !purgedCodes.has(item.code));
 
        // Find custom modules for this category
        const categoryModules = customModules.filter(m => {
