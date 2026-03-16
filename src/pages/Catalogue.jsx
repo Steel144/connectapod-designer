@@ -184,19 +184,23 @@ export default function Catalogue() {
 
   const handlePermanentlyDeleteModule = async (code) => {
     try {
-      // If it's a custom module, delete the ModuleEntry itself
+      // If it's a custom module, delete the ModuleEntry entirely
       const customModule = customModules.find(m => m.code === code);
       if (customModule) {
         await base44.entities.ModuleEntry.delete(customModule.id);
-        // If it was overriding a builtin, ensure builtin stays hidden
-        if (customModule.originalCode) {
-          const existing = await base44.entities.DeletedModule.filter({ moduleCode: customModule.originalCode });
-          if (existing.length === 0) {
-            await base44.entities.DeletedModule.create({ moduleCode: customModule.originalCode });
-          }
-        }
       }
-      // For builtin modules, DeletedModule record already exists (keeping it hidden)
+      
+      // Mark as permanently purged
+      const existing = await base44.entities.PurgedModule.filter({ moduleCode: code });
+      if (existing.length === 0) {
+        await base44.entities.PurgedModule.create({ moduleCode: code });
+      }
+      
+      // Remove associated DeletedModule record if it exists
+      const deleted = await base44.entities.DeletedModule.filter({ moduleCode: code });
+      if (deleted.length > 0) {
+        await base44.entities.DeletedModule.delete(deleted[0].id);
+      }
       
       // Always remove images
       const images = await base44.entities.FloorPlanImage.filter({ moduleType: code });
@@ -207,9 +211,10 @@ export default function Catalogue() {
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ["moduleEntries"] }),
         queryClient.invalidateQueries({ queryKey: ["deletedModules"] }),
+        queryClient.invalidateQueries({ queryKey: ["purgedModules"] }),
         queryClient.invalidateQueries({ queryKey: ["floorPlanImages"] })
       ]);
-      toast.success("Module purged");
+      toast.success("Module purged forever");
     } catch (error) {
       console.error("Purge failed:", error);
       toast.error("Failed to purge module");
