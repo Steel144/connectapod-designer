@@ -74,13 +74,25 @@ export default function EditModuleModal({ module: mod, onSave, onClose }) {
           {/* Description */}
           <div>
             <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Description</label>
-            <textarea
-              value={form.description}
-              onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
-              rows={2}
-              placeholder="e.g. Full-width standard open module"
-              className="w-full border border-gray-200 px-3 py-1.5 text-sm focus:outline-none focus:border-[#F15A22] resize-none"
-            />
+            <div className="flex flex-wrap gap-2">
+              {["Living", "Bedroom", "Bathroom", "Laundry", "Kitchen", "Soffit", "Deck"].map(opt => {
+                const active = form.description.split(",").map(s => s.trim()).includes(opt);
+                return (
+                  <button
+                    key={opt}
+                    type="button"
+                    onClick={() => {
+                      const parts = form.description.split(",").map(s => s.trim()).filter(Boolean);
+                      const updated = active ? parts.filter(p => p !== opt) : [...parts, opt];
+                      setForm(f => ({ ...f, description: updated.join(", ") }));
+                    }}
+                    className={`px-3 py-1.5 text-xs border transition-colors ${active ? "bg-[#F15A22] text-white border-[#F15A22]" : "bg-white text-gray-600 border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22]"}`}
+                  >
+                    {opt}
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
           {/* Wall Elevations */}
