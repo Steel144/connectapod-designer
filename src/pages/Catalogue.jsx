@@ -1,11 +1,12 @@
 import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { ChevronLeft, Pencil, Upload, X, Loader2, Plus, Trash2, Copy } from "lucide-react";
+import { ChevronLeft, Pencil, Upload, X, Loader2, Plus, Trash2, Copy, Printer } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { toast } from "sonner";
 import AddModuleModal from "@/components/catalogue/AddModuleModal";
 import EditModuleModal from "@/components/catalogue/EditModuleModal";
+import PrintableCatalogue from "@/components/catalogue/PrintableCatalogue";
 
 // Category structure for organizing custom modules — all built-in modules hidden
 const CATALOGUE = [
