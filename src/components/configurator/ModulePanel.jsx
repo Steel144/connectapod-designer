@@ -203,7 +203,7 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
     const categoryAbbreviations = {
       "Living": ["LV", "living"],
       "Bedroom": ["B0", "B1", "B2", "B3", "B4", "bedroom"],
-      "Bathroom": ["B", "bathroom"],
+      "Bathroom": ["W", "bathroom"],
       "Kitchen": ["K", "kitchen"],
       "Laundry": ["L", "laundry"],
       "Deck": ["DK", "D", "deck"],
