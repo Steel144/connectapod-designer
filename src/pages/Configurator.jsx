@@ -636,17 +636,16 @@ export default function Configurator() {
           </div>
           <div className="flex-1 overflow-y-auto p-3">
             <ModulePanel
-              onDragStart={handleDragStart}
-              onDragEnd={handleDragEnd}
-              selectedWall={selectedWall}
-              selectedModule={selectedModule}
-              placedModules={placedModules}
-              onModuleImageUpdate={handleModuleImageUpdate}
-              onWallImageUpdate={handleWallImageUpdate}
-              onWallTypesLoaded={handleWallTypesLoaded}
-              floorPlanImages={floorPlanImages}
-              wallImages={wallImages}
-            />
+               onDragStart={handleDragStart}
+               onDragEnd={handleDragEnd}
+               selectedWall={selectedWall}
+               selectedModule={selectedModule}
+               placedModules={placedModules}
+               onModuleImageUpdate={handleModuleImageUpdate}
+               onWallImageUpdate={handleWallImageUpdate}
+               floorPlanImages={floorPlanImages}
+               wallImages={wallImages}
+             />
           </div>
         </div>
 
