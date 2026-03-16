@@ -444,8 +444,8 @@ export default function Catalogue() {
                     >
                       {uploading === mod.code ? (
                         <Loader2 size={20} className="animate-spin text-[#F15A22]" />
-                      ) : floorPlanImages[mod.code] ? (
-                        <img src={floorPlanImages[mod.code]} alt={mod.name} className="w-full h-full object-contain" />
+                      ) : (floorPlanImages[mod.code] || floorPlanImages[mod.originalCode]) ? (
+                        <img src={floorPlanImages[mod.code] || floorPlanImages[mod.originalCode]} alt={mod.name} className="w-full h-full object-contain" />
                       ) : (
                         <div
                           className="border-2 border-gray-400 group-hover:border-[#F15A22] transition-colors flex items-center justify-center"
