@@ -429,6 +429,10 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
                        onDragStart={(e) => {
                          e.dataTransfer.effectAllowed = "copy";
                          e.dataTransfer.setData("moduleType", mod.type);
+                         const imageUrl = floorPlanImages[mod.type] || floorPlanImages[item.originalCode];
+                         if (imageUrl) {
+                           e.dataTransfer.setData("moduleImage", imageUrl);
+                         }
                          onDragStart(e, mod);
                        }}
                        onDragEnd={onDragEnd}
