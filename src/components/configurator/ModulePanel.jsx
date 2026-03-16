@@ -75,7 +75,7 @@ const PANEL_GROUPS = [
       { code: "050-2", name: "L-Corner Right",       mpCode: mp48("SF","30","G50",2), width: 3.0, depth: 4.8, sqm: 14.4, chassis: "SF", widthCode: "30", room: "G", orientation: 2 },
       { code: "050-3", name: "L-Corner Mirror Left", mpCode: mp48("SF","30","G50",3), width: 3.0, depth: 4.8, sqm: 14.4, chassis: "SF", widthCode: "30", room: "G", orientation: 3 },
       { code: "050-4", name: "L-Corner Mirror Right",mpCode: mp48("SF","30","G50",4), width: 3.0, depth: 4.8, sqm: 14.4, chassis: "SF", widthCode: "30", room: "G", orientation: 4 },
-      { code: "CP48-12S-B07-LV07", name: "Custom 1.2m Living Module", mpCode: "CP48-12S-B07-LV07", width: 1.2, depth: 4.8, sqm: 5.8, chassis: "SF", widthCode: "12", room: "G" },
+      { code: "CP48-12S-B07-LV07", name: "Flexible 1.2m (Living/Bath)", mpCode: "CP48-12S-B07-LV07", width: 1.2, depth: 4.8, sqm: 5.8, chassis: "SF", widthCode: "12", room: "G" },
     ],
   },
   {
