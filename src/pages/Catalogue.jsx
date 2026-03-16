@@ -485,7 +485,19 @@ export default function Catalogue() {
                        {uploading === mod.code ? (
                          <Loader2 size={20} className="animate-spin text-[#F15A22]" />
                        ) : (floorPlanImages[mod.code] || floorPlanImages[mod.originalCode]) ? (
-                         <img src={floorPlanImages[mod.code] || floorPlanImages[mod.originalCode]} alt={mod.name} className="w-auto h-full object-contain" style={{ backgroundColor: 'white' }} />
+                         <>
+                           <img src={floorPlanImages[mod.code] || floorPlanImages[mod.originalCode]} alt={mod.name} className="w-auto h-full object-contain" style={{ backgroundColor: 'white' }} />
+                           {floorPlanImages[mod.code] && (
+                             <div className="absolute top-2 right-2 bg-green-500 text-white text-[10px] px-1.5 py-0.5 rounded flex items-center gap-1">
+                               <span>✓</span> Matched
+                             </div>
+                           )}
+                           {!floorPlanImages[mod.code] && floorPlanImages[mod.originalCode] && (
+                             <div className="absolute top-2 right-2 bg-yellow-500 text-white text-[10px] px-1.5 py-0.5 rounded flex items-center gap-1" title="Using original code image">
+                               <span>⚠</span> Original
+                             </div>
+                           )}
+                         </>
                       ) : (
                         <div
                           className="bg-white border-2 border-gray-300 group-hover:border-[#F15A22] transition-colors flex items-center justify-center"
