@@ -378,10 +378,9 @@ export default function WallCatalogue() {
     const builtins = g.walls
       .filter(w => {
         if (overriddenCodes.has(w.code)) return false;
-        if (!deletedCodes.has(w.code)) return true;
-        return editMode;
+        return !deletedCodes.has(w.code);
       })
-      .map(w => ({ ...w, _custom: false, _deleted: deletedCodes.has(w.code), _groupKey: g.key }));
+      .map(w => ({ ...w, _custom: false, _deleted: false, _groupKey: g.key }));
 
     const customs = customWalls.filter(c => c.groupKey === g.key).map(c => ({
       code: c.code, name: c.name, width: c.width || 3000,
