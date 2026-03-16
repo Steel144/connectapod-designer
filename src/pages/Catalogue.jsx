@@ -347,19 +347,13 @@ export default function Catalogue() {
 
         {/* Category filter */}
         <div className="flex flex-wrap gap-2 mb-8">
-          <button
-            onClick={() => setActiveCategory("All")}
-            className={`px-3 py-1.5 text-xs font-medium border transition-all ${activeCategory === "All" ? "bg-[#F15A22] text-white border-[#F15A22]" : "bg-white text-gray-600 border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22]"}`}
-          >
-            All Categories
-          </button>
-          {CATALOGUE.map(cat => (
+          {categories.map(cat => (
             <button
-              key={cat.category}
-              onClick={() => setActiveCategory(cat.category)}
-              className={`px-3 py-1.5 text-xs font-medium border transition-all ${activeCategory === cat.category ? "bg-[#F15A22] text-white border-[#F15A22]" : "bg-white text-gray-600 border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22]"}`}
+              key={cat}
+              onClick={() => setActiveCategory(cat)}
+              className={`px-3 py-1.5 text-xs font-medium border transition-all ${activeCategory === cat ? "bg-[#F15A22] text-white border-[#F15A22]" : "bg-white text-gray-600 border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22]"}`}
             >
-              {cat.category}
+              {cat}
             </button>
           ))}
         </div>
