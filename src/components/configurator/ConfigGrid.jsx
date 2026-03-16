@@ -383,7 +383,26 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
     const modType = e.dataTransfer.getData("moduleType");
     console.log("modType:", modType);
     if (modType) {
-      const mod = MODULE_TYPES.find((m) => m.type === modType);
+      let mod = MODULE_TYPES.find((m) => m.type === modType);
+      
+      // If not in MODULE_TYPES, try custom modules
+      if (!mod && customModules.length > 0) {
+        const customMod = customModules.find(c => c.code === modType);
+        if (customMod) {
+          mod = {
+            type: customMod.code,
+            label: customMod.name,
+            w: Math.round((customMod.width || 3.0) / 0.6),
+            h: Math.round((customMod.depth || 4.8) / 0.6),
+            sqm: customMod.sqm || (customMod.width || 3.0) * (customMod.depth || 4.8),
+            price: customMod.price || 0,
+            groupKey: customMod.category || "Living",
+            color: "#FDF0EB",
+            border: "#F15A22",
+          };
+        }
+      }
+      
       if (!mod || !gridRef.current) return;
       const { x, y } = getCellFromClient(e.clientX, e.clientY);
       if (canPlace(mod, x, y)) onPlace(mod, x, y);
