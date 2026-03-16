@@ -654,11 +654,8 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
         {walls.map((wall) => {
            const isBeingDragged = draggingWall?.wall.id === wall.id;
            const isSelected = selectedWallIds.has(wall.id);
-           // For vertical walls (Z/X faces), crop to 3m (5 cells) instead of full length
-           const isVertical = wall.orientation === "vertical";
-           const croppedLength = isVertical ? 5 : wall.length; // 5 cells = 3m
-           const wallW = !isVertical ? wall.length * CELL_W : wall.thickness * CELL_W;
-           const wallH = isVertical ? croppedLength * CELL_H : wall.thickness * CELL_H;
+           const wallW = wall.orientation === "horizontal" ? wall.length * CELL_W : wall.thickness * CELL_W;
+           const wallH = wall.orientation === "vertical" ? wall.length * CELL_H : wall.thickness * CELL_H;
 
            // Ghost position while dragging
            let ghostLeft = wall.x * CELL_W;
