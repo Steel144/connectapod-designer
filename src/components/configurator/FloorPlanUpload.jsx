@@ -21,6 +21,13 @@ export default function FloorPlanUpload({ module, onImageAssigned }) {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    // Validate filename matches module code
+    const fileNameWithoutExt = file.name.replace(/\.[^.]+$/, '');
+    if (fileNameWithoutExt !== module?.type) {
+      toast.error(`File name must be "${module?.type}.png" (was "${file.name}")`);
+      return;
+    }
+
     setIsLoading(true);
     try {
       const response = await base44.integrations.Core.UploadFile({ file });
@@ -67,6 +74,7 @@ export default function FloorPlanUpload({ module, onImageAssigned }) {
   return (
     <div className="border-t pt-3 mt-3">
       <p className="text-xs font-semibold text-slate-700 mb-2">Floor Plan Image</p>
+      <p className="text-[10px] text-slate-500 mb-2">File must be named: <code className="bg-slate-100 px-1 rounded">{module?.type}.png</code></p>
       
       {imageUrl ? (
         <div className="space-y-2">
