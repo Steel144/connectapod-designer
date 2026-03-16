@@ -275,7 +275,7 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
   // Notify parent of available wall types so ConfigGrid can resolve drops
   React.useEffect(() => {
     if (onWallTypesLoaded) onWallTypesLoaded(customWallTypes);
-  }, [customWallTypes, onWallTypesLoaded]);
+  }, [customWallTypes]);
 
   React.useEffect(() => {
     if (selectedWall || selectedModule) setOpenGroup("walls");
