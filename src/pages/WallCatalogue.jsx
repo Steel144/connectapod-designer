@@ -107,17 +107,7 @@ const WALL_GROUPS = [
       { code: "W658/Y658 (D1222LDIRTGV)", name: "3000mm Wall – Low Door Louvre Right TGV", width: 3000, variants: ["Standard (W658/Y658)", "Left End (W658L/Y658L)", "Right End (W658R/Y658R)"], description: "Low door + louvre right TGV cladding" },
     ]
   },
-  {
-    key: "3.0m-700",
-    label: "3.0m Module Walls – Series 700 (Corner)",
-    series: "WY700-703",
-    walls: [
-      { code: "W700/Y700 (W622CL2S)", name: "3000mm Corner Wall – Window Left 622", width: 3000, variants: ["Standard (W700/Y700)", "Left End (W700L)"], description: "290+620+2090mm corner window, left-hand" },
-      { code: "W701/Y701 (W622CR2S)", name: "3000mm Corner Wall – Window Right 622", width: 3000, variants: ["Standard (W701/Y701)", "Right End (Y700R)"], description: "290+620+2090mm corner window, right-hand" },
-      { code: "W702/Y702 (W622CL2S)", name: "3000mm Corner Wall – Window Left Mirror", width: 3000, variants: ["Standard (W702/Y702)", "Right End (W702R)"], description: "2090+620+290mm corner window, left mirror" },
-      { code: "W703/Y703 (W622CR2S)", name: "3000mm Corner Wall – Window Right Mirror", width: 3000, variants: ["Standard (W703/Y703)", "Left End (Y703L)"], description: "2090+620+290mm corner window, right mirror" },
-    ]
-  },
+
   {
     key: "3.0m-800",
     label: "3.0m Module Walls – Series 800/900 (Offset Window)",
