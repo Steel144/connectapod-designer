@@ -9,7 +9,7 @@ export default function EditModuleModal({ module: mod, onSave, onClose }) {
     depth: mod.depth ?? 4.8,
     description: mod.description || "",
     variants: mod.variants || [],
-    wallElevations: mod.wallElevations_list || [],
+    wallElevations: mod.wallElevations_list || mod.wallElevations_arr || [],
   });
 
   const sqm = parseFloat((parseFloat(form.width || 3) * parseFloat(form.depth || 4.8)).toFixed(1));

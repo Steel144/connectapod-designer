@@ -274,6 +274,8 @@ export default function Catalogue() {
         sqm: c.sqm || parseFloat(((c.width || 3.0) * (c.depth || 4.8)).toFixed(1)),
         description: c.description || "",
         chassisCodes: c.chassisCodes || [],
+        variants: c.variants || [],
+        wallElevations_list: c.wallElevations_list || [],
         wallElevations: { Z: c.wallElevationZ || "N/A", W: c.wallElevationW || "", Y: c.wallElevationY || "", X: c.wallElevationX || "N/A" },
         originalCode: c.originalCode || undefined,
         _custom: true, _id: c.id,
