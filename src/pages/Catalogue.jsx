@@ -334,24 +334,8 @@ export default function Catalogue() {
       })
       .map(m => ({ ...m, _custom: false, _deleted: deletedCodes.has(m.code) }));
 
-    // Get custom modules for this category or modules whose code/description indicates they belong in it
-    const categoryAbbreviations = {
-      "Living": ["LV", "living"],
-      "Bedroom": ["B0", "B1", "B2", "B3", "B4", "bedroom"],
-      "Bathroom": ["B", "bathroom"],
-      "Kitchen": ["K", "kitchen"],
-      "Laundry": ["L", "laundry"],
-      "Deck": ["DK", "deck"],
-      "Soffit": ["SO", "soffit"],
-    };
-    const abbrevs = categoryAbbreviations[cat.category] || [];
-    const customs = customModules.filter(c => {
-      // Always include if primary category matches
-      if (c.category === cat.category) return true;
-      // Check code and description for category indicators
-      const fullText = `${c.code} ${c.description}`.toUpperCase();
-      return abbrevs.some(abbrev => fullText.includes(abbrev.toUpperCase()));
-    }).map(c => ({
+    // Get custom modules for this category (only primary category matches)
+    const customs = customModules.filter(c => c.category === cat.category).map(c => ({
         code: c.code, name: c.name, width: c.width || 3.0, depth: c.depth || 4.8,
         sqm: c.sqm || parseFloat(((c.width || 3.0) * (c.depth || 4.8)).toFixed(1)),
         description: c.description || "",
