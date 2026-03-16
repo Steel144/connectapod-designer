@@ -176,6 +176,24 @@ export default function Catalogue() {
     }
   };
 
+  const handlePermanentlyDeleteModule = async (code) => {
+    const entry = deletedModules.find(d => d.moduleCode === code);
+    if (entry) {
+      // Delete the DeletedModule record
+      await base44.entities.DeletedModule.delete(entry.id);
+      // Remove any associated image
+      const image = await base44.entities.FloorPlanImage.filter({ moduleType: code });
+      if (image.length > 0) {
+        await base44.entities.FloorPlanImage.delete(image[0].id);
+      }
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["deletedModules"] }),
+        queryClient.invalidateQueries({ queryKey: ["floorPlanImages"] }),
+      ]);
+      toast.success("Module permanently deleted");
+    }
+  };
+
   const handleEditModule = async (data) => {
     // If code changed, migrate any associated image to the new code
     if (editingModule.code !== data.code) {
