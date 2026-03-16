@@ -483,10 +483,16 @@ export default function Catalogue() {
                     {editMode && (
                        <div className="absolute top-2 right-2 flex items-center gap-1 z-10">
                          {mod._deleted ? (
-                           <button
-                             onClick={() => handleRestoreModule(mod.code)}
-                             className="text-xs text-green-600 hover:underline"
-                           >Restore</button>
+                           <>
+                             <button
+                               onClick={() => handleRestoreModule(mod.code)}
+                               className="text-xs text-green-600 hover:underline"
+                             >Restore</button>
+                             <button
+                               onClick={() => handlePermanentlyDeleteModule(mod.code)}
+                               className="text-xs text-red-600 hover:underline"
+                             >Purge</button>
+                           </>
                          ) : (
                            <>
                              <button
