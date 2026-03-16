@@ -260,19 +260,26 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
   });
 
   // Build custom wall types from database
+  // Parse code prefix to derive face/width: WY{ww} = horizontal, ZX{ww} = vertical
+  // e.g. WY30-D-001 → horizontal, 3.0m wide; ZX48-B-001 → vertical, 4.8m wide
   const customWallTypes = customWalls
     .filter(w => !deletedWalls.some(d => d.wallCode === w.code))
-    .map(w => ({
-      type: w.code,
-      label: w.name,
-      description: w.description || "",
-      mpCode: w.code,
-      width: w.width ? w.width / 1000 : 3.0,
-      orientation: "horizontal",
-      length: Math.round((w.width || 3000) / 600),
-      thickness: 0.31,
-      variants: w.variants || [],
-    }));
+    .map(w => {
+      const codeMatch = w.code && w.code.match(/^(WY|ZX)(\d{2})-/);
+      const parsedOrientation = codeMatch ? (codeMatch[1] === "ZX" ? "vertical" : "horizontal") : "horizontal";
+      const parsedWidthM = codeMatch ? parseInt(codeMatch[2], 10) / 10 : (w.width ? w.width / 1000 : 3.0);
+      return {
+        type: w.code,
+        label: w.name,
+        description: w.description || "",
+        mpCode: w.code,
+        width: parsedWidthM,
+        orientation: parsedOrientation,
+        length: Math.round(parsedWidthM / 0.6),
+        thickness: 0.31,
+        variants: w.variants || [],
+      };
+    });
 
   // Auto-open walls section when a wall or module is selected on the grid
   React.useEffect(() => {
