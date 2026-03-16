@@ -24,6 +24,7 @@ export default function EditModuleModal({ module: mod, onSave, onClose }) {
       depth: parseFloat(form.depth) || 4.8,
       sqm,
       description: form.description,
+      price: form.price !== "" ? parseFloat(form.price) : undefined,
       variants: form.variants,
       wallElevations_list: form.wallElevations,
       wallElevationZ: undefined,
