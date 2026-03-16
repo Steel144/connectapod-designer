@@ -45,15 +45,6 @@ export default function EditModuleModal({ module: mod, onSave, onClose }) {
     </div>
   );
 
-  const toggleChassis = (code) => {
-    setForm(f => ({
-      ...f,
-      chassisCodes: f.chassisCodes.includes(code)
-        ? f.chassisCodes.filter(c => c !== code)
-        : [...f.chassisCodes, code],
-    }));
-  };
-
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
       <div className="bg-white w-full max-w-lg max-h-[90vh] overflow-y-auto p-6">
