@@ -271,6 +271,7 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
       orientation: "horizontal",
       length: Math.round((w.width || 3000) / 600),
       thickness: 0.31,
+      variants: w.variants || [],
     }));
 
   // Auto-open walls section when a wall or module is selected on the grid
