@@ -108,29 +108,7 @@ const WALL_GROUPS = [
     ]
   },
 
-  {
-    key: "3.0m-800",
-    label: "3.0m Module Walls – Series 800/900 (Offset Window)",
-    series: "WY800-810/900-910",
-    walls: [
-      { code: "W801/Y801 (D0922HLSG)", name: "3000mm Wall – High Left Door SG", width: 3000, variants: ["Standard (W801/Y801)", "Left End (W801L/Y801L)", "Right End (W801R/Y801R)"], description: "440+920+1640mm, door left, sliding glass" },
-      { code: "W802/Y802 (D0922HRSG)", name: "3000mm Wall – High Right Door SG", width: 3000, variants: ["Standard (W802/Y802)", "Left End (W802L/Y802L)", "Right End (W802R/Y802R)"], description: "440+920+1640mm, door right, sliding glass" },
-      { code: "W803/Y803 (D0922HLTGV)", name: "3000mm Wall – High Left Door TGV", width: 3000, variants: ["Standard (W803/Y803)", "Left End (W803L/Y803L)", "Right End (W803R/Y803R)"], description: "Door left TGV cladding" },
-      { code: "W804/Y804 (D0922HRTGV)", name: "3000mm Wall – High Right Door TGV", width: 3000, variants: ["Standard (W804/Y804)", "Left End (W804L/Y804L)", "Right End (W804R/Y804R)"], description: "Door right TGV cladding" },
-      { code: "W805/Y805 (W922A2S)", name: "3000mm Wall – 2 Windows 922 (800s)", width: 3000, variants: ["Standard (W805/Y805)", "Left End (W805L/Y805L)", "Right End (W805R/Y805R)"], description: "2-pane window, 440+920+1640mm" },
-      { code: "W806/Y806 (W922F1S)", name: "3000mm Wall – Fixed Window 922 (800s)", width: 3000, variants: ["Standard (W806/Y806)", "Left End (W806L/Y806L)", "Right End (W806R/Y806R)"], description: "Fixed light window 922 series" },
-      { code: "W807/Y807 (W922A3S)", name: "3000mm Wall – 3 Windows 922 (800s)", width: 3000, variants: ["Standard (W807/Y807)", "Left End (W807L/Y807L)", "Right End (W807R/Y807R)"], description: "3-pane awning window" },
-      { code: "W901/Y901 (D0922HRSG)", name: "3000mm Wall – High Right Door SG (900s)", width: 3000, variants: ["Standard (W901/Y901)", "Left End (W901L/Y901L)", "Right End (W901R/Y901R)"], description: "Mirror of 801 – door right sliding glass, 900 series" },
-      { code: "W902/Y902 (D0922HLSG)", name: "3000mm Wall – High Left Door SG (900s)", width: 3000, variants: ["Standard (W902/Y902)", "Left End (W902L/Y902L)", "Right End (W902R/Y902R)"], description: "900 series left sliding glass door" },
-      { code: "W903/Y903 (D0922HRTGV)", name: "3000mm Wall – High Right TGV (900s)", width: 3000, variants: ["Standard (W903/Y903)", "Left End (W903L/Y903L)", "Right End (W903R/Y903R)"], description: "900 series right TGV" },
-      { code: "W904/Y904 (D0922HLTGV)", name: "3000mm Wall – High Left TGV (900s)", width: 3000, variants: ["Standard (W904/Y904)", "Left End (W904L/Y904L)", "Right End (W904R/Y904R)"], description: "900 series left TGV" },
-      { code: "W905/Y905 (W922A2S)", name: "3000mm Wall – 2 Windows 922 (900s)", width: 3000, variants: ["Standard (W905/Y905)", "Left End (W905L/Y905L)", "Right End (W905R/Y905R)"], description: "2-pane window 922, 900 series" },
-      { code: "W906/Y906 (W922F1S)", name: "3000mm Wall – Fixed Window 922 (900s)", width: 3000, variants: ["Standard (W906/Y906)", "Left End (W906L/Y906L)", "Right End (W906R/Y906R)"], description: "Fixed light 922, 900 series" },
-      { code: "W907/Y907 (W922A3S)", name: "3000mm Wall – 3 Windows 922 (900s)", width: 3000, variants: ["Standard (W907/Y907)", "Left End (W907L/Y907L)", "Right End (W907R/Y907R)"], description: "3-pane awning 922, 900 series" },
-      { code: "W811/Y811 (W622A2S)", name: "3000mm Wall – 2 Windows 622 (811)", width: 3000, variants: ["Standard (W811/Y811)", "Left End (W811L)"], description: "290+620+2090mm, 2 windows, 2145mm height" },
-      { code: "W911/Y911 (W622A2S)", name: "3000mm Wall – 2 Windows 622 (911)", width: 3000, variants: ["Standard (W911/Y911)", "Right End (W911R)"], description: "2090+620+290mm mirror, 900 series" },
-    ]
-  },
+
   {
     key: "3.0m-851",
     label: "3.0m Module Walls – Series 851/951 (Corner Windows)",
