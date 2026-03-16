@@ -135,11 +135,11 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
       return;
     }
     if (draggingWall) {
-      setDraggingWall((d) => ({ ...d, cursorX: e.clientX, cursorY: e.clientY }));
+      setDraggingWall((d) => d ? ({ ...d, cursorX: e.clientX, cursorY: e.clientY }) : null);
       return;
     }
     if (!dragging) return;
-    setDragging((d) => ({ ...d, cursorX: e.clientX, cursorY: e.clientY, selectedIds: d.selectedIds }));
+    setDragging((d) => d ? { ...d, cursorX: e.clientX, cursorY: e.clientY } : null);
   }, [dragging, draggingWall, selectionBox]);
 
   // Snap to nearest placed module edge within SNAP_THRESHOLD cells
