@@ -17,19 +17,37 @@ export default function PrintableCatalogue({ title, categories, onClose }) {
           .print-page { page-break-after: always; padding-bottom: 20mm; }
           .print-page:last-child { page-break-after: avoid; }
           .no-print { display: none; }
-          h1 { margin: 0 0 6mm 0; font-size: 24pt; }
-          h2 { margin: 8mm 0 4mm 0; font-size: 16pt; }
+          .print-header { border-bottom: 3pt solid #F15A22; padding-bottom: 6mm; margin-bottom: 8mm; display: flex; align-items: center; justify-content: space-between; }
+          .print-header-logo { height: 32pt; width: auto; }
+          .print-header-title { font-size: 18pt; font-weight: bold; color: #1a1a1a; }
+          .print-header-subtitle { font-size: 9pt; color: #666; margin-top: 2mm; }
+          h1 { margin: 0 0 6mm 0; font-size: 18pt; color: #F15A22; font-weight: bold; border-left: 3pt solid #F15A22; padding-left: 4mm; }
+          h2 { margin: 8mm 0 4mm 0; font-size: 14pt; color: #1a1a1a; font-weight: bold; }
+          p { color: #666; }
           table { width: 100%; border-collapse: collapse; font-size: 8pt; }
-          th, td { border: 0.5pt solid #ccc; padding: 2mm; text-align: left; }
-          th { background-color: #f5f5f5; font-weight: bold; }
-          tr:nth-child(even) { background-color: #fafafa; }
-          .footer { margin-top: 8mm; padding-top: 4mm; border-top: 0.5pt solid #ccc; font-size: 7pt; color: #666; }
+          th, td { border: 0.5pt solid #ddd; padding: 2.5mm; text-align: left; }
+          th { background-color: #F15A22; color: white; font-weight: bold; }
+          tr:nth-child(even) { background-color: #f9f9f9; }
+          tr:hover { background-color: #fff9f5; }
+          .footer { margin-top: 8mm; padding-top: 4mm; border-top: 1.5pt solid #F15A22; font-size: 7pt; color: #666; }
+          .footer-brand { color: #F15A22; font-weight: bold; }
         }
       `}</style>
 
       <div className="print-page">
-        <h1 style={{ marginBottom: "8mm" }}>{title} – Printable Catalogue</h1>
-        <p style={{ fontSize: "10pt", color: "#666", margin: "0 0 4mm 0" }}>
+        <div style={{ borderBottom: "3pt solid #F15A22", paddingBottom: "6mm", marginBottom: "8mm", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <div>
+            <div style={{ fontSize: "18pt", fontWeight: "bold", color: "#1a1a1a" }}>connectapod</div>
+            <div style={{ fontSize: "9pt", color: "#666", marginTop: "2mm" }}>New Zealand Made Modular Homes</div>
+          </div>
+          <img 
+            src="https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/775e85894_ConnectapodArchLogo-01.png"
+            alt="Connectapod Logo"
+            style={{ height: "40pt", width: "auto" }}
+          />
+        </div>
+        <h1 style={{ margin: "0 0 6mm 0", color: "#F15A22", fontSize: "16pt", fontWeight: "bold", borderLeft: "3pt solid #F15A22", paddingLeft: "4mm" }}>{title} Catalogue</h1>
+        <p style={{ fontSize: "9pt", color: "#666", margin: "0 0 4mm 0" }}>
           Generated: {new Date().toLocaleDateString()} | Total items: {
             categories.reduce((sum, cat) => sum + (cat.items?.length || 0), 0)
           }
