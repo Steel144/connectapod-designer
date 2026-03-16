@@ -50,7 +50,7 @@ const mp48 = (chassis, widthCode, framingRef, orientation = 1) =>
 const PANEL_GROUPS = [
   {
     key: "general",
-    label: "General",
+    label: "Living",
     color: "#FDF0EB",
     border: "#F15A22",
     price: 12000,
