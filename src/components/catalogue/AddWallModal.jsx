@@ -130,19 +130,18 @@ export default function AddWallModal({ groupKey, groupLabel, onSave, onClose, ex
         </div>
 
         <div className="px-5 py-4 space-y-3 max-h-[70vh] overflow-y-auto">
-          <div>
-            <label className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide block mb-1">Code *</label>
-            <input
-              value={form.code}
-              onChange={e => setField("code", e.target.value)}
-              placeholder="e.g. W500/Y500"
-              className="w-full border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:border-[#F15A22]"
-            />
-          </div>
-          <div>
-            <label className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide block mb-1">Name</label>
-            <div className="w-full border border-gray-200 px-3 py-2 text-sm bg-gray-50 text-gray-700 min-h-[34px]">
-              {autoName || <span className="text-gray-400">Auto-populated from fields below</span>}
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide block mb-1">Code (auto)</label>
+              <div className="w-full border border-gray-100 px-3 py-2 text-sm bg-gray-50 text-[#F15A22] font-mono min-h-[34px]">
+                {autoCode}
+              </div>
+            </div>
+            <div>
+              <label className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide block mb-1">Name (auto)</label>
+              <div className="w-full border border-gray-100 px-3 py-2 text-sm bg-gray-50 text-gray-700 min-h-[34px] truncate">
+                {autoName || <span className="text-gray-400">–</span>}
+              </div>
             </div>
           </div>
           <div>
