@@ -76,7 +76,7 @@ const CATALOGUE = [
     ],
   },
   {
-    category: "Bathroom — Ensuite + Walk-in Robe",
+    category: "Bedroom",
     description: "Combined ensuite and walk-in wardrobe (WIR) module.",
     modules: [
       { code: "402-B30", name: "Ensuite + WIR (B30) — Standard", width: 3.0, depth: 4.8, sqm: 14.4, description: "DLH810 × 2. SH90902 shower. Ensuite zone: 2,000 × 1,622mm. WIR: 2,000 × 2,222mm.", chassisCodes: ["MP-48-SF30", "MP-48-SR30"], wallElevations: { Z: "N/A", W: "W500 / W series", Y: "Y500 / Y series", X: "N/A" } },
