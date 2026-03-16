@@ -658,15 +658,15 @@ export default function Configurator() {
         </button>
       </div>
 
-      {/* Floating right panel — Design summary */}
+      {/* Floating right panel — Design summary or preview */}
        {placedModules.length > 0 && (
          <div
-           className="absolute z-20 w-60"
-           style={{ left: `${summaryPos.x}px`, top: `${summaryPos.y}px`, cursor: draggingSummary ? "grabbing" : "default" }}
+           className="absolute z-20"
+           style={{ left: `${summaryPos.x}px`, top: `${summaryPos.y}px`, cursor: draggingSummary ? "grabbing" : "default", width: "260px" }}
          >
            <div className="bg-white border border-gray-200 shadow-xl overflow-hidden" onMouseDown={handleSummaryMouseDown}>
              <div className="px-4 py-3 border-b border-gray-100 cursor-grab active:cursor-grabbing flex items-center justify-between">
-               <p className="text-xs font-semibold text-gray-800">Design Summary</p>
+               <p className="text-xs font-semibold text-gray-800">{selectedModule || selectedWall ? "Preview" : "Design Summary"}</p>
                <button
                  onMouseDown={e => e.stopPropagation()}
                  onClick={() => setSummaryCollapsed(c => !c)}
@@ -677,13 +677,35 @@ export default function Configurator() {
                </button>
              </div>
              {!summaryCollapsed && (
-               <div className="p-4">
-                 <DesignSummary
-                   placedModules={placedModules}
-                   onSave={() => setSaveModalOpen(true)}
-                   onClear={handleClear}
-                   isSaving={saveMutation.isPending}
-                 />
+               <div className="p-4 h-[320px] overflow-hidden">
+                 {selectedModule && selectedModule.floorPlanImage ? (
+                   <div className="flex flex-col h-full gap-2">
+                     <div>
+                       <p className="text-xs font-semibold text-gray-900 break-words">{selectedModule.label}</p>
+                       <p className="text-[10px] text-gray-500">{selectedModule.type}</p>
+                     </div>
+                     <div className="flex-1 bg-gray-50 rounded overflow-hidden">
+                       <img src={selectedModule.floorPlanImage} alt={selectedModule.label} className="w-full h-full object-contain" />
+                     </div>
+                   </div>
+                 ) : selectedWall && selectedWall.elevationImage ? (
+                   <div className="flex flex-col h-full gap-2">
+                     <div>
+                       <p className="text-xs font-semibold text-gray-900 break-words">{selectedWall.label}</p>
+                       <p className="text-[10px] text-gray-500">Wall Elevation</p>
+                     </div>
+                     <div className="flex-1 bg-gray-50 rounded overflow-hidden">
+                       <img src={selectedWall.elevationImage} alt={selectedWall.label} className="w-full h-full object-contain" />
+                     </div>
+                   </div>
+                 ) : (
+                   <DesignSummary
+                     placedModules={placedModules}
+                     onSave={() => setSaveModalOpen(true)}
+                     onClear={handleClear}
+                     isSaving={saveMutation.isPending}
+                   />
+                 )}
                </div>
              )}
            </div>
