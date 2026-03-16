@@ -766,20 +766,27 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
         const wall = walls.find(w => w.id === hoveredWallId);
         return wall?.elevationImage ? (
           <div
-            className="fixed z-[100] bg-white border-2 border-[#F15A22] shadow-xl rounded pointer-events-none"
+            className="fixed z-[100] bg-white border-2 border-[#F15A22] shadow-xl rounded pointer-events-none flex flex-col"
             style={{
-              maxWidth: "320px",
-              maxHeight: "400px",
+              maxWidth: "340px",
               top: "48px",
               right: "20px",
-              padding: "4px",
+              padding: "8px",
             }}
           >
-            <img 
-              src={wall.elevationImage} 
-              alt={wall.label} 
-              className="w-auto h-auto max-w-[312px] max-h-[392px] object-contain" 
-            />
+            <div className="flex items-start justify-between gap-2 mb-2">
+              <div>
+                <p className="text-xs font-semibold text-gray-900">{wall.label}</p>
+                <p className="text-[10px] text-gray-500">Wall Elevation</p>
+              </div>
+            </div>
+            <div className="bg-gray-50 rounded overflow-hidden" style={{ maxHeight: "300px" }}>
+              <img 
+                src={wall.elevationImage} 
+                alt={wall.label} 
+                className="w-auto h-auto max-w-[324px] max-h-[300px] object-contain" 
+              />
+            </div>
           </div>
         ) : null;
       })()}
