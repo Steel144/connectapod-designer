@@ -54,7 +54,7 @@ const CATALOGUE = [
     ],
   },
   {
-    category: "Kitchen — End Modules",
+    category: "Kitchen",
     description: "End-of-row kitchen modules with finished end wall and full cabinetry layout.",
     modules: [
       { code: "005-K30", name: "Kitchen End — U-Shape", width: 3.0, depth: 4.8, sqm: 14.4, description: "U-shaped bench: 900 + 2,700 + 1,200mm runs. Dims: 2,691 × 4,800mm frame.", chassisCodes: ["MP-48-LF30", "MP-48-LR30", "MP-48-RF30", "MP-48-RR30"], wallElevations: { Z: "Z000 / All", W: "W500 / W700 / W series", Y: "Y500 / Y530 / Y series", X: "N/A (LF) / X000 All (RF)" } },
