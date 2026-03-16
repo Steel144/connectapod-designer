@@ -182,18 +182,11 @@ export default function Catalogue() {
       const customModule = customModules.find(m => m.code === code);
       if (customModule) {
         await base44.entities.ModuleEntry.delete(customModule.id);
-        // If this custom module was overriding a builtin (has originalCode), hide the builtin
-        if (customModule.originalCode) {
-          const existing = await base44.entities.DeletedModule.filter({ moduleCode: customModule.originalCode });
-          if (existing.length === 0) {
-            await base44.entities.DeletedModule.create({ moduleCode: customModule.originalCode });
-          }
-        }
       } else {
-        // For builtin modules, ensure DeletedModule record exists to keep it hidden
+        // For builtin modules, delete the DeletedModule record to permanently purge
         const existing = await base44.entities.DeletedModule.filter({ moduleCode: code });
-        if (existing.length === 0) {
-          await base44.entities.DeletedModule.create({ moduleCode: code });
+        if (existing.length > 0) {
+          await base44.entities.DeletedModule.delete(existing[0].id);
         }
       }
       
