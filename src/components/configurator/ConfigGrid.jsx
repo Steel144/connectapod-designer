@@ -437,6 +437,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
             sqm: customMod.sqm || (customMod.width || 3.0) * (customMod.depth || 4.8),
             price: customMod.price || 0,
             groupKey: customMod.category || "Living",
+            description: customMod.description || "",
             color: "#FDF0EB",
             border: "#F15A22",
           };
