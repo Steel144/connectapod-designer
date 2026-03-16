@@ -255,21 +255,28 @@ export default function ElevationGallery({ walls = [] }) {
       {/* Preview on hover */}
       {hoveredWall && (
         <div
-          className="fixed z-50 bg-white border-2 border-[#F15A22] shadow-2xl rounded pointer-events-none"
+          className="fixed z-50 bg-white border-2 border-[#F15A22] shadow-xl rounded pointer-events-none flex flex-col"
           style={{
-            width: "280px",
-            height: "360px",
-            left: `${previewPos.x + 16}px`,
-            top: `${previewPos.y - 180}px`,
+            width: "320px",
+            height: "400px",
+            top: "48px",
+            right: "20px",
             padding: "4px",
           }}
         >
-          <div className="w-full h-full bg-gray-50 rounded flex items-center justify-center overflow-hidden">
-            <img 
-              src={hoveredWall.elevationImage} 
-              alt={hoveredWall.label}
-              className="w-auto h-full object-contain"
-            />
+          <div className="flex flex-col h-full gap-2">
+            <div>
+              <p className="text-xs font-semibold text-gray-900 break-words">{hoveredWall.label}</p>
+              <p className="text-[10px] text-gray-500">{hoveredWall.type}</p>
+              {hoveredWall.description && <p className="text-[10px] text-gray-400 mt-0.5">{hoveredWall.description}</p>}
+            </div>
+            <div className="flex-1 bg-gray-50 rounded overflow-hidden flex items-center justify-center">
+              <img 
+                src={hoveredWall.elevationImage} 
+                alt={hoveredWall.label}
+                className="w-auto h-auto max-w-[312px] max-h-[312px] object-contain"
+              />
+            </div>
           </div>
         </div>
       )}
