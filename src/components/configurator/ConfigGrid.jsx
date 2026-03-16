@@ -604,7 +604,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
            }
 
            return (
-             <div key={wall.id} className="group absolute" style={{ left: wall.x * CELL_W, top: wall.y * CELL_H, width: wallW, height: wallH }}>
+             <div key={wall.id} className="group absolute" style={{ left: wall.x * CELL_W, top: wall.y * CELL_H, width: wallW, height: wallH }} onMouseEnter={() => setHoveredWallId(wall.id)} onMouseLeave={() => setHoveredWallId(null)}>
                <div
                   onMouseDown={(e) => {
                     if (e.target.closest("button")) return;
