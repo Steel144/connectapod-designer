@@ -211,12 +211,10 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
     };
     
     return PANEL_GROUPS.map(group => {
-      const abbrevs = categoryAbbreviations[group.label] || [];
       const categoryModules = customModules.filter(m => {
         if (deletedCodes.has(m.code)) return false;
-        if (m.category === group.label) return true;
-        const fullText = `${m.code} ${m.description}`.toUpperCase();
-        return abbrevs.some(abbrev => fullText.includes(abbrev.toUpperCase()));
+        const descriptions = (m.description || "").split(",").map(s => s.trim()).filter(Boolean);
+        return descriptions.includes(group.label) || m.category === group.label;
       });
       
       const customItems = categoryModules.map(m => {
