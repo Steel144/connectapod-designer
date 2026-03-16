@@ -245,7 +245,7 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
         
         if (aIsEnd !== bIsEnd) return aIsEnd ? -1 : 1;
         if (aIsDeck !== bIsDeck) return aIsDeck ? 1 : -1;
-        return 0;
+        return a.width - b.width;
       });
       
       return {
