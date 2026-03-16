@@ -44,10 +44,37 @@ export default function Configurator() {
   const [selectedWall, setSelectedWall] = useState(null);
   const [selectedModule, setSelectedModule] = useState(null);
   const [printMode, setPrintMode] = useState(null);
-  const [availableWallTypes, setAvailableWallTypes] = useState([]);
-  const handleWallTypesLoaded = React.useCallback((wallTypes) => {
-    setAvailableWallTypes(wallTypes);
-  }, []);
+  const { data: customWalls = [] } = useQuery({
+    queryKey: ["wallEntries"],
+    queryFn: () => base44.entities.WallEntry.list(),
+  });
+
+  const { data: deletedWalls = [] } = useQuery({
+    queryKey: ["deletedWalls"],
+    queryFn: () => base44.entities.DeletedWall.list(),
+  });
+
+  const availableWallTypes = React.useMemo(() => {
+    const deletedCodes = new Set(deletedWalls.map(d => d.wallCode));
+    return customWalls
+      .filter(w => !deletedCodes.has(w.code))
+      .map(w => {
+        const codeMatch = w.code && w.code.match(/^(WY|ZX)(\d{2})-/);
+        const parsedOrientation = codeMatch ? (codeMatch[1] === "ZX" ? "vertical" : "horizontal") : "horizontal";
+        const parsedWidthM = codeMatch ? parseInt(codeMatch[2], 10) / 10 : (w.width ? w.width / 1000 : 3.0);
+        return {
+          type: w.code,
+          label: w.name,
+          description: w.description || "",
+          mpCode: w.code,
+          width: parsedWidthM,
+          orientation: parsedOrientation,
+          length: Math.round(parsedWidthM / 0.6),
+          thickness: 0.31,
+          variants: w.variants || [],
+        };
+      });
+  }, [customWalls, deletedWalls]);
   const queryClient = useQueryClient();
 
   const { data: designs = [] } = useQuery({
