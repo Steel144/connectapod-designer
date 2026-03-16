@@ -561,10 +561,10 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
       {/* Magnified preview on hover — walls */}
       {hoveredWall?.elevationImage && (
         <div
-          className="fixed z-[100] bg-white border-2 border-[#F15A22] shadow-xl rounded pointer-events-none"
+          className="fixed z-[100] bg-white border-2 border-[#F15A22] shadow-xl rounded pointer-events-none flex items-center justify-center"
           style={{
-            maxWidth: "320px",
-            maxHeight: "400px",
+            width: "320px",
+            height: "400px",
             top: "48px",
             right: "20px",
             padding: "4px",
