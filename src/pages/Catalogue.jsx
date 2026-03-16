@@ -259,8 +259,19 @@ export default function Catalogue() {
     return m ? parseInt(m[0], 10) : 9999;
   };
 
-  // Merge hardcoded + custom modules per category
-  const allCatalogue = CATALOGUE.map(cat => {
+  // Merge hardcoded + custom modules per category, combining duplicate categories
+  const catalogueByCategory = CATALOGUE.reduce((acc, cat) => {
+    const existing = acc.find(c => c.category === cat.category);
+    if (existing) {
+      existing.modules = [...existing.modules, ...cat.modules];
+      existing.description = existing.description || cat.description;
+    } else {
+      acc.push({ ...cat });
+    }
+    return acc;
+  }, []);
+
+  const allCatalogue = catalogueByCategory.map(cat => {
     const builtins = cat.modules
       .filter(m => {
         if (overriddenModuleCodes.has(m.code)) return false;
