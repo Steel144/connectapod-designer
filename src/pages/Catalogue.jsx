@@ -44,7 +44,7 @@ const CATALOGUE = [
     ],
   },
   {
-    category: "General — Corner / L-Shape Layouts",
+    category: "Laundry",
     description: "Modules with offset wall panels to create corner connections between perpendicular rows.",
     modules: [
       { code: "050-1", name: "L-Corner 1", width: 3.0, depth: 4.8, sqm: 14.4, description: "DLH810 + DRH810 + DLH660. Internal dims: 2,522 × 3,000 + 1,100 × 1,000mm zone.", chassisCodes: ["MP-48-SF30", "MP-48-SR30"], wallElevations: { Z: "N/A", W: "W000", Y: "Y000", X: "N/A" } },
