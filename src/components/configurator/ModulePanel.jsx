@@ -187,11 +187,6 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
     queryFn: () => base44.entities.DeletedModule.list(),
   });
 
-  const { data: purgedModules = [] } = useQuery({
-    queryKey: ["purgedModules"],
-    queryFn: () => base44.entities.PurgedModule.list(),
-  });
-
   const { data: customWalls = [] } = useQuery({
     queryKey: ["wallEntries"],
     queryFn: () => base44.entities.WallEntry.list(),
@@ -205,7 +200,6 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
   // Merge custom modules with PANEL_GROUPS by category, supporting multi-category modules
    const dynamicPanelGroups = React.useMemo(() => {
      const deletedCodes = new Set(deletedModules.map(d => d.moduleCode));
-     const purgedCodes = new Set(purgedModules.map(p => p.moduleCode));
      const categoryAbbreviations = {
        "Living": ["LV", "living"],
        "Bedroom": ["B0", "B1", "B2", "B3", "B4", "bedroom"],
@@ -217,12 +211,12 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
      };
 
      return PANEL_GROUPS.map(group => {
-       // Keep built-in items, filter out deleted and purged ones
-       const builtInItems = group.items.filter(item => !deletedCodes.has(item.code) && !purgedCodes.has(item.code));
+       // Keep built-in items, filter out deleted ones
+       const builtInItems = group.items.filter(item => !deletedCodes.has(item.code));
 
        // Find custom modules for this category
        const categoryModules = customModules.filter(m => {
-         if (deletedCodes.has(m.code) || purgedCodes.has(m.code)) return false;
+         if (deletedCodes.has(m.code)) return false;
          const descriptions = (m.description || "").split(",").map(s => s.trim()).filter(Boolean);
          return descriptions.includes(group.label) || m.category === group.label;
        });
@@ -263,7 +257,7 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
          items: sorted,
        };
        });
-       }, [customModules, deletedModules, purgedModules]);
+       }, [customModules, deletedModules]);
 
   const customWallTypes = React.useMemo(() => customWalls
      .filter(w => !deletedWalls.some(d => d.wallCode === w.code))
