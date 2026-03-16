@@ -37,6 +37,7 @@ export default function AddModuleModal({ category, onSave, onClose }) {
       sqm,
       description: form.description.trim(),
       price: form.price !== "" ? parseFloat(form.price) : undefined,
+      categories: form.categories,
       variants: form.variants,
       wallElevations_list: form.wallElevations,
       wallElevationZ: undefined,
