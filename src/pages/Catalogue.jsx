@@ -447,18 +447,18 @@ export default function Catalogue() {
                           </span>
                         </div>
                       )}
-                      {editMode && uploading !== mod.code && (
-                        <div className="absolute inset-0 bg-black/40 items-center justify-center gap-2 hidden group-hover:flex">
+                       {editMode && uploading !== mod.code && (
+                        <div className="absolute inset-0 bg-black/40 items-center justify-center gap-2 hidden group-hover:flex pointer-events-none">
                           <button
                             onClick={() => handleUploadClick(mod.code)}
-                            className="flex items-center gap-1 px-2 py-1 bg-white text-gray-800 text-xs font-medium hover:bg-[#F15A22] hover:text-white transition-colors"
+                            className="flex items-center gap-1 px-2 py-1 bg-white text-gray-800 text-xs font-medium hover:bg-[#F15A22] hover:text-white transition-colors pointer-events-auto"
                           >
                             <Upload size={11} /> Upload
                           </button>
                           {floorPlanImages[mod.code] && (
                             <button
                               onClick={() => handleRemoveImage(mod.code)}
-                              className="flex items-center gap-1 px-2 py-1 bg-white text-red-600 text-xs font-medium hover:bg-red-600 hover:text-white transition-colors"
+                              className="flex items-center gap-1 px-2 py-1 bg-white text-red-600 text-xs font-medium hover:bg-red-600 hover:text-white transition-colors pointer-events-auto"
                             >
                               <X size={11} /> Remove
                             </button>
