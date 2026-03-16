@@ -162,9 +162,13 @@ export default function Catalogue() {
   };
 
   const handleDeleteModule = async (entryId) => {
-    await base44.entities.ModuleEntry.delete(entryId);
-    queryClient.invalidateQueries({ queryKey: ["moduleEntries"] });
-    toast.success("Module removed");
+    try {
+      await base44.entities.ModuleEntry.delete(entryId);
+      queryClient.invalidateQueries({ queryKey: ["moduleEntries"] });
+      toast.success("Module removed");
+    } catch (error) {
+      toast.error("Failed to remove module");
+    }
   };
 
   const handleDeleteBuiltinModule = async (code) => {
