@@ -182,6 +182,13 @@ export default function Catalogue() {
       const customModule = customModules.find(m => m.code === code);
       if (customModule) {
         await base44.entities.ModuleEntry.delete(customModule.id);
+        // If this custom module was overriding a builtin (has originalCode), hide the builtin
+        if (customModule.originalCode) {
+          const existing = await base44.entities.DeletedModule.filter({ moduleCode: customModule.originalCode });
+          if (existing.length === 0) {
+            await base44.entities.DeletedModule.create({ moduleCode: customModule.originalCode });
+          }
+        }
       } else {
         // Otherwise delete the DeletedModule record (unhides builtin)
         const entry = deletedModules.find(d => d.moduleCode === code);
