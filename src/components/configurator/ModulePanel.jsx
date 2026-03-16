@@ -233,9 +233,20 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
         originalCode: m.originalCode || undefined,
       }));
       
+      const sorted = customItems.sort((a, b) => {
+        const aIsEnd = a.chassis === "EF" || a.chassis === "ER" || a.chassis === "LF" || a.chassis === "RF";
+        const bIsEnd = b.chassis === "EF" || b.chassis === "ER" || b.chassis === "LF" || b.chassis === "RF";
+        const aIsDeck = a.description?.includes("Deck") || a.description?.includes("Soffit");
+        const bIsDeck = b.description?.includes("Deck") || b.description?.includes("Soffit");
+        
+        if (aIsEnd !== bIsEnd) return aIsEnd ? -1 : 1;
+        if (aIsDeck !== bIsDeck) return aIsDeck ? 1 : -1;
+        return 0;
+      });
+      
       return {
         ...group,
-        items: customItems,
+        items: sorted,
       };
     });
   }, [customModules, deletedModules]);
