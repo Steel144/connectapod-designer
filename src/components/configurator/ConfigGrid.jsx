@@ -683,9 +683,33 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
         )}
 
       </div>
+
+      {/* Wall elevation preview on hover */}
+      {hoveredWallId && (() => {
+        const wall = walls.find(w => w.id === hoveredWallId);
+        return wall?.elevationImage ? (
+          <div
+            className="fixed z-[100] bg-white border-2 border-[#F15A22] shadow-xl rounded pointer-events-none"
+            style={{
+              maxWidth: "320px",
+              maxHeight: "400px",
+              top: "48px",
+              right: "20px",
+              padding: "4px",
+            }}
+          >
+            <img 
+              src={wall.elevationImage} 
+              alt={wall.label} 
+              className="w-auto h-auto max-w-[312px] max-h-[392px] object-contain" 
+            />
+          </div>
+        ) : null;
+      })()}
+
       <p className="text-xs text-slate-400 mt-2 text-center">
         Grid: {GRID_COLS}×{GRID_ROWS} cells · Snap: 600mm
       </p>
-    </div>
-  );
-}
+      </div>
+      );
+      }
