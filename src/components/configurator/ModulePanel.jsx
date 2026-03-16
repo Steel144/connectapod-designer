@@ -43,10 +43,6 @@ function getIcon(key, size = 18) {
   return icons[key] || icons.general;
 }
 
-// MP48 code builder
-const mp48 = (chassis, widthCode, framingRef, orientation = 1) =>
-  `MP48-${chassis}${widthCode}-${framingRef}-${orientation}`;
-
 const PANEL_GROUPS = [
   {
     key: "living",
@@ -54,13 +50,7 @@ const PANEL_GROUPS = [
     color: "#FDF0EB",
     border: "#F15A22",
     price: 12000,
-    items: [
-      { code: "006",   name: "Open 0.6m",            mpCode: mp48("SF","06","G00"),   width: 0.6, depth: 4.8, sqm: 2.9,  chassis: "SF", widthCode: "06", room: "G", description: "Living, Bedroom" },
-      { code: "007",   name: "Open 1.2m",            mpCode: mp48("SF","12","G00"),   width: 1.2, depth: 4.8, sqm: 5.8,  chassis: "SF", widthCode: "12", room: "G", description: "Living, Bedroom" },
-      { code: "008",   name: "Open 1.8m",            mpCode: mp48("SF","18","G00"),   width: 1.8, depth: 4.8, sqm: 8.6,  chassis: "SF", widthCode: "18", room: "G", description: "Living, Bedroom" },
-      { code: "009",   name: "Open 2.4m",            mpCode: mp48("SF","24","G00"),   width: 2.4, depth: 4.8, sqm: 11.5, chassis: "SF", widthCode: "24", room: "G", description: "Living, Bedroom" },
-      { code: "010",   name: "Open 3.0m",            mpCode: mp48("SF","30","G00"),   width: 3.0, depth: 4.8, sqm: 14.4, chassis: "SF", widthCode: "30", room: "G", description: "Living, Bedroom" },
-    ],
+    items: [],
   },
   {
     key: "bedroom",
@@ -68,16 +58,7 @@ const PANEL_GROUPS = [
     color: "#FDF0EB",
     border: "#F15A22",
     price: 12000,
-    items: [
-      { code: "001",   name: "End Cap 0.6m",         mpCode: mp48("EF","06","G00"),   width: 0.6, depth: 4.8, sqm: 2.9,  chassis: "EF", widthCode: "06", room: "G" },
-      { code: "002",   name: "End Cap 1.2m",         mpCode: mp48("EF","12","G00"),   width: 1.2, depth: 4.8, sqm: 5.8,  chassis: "EF", widthCode: "12", room: "G" },
-      { code: "003",   name: "End Cap 1.8m",         mpCode: mp48("EF","18","G00"),   width: 1.8, depth: 4.8, sqm: 8.6,  chassis: "EF", widthCode: "18", room: "G" },
-      { code: "004",   name: "End Cap 2.4m",         mpCode: mp48("EF","24","G00"),   width: 2.4, depth: 4.8, sqm: 11.5, chassis: "EF", widthCode: "24", room: "G" },
-      { code: "005",   name: "End Cap 3.0m",         mpCode: mp48("EF","30","G00"),   width: 3.0, depth: 4.8, sqm: 14.4, chassis: "EF", widthCode: "30", room: "G" },
-      { code: "402-B30", name: "Ensuite + WIR Standard", mpCode: mp48("SF","30","B30",1), width: 3.0, depth: 4.8, sqm: 14.4, chassis: "SF", widthCode: "30", room: "B", orientation: 1 },
-      { code: "421-B30", name: "Ensuite + WIR End",      mpCode: mp48("EF","30","B30",1), width: 3.0, depth: 4.8, sqm: 14.4, chassis: "EF", widthCode: "30", room: "B", orientation: 1 },
-      { code: "422-B30", name: "Ensuite + WIR Passage",  mpCode: mp48("SF","30","B30",2), width: 3.0, depth: 4.8, sqm: 14.4, chassis: "SF", widthCode: "30", room: "B", orientation: 2 },
-    ],
+    items: [],
   },
   {
     key: "bathroom",
@@ -85,16 +66,7 @@ const PANEL_GROUPS = [
     color: "#FDF0EB",
     border: "#F15A22",
     price: 14000,
-    items: [
-      { code: "011-1", name: "Door — Top Left",      mpCode: mp48("SF","30","G11",1), width: 3.0, depth: 4.8, sqm: 14.4, chassis: "SF", widthCode: "30", room: "G", orientation: 1 },
-      { code: "011-2", name: "Door — Top Right",     mpCode: mp48("SF","30","G11",2), width: 3.0, depth: 4.8, sqm: 14.4, chassis: "SF", widthCode: "30", room: "G", orientation: 2 },
-      { code: "011-3", name: "Door — Bottom Left",   mpCode: mp48("SF","30","G11",3), width: 3.0, depth: 4.8, sqm: 14.4, chassis: "SF", widthCode: "30", room: "G", orientation: 3 },
-      { code: "011-4", name: "Door — Bottom Right",  mpCode: mp48("SF","30","G11",4), width: 3.0, depth: 4.8, sqm: 14.4, chassis: "SF", widthCode: "30", room: "G", orientation: 4 },
-      { code: "401-B10", name: "Bathroom (B10)",         mpCode: mp48("SF","30","B10",1), width: 3.0, depth: 4.8, sqm: 14.4, chassis: "SF", widthCode: "30", room: "B", orientation: 1 },
-      { code: "412-B03", name: "Compact (B03)",          mpCode: mp48("SF","30","B03",1), width: 3.0, depth: 4.8, sqm: 14.4, chassis: "SF", widthCode: "30", room: "B", orientation: 1 },
-      { code: "423-B40", name: "Large (B40)",            mpCode: mp48("SF","30","B40",1), width: 3.0, depth: 4.8, sqm: 14.4, chassis: "SF", widthCode: "30", room: "B", orientation: 1 },
-      { code: "420-B01", name: "Bathroom End (B01)",     mpCode: mp48("EF","30","B01",1), width: 3.0, depth: 4.8, sqm: 14.4, chassis: "EF", widthCode: "30", room: "B", orientation: 1 },
-    ],
+    items: [],
   },
   {
     key: "laundry",
@@ -102,12 +74,7 @@ const PANEL_GROUPS = [
     color: "#FDF0EB",
     border: "#F15A22",
     price: 12000,
-    items: [
-      { code: "050-1", name: "L-Corner 1",        mpCode: mp48("SF","30","G50",1), width: 3.0, depth: 4.8, sqm: 14.4, chassis: "SF", widthCode: "30", room: "G", orientation: 1 },
-      { code: "050-2", name: "L-Corner 2",       mpCode: mp48("SF","30","G50",2), width: 3.0, depth: 4.8, sqm: 14.4, chassis: "SF", widthCode: "30", room: "G", orientation: 2 },
-      { code: "050-3", name: "L-Corner 3", mpCode: mp48("SF","30","G50",3), width: 3.0, depth: 4.8, sqm: 14.4, chassis: "SF", widthCode: "30", room: "G", orientation: 3 },
-      { code: "050-4", name: "L-Corner 4",mpCode: mp48("SF","30","G50",4), width: 3.0, depth: 4.8, sqm: 14.4, chassis: "SF", widthCode: "30", room: "G", orientation: 4 },
-    ],
+    items: [],
   },
   {
     key: "kitchen",
@@ -115,15 +82,7 @@ const PANEL_GROUPS = [
     color: "#FDF0EB",
     border: "#F15A22",
     price: 22000,
-    items: [
-      { code: "005-K30", name: "End — U-Shape",         mpCode: mp48("EF","30","K30",1), width: 3.0, depth: 4.8, sqm: 14.4, chassis: "EF", widthCode: "30", room: "K", orientation: 1 },
-      { code: "005-K31", name: "End — Galley",          mpCode: mp48("EF","30","K31",1), width: 3.0, depth: 4.8, sqm: 14.4, chassis: "EF", widthCode: "30", room: "K", orientation: 1 },
-      { code: "012-K01", name: "Standard — Single Run", mpCode: mp48("SF","30","K01",1), width: 3.0, depth: 4.8, sqm: 14.4, chassis: "SF", widthCode: "30", room: "K", orientation: 1 },
-      { code: "012-K02", name: "Standard — Double Run", mpCode: mp48("SF","30","K02",1), width: 3.0, depth: 4.8, sqm: 14.4, chassis: "SF", widthCode: "30", room: "K", orientation: 1 },
-      { code: "401-B10-K10",     name: "Bathroom + Kitchen (K10)",       mpCode: mp48("SF","30","B10",1), width: 3.0, depth: 4.8, sqm: 14.4, chassis: "SF", widthCode: "30", room: "B" },
-      { code: "401-B10-K11",     name: "Bathroom + Kitchen (K11)",       mpCode: mp48("SF","30","B10",2), width: 3.0, depth: 4.8, sqm: 14.4, chassis: "SF", widthCode: "30", room: "B" },
-      { code: "413-K31-B30-L02", name: "Kitchen + Bath + Laundry",       mpCode: mp48("SF","30","K31",1), width: 3.0, depth: 4.8, sqm: 14.4, chassis: "SF", widthCode: "30", room: "K" },
-    ],
+    items: [],
   },
   {
     key: "deck",
@@ -131,13 +90,7 @@ const PANEL_GROUPS = [
     color: "#FDF0EB",
     border: "#F15A22",
     price: 8000,
-    items: [
-      { code: "SO06", name: "Soffit Only", mpCode: mp48("SO","06","G00"), width: 0.6, depth: 4.8, sqm: 2.9,  chassis: "SO", widthCode: "06", room: "G" },
-      { code: "DK12", name: "Deck 1.2m",  mpCode: mp48("DK","12","G00"), width: 1.2, depth: 4.8, sqm: 5.8,  chassis: "DK", widthCode: "12", room: "G" },
-      { code: "DK18", name: "Deck 1.8m",  mpCode: mp48("DK","18","G00"), width: 1.8, depth: 4.8, sqm: 8.6,  chassis: "DK", widthCode: "18", room: "G" },
-      { code: "DK24", name: "Deck 2.4m",  mpCode: mp48("DK","24","G00"), width: 2.4, depth: 4.8, sqm: 11.5, chassis: "DK", widthCode: "24", room: "G" },
-      { code: "DK30", name: "Deck 3.0m",  mpCode: mp48("DK","30","G00"), width: 3.0, depth: 4.8, sqm: 14.4, chassis: "DK", widthCode: "30", room: "G" },
-    ],
+    items: [],
   },
 ];
 
