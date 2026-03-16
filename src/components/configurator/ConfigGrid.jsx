@@ -767,23 +767,22 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
           <div
             className="fixed z-[100] bg-white border-2 border-[#F15A22] shadow-xl rounded pointer-events-none flex flex-col"
             style={{
-              maxWidth: "340px",
+              width: "340px",
+              height: "420px",
               top: "48px",
               right: "20px",
               padding: "8px",
             }}
           >
-            <div className="flex items-start justify-between gap-2 mb-2">
-              <div>
-                <p className="text-xs font-semibold text-gray-900">{wall.label}</p>
-                <p className="text-[10px] text-gray-500">Wall Elevation</p>
-              </div>
+            <div className="mb-2 min-h-fit">
+              <p className="text-xs font-semibold text-gray-900 break-words">{wall.label}</p>
+              <p className="text-[10px] text-gray-500">Wall Elevation</p>
             </div>
-            <div className="bg-gray-50 rounded overflow-hidden" style={{ maxHeight: "300px" }}>
+            <div className="flex-1 bg-gray-50 rounded overflow-hidden">
               <img 
                 src={wall.elevationImage} 
                 alt={wall.label} 
-                className="w-auto h-auto max-w-[324px] max-h-[300px] object-contain" 
+                className="w-full h-full object-contain" 
               />
             </div>
           </div>
