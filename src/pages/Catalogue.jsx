@@ -92,7 +92,7 @@ const CATALOGUE = [
     ],
   },
   {
-    category: "Combined Wet Areas",
+    category: "Living",
     description: "Multi-function modules combining bathroom, kitchen, toilet, and/or laundry in one unit.",
     modules: [
       { code: "401-B10-K10", name: "Bathroom + Kitchen (B10/K10)", width: 3.0, depth: 4.8, sqm: 14.4, description: "DRH710. Kitchen + bathroom split. Bench: 1,120 + 760 + 1,120mm. Basic kitchen fit-out (W.M. PROV).", chassisCodes: ["MP-48-SF30", "MP-48-SR30"], wallElevations: { Z: "N/A", W: "W500 / W700 / W series", Y: "Y500 / Y530 / Y series", X: "N/A" } },
