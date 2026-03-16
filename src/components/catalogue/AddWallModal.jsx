@@ -39,7 +39,6 @@ const buildAutoName = (f) => {
 };
 
 const DEFAULTS = {
-  code: "",
   width: 3000,
   description: "",
   variants: [],
