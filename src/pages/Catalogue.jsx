@@ -579,6 +579,7 @@ export default function Catalogue() {
                       <h3 className="text-sm font-bold text-gray-800 leading-tight">{mod.name}</h3>
                       <span className="text-xs font-mono text-[#F15A22] bg-orange-50 px-1.5 py-0.5 shrink-0">{mod.code}</span>
                     </div>
+                    <p className="text-xs text-gray-500 leading-relaxed mb-2">{mod.description}</p>
                     {editMode && (
                       <button
                         onClick={() => setEditingModule({ ...mod, category: cat.category })}
@@ -588,7 +589,6 @@ export default function Catalogue() {
                         <Pencil size={12} /> Edit
                       </button>
                     )}
-                    <p className="text-xs text-gray-500 leading-relaxed mb-3">{mod.description}</p>
 
                     <div className="flex gap-3 text-xs text-gray-500 border-t border-gray-100 pt-2.5 mb-3">
                       <span><span className="font-semibold text-gray-700">{mod.width}m</span> wide</span>
