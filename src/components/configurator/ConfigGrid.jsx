@@ -563,6 +563,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                   transform: `rotate(${mod.rotation || 0}deg)`,
                   width: "100%",
                   height: "100%",
+                  backgroundColor: mod.floorPlanImage ? "white" : "transparent",
                 }}
               >
                 {mod.floorPlanImage ? (
