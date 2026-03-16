@@ -253,24 +253,24 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
      });
    }, [customModules, deletedModules]);
 
-  const customWallTypes = customWalls
-    .filter(w => !deletedWalls.some(d => d.wallCode === w.code))
-    .map(w => {
-      const codeMatch = w.code && w.code.match(/^(WY|ZX)(\d{2})-/);
-      const parsedOrientation = codeMatch ? (codeMatch[1] === "ZX" ? "vertical" : "horizontal") : "horizontal";
-      const parsedWidthM = codeMatch ? parseInt(codeMatch[2], 10) / 10 : (w.width ? w.width / 1000 : 3.0);
-      return {
-        type: w.code,
-        label: w.name,
-        description: w.description || "",
-        mpCode: w.code,
-        width: parsedWidthM,
-        orientation: parsedOrientation,
-        length: Math.round(parsedWidthM / 0.6),
-        thickness: 0.31,
-        variants: w.variants || [],
-      };
-    });
+  const customWallTypes = React.useMemo(() => customWalls
+     .filter(w => !deletedWalls.some(d => d.wallCode === w.code))
+     .map(w => {
+       const codeMatch = w.code && w.code.match(/^(WY|ZX)(\d{2})-/);
+       const parsedOrientation = codeMatch ? (codeMatch[1] === "ZX" ? "vertical" : "horizontal") : "horizontal";
+       const parsedWidthM = codeMatch ? parseInt(codeMatch[2], 10) / 10 : (w.width ? w.width / 1000 : 3.0);
+       return {
+         type: w.code,
+         label: w.name,
+         description: w.description || "",
+         mpCode: w.code,
+         width: parsedWidthM,
+         orientation: parsedOrientation,
+         length: Math.round(parsedWidthM / 0.6),
+         thickness: 0.31,
+         variants: w.variants || [],
+       };
+     }), [customWalls, deletedWalls]);
 
   // Notify parent of available wall types so ConfigGrid can resolve drops
   React.useEffect(() => {
