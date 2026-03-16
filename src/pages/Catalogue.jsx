@@ -330,7 +330,8 @@ export default function Catalogue() {
     toast.success(`Duplicated as ${newCode}`);
   };
 
-  const categories = ["All", ...Array.from(new Set(CATALOGUE.map(c => c.category)))];
+  const validCategories = Array.from(new Set(CATALOGUE.map(c => c.category)));
+  const categories = ["All", ...validCategories, "Uncategorized"];
 
   // Codes that have a custom override via originalCode
   const overriddenModuleCodes = new Set(customModules.filter(c => c.originalCode).map(c => c.originalCode));
@@ -351,6 +352,19 @@ export default function Catalogue() {
     }
     return acc;
   }, []);
+
+  // Add Uncategorized section for custom modules without matching descriptions
+  const uncategorizedCustoms = customModules.filter(c => {
+    const descriptions = (c.description || "").split(",").map(s => s.trim()).filter(Boolean);
+    return descriptions.length === 0 || !descriptions.some(d => validCategories.includes(d));
+  });
+  if (uncategorizedCustoms.length > 0) {
+    catalogueByCategory.push({
+      category: "Uncategorized",
+      description: "Modules without category assignments",
+      modules: []
+    });
+  }
 
   const allCatalogue = catalogueByCategory.map(cat => {
     const builtins = cat.modules
