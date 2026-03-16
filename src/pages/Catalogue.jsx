@@ -62,15 +62,12 @@ const CATALOGUE = [
     ],
   },
   {
-    category: "Kitchen — Standard Modules",
-    description: "Pass-through kitchen modules that connect into a run. No end walls on X faces.",
-    modules: [
-      { code: "012-K01", name: "Kitchen Standard — Single Run", width: 3.0, depth: 4.8, sqm: 14.4, description: "Single-side bench run. DLH810 or DRH810 door. W000/Y000 on plain-end orientations.", chassisCodes: ["MP-48-SF30", "MP-48-SR30"], wallElevations: { Z: "N/A", W: "W000 (ori 1) / All (less L/R/D)", Y: "Y000 (ori 1) / All (less L/R/D)", X: "N/A" } },
-      { code: "012-K02", name: "Kitchen Standard — Double Run (Galley)", width: 3.0, depth: 4.8, sqm: 14.4, description: "Benches both sides (galley). DLH810 or DRH810 door. W000/Y000 on plain-end orientations.", chassisCodes: ["MP-48-SF30", "MP-48-SR30"], wallElevations: { Z: "N/A", W: "W000 (ori 1) / All (less L/R/D)", Y: "Y000 (ori 1) / All (less L/R/D)", X: "N/A" } },
-    ],
+    category: "Soffit",
+    description: "Soffit-only modules.",
+    modules: [],
   },
   {
-    category: "Bathroom — Standard",
+    category: "Deck",
     description: "Standard bathroom module with shower, vanity, and toilet.",
     modules: [
       { code: "401-B10", name: "Bathroom (B10)", width: 3.0, depth: 4.8, sqm: 14.4, description: "DRH710 or DLH710. Internal bath zone: 2,422 × 1,200mm. Frame: 2,911 × 2,822mm.", chassisCodes: ["MP-48-SF30", "MP-48-SR30"], wallElevations: { Z: "N/A", W: "W500 / W series", Y: "Y500 / Y series", X: "N/A" } },
