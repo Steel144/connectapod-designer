@@ -178,9 +178,16 @@ export default function Catalogue() {
 
   const handlePermanentlyDeleteModule = async (code) => {
     try {
-      // Get the DeletedModule record
-      const allDeleted = await base44.entities.DeletedModule.list();
-      const deletedEntry = allDeleted.find(d => d.moduleCode === code);
+      // Find the DeletedModule record using state
+      const entry = deletedModules.find(d => d.moduleCode === code);
+      
+      if (!entry) {
+        toast.error("Module not found in deleted list");
+        return;
+      }
+      
+      // Delete the DeletedModule record
+      await base44.entities.DeletedModule.delete(entry.id);
       
       // Remove any associated image
       const images = await base44.entities.FloorPlanImage.filter({ moduleType: code });
@@ -188,15 +195,11 @@ export default function Catalogue() {
         await base44.entities.FloorPlanImage.delete(images[0].id);
       }
       
-      // Delete the DeletedModule record to fully remove it from catalogue
-      if (deletedEntry) {
-        await base44.entities.DeletedModule.delete(deletedEntry.id);
-      }
-      
       queryClient.invalidateQueries({ queryKey: ["deletedModules"] });
       queryClient.invalidateQueries({ queryKey: ["floorPlanImages"] });
       toast.success("Module purged");
     } catch (error) {
+      console.error("Purge failed:", error);
       toast.error("Failed to purge module");
     }
   };
