@@ -26,6 +26,7 @@ export default function EditModuleModal({ module: mod, onSave, onClose }) {
 
   const handleSubmit = () => {
     if (!form.name || !form.code) return;
+    const descriptionCategories = form.description.split(",").map(s => s.trim()).filter(Boolean);
     onSave({
       name: form.name,
       code: form.code,
@@ -34,7 +35,7 @@ export default function EditModuleModal({ module: mod, onSave, onClose }) {
       sqm,
       description: form.description,
       price: form.price !== "" ? parseFloat(form.price) : undefined,
-      categories: form.categories,
+      categories: descriptionCategories,
       variants: form.variants,
       wallElevations_list: form.wallElevations,
       wallElevationZ: undefined,
