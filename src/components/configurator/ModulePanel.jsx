@@ -511,16 +511,6 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
 
       <p className="text-xs text-gray-400 mt-3 text-center">Expand a category, then drag →</p>
 
-      {/* Floor plan image upload for selected module */}
-      {selectedModule && (
-        <FloorPlanUpload 
-          module={selectedModule} 
-          onImageAssigned={(imageUrl) => {
-            onModuleImageUpdate?.(selectedModule.id, imageUrl);
-          }}
-        />
-      )}
-
       {/* Wall image upload for selected wall */}
       {selectedWall && (
         <WallImageUpload 
