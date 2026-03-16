@@ -189,13 +189,8 @@ export default function Catalogue() {
             await base44.entities.DeletedModule.create({ moduleCode: customModule.originalCode });
           }
         }
-      } else {
-        // It's a deleted builtin — permanently delete it by removing the DeletedModule entry permanently
-        const entry = deletedModules.find(d => d.moduleCode === code);
-        if (entry) {
-          await base44.entities.DeletedModule.delete(entry.id);
-        }
       }
+      // For deleted builtins, the DeletedModule record already hides them permanently — no action needed
       
       // Always remove images regardless
       const images = await base44.entities.FloorPlanImage.filter({ moduleType: code });
