@@ -287,11 +287,30 @@ export default function Configurator() {
     const newWall = { ...wallWithImage, id: generateWallId(), x, y };
 
     setWalls((prev) => {
-      // For end-module faces (Z/X), only allow one wall per face per module.
-      // Replace any existing wall on the same face at the same position.
+      // One wall per face per position (replace existing)
       if (wallData.face === "Z" || wallData.face === "X" ||
           wallData.face === "W" || wallData.face === "Y") {
         const filtered = prev.filter(w => !(w.face === wallData.face && w.x === x && w.y === y));
+
+        // For end-module Z/X faces: enforce only one end can be walled.
+        // If placing on Z, block if X already has a wall on the same module, and vice versa.
+        if (wallData.face === "Z" || wallData.face === "X") {
+          const opposingFace = wallData.face === "Z" ? "X" : "Z";
+          const attachedMod = placedModules.find(mod => {
+            const isEndChassis = mod.chassis === "EF" || mod.chassis === "ER" || mod.chassis === "LF" || mod.chassis === "RF";
+            if (!isEndChassis) return false;
+            if (wallData.face === "Z") return Math.abs(mod.y - y) < 0.5 && Math.abs(mod.x - x) < 0.5;
+            if (wallData.face === "X") return Math.abs(mod.y - y) < 0.5 && Math.abs((mod.x + mod.w) - x) < 1.0;
+          });
+          if (attachedMod) {
+            const oppositeAlreadyWalled = prev.some(w => w.face === opposingFace && Math.abs(w.y - attachedMod.y) < 0.5);
+            if (oppositeAlreadyWalled) {
+              toast.error("One end must remain open on end modules.");
+              return prev;
+            }
+          }
+        }
+
         return [...filtered, newWall];
       }
       return [...prev, newWall];
