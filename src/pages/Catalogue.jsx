@@ -485,9 +485,7 @@ export default function Catalogue() {
                        {uploading === mod.code ? (
                          <Loader2 size={20} className="animate-spin text-[#F15A22]" />
                        ) : (floorPlanImages[mod.code] || floorPlanImages[mod.originalCode]) ? (
-                         <div className="w-full h-full flex items-center justify-center bg-white">
-                           <img src={floorPlanImages[mod.code] || floorPlanImages[mod.originalCode]} alt={mod.name} className="w-auto h-full object-contain" />
-                         </div>
+                         <img src={floorPlanImages[mod.code] || floorPlanImages[mod.originalCode]} alt={mod.name} className="w-auto h-full object-contain" style={{ backgroundColor: 'white' }} />
                       ) : (
                         <div
                           className="bg-white border-2 border-gray-300 group-hover:border-[#F15A22] transition-colors flex items-center justify-center"
