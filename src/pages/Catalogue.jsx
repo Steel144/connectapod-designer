@@ -177,6 +177,14 @@ export default function Catalogue() {
   };
 
   const handleEditModule = async (data) => {
+    // If code changed, migrate any associated image to the new code
+    if (editingModule.code !== data.code) {
+      const oldImage = await base44.entities.FloorPlanImage.filter({ moduleType: editingModule.code });
+      if (oldImage.length > 0) {
+        await base44.entities.FloorPlanImage.update(oldImage[0].id, { moduleType: data.code });
+      }
+    }
+
     if (editingModule._custom) {
       // For custom modules, just update directly
       await base44.entities.ModuleEntry.update(editingModule._id, {
@@ -209,6 +217,7 @@ export default function Catalogue() {
     await Promise.all([
       queryClient.invalidateQueries({ queryKey: ["moduleEntries"] }),
       queryClient.invalidateQueries({ queryKey: ["deletedModules"] }),
+      queryClient.invalidateQueries({ queryKey: ["floorPlanImages"] }),
     ]);
     setEditingModule(null);
     toast.success("Module updated");
