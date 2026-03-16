@@ -1,11 +1,6 @@
 import React, { useState } from "react";
 import { X } from "lucide-react";
 
-const CHASSIS_OPTIONS = ["SF", "SR", "EF", "ER", "LF", "LR", "RF", "RR", "DK", "SO"];
-const WIDTH_OPTIONS = ["06", "12", "18", "24", "30"];
-
-const buildChassisCode = (chassis, width) => `MP-48-${chassis}${width}`;
-
 export default function EditModuleModal({ module: mod, onSave, onClose }) {
   const [form, setForm] = useState({
     name: mod.name || "",
@@ -13,7 +8,6 @@ export default function EditModuleModal({ module: mod, onSave, onClose }) {
     width: mod.width ?? 3.0,
     depth: mod.depth ?? 4.8,
     description: mod.description || "",
-    chassisCodes: mod.chassisCodes || [],
     wallElevationZ: mod.wallElevations?.Z || mod.wallElevationZ || "",
     wallElevationW: mod.wallElevations?.W || mod.wallElevationW || "",
     wallElevationY: mod.wallElevations?.Y || mod.wallElevationY || "",
