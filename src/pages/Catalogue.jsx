@@ -10,7 +10,7 @@ import EditModuleModal from "@/components/catalogue/EditModuleModal";
 // wallElevations: { Z, W, Y, X } — compatible wall codes per face
 const CATALOGUE = [
   {
-    category: "General — Open Modules",
+    category: "Living",
     description: "Standard open modules with no internal partitions. Used for living, dining, sleeping areas.",
     modules: [
       { code: "006", name: "Open Module 0.6m", width: 0.6, depth: 4.8, sqm: 2.9, description: "Narrow end/connector module", chassisCodes: ["MP-48-SF06", "MP-48-SR06"], wallElevations: { Z: "N/A", W: "W000", Y: "Y000", X: "N/A" } },
