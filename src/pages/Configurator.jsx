@@ -616,7 +616,7 @@ export default function Configurator() {
               placedModules={placedModules}
               onModuleImageUpdate={handleModuleImageUpdate}
               onWallImageUpdate={handleWallImageUpdate}
-              onWallTypesLoaded={setAvailableWallTypes}
+              onWallTypesLoaded={handleWallTypesLoaded}
               floorPlanImages={floorPlanImages}
               wallImages={wallImages}
             />
