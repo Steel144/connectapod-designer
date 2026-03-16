@@ -177,6 +177,16 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
   const [hoveredWall, setHoveredWall] = useState(null);
   const [showWallSuggestions, setShowWallSuggestions] = useState(true);
 
+  const { data: customModules = [] } = useQuery({
+    queryKey: ["moduleEntries"],
+    queryFn: () => base44.entities.ModuleEntry.list(),
+  });
+
+  const { data: deletedModules = [] } = useQuery({
+    queryKey: ["deletedModules"],
+    queryFn: () => base44.entities.DeletedModule.list(),
+  });
+
   const { data: customWalls = [] } = useQuery({
     queryKey: ["wallEntries"],
     queryFn: () => base44.entities.WallEntry.list(),
