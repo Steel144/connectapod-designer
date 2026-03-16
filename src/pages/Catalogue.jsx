@@ -280,7 +280,14 @@ export default function Catalogue() {
       })
       .map(m => ({ ...m, _custom: false, _deleted: deletedCodes.has(m.code) }));
 
-    const customs = customModules.filter(c => c.category === cat.category).map(c => ({
+    // Get custom modules for this category or modules whose description contains this category
+    const customs = customModules.filter(c => {
+      // Always include if primary category matches
+      if (c.category === cat.category) return true;
+      // Also include if module description mentions this category (for multi-category modules)
+      if (c.description && c.description.toLowerCase().includes(cat.category.toLowerCase())) return true;
+      return false;
+    }).map(c => ({
         code: c.code, name: c.name, width: c.width || 3.0, depth: c.depth || 4.8,
         sqm: c.sqm || parseFloat(((c.width || 3.0) * (c.depth || 4.8)).toFixed(1)),
         description: c.description || "",
