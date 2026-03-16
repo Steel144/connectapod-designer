@@ -103,7 +103,7 @@ const CATALOGUE = [
     ],
   },
   {
-    category: "Deck & Soffit",
+    category: "Deck",
     description: "Outdoor deck modules with wall panels and soffit options. Widths from 0.6m to 3.0m.",
     modules: [
       { code: "SO06", name: "Soffit Only 0.6m", width: 0.6, depth: 4.8, sqm: 2.9, description: "600mm soffit panel only — no deck walls.", chassisCodes: ["MP-48-SO06"], wallElevations: { Z: "N/A", W: "W000D", Y: "Y000D", X: "N/A" } },
