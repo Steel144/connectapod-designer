@@ -356,7 +356,7 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
     <div className="flex flex-col gap-1 relative">
       <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2">Modules</p>
 
-      {PANEL_GROUPS.map((group) => {
+      {dynamicPanelGroups.map((group) => {
         const isOpen = openGroup === group.key;
         return (
           <div key={group.key} className="border border-gray-200 bg-white overflow-hidden">
