@@ -425,6 +425,28 @@ export default function WallCatalogue() {
 
   const totalWalls = allGroups.reduce((s, g) => s + g.walls.length, 0);
 
+  if (printMode) {
+    const printCategories = filtered.map(group => ({
+      name: group.label,
+      description: `Series: ${group.series}`,
+      items: group.walls.map(w => ({
+        code: w.code,
+        name: w.name,
+        specs: `${(w.width / 1000).toFixed(1)}m`,
+        description: w.description || "—",
+        variants: w.variants || [],
+      })),
+    }));
+
+    return (
+      <PrintableCatalogue
+        title="Wall Catalogue"
+        categories={printCategories}
+        onClose={() => setPrintMode(false)}
+      />
+    );
+  }
+
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
@@ -435,6 +457,14 @@ export default function WallCatalogue() {
             <span className="ml-2 text-xs text-gray-400">Wall Catalogue</span>
           </div>
           <div className="flex items-center gap-2 ml-auto">
+            <button
+              onClick={() => setPrintMode(true)}
+              className="flex items-center gap-2 px-3 py-1.5 text-xs text-gray-600 border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22] transition-all"
+              title="Print catalogue as PDF"
+            >
+              <Printer size={14} />
+              Print
+            </button>
             <button
               onClick={() => setEditMode(e => !e)}
               className={`flex items-center gap-2 px-3 py-1.5 text-xs border transition-all ${editMode ? "bg-[#F15A22] text-white border-[#F15A22]" : "text-gray-600 border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22]"}`}
