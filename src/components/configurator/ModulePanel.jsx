@@ -236,7 +236,7 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
       return {
         ...group,
         items: [
-          ...group.items.filter(item => !item.mpCode?.startsWith("MP-")),
+          ...group.items.filter(item => deletedCodes.has(item.code)),
           ...customItems
         ],
       };
