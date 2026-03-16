@@ -391,7 +391,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
     const wallType = e.dataTransfer.getData("wallType");
     console.log("wallType:", wallType);
     if (wallType) {
-      const wallTemplate = WALL_TYPES.find((w) => w.type === wallType);
+      const wallTemplate = wallTypes.find((w) => w.type === wallType);
       if (!wallTemplate || !gridRef.current) return;
       
       const rect = gridRef.current.getBoundingClientRect();
