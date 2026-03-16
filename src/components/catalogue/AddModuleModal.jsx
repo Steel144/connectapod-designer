@@ -18,15 +18,6 @@ export default function AddModuleModal({ category, onSave, onClose }) {
 
   const setField = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
-  const toggleChassis = (code) => {
-    setForm(f => ({
-      ...f,
-      chassisCodes: f.chassisCodes.includes(code)
-        ? f.chassisCodes.filter(c => c !== code)
-        : [...f.chassisCodes, code],
-    }));
-  };
-
   const handleSave = () => {
     if (!form.code.trim() || !form.name.trim()) return;
     onSave({
@@ -37,7 +28,6 @@ export default function AddModuleModal({ category, onSave, onClose }) {
       depth: Number(form.depth),
       sqm,
       description: form.description.trim(),
-      chassisCodes: form.chassisCodes,
       wallElevationZ: form.wallElevationZ || undefined,
       wallElevationW: form.wallElevationW || undefined,
       wallElevationY: form.wallElevationY || undefined,
