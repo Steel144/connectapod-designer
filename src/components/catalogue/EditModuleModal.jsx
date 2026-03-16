@@ -83,45 +83,6 @@ export default function EditModuleModal({ module: mod, onSave, onClose }) {
             />
           </div>
 
-          {/* Chassis Codes */}
-          <div>
-            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Chassis Codes</label>
-            <div className="space-y-2">
-              {CHASSIS_OPTIONS.map(chassis => (
-                <div key={chassis} className="flex items-center gap-3">
-                  <span className="text-xs font-mono font-semibold text-gray-600 w-8">{chassis}</span>
-                  <div className="flex gap-1 flex-wrap">
-                    {WIDTH_OPTIONS.map(w => {
-                      const code = buildChassisCode(chassis, w);
-                      const active = form.chassisCodes.includes(code);
-                      return (
-                        <button
-                          key={w}
-                          type="button"
-                          onClick={() => toggleChassis(code)}
-                          className={`px-2 py-0.5 text-[11px] font-mono border transition-colors ${
-                            active
-                              ? "bg-[#F15A22] text-white border-[#F15A22]"
-                              : "bg-white text-gray-500 border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22]"
-                          }`}
-                        >
-                          {parseInt(w) * 60}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              ))}
-            </div>
-            {form.chassisCodes.length > 0 && (
-              <div className="mt-2 flex flex-wrap gap-1">
-                {form.chassisCodes.map(c => (
-                  <span key={c} className="text-[10px] font-mono bg-orange-50 text-[#F15A22] px-1.5 py-0.5 border border-orange-200">{c}</span>
-                ))}
-              </div>
-            )}
-          </div>
-
           {/* Wall Elevations */}
           <div>
             <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Wall Elevations</label>
