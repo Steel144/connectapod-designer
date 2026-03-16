@@ -105,6 +105,7 @@ export default function AddWallModal({ groupKey, groupLabel, onSave, onClose, ex
   const hasWindow = descParts.includes("Window");
   const hasDoor = descParts.includes("Door");
 
+
   const toggleDesc = (opt) => {
     if (opt === "Blank Wall") {
       setField("description", isBlank ? "" : "Blank Wall");
