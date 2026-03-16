@@ -464,7 +464,7 @@ export default function Catalogue() {
                           >
                             <Upload size={11} /> Upload
                           </button>
-                          {floorPlanImages[mod.code] && (
+                          {(floorPlanImages[mod.code] || floorPlanImages[mod.originalCode]) && (
                             <button
                               onClick={() => handleRemoveImage(mod.code)}
                               className="flex items-center gap-1 px-2 py-1 bg-white text-red-600 text-xs font-medium hover:bg-red-600 hover:text-white transition-colors pointer-events-auto"
