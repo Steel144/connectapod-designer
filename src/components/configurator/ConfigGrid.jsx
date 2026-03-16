@@ -257,26 +257,9 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
           }
 
           if (snapped) {
-            const snappedModule = placedModules.find(mod => {
-              const isLongFace = wall.orientation === "horizontal";
-              if (isLongFace) {
-                return (snapped.face === "Y" && snapped.x === mod.x && snapped.y === mod.y + mod.h) ||
-                       (snapped.face === "W" && snapped.x === mod.x && Math.abs(snapped.y - (mod.y - 0.308)) < 0.01);
-              } else {
-                return (snapped.face === "Z" && snapped.y === mod.y && snapped.x === mod.x) ||
-                       (snapped.face === "X" && snapped.y === mod.y && Math.abs(snapped.x - (mod.x + mod.w - 0.31)) < 0.01);
-              }
-            });
-            
-            if (snappedModule && selected.has(snappedModule.id)) {
-              const wallUpdate = { length: snapped.length, face: snapped.face };
-              if (snapped.rotation) wallUpdate.rotation = snapped.rotation;
-              if (onMoveWall) onMoveWall(wall.id, snapped.x, snapped.y, wallUpdate);
-            } else {
-              const newX = Math.max(0, wallExactX);
-              const newY = Math.max(0, wallExactY);
-              if (onMoveWall) onMoveWall(wall.id, newX, newY);
-            }
+            const wallUpdate = { length: snapped.length, face: snapped.face };
+            if (snapped.rotation) wallUpdate.rotation = snapped.rotation;
+            if (onMoveWall) onMoveWall(wall.id, snapped.x, snapped.y, wallUpdate);
           } else {
             const newX = Math.max(0, wallExactX);
             const newY = Math.max(0, wallExactY);
