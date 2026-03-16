@@ -35,18 +35,7 @@ export default function PrintableCatalogue({ title, categories, onClose }) {
       `}</style>
 
       <div className="print-page">
-        <div style={{ borderBottom: "3pt solid #F15A22", paddingBottom: "6mm", marginBottom: "8mm", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <div>
-            <div style={{ fontSize: "18pt", fontWeight: "bold", color: "#1a1a1a" }}>connectapod</div>
-            <div style={{ fontSize: "9pt", color: "#666", marginTop: "2mm" }}>New Zealand Made Modular Homes</div>
-          </div>
-          <img 
-            src="https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/775e85894_ConnectapodArchLogo-01.png"
-            alt="Connectapod Logo"
-            style={{ height: "40pt", width: "auto" }}
-          />
-        </div>
-        <h1 style={{ margin: "0 0 6mm 0", color: "#F15A22", fontSize: "16pt", fontWeight: "bold", borderLeft: "3pt solid #F15A22", paddingLeft: "4mm" }}>{title} Catalogue</h1>
+         <h1 style={{ margin: "0 0 6mm 0", color: "#F15A22", fontSize: "16pt", fontWeight: "bold", borderLeft: "3pt solid #F15A22", paddingLeft: "4mm" }}>{title} Catalogue</h1>
         <p style={{ fontSize: "9pt", color: "#666", margin: "0 0 4mm 0" }}>
           Generated: {new Date().toLocaleDateString()} | Total items: {
             categories.reduce((sum, cat) => sum + (cat.items?.length || 0), 0)
