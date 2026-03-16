@@ -142,8 +142,11 @@ export default function Configurator() {
     pushHistory(placedModules, walls);
     const fullMod = MODULE_TYPES.find(m => m.type === mod.type) || mod;
     const newMod = { ...fullMod, ...mod, id: generateId(), x, y };
+    // Check for image using both the code and originalCode (for overrides)
     if (floorPlanImages[mod.type]) {
       newMod.floorPlanImage = floorPlanImages[mod.type];
+    } else if (mod.originalCode && floorPlanImages[mod.originalCode]) {
+      newMod.floorPlanImage = floorPlanImages[mod.originalCode];
     }
     setPlacedModules((prev) => [...prev, newMod]);
   };
