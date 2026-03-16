@@ -345,28 +345,22 @@ export default function Catalogue() {
 
         {/* Category filter */}
         <div className="flex flex-wrap gap-2 mb-8">
-          {categories.map(cat => (
+          <button
+            onClick={() => setActiveCategory("All")}
+            className={`px-3 py-1.5 text-xs font-medium border transition-all ${activeCategory === "All" ? "bg-[#F15A22] text-white border-[#F15A22]" : "bg-white text-gray-600 border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22]"}`}
+          >
+            All Categories
+          </button>
+          {CATALOGUE.map(cat => (
             <button
-              key={cat}
-              onClick={() => setActiveCategory(cat)}
-              className={`px-3 py-1.5 text-xs font-medium border transition-all ${
-                activeCategory === cat
-                  ? "bg-[#F15A22] text-white border-[#F15A22]"
-                  : "bg-white text-gray-600 border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22]"
-              }`}
+              key={cat.category}
+              onClick={() => setActiveCategory(cat.category)}
+              className={`px-3 py-1.5 text-xs font-medium border transition-all ${activeCategory === cat.category ? "bg-[#F15A22] text-white border-[#F15A22]" : "bg-white text-gray-600 border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22]"}`}
             >
-              {cat === "All" ? "All Categories" : cat}
+              {cat.category}
             </button>
           ))}
         </div>
-
-        {/* Category descriptions */}
-        {activeCategory !== "All" && (() => {
-          const catGroup = CATALOGUE.find(c => c.category === activeCategory);
-          return catGroup ? (
-            <p className="text-sm text-gray-500 -mt-4 mb-6">{catGroup.description}</p>
-          ) : null;
-        })()}
 
         {editingModule && (
           <EditModuleModal
