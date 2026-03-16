@@ -110,19 +110,7 @@ const WALL_GROUPS = [
 
 
 
-  {
-    key: "3.0m-871",
-    label: "3.0m Module Walls – Series 871/971 (Large Opening)",
-    series: "WY871-880/971-980",
-    walls: [
-      { code: "W871/Y871 (L1822)", name: "3000mm Wall – Louvre 1822 (Left)", width: 3000, variants: ["Standard (W871/Y871)", "Left End (W871L)"], description: "290+1820+890mm louvre panel, 15mm reveal" },
-      { code: "W872/Y872 (D1822S2RS)", name: "3000mm Wall – Door Right 1822 (Left)", width: 3000, variants: ["Standard (W872/Y872)", "Left End (W872L)"], description: "Door right + 2 sidelights, 1822 joinery" },
-      { code: "W873/Y873 (D1822S2LS)", name: "3000mm Wall – Door Left 1822 (Left)", width: 3000, variants: ["Standard (W873/Y873)", "Left End (W873L)"], description: "Door left + 2 sidelights, 1822 joinery" },
-      { code: "W971/Y971 (L1822)", name: "3000mm Wall – Louvre 1822 (Right)", width: 3000, variants: ["Standard (W971/Y971)", "Right End (W971R)"], description: "890+1820+290mm louvre panel, mirror" },
-      { code: "W972/Y972 (D1822S2RS)", name: "3000mm Wall – Door Right 1822 (Right)", width: 3000, variants: ["Standard (W972/Y972)", "Right End (W972R)"], description: "Door right 1822, 900 mirror series" },
-      { code: "W973/Y973 (D1822S2LS)", name: "3000mm Wall – Door Left 1822 (Right)", width: 3000, variants: ["Standard (W973/Y973)", "Right End (W973R)"], description: "Door left 1822, 900 mirror series" },
-    ]
-  },
+
   {
     key: "gable",
     label: "5.2m Family Gable Walls",
