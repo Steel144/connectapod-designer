@@ -43,19 +43,25 @@ export default function PrintablePlansSheet({ placedModules, onClose }) {
         Close
       </button>
       <div className="bg-white flex flex-col p-0 relative" style={{ minHeight: "100vh" }}>
-        {/* Logo */}
-        <div className="absolute top-4 right-4 z-40">
-          <img 
-            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69a55c0c222e61cb3fbc417c/1ae4d27f6_Untitled-1-01.png" 
-            alt="Connectapod Logo" 
-            style={{ height: "72px", width: "auto" }}
-          />
-        </div>
-        
-        {/* Main content */}
-        <div className="flex-1 flex flex-col p-4">
-          {/* Grid view */}
-          <div className="flex-1 flex items-center justify-center overflow-hidden mb-6">
+         {/* Header with Logo */}
+         <div className="border-b-4 px-6 py-4" style={{ borderColor: "#F15A22", backgroundColor: "#fff9f5" }}>
+           <div className="flex items-center justify-between gap-4">
+             <div>
+               <h1 className="text-3xl font-bold" style={{ color: "#1a1a1a" }}>connectapod</h1>
+               <p className="text-xs mt-1" style={{ color: "#666" }}>Floor Plan & Site Layout</p>
+             </div>
+             <img 
+               src="https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/775e85894_ConnectapodArchLogo-01.png" 
+               alt="Connectapod Logo" 
+               style={{ height: "64px", width: "auto" }}
+             />
+           </div>
+         </div>
+
+         {/* Main content */}
+         <div className="flex-1 flex flex-col p-6">
+           {/* Grid view */}
+           <div className="flex-1 flex items-center justify-center overflow-hidden mb-8">
             <svg
               width={canvasWidth}
               height={canvasHeight}
