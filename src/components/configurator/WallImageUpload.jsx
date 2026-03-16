@@ -30,6 +30,13 @@ export default function WallImageUpload({ wall, onImageAssigned }) {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    // Validate filename matches wall code
+    const fileNameWithoutExt = file.name.replace(/\.[^.]+$/, '');
+    if (fileNameWithoutExt !== wall?.type) {
+      toast.error(`File name must be "${wall?.type}.png" (was "${file.name}")`);
+      return;
+    }
+
     setIsLoading(true);
     try {
       const response = await base44.integrations.Core.UploadFile({ file });
@@ -78,6 +85,7 @@ export default function WallImageUpload({ wall, onImageAssigned }) {
   return (
     <div className="border-t pt-3 mt-3">
       <p className="text-xs font-semibold text-slate-700 mb-2">Wall Texture</p>
+      <p className="text-[10px] text-slate-500 mb-2">File must be named: <code className="bg-slate-100 px-1 rounded">{wall?.type}.png</code></p>
       
       {imageUrl ? (
         <div className="space-y-2">
