@@ -66,16 +66,24 @@ export default function PrintableCatalogue({ title, categories, onClose }) {
               <table>
                 <thead>
                   <tr>
-                    <th style={{ width: "15%" }}>Code</th>
-                    <th style={{ width: "30%" }}>Name</th>
-                    <th style={{ width: "15%" }}>Specs</th>
-                    <th style={{ width: "25%" }}>Description</th>
-                    <th style={{ width: "15%" }}>Variants</th>
+                    <th style={{ width: "10%" }}>Thumbnail</th>
+                    <th style={{ width: "12%" }}>Code</th>
+                    <th style={{ width: "26%" }}>Name</th>
+                    <th style={{ width: "14%" }}>Specs</th>
+                    <th style={{ width: "22%" }}>Description</th>
+                    <th style={{ width: "16%" }}>Variants</th>
                   </tr>
                 </thead>
                 <tbody>
                   {category.items.map((item, i) => (
                     <tr key={i}>
+                      <td style={{ padding: "1.5mm", textAlign: "center" }}>
+                        {item.imageUrl ? (
+                          <img src={item.imageUrl} alt={item.code} style={{ maxHeight: "20mm", maxWidth: "15mm", objectFit: "contain" }} />
+                        ) : (
+                          <div style={{ fontSize: "7pt", color: "#999" }}>—</div>
+                        )}
+                      </td>
                       <td style={{ fontWeight: "bold", fontSize: "8pt" }}>
                         {item.code}
                       </td>
