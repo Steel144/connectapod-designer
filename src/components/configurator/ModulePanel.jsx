@@ -413,8 +413,8 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
         );
       })}
 
-      {/* Walls section — shown when a module or wall is selected */}
-      {(selectedModule || selectedWall) && (
+      {/* Walls section — always shown */}
+      {customWallTypes.length > 0 && (
         <div className="border border-gray-200 bg-white overflow-hidden mt-1">
           <button
             className="w-full flex items-center gap-3 p-3 hover:bg-gray-50 transition-colors text-left"
@@ -426,7 +426,7 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
               </svg>
             </span>
             <span className="flex-1 text-sm font-semibold text-gray-800">
-              Walls <span className="text-[10px] font-normal text-[#F15A22]">· for selected plan</span>
+              Walls {(selectedModule || selectedWall) && <span className="text-[10px] font-normal text-[#F15A22]">· for selected plan</span>}
             </span>
             <span className="text-gray-400 shrink-0">
               {openGroup === "walls" ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
