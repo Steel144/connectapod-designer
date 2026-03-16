@@ -219,19 +219,22 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
         return abbrevs.some(abbrev => fullText.includes(abbrev.toUpperCase()));
       });
       
-      const customItems = categoryModules.map(m => ({
-        code: m.code,
-        name: m.name,
-        mpCode: m.code,
-        width: m.width || 3.0,
-        depth: m.depth || 4.8,
-        sqm: m.sqm || parseFloat(((m.width || 3.0) * (m.depth || 4.8)).toFixed(1)),
-        description: m.description || "",
-        chassis: "SF",
-        widthCode: "30",
-        room: "G",
-        originalCode: m.originalCode || undefined,
-      }));
+      const customItems = categoryModules.map(m => {
+        const isEnd = m.code?.includes("LF") || m.code?.includes("RF") || m.code?.includes("LR") || m.code?.includes("RR");
+        return {
+          code: m.code,
+          name: m.name,
+          mpCode: m.code,
+          width: m.width || 3.0,
+          depth: m.depth || 4.8,
+          sqm: m.sqm || parseFloat(((m.width || 3.0) * (m.depth || 4.8)).toFixed(1)),
+          description: m.description || "",
+          chassis: isEnd ? "LF" : "SF",
+          widthCode: "30",
+          room: "G",
+          originalCode: m.originalCode || undefined,
+        };
+      });
       
       const sorted = customItems.sort((a, b) => {
         const aIsEnd = a.chassis === "EF" || a.chassis === "ER" || a.chassis === "LF" || a.chassis === "RF";
