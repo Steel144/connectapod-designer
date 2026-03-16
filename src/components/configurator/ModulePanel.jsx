@@ -43,11 +43,7 @@ function getIcon(key, size = 18) {
   return icons[key] || icons.general;
 }
 
-// MP48 code builder: MP48-{chassis}{width}-{framingRef}-{orientation}
-// chassis: SF=Standard Flat, EF=End Flat, SR=Standard Raking, ER=End Raking, DK=Deck, SO=Soffit
-// width:   06=0.6m 12=1.2m 18=1.8m 24=2.4m 30=3.0m
-// room:    G=General B=Bathroom R=Bedroom K=Kitchen L=Laundry T=Toilet S=Storage
-// orientation: 1=standard 2=rotated 3=flipped 4=flipped+rotated
+// MP48 code builder
 const mp48 = (chassis, widthCode, framingRef, orientation = 1) =>
   `MP48-${chassis}${widthCode}-${framingRef}-${orientation}`;
 
@@ -140,8 +136,6 @@ const PANEL_GROUPS = [
   },
 ];
 
-// All module types flat list — used by ConfigGrid for drop resolution
-// Convert metres to 600mm grid cells
 const mToCells = (m) => Math.round(m / 0.6);
 
 const MODULE_TYPES = PANEL_GROUPS.flatMap((group) =>
@@ -163,22 +157,21 @@ const MODULE_TYPES = PANEL_GROUPS.flatMap((group) =>
   }))
 );
 
-// Icon lookup by groupKey — used by ConfigGrid & DesignSummary
 const GROUP_ICONS = Object.fromEntries(
   PANEL_GROUPS.map((g) => [g.key, getIcon(g.key, 20)])
 );
 
+// Empty — all walls come from the catalogue database
 const WALL_TYPES = [];
 
 export { MODULE_TYPES, GROUP_ICONS, WALL_TYPES };
 
-export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, selectedModule, placedModules = [], onModuleImageUpdate, onWallImageUpdate, floorPlanImages = {}, wallImages = {} }) {
+export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, selectedModule, placedModules = [], onModuleImageUpdate, onWallImageUpdate, onWallTypesLoaded, floorPlanImages = {}, wallImages = {} }) {
   const [openGroup, setOpenGroup] = useState(null);
   const [hoveredModule, setHoveredModule] = useState(null);
   const [hoveredWall, setHoveredWall] = useState(null);
   const [showWallSuggestions, setShowWallSuggestions] = useState(true);
 
-  // Fetch custom walls and deleted walls
   const { data: customWalls = [] } = useQuery({
     queryKey: ["wallEntries"],
     queryFn: () => base44.entities.WallEntry.list(),
@@ -189,9 +182,6 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
     queryFn: () => base44.entities.DeletedWall.list(),
   });
 
-  // Build custom wall types from database
-  // Parse code prefix to derive face/width: WY{ww} = horizontal, ZX{ww} = vertical
-  // e.g. WY30-D-001 → horizontal, 3.0m wide; ZX48-B-001 → vertical, 4.8m wide
   const customWallTypes = customWalls
     .filter(w => !deletedWalls.some(d => d.wallCode === w.code))
     .map(w => {
@@ -211,17 +201,18 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
       };
     });
 
-  // Auto-open walls section when a wall or module is selected on the grid
+  // Notify parent of available wall types so ConfigGrid can resolve drops
+  React.useEffect(() => {
+    if (onWallTypesLoaded) onWallTypesLoaded(customWallTypes);
+  }, [customWalls, deletedWalls]);
+
   React.useEffect(() => {
     if (selectedWall || selectedModule) setOpenGroup("walls");
   }, [selectedWall?.id, selectedModule?.id]);
 
-  // Filter walls based on the selected module (clicked on grid) OR the wall's attached module
   const { compatibleWalls, filterReason } = React.useMemo(() => {
     const CELL_M = 0.6;
 
-    // Determine context: if a wall is selected, find which module it's attached to and which face
-    // If a module is directly selected, filter to walls compatible with that module (all W/Y faces)
     let attachedMod = null;
     let face = null;
 
@@ -230,20 +221,16 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
       const isLongFace = face === "W" || face === "Y";
       for (const mod of placedModules) {
         if (isLongFace) {
-          // W face (top/outside): x aligns, y is one cell above
           if (face === "W" && selectedWall.x === mod.x && selectedWall.y === mod.y - 1) {
             attachedMod = mod; break;
           }
-          // Y face (bottom/outside): x aligns, y is at module bottom edge
           if (face === "Y" && selectedWall.x === mod.x && selectedWall.y === mod.y + mod.h) {
             attachedMod = mod; break;
           }
         } else {
-          // Z face (left/inside): y aligns, x is one cell inside
           if (face === "Z" && selectedWall.y === mod.y && selectedWall.x === mod.x + 1) {
             attachedMod = mod; break;
           }
-          // X face (right/inside): y aligns, x is one cell inside from right
           if (face === "X" && selectedWall.y === mod.y && selectedWall.x === mod.x + mod.w - 1) {
             attachedMod = mod; break;
           }
@@ -251,16 +238,14 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
       }
     } else if (selectedModule) {
       attachedMod = selectedModule;
-      face = "W"; // default to long face when only module is selected (no face known yet)
+      face = "W";
     }
 
     const allWalls = [...customWallTypes];
     if (!attachedMod) return { compatibleWalls: allWalls, filterReason: null };
 
-    // Resolve chassis and width — placed modules have chassis/widthCode from MODULE_TYPES spread
-    // but fall back to deriving from MODULE_TYPES lookup if missing
     let chassis = attachedMod.chassis;
-    let modWidthM = attachedMod.width; // metres (from panel item)
+    let modWidthM = attachedMod.width;
     if (!chassis || !modWidthM) {
       const resolved = MODULE_TYPES.find(m => m.type === attachedMod.type);
       chassis = chassis || resolved?.chassis || "SF";
@@ -268,25 +253,20 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
     } else {
       modWidthM = modWidthM || (attachedMod.w * CELL_M);
     }
-    // Always derive from grid cells to be safe (w is the authoritative source after rotation)
     modWidthM = attachedMod.w ? attachedMod.w * CELL_M : modWidthM;
 
     const isDeck = chassis === "DK" || chassis === "SO";
     const isEnd = chassis === "EF" || chassis === "LF" || chassis === "RF" || chassis === "ER";
     const isLongFace = face === "W" || face === "Y";
 
-    const faceWidthM = isLongFace
-      ? modWidthM          // W/Y face = module width
-      : attachedMod.h * CELL_M;  // Z/X face = module depth (4.8m)
+    const faceWidthM = isLongFace ? modWidthM : attachedMod.h * CELL_M;
 
-    // Z/X end faces only on End chassis
     if (!isLongFace && !isEnd) {
       return { compatibleWalls: [], filterReason: `Face ${face} only on End chassis (module is ${chassis})` };
     }
 
     let filtered = allWalls;
 
-    // Determine variant filter based on chassis
     let variantFilter = null;
     if (isDeck) {
       variantFilter = "Deck";
@@ -297,52 +277,31 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
     }
 
     if (!isLongFace) {
-      // Gable end walls only, matching depth
       filtered = filtered.filter(w => {
-        const matchesType = (w.type.startsWith("Z") || w.type.startsWith("X")) &&
-                            Math.abs(w.width - faceWidthM) < 0.05;
-        const matchesVariant = !variantFilter || !w.variants || w.variants.includes(variantFilter);
+        const matchesType = w.orientation === "vertical" && Math.abs(w.width - faceWidthM) < 0.05;
+        const matchesVariant = !variantFilter || !w.variants || w.variants.length === 0 || w.variants.includes(variantFilter);
         return matchesType && matchesVariant;
       });
     } else if (isDeck) {
-      // Deck/Soffit: D-suffix walls only, matching width
-      // For Soffit (SO), also include standard walls (W000/Y000, W001/Y001 etc.)
       filtered = filtered.filter(w => {
-        const isStandardWall = !w.type.startsWith("Z") && !w.type.startsWith("X") && 
-                               !w.type.includes("D/") && !w.type.endsWith("D") &&
-                               w.orientation === "horizontal";
-        const isDeckWall = (w.type.includes("D/") || w.type.endsWith("D")) &&
-                           !w.type.startsWith("Z") && !w.type.startsWith("X");
         const matchesWidth = Math.abs(w.width - faceWidthM) < 0.05;
-        const matchesVariant = !w.variants || w.variants.includes("Deck");
-
-        if (chassis === "SO") {
-          // Soffit: include both standard and D-suffix walls
-          return (isStandardWall || isDeckWall) && matchesWidth && matchesVariant;
-        }
-        // Deck: only D-suffix walls
-        return isDeckWall && matchesWidth && matchesVariant;
+        const matchesVariant = !w.variants || w.variants.length === 0 || w.variants.includes("Deck");
+        return w.orientation === "horizontal" && matchesWidth && matchesVariant;
       });
     } else {
-      // Standard: horizontal walls matching module width, no gable or deck walls
       filtered = filtered.filter(w => {
-        const isCompatible = w.orientation === "horizontal" &&
-                             !w.type.startsWith("Z") && !w.type.startsWith("X") &&
-                             !w.type.includes("D/") && !w.type.endsWith("D") &&
-                             Math.abs(w.width - faceWidthM) < 0.05;
-        const matchesVariant = !w.variants || w.variants.includes("Standard");
+        const isCompatible = w.orientation === "horizontal" && Math.abs(w.width - faceWidthM) < 0.05;
+        const matchesVariant = !w.variants || w.variants.length === 0 || w.variants.includes("Standard");
         return isCompatible && matchesVariant;
       });
 
-      // For end modules, also include gable/end walls (4.8m vertical) for side walls
       if (isEnd) {
         const endWalls = allWalls.filter(w =>
-          (w.type.startsWith("Z") || w.type.startsWith("X")) &&
+          w.orientation === "vertical" &&
           Math.abs(w.width - 4.8) < 0.05 &&
-          (!w.variants || w.variants.includes("End"))
+          (!w.variants || w.variants.length === 0 || w.variants.includes("End"))
         );
         filtered = [...filtered, ...endWalls];
-        // Remove duplicates
         filtered = Array.from(new Map(filtered.map(w => [w.type, w])).values());
       }
     }
@@ -413,7 +372,7 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
         );
       })}
 
-      {/* Walls section — always shown */}
+      {/* Walls section */}
       {customWallTypes.length > 0 && (
         <div className="border border-gray-200 bg-white overflow-hidden mt-1">
           <button
@@ -459,24 +418,24 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
                   onMouseLeave={() => setHoveredWall(null)}
                   className="flex items-center gap-3 px-3 py-2 cursor-grab active:cursor-grabbing hover:bg-orange-50 border-b border-gray-50 last:border-0 transition-colors"
                 >
-                  <div className="shrink-0 w-10 h-8 border border-gray-200 bg-white flex items-center justify-center relative">
-                    <div 
-                      style={{
-                        width: wall.orientation === "horizontal" ? "90%" : `${wall.thickness * 2}px`,
-                        height: wall.orientation === "vertical" ? "90%" : `${wall.thickness * 2}px`,
-                        backgroundColor: "#4B5563",
-                      }}
-                    />
-                    {wall.elevationImage && (
-                      <div className="absolute top-0 right-0 bg-[#F15A22] rounded-full p-0.5">
-                        <ImageIcon size={8} className="text-white" />
-                      </div>
+                  <div className="shrink-0 w-10 h-16 border border-gray-200 bg-gray-50 flex items-center justify-center relative overflow-hidden">
+                    {wallImages[wall.type] ? (
+                      <img src={wallImages[wall.type]} alt={wall.label} className="w-full h-full object-contain" />
+                    ) : (
+                      <div
+                        style={{
+                          width: wall.orientation === "horizontal" ? "90%" : "6px",
+                          height: wall.orientation === "vertical" ? "90%" : "6px",
+                          backgroundColor: "#4B5563",
+                        }}
+                      />
                     )}
                   </div>
                   <div className="min-w-0">
                     <p className="text-xs font-medium text-gray-700 leading-tight">{wall.label}</p>
                     <p className="text-[10px] font-mono text-[#F15A22] mt-0.5 truncate" title={wall.mpCode}>{wall.mpCode}</p>
-                    <p className="text-[10px] text-gray-400">{wall.width}m wide</p>
+                    {wall.description && <p className="text-[10px] text-gray-500 mt-0.5 truncate">{wall.description}</p>}
+                    <p className="text-[10px] text-gray-400">{wall.width.toFixed ? wall.width.toFixed(1) : wall.width}m wide</p>
                   </div>
                 </div>
               ))}
