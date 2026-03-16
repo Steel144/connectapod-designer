@@ -177,20 +177,30 @@ export default function Catalogue() {
   };
 
   const handlePermanentlyDeleteModule = async (code) => {
-    const entry = deletedModules.find(d => d.moduleCode === code);
-    if (entry) {
+    try {
+      // Fetch fresh list to ensure we get the current record
+      const allDeleted = await base44.entities.DeletedModule.list();
+      const entry = allDeleted.find(d => d.moduleCode === code);
+      
+      if (!entry) {
+        toast.error("Module record not found");
+        return;
+      }
+      
       // Delete the DeletedModule record
       await base44.entities.DeletedModule.delete(entry.id);
+      
       // Remove any associated image
-      const image = await base44.entities.FloorPlanImage.filter({ moduleType: code });
-      if (image.length > 0) {
-        await base44.entities.FloorPlanImage.delete(image[0].id);
+      const images = await base44.entities.FloorPlanImage.filter({ moduleType: code });
+      if (images.length > 0) {
+        await base44.entities.FloorPlanImage.delete(images[0].id);
       }
-      await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ["deletedModules"] }),
-        queryClient.invalidateQueries({ queryKey: ["floorPlanImages"] }),
-      ]);
+      
+      queryClient.invalidateQueries({ queryKey: ["deletedModules"] });
+      queryClient.invalidateQueries({ queryKey: ["floorPlanImages"] });
       toast.success("Module permanently deleted");
+    } catch (error) {
+      toast.error("Failed to delete module");
     }
   };
 
