@@ -9,10 +9,7 @@ export default function AddModuleModal({ category, onSave, onClose }) {
     depth: 4.8,
     description: "",
     variants: [],
-    wallElevationZ: "",
-    wallElevationW: "",
-    wallElevationY: "",
-    wallElevationX: "",
+    wallElevations: [],
   });
 
   const sqm = parseFloat((Number(form.width) * Number(form.depth)).toFixed(1));
