@@ -262,8 +262,8 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
          ...group,
          items: sorted,
        };
-     });
-   }, [customModules, deletedModules]);
+       });
+       }, [customModules, deletedModules, purgedModules]);
 
   const customWallTypes = React.useMemo(() => customWalls
      .filter(w => !deletedWalls.some(d => d.wallCode === w.code))
