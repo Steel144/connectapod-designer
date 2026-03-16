@@ -579,7 +579,7 @@ export default function Catalogue() {
                       <h3 className="text-sm font-bold text-gray-800 leading-tight">{mod.name}</h3>
                       <span className="text-xs font-mono text-[#F15A22] bg-orange-50 px-1.5 py-0.5 shrink-0">{mod.code}</span>
                     </div>
-                    <p className="text-xs text-gray-500 leading-relaxed mb-2">{mod.description}</p>
+                    {mod.description && <p className="text-xs text-gray-500 leading-relaxed mb-2">{mod.description}</p>}
                     {editMode && (
                       <button
                         onClick={() => setEditingModule({ ...mod, category: cat.category })}
