@@ -337,6 +337,28 @@ export default function Catalogue() {
     }))
     .filter(cat => cat.modules.length > 0);
 
+  if (printMode) {
+    const printCategories = filtered.map(cat => ({
+      name: cat.category,
+      description: cat.description,
+      items: cat.modules.map(m => ({
+        code: m.code,
+        name: m.name,
+        specs: `${m.width}m × ${m.depth}m (${m.sqm.toFixed(1)} m²)`,
+        description: m.description || "—",
+        variants: m.variants || [],
+      })),
+    }));
+
+    return (
+      <PrintableCatalogue
+        title="Module Catalogue"
+        categories={printCategories}
+        onClose={() => setPrintMode(false)}
+      />
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[#F5F5F3]">
       {/* Header */}
@@ -347,6 +369,14 @@ export default function Catalogue() {
             <span className="ml-2 text-xs text-gray-400">Module Catalogue</span>
           </div>
           <div className="flex items-center gap-2 ml-auto">
+            <button
+              onClick={() => setPrintMode(true)}
+              className="flex items-center gap-2 px-3 py-1.5 text-xs text-gray-600 border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22] transition-all"
+              title="Print catalogue as PDF"
+            >
+              <Printer size={14} />
+              Print
+            </button>
             <button
               onClick={() => setEditMode(e => !e)}
               className={`flex items-center gap-2 px-3 py-1.5 text-xs border transition-all ${editMode ? "bg-[#F15A22] text-white border-[#F15A22]" : "text-gray-600 border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22]"}`}
