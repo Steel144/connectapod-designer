@@ -742,14 +742,19 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
           <div
             className="fixed z-[100] bg-white border-2 border-[#F15A22] shadow-xl rounded pointer-events-none flex flex-col"
             style={{
-              width: "210px",
-              height: "330px",
+              width: "240px",
               top: "48px",
               right: "20px",
-              padding: "4px",
+              padding: "8px",
             }}
           >
-            <div className="flex-1 bg-gray-50 rounded overflow-hidden">
+            <div className="flex items-start justify-between gap-2 mb-2">
+              <div>
+                <p className="text-xs font-semibold text-gray-900">{mod.label}</p>
+                <p className="text-[10px] text-gray-500">{mod.type}</p>
+              </div>
+            </div>
+            <div className="bg-gray-50 rounded overflow-hidden" style={{ height: "200px" }}>
               <img src={mod.floorPlanImage} alt={mod.label} className="w-full h-full object-contain" />
             </div>
           </div>
