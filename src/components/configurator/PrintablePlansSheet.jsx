@@ -161,32 +161,27 @@ export default function PrintablePlansSheet({ placedModules, onClose }) {
             </svg>
           </div>
 
-          {/* Header */}
-          <div className="text-center mb-4">
-            <h1 className="text-2xl font-bold text-gray-900">connectapod</h1>
-            <p className="text-sm text-gray-600 mt-1">FLOOR PLAN - SITE LAYOUT</p>
           </div>
-        </div>
 
-        {/* Title block footer */}
-        <div className="border-t-2 border-gray-900 grid grid-cols-4 text-[10px] text-gray-600">
-          <div className="border-r border-gray-900 p-4">
-            <p className="uppercase font-bold text-gray-900">Project</p>
-            <p className="mt-1">connectapod Design</p>
+          {/* Title block footer */}
+          <div className="border-t-4 grid grid-cols-4 text-[10px]" style={{ borderColor: "#F15A22" }}>
+            <div className="border-r p-4" style={{ borderColor: "#F15A22" }}>
+              <p className="uppercase font-bold" style={{ color: "#F15A22" }}>Project</p>
+              <p className="mt-1 text-gray-600">connectapod Design</p>
+            </div>
+            <div className="border-r p-4" style={{ borderColor: "#F15A22" }}>
+              <p className="uppercase font-bold" style={{ color: "#F15A22" }}>Sheet</p>
+              <p className="mt-1 text-gray-600">Floor Plan</p>
+            </div>
+            <div className="border-r p-4" style={{ borderColor: "#F15A22" }}>
+              <p className="uppercase font-bold" style={{ color: "#F15A22" }}>Date</p>
+              <p className="mt-1 text-gray-600">{new Date().toLocaleDateString()}</p>
+            </div>
+            <div className="p-4">
+              <p className="uppercase font-bold" style={{ color: "#F15A22" }}>Scale</p>
+              <p className="mt-1 text-gray-600">1:100</p>
+            </div>
           </div>
-          <div className="border-r border-gray-900 p-4">
-            <p className="uppercase font-bold text-gray-900">Sheet</p>
-            <p className="mt-1">Floor Plan</p>
-          </div>
-          <div className="border-r border-gray-900 p-4">
-            <p className="uppercase font-bold text-gray-900">Date</p>
-            <p className="mt-1">{new Date().toLocaleDateString()}</p>
-          </div>
-          <div className="p-4">
-            <p className="uppercase font-bold text-gray-900">Scale</p>
-            <p className="mt-1">1:100</p>
-          </div>
-        </div>
       </div>
 
 
