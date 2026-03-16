@@ -24,10 +24,7 @@ export default function EditModuleModal({ module: mod, onSave, onClose }) {
       sqm,
       description: form.description,
       variants: form.variants,
-      wallElevationZ: form.wallElevationZ || undefined,
-      wallElevationW: form.wallElevationW || undefined,
-      wallElevationY: form.wallElevationY || undefined,
-      wallElevationX: form.wallElevationX || undefined,
+      wallElevations_list: form.wallElevations,
     });
   };
 

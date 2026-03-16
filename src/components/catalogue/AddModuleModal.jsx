@@ -27,10 +27,7 @@ export default function AddModuleModal({ category, onSave, onClose }) {
       sqm,
       description: form.description.trim(),
       variants: form.variants,
-      wallElevationZ: form.wallElevationZ || undefined,
-      wallElevationW: form.wallElevationW || undefined,
-      wallElevationY: form.wallElevationY || undefined,
-      wallElevationX: form.wallElevationX || undefined,
+      wallElevations_list: form.wallElevations,
     });
   };
 
