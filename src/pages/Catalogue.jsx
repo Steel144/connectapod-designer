@@ -249,7 +249,7 @@ export default function Catalogue() {
     }
   };
 
-  const categories = ["All", ...CATALOGUE.map(c => c.category)];
+  const categories = ["All", ...Array.from(new Set(CATALOGUE.map(c => c.category)))];
 
   // Codes that have a custom override via originalCode
   const overriddenModuleCodes = new Set(customModules.filter(c => c.originalCode).map(c => c.originalCode));
