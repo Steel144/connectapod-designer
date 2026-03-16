@@ -67,7 +67,7 @@ const CATALOGUE = [
     modules: [],
   },
   {
-    category: "Deck",
+    category: "Bathroom",
     description: "Standard bathroom module with shower, vanity, and toilet.",
     modules: [
       { code: "401-B10", name: "Bathroom (B10)", width: 3.0, depth: 4.8, sqm: 14.4, description: "DRH710 or DLH710. Internal bath zone: 2,422 × 1,200mm. Frame: 2,911 × 2,822mm.", chassisCodes: ["MP-48-SF30", "MP-48-SR30"], wallElevations: { Z: "N/A", W: "W500 / W series", Y: "Y500 / Y series", X: "N/A" } },
