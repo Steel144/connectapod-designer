@@ -178,12 +178,22 @@ export default function Catalogue() {
 
   const handlePermanentlyDeleteModule = async (code) => {
     try {
-      // Remove any associated image (keeps module deleted/hidden)
+      // Get the DeletedModule record
+      const allDeleted = await base44.entities.DeletedModule.list();
+      const deletedEntry = allDeleted.find(d => d.moduleCode === code);
+      
+      // Remove any associated image
       const images = await base44.entities.FloorPlanImage.filter({ moduleType: code });
       if (images.length > 0) {
         await base44.entities.FloorPlanImage.delete(images[0].id);
       }
       
+      // Delete the DeletedModule record to fully remove it from catalogue
+      if (deletedEntry) {
+        await base44.entities.DeletedModule.delete(deletedEntry.id);
+      }
+      
+      queryClient.invalidateQueries({ queryKey: ["deletedModules"] });
       queryClient.invalidateQueries({ queryKey: ["floorPlanImages"] });
       toast.success("Module purged");
     } catch (error) {
