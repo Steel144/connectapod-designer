@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import ModulePanel, { MODULE_TYPES, WALL_TYPES } from "@/components/configurator/ModulePanel";
+import ModulePanel, { MODULE_TYPES } from "@/components/configurator/ModulePanel";
 import ConfigGrid from "@/components/configurator/ConfigGrid";
 import DesignSummary from "@/components/configurator/DesignSummary";
 import SavedDesigns from "@/components/configurator/SavedDesigns";
