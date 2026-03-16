@@ -197,12 +197,28 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
     queryFn: () => base44.entities.DeletedWall.list(),
   });
 
-  // Merge custom modules with PANEL_GROUPS by category
+  // Merge custom modules with PANEL_GROUPS by category, supporting multi-category modules
   const dynamicPanelGroups = useMemo(() => {
     const deletedCodes = new Set(deletedModules.map(d => d.moduleCode));
+    const categoryAbbreviations = {
+      "Living": ["LV", "living"],
+      "Bedroom": ["B0", "B1", "B2", "B3", "B4", "bedroom"],
+      "Bathroom": ["B", "bathroom"],
+      "Kitchen": ["K", "kitchen"],
+      "Laundry": ["L", "laundry"],
+      "Deck": ["DK", "deck"],
+      "Soffit": ["SO", "soffit"],
+    };
     
     return PANEL_GROUPS.map(group => {
-      const categoryModules = customModules.filter(m => m.category === group.label && !deletedCodes.has(m.code));
+      const abbrevs = categoryAbbreviations[group.label] || [];
+      const categoryModules = customModules.filter(m => {
+        if (deletedCodes.has(m.code)) return false;
+        if (m.category === group.label) return true;
+        const fullText = `${m.code} ${m.description}`.toUpperCase();
+        return abbrevs.some(abbrev => fullText.includes(abbrev.toUpperCase()));
+      });
+      
       const customItems = categoryModules.map(m => ({
         code: m.code,
         name: m.name,
