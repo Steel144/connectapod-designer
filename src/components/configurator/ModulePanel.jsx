@@ -273,7 +273,8 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
     let chassis = attachedMod.chassis;
     let modWidthM = attachedMod.width;
     if (!chassis || !modWidthM) {
-      const resolved = MODULE_TYPES.find(m => m.type === attachedMod.type);
+      const resolved = dynamicPanelGroups.flatMap(g => g.items).find(m => m.code === attachedMod.type) || 
+                       MODULE_TYPES.find(m => m.type === attachedMod.type);
       chassis = chassis || resolved?.chassis || "SF";
       modWidthM = modWidthM || (attachedMod.w ? attachedMod.w * CELL_M : resolved?.w * CELL_M) || 3.0;
     } else {
