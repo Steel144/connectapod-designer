@@ -1,6 +1,11 @@
 import React, { useState } from "react";
 import { X } from "lucide-react";
 
+const CHASSIS_OPTIONS = ["SF", "SR", "EF", "ER", "LF", "LR", "RF", "RR", "DK", "SO"];
+const WIDTH_OPTIONS = ["06", "12", "18", "24", "30"];
+
+const buildChassisCode = (chassis, width) => `MP-48-${chassis}${width}`;
+
 export default function AddModuleModal({ category, onSave, onClose }) {
   const [form, setForm] = useState({
     code: "",
@@ -8,20 +13,28 @@ export default function AddModuleModal({ category, onSave, onClose }) {
     width: 3.0,
     depth: 4.8,
     description: "",
-    variants: [],
-    wallZ: false,
-    wallW: false,
-    wallY: false,
-    wallX: false,
+    chassisCodes: [],
+    wallElevationZ: "",
+    wallElevationW: "",
+    wallElevationY: "",
+    wallElevationX: "",
   });
 
   const sqm = parseFloat((Number(form.width) * Number(form.depth)).toFixed(1));
 
   const setField = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
+  const toggleChassis = (code) => {
+    setForm(f => ({
+      ...f,
+      chassisCodes: f.chassisCodes.includes(code)
+        ? f.chassisCodes.filter(c => c !== code)
+        : [...f.chassisCodes, code],
+    }));
+  };
+
   const handleSave = () => {
     if (!form.code.trim() || !form.name.trim()) return;
-    const sqm = parseFloat((Number(form.width) * Number(form.depth)).toFixed(1));
     onSave({
       category,
       code: form.code.trim(),
@@ -30,91 +43,134 @@ export default function AddModuleModal({ category, onSave, onClose }) {
       depth: Number(form.depth),
       sqm,
       description: form.description.trim(),
-      variants: form.variants,
-      wallElevationZ: form.wallZ ? "Z" : undefined,
-      wallElevationW: form.wallW ? "W" : undefined,
-      wallElevationY: form.wallY ? "Y" : undefined,
-      wallElevationX: form.wallX ? "X" : undefined,
+      chassisCodes: form.chassisCodes,
+      wallElevationZ: form.wallElevationZ || undefined,
+      wallElevationW: form.wallElevationW || undefined,
+      wallElevationY: form.wallElevationY || undefined,
+      wallElevationX: form.wallElevationX || undefined,
     });
   };
 
+  const field = (label, key, type = "text", placeholder = "") => (
+    <div>
+      <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">{label}</label>
+      <input
+        type={type}
+        value={form[key]}
+        onChange={e => setField(key, e.target.value)}
+        placeholder={placeholder}
+        className="w-full border border-gray-200 px-3 py-1.5 text-sm focus:outline-none focus:border-[#F15A22]"
+      />
+    </div>
+  );
+
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white w-full max-w-md shadow-xl">
-        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-200">
+      <div className="bg-white w-full max-w-lg max-h-[90vh] overflow-y-auto p-6">
+        <div className="flex items-center justify-between mb-4">
           <div>
-            <p className="text-xs text-gray-400 font-medium uppercase tracking-wide">Add Module</p>
-            <p className="text-sm font-bold text-gray-800">{category}</p>
+            <h2 className="text-base font-bold text-gray-900">Add Module</h2>
+            <p className="text-xs text-gray-400 mt-0.5">{category}</p>
           </div>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-700 transition-colors">
-            <X size={18} />
-          </button>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600"><X size={16} /></button>
         </div>
 
-        <div className="px-5 py-4 space-y-3 max-h-[70vh] overflow-y-auto">
+        <div className="space-y-3">
+          {/* Name + Code */}
           <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide block mb-1">Code *</label>
-              <input value={form.code} onChange={e => setField("code", e.target.value)} placeholder="e.g. 010" className="w-full border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:border-[#F15A22]" />
-            </div>
-            <div>
-              <label className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide block mb-1">Width (m)</label>
-              <input type="number" step="0.6" value={form.width} onChange={e => setField("width", e.target.value)} className="w-full border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:border-[#F15A22]" />
-            </div>
+            {field("Name *", "name", "text", "e.g. Open Module 3.0m")}
+            {field("Code *", "code", "text", "e.g. 010")}
           </div>
-          <div>
-            <label className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide block mb-1">Name *</label>
-            <input value={form.name} onChange={e => setField("name", e.target.value)} placeholder="e.g. Open Module 3.0m" className="w-full border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:border-[#F15A22]" />
+
+          {/* Width + Depth */}
+          <div className="grid grid-cols-2 gap-3">
+            {field("Width (m)", "width", "number", "3.0")}
+            {field("Depth (m)", "depth", "number", "4.8")}
           </div>
-          <div>
-            <label className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide block mb-1">Description</label>
-            <textarea value={form.description} onChange={e => setField("description", e.target.value)} rows={2} placeholder="e.g. Full-width standard open module" className="w-full border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:border-[#F15A22] resize-none" />
-          </div>
-          <div className="bg-gray-50 p-3 text-xs text-gray-500 border border-gray-200">
+
+          {/* Area summary */}
+          <div className="bg-gray-50 px-3 py-2 text-xs text-gray-500 border border-gray-200">
             <span className="font-semibold text-gray-700">{sqm.toFixed(1)} m²</span> — {form.width}m wide × {form.depth}m deep
           </div>
+
+          {/* Description */}
           <div>
-            <label className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide block mb-1">Variants</label>
-            <div className="flex flex-col gap-1 mt-1">
-              {["Standard", "End", "Deck"].map(variant => (
-                <label key={variant} className="flex items-center gap-2 text-sm cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={form.variants.includes(variant)}
-                    onChange={e => {
-                      const updated = e.target.checked
-                        ? [...form.variants, variant]
-                        : form.variants.filter(v => v !== variant);
-                      setField("variants", updated);
-                    }}
-                    className="accent-[#F15A22]"
-                  />
-                  {variant}
-                </label>
+            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Description</label>
+            <textarea
+              value={form.description}
+              onChange={e => setField("description", e.target.value)}
+              rows={2}
+              placeholder="e.g. Full-width standard open module"
+              className="w-full border border-gray-200 px-3 py-1.5 text-sm focus:outline-none focus:border-[#F15A22] resize-none"
+            />
+          </div>
+
+          {/* Chassis Codes */}
+          <div>
+            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Chassis Codes</label>
+            <div className="space-y-2">
+              {CHASSIS_OPTIONS.map(chassis => (
+                <div key={chassis} className="flex items-center gap-3">
+                  <span className="text-xs font-mono font-semibold text-gray-600 w-8">{chassis}</span>
+                  <div className="flex gap-1 flex-wrap">
+                    {WIDTH_OPTIONS.map(w => {
+                      const code = buildChassisCode(chassis, w);
+                      const active = form.chassisCodes.includes(code);
+                      return (
+                        <button
+                          key={w}
+                          type="button"
+                          onClick={() => toggleChassis(code)}
+                          className={`px-2 py-0.5 text-[11px] font-mono border transition-colors ${
+                            active
+                              ? "bg-[#F15A22] text-white border-[#F15A22]"
+                              : "bg-white text-gray-500 border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22]"
+                          }`}
+                        >
+                          {parseInt(w) * 60}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
               ))}
             </div>
+            {form.chassisCodes.length > 0 && (
+              <div className="mt-2 flex flex-wrap gap-1">
+                {form.chassisCodes.map(c => (
+                  <span key={c} className="text-[10px] font-mono bg-orange-50 text-[#F15A22] px-1.5 py-0.5 border border-orange-200">{c}</span>
+                ))}
+              </div>
+            )}
           </div>
+
+          {/* Wall Elevations */}
           <div>
-            <label className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide block mb-2">Wall Elevations</label>
-            <div className="flex gap-4">
-              {[["wallW", "W side"], ["wallX", "X end"], ["wallY", "Y side"], ["wallZ", "Z end"]].map(([field, face]) => (
-                <label key={field} className="flex items-center gap-2 cursor-pointer">
+            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Wall Elevations</label>
+            <div className="grid grid-cols-2 gap-2">
+              {[["wallElevationW", "W (front)"], ["wallElevationY", "Y (rear)"], ["wallElevationZ", "Z (left end)"], ["wallElevationX", "X (right end)"]].map(([key, label]) => (
+                <div key={key}>
+                  <label className="block text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1">{label}</label>
                   <input
-                    type="checkbox"
-                    checked={form[field]}
-                    onChange={e => setField(field, e.target.checked)}
-                    className="accent-[#F15A22]"
+                    type="text"
+                    value={form[key]}
+                    onChange={e => setField(key, e.target.value)}
+                    placeholder="e.g. W500 / N/A"
+                    className="w-full border border-gray-200 px-2 py-1 text-xs focus:outline-none focus:border-[#F15A22]"
                   />
-                  <span className="text-sm font-semibold text-gray-700">{face}</span>
-                </label>
+                </div>
               ))}
             </div>
           </div>
         </div>
 
-        <div className="px-5 py-4 border-t border-gray-100 flex justify-end gap-2">
-          <button onClick={onClose} className="px-4 py-2 text-sm text-gray-500 border border-gray-200 hover:border-gray-400 transition-colors">Cancel</button>
-          <button onClick={handleSave} disabled={!form.code.trim() || !form.name.trim()} className="px-4 py-2 text-sm bg-[#F15A22] text-white hover:bg-[#d94e1b] transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
+        <div className="flex justify-end gap-2 mt-5">
+          <button onClick={onClose} className="px-4 py-2 text-sm border border-gray-200 text-gray-600 hover:border-gray-400 transition-colors">Cancel</button>
+          <button
+            onClick={handleSave}
+            disabled={!form.code.trim() || !form.name.trim()}
+            className="px-4 py-2 text-sm bg-[#F15A22] text-white hover:bg-[#d44e1c] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+          >
             Add Module
           </button>
         </div>
