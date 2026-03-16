@@ -527,33 +527,23 @@ export default function WallCatalogue() {
                     <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${widthColors[wall.width] || "bg-gray-100 text-gray-600"}`}>
                       {(wall.width / 1000).toFixed(1)}m
                     </span>
-                    {editMode && (
-                      wall._deleted ? (
+                    {editMode && !wall._deleted && (
+                      <div className="flex items-center gap-1">
                         <button
-                          onClick={() => handleRestoreWall(wall.code)}
-                          className="text-xs text-green-600 hover:underline"
-                          title="Restore this wall"
+                          onClick={() => setEditingWall(wall)}
+                          className="text-gray-300 hover:text-[#F15A22] transition-colors"
+                          title="Edit this wall"
                         >
-                          Restore
+                          <Pencil size={13} />
                         </button>
-                      ) : (
-                        <div className="flex items-center gap-1">
-                          <button
-                            onClick={() => setEditingWall(wall)}
-                            className="text-gray-300 hover:text-[#F15A22] transition-colors"
-                            title="Edit this wall"
-                          >
-                            <Pencil size={13} />
-                          </button>
-                          <button
-                            onClick={() => wall._custom ? handleDeleteWall(wall._id) : handleDeleteBuiltinWall(wall.code)}
-                            className="text-gray-300 hover:text-red-500 transition-colors"
-                            title="Remove this wall"
-                          >
-                            <Trash2 size={13} />
-                          </button>
-                        </div>
-                      )
+                        <button
+                          onClick={() => wall._custom ? handleDeleteWall(wall._id) : handleDeleteBuiltinWall(wall.code)}
+                          className="text-gray-300 hover:text-red-500 transition-colors"
+                          title="Remove this wall"
+                        >
+                          <Trash2 size={13} />
+                        </button>
+                      </div>
                     )}
                   </div>
 
