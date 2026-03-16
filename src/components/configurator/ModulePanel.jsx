@@ -369,6 +369,7 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
                        </div>
                        <div className="min-w-0">
                          <p className="text-xs font-medium text-gray-700 leading-tight">{item.name}</p>
+                         {item.description && <p className="text-[10px] text-gray-500 mt-0.5 truncate">{item.description}</p>}
                          <p className="text-[10px] font-mono text-[#F15A22] mt-0.5 truncate" title={item.mpCode}>{item.mpCode}</p>
                          <p className="text-[10px] text-gray-400">{item.width}×{item.depth}m · {item.sqm}m²</p>
                        </div>
