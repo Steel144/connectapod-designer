@@ -71,10 +71,26 @@ export default function AddModuleModal({ category, onSave, onClose }) {
 
         <div className="space-y-3">
           {/* Name + Code */}
-          <div className="grid grid-cols-2 gap-3">
-            {field("Name *", "name", "text", "e.g. Open Module 3.0m")}
-            {field("Code *", "code", "text", "e.g. 010")}
+          <div>
+            <div className="flex items-center justify-between mb-1">
+              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide">Name *</label>
+              <button
+                type="button"
+                onClick={() => setField("name", generateName())}
+                className="text-xs text-[#F15A22] hover:underline"
+              >
+                Auto-generate
+              </button>
+            </div>
+            <input
+              type="text"
+              value={form.name}
+              onChange={e => setField("name", e.target.value)}
+              placeholder="e.g. Open Module 3.0m"
+              className="w-full border border-gray-200 px-3 py-1.5 text-sm focus:outline-none focus:border-[#F15A22]"
+            />
           </div>
+          {field("Code *", "code", "text", "e.g. 010")}
 
           {/* Width + Depth */}
           <div className="grid grid-cols-2 gap-3">
