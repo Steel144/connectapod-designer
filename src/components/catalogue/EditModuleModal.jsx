@@ -93,19 +93,23 @@ export default function EditModuleModal({ module: mod, onSave, onClose }) {
 
           {/* Wall Elevations */}
           <div>
-            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Wall Elevations</label>
-            <div className="grid grid-cols-2 gap-2">
-              {[["wallElevationW", "W (front)"], ["wallElevationY", "Y (rear)"], ["wallElevationZ", "Z (left end)"], ["wallElevationX", "X (right end)"]].map(([key, label]) => (
-                <div key={key}>
-                  <label className="block text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1">{label}</label>
+            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Wall Elevations</label>
+            <div className="flex flex-col gap-1 mt-1">
+              {["W (Front)", "Y (Rear)", "Z (Left End)", "X (Right End)"].map(face => (
+                <label key={face} className="flex items-center gap-2 text-sm cursor-pointer">
                   <input
-                    type="text"
-                    value={form[key]}
-                    onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))}
-                    placeholder="e.g. W500 / N/A"
-                    className="w-full border border-gray-200 px-2 py-1 text-xs focus:outline-none focus:border-[#F15A22]"
+                    type="checkbox"
+                    checked={form.wallElevations.includes(face)}
+                    onChange={e => {
+                      const updated = e.target.checked
+                        ? [...form.wallElevations, face]
+                        : form.wallElevations.filter(v => v !== face);
+                      setForm(f => ({ ...f, wallElevations: updated }));
+                    }}
+                    className="accent-[#F15A22]"
                   />
-                </div>
+                  {face}
+                </label>
               ))}
             </div>
           </div>
