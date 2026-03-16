@@ -331,6 +331,10 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
     // Move all selected modules by same delta
     dragging.selectedIds.forEach((id) => {
       const mod = placedModules.find((m) => m.id === id);
+      const isEndModule = mod?.chassis === "EF" || mod?.chassis === "ER" || mod?.chassis === "LF" || mod?.chassis === "RF";
+      if (mod && isEndModule) {
+        return; // Don't move end modules
+      }
       if (mod && canPlaceGroup(mod, mod.x + deltaX, mod.y + deltaY, dragging.selectedIds)) {
         onMove(id, mod.x + deltaX, mod.y + deltaY);
         
