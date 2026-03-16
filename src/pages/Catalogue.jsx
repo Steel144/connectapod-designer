@@ -360,6 +360,14 @@ export default function Catalogue() {
           ))}
         </div>
 
+        {/* Category descriptions */}
+        {activeCategory !== "All" && (() => {
+          const catGroup = CATALOGUE.find(c => c.category === activeCategory);
+          return catGroup ? (
+            <p className="text-sm text-gray-500 -mt-4 mb-6">{catGroup.description}</p>
+          ) : null;
+        })()}
+
         {editingModule && (
           <EditModuleModal
             module={editingModule}
