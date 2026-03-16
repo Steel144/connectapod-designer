@@ -438,7 +438,7 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
                      >
                        <div className="shrink-0 w-10 h-16 border border-gray-200 bg-white overflow-hidden relative">
                          {floorPlanImages[mod.type] || floorPlanImages[item.originalCode] ? (
-                           <img src={floorPlanImages[mod.type] || floorPlanImages[item.originalCode]} alt={item.name} className="w-full h-full object-contain" />
+                           <img src={floorPlanImages[mod.type] || floorPlanImages[item.originalCode]} alt={item.name} className="w-full h-full object-cover object-center" />
                          ) : (
                            <FloorPlanSVG code={item.code} className="w-full h-full" />
                          )}
