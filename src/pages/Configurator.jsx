@@ -68,6 +68,11 @@ export default function Configurator() {
     },
   });
 
+  const { data: customModules = [] } = useQuery({
+    queryKey: ["moduleEntries"],
+    queryFn: () => base44.entities.ModuleEntry.list(),
+  });
+
   const saveMutation = useMutation({
     mutationFn: (data) => base44.entities.HomeDesign.create(data),
     onSuccess: () => {
