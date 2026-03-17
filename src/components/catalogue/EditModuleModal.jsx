@@ -133,15 +133,7 @@ export default function EditModuleModal({ module: mod, onSave, onClose }) {
                      e.stopPropagation();
                      const parts = form.description.split(",").map(s => s.trim()).filter(Boolean);
                      const updated = active ? parts.filter(p => p !== opt) : [...parts, opt];
-                     const newDescription = updated.join(", ");
-                     let newUnitType = form.unitType;
-                     if (opt === "Connection" && !active) {
-                       newUnitType = "Connection";
-                     }
-                     setForm(f => ({ ...f, description: newDescription, ...(newUnitType !== form.unitType && { unitType: newUnitType }) }));
-                     if (newUnitType !== form.unitType) {
-                       handleUnitTypeChange(newUnitType);
-                     }
+                     setForm(f => ({ ...f, description: updated.join(", ") }));
                    }}
                     className={`px-3 py-1.5 text-xs border transition-colors ${active ? "bg-[#F15A22] text-white border-[#F15A22]" : "bg-white text-gray-600 border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22]"}`}
                   >
