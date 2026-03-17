@@ -42,6 +42,12 @@ export default function AddModuleModal({ category, onSave, onClose }) {
     return `${desc}${variant}${size}`;
   };
 
+  const generateCode = () => {
+    const widthNum = Math.round(Number(form.width) * 10);
+    const suffix = form.unitType === "Connection" ? "C" : form.unitType === "Deck" ? "D" : form.unitType === "End" ? "E" : "";
+    return `${widthNum}${suffix}`;
+  };
+
   const handleSave = () => {
     if (!form.code.trim() || !form.name.trim()) return;
     onSave({
