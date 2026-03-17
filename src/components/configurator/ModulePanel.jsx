@@ -192,7 +192,8 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
        const customItems = categoryModules.map(m => {
          const variants = (m.variants || []).map(v => v.toLowerCase());
          const isEnd = variants.some(v => v.includes("end"));
-         const chassis = isEnd ? "LF" : "SF";
+         const isConnection = variants.some(v => v.includes("connection"));
+         const chassis = isConnection ? "CM" : isEnd ? "LF" : "SF";
          
          return {
            code: m.code,
