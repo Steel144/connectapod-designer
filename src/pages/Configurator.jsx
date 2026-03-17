@@ -375,7 +375,7 @@ export default function Configurator() {
     const wallsToSave = walls.map(w => ({
       id: w.id, type: w.type, label: w.label, x: w.x, y: w.y,
       orientation: w.orientation, length: w.length, thickness: w.thickness,
-      face: w.face, rotation: w.rotation, elevationImage: w.elevationImage || null,
+      face: w.face, rotation: w.rotation, flipped: w.flipped || false, elevationImage: w.elevationImage || null,
     }));
     saveMutation.mutate({
       name,
