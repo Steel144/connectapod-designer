@@ -70,7 +70,7 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
 
       const yPositions = Object.keys(yGroups).map(Number).sort((a, b) => a - b);
 
-      // For each y-position, create rows
+      // For each y-position, create rows: Y first, then W
       const rows = yPositions.flatMap(yPos => {
         const wallsAtY = yGroups[yPos];
 
@@ -91,7 +91,7 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
       });
 
       pavilions.push({
-        pavilionNum: pavilions.length + 1,
+        pavilionNum: i + 1,
         rows,
       });
     }
