@@ -609,7 +609,7 @@ export default function Catalogue() {
                       <div className="border-t border-gray-100 pt-2 mt-1">
                         <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1.5">Wall Elevations</p>
                         <div className="grid grid-cols-2 gap-x-3 gap-y-0.5">
-                          {Object.entries(mod.wallElevations).map(([face, val]) => (
+                          {Object.entries(mod.wallElevations).filter(([, val]) => val && val !== "N/A").map(([face, val]) => (
                             <div key={face} className="flex items-start gap-1 text-[10px]">
                               <span className="font-bold text-[#F15A22] w-3 shrink-0">{face}</span>
                               <span className="text-gray-500 leading-tight">{val}</span>
