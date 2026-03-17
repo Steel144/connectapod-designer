@@ -306,7 +306,7 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
                         />
                       ))}
                       {wRows.map((row) => (
-                        <div key={`${pav.pavilionNum}-${row.yPos}-W`} style={{ marginLeft: `${Math.round((zoom / 100) * 400)}px` }}>
+                        <div key={`${pav.pavilionNum}-${row.yPos}-W`} style={{ marginLeft: `${Math.round((zoom / 100) * 800)}px` }}>
                           <ElevationRow
                             pavilionNum={pav.pavilionNum}
                             endLeft={row.zWall}
