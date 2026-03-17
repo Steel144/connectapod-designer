@@ -624,6 +624,29 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
 
 
 
+               {/* Red strip — Connection Module (1200mm / 2 cells, centered) */}
+               <div
+                 className="absolute pointer-events-none"
+                 style={{
+                   left: 0,
+                   top: (midpoint - 1) * CELL_H,
+                   width: GRID_COLS * CELL_W,
+                   height: 2 * CELL_H,
+                   backgroundColor: "rgba(239, 68, 68, 0.075)",
+                   transition: "top 0.2s ease-out",
+                 }}
+               />
+               <div
+                 className="absolute pointer-events-none text-red-700 font-bold text-sm"
+                 style={{
+                   left: "12px",
+                   top: (midpoint - 1) * CELL_H + 4,
+                   transition: "top 0.2s ease-out",
+                 }}
+               >
+                 Connection Module
+               </div>
+
                {/* Blue stripe — Pavilion 2 */}
                <div
                  className="absolute pointer-events-none"
