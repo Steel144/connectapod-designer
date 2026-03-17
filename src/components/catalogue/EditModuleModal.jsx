@@ -59,9 +59,11 @@ export default function EditModuleModal({ module: mod, onSave, onClose }) {
   const handleSubmit = () => {
     if (!form.name || !form.code) return;
     const descriptionCategories = form.description.split(",").map(s => s.trim()).filter(Boolean);
+    const primaryCategory = descriptionCategories.length > 0 ? descriptionCategories[0] : "General";
     onSave({
       name: form.name,
       code: form.code,
+      category: primaryCategory,
       width: parseFloat(form.width) || 3.0,
       depth: parseFloat(form.depth) || 4.8,
       sqm,
