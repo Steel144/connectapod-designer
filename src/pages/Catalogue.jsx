@@ -436,6 +436,19 @@ export default function Catalogue() {
           ))}
         </div>
 
+        {bulkUploadOpen && (
+          <BulkUploadModal
+            existingModules={allCatalogue.flatMap(c => c.modules)}
+            onClose={() => setBulkUploadOpen(false)}
+            onDone={() => {
+              queryClient.invalidateQueries({ queryKey: ["moduleEntries"] });
+              queryClient.invalidateQueries({ queryKey: ["floorPlanImages"] });
+              setBulkUploadOpen(false);
+              toast.success("Bulk upload complete");
+            }}
+          />
+        )}
+
         {editingModule && (
           <EditModuleModal
             module={editingModule}
