@@ -76,16 +76,17 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
   const { pavilions, hasAny } = useMemo(() => {
     // Add pavilion info to each wall
     const wallsWithPavilion = walls.map(w => ({ ...w, pavilionNum: getWallPavilion(w) }));
-    const withImage = wallsWithPavilion.filter(w => w.elevationImage);
-    if (withImage.length === 0) return { pavilions: [], hasAny: false };
-
-    // Group ALL walls (not just with images) by pavilion for structure, but only with images get displayed
+    
+    // Group ALL walls by pavilion (including those without images for proper grouping)
     const pavilionGroups = { 1: [], 2: [], 3: [] };
     wallsWithPavilion.forEach(w => {
       if (w.pavilionNum && pavilionGroups[w.pavilionNum]) {
         pavilionGroups[w.pavilionNum].push(w);
       }
     });
+    
+    const withImage = wallsWithPavilion.filter(w => w.elevationImage);
+    if (withImage.length === 0) return { pavilions: [], hasAny: false };
 
     // Create pavilions for those with walls (include pavilion 2 even if empty to show structure)
     const pavilions = [3, 2, 1].map((pavNum) => {
