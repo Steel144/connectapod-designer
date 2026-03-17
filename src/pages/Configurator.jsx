@@ -621,6 +621,11 @@ export default function Configurator() {
             <ElevationGallery walls={walls} onWallSelect={setSelectedWall} />
           </div>
         )}
+        {viewMode === "3d-elevations" && (
+          <div className="absolute inset-0 z-10">
+            <View3DFromElevations walls={walls} />
+          </div>
+        )}
         <ConfigGrid
            placedModules={placedModules}
            onPlace={handlePlace}
