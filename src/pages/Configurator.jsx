@@ -603,26 +603,26 @@ export default function Configurator() {
             <ElevationGallery walls={walls} onWallSelect={setSelectedWall} />
           </div>
         ) : (
-        <ConfigGrid
-           placedModules={placedModules}
-           onPlace={handlePlace}
-           onRemove={handleRemove}
-           onMove={handleMove}
-           onRotate={handleRotate}
-           onFlip={handleFlip}
-           draggingMod={draggingMod}
-           walls={walls}
-           wallTypes={availableWallTypes}
-           onPlaceWall={handlePlaceWall}
-           onRemoveWall={handleRemoveWall}
-           onFlipWall={handleFlipWall}
-           onMoveWall={handleMoveWall}
-           onWallSelect={setSelectedWall}
-           onModuleSelect={setSelectedModule}
-           customModules={customModules}
-           />
-           )}
-           </div>
+          <ConfigGrid
+            placedModules={placedModules}
+            onPlace={handlePlace}
+            onRemove={handleRemove}
+            onMove={handleMove}
+            onRotate={handleRotate}
+            onFlip={handleFlip}
+            draggingMod={draggingMod}
+            walls={walls}
+            wallTypes={availableWallTypes}
+            onPlaceWall={handlePlaceWall}
+            onRemoveWall={handleRemoveWall}
+            onFlipWall={handleFlipWall}
+            onMoveWall={handleMoveWall}
+            onWallSelect={setSelectedWall}
+            onModuleSelect={setSelectedModule}
+            customModules={customModules}
+          />
+        )}
+        </div>
 
       {/* Floating left panel — Module picker */}
       <div
