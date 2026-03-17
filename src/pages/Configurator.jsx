@@ -597,6 +597,11 @@ export default function Configurator() {
 
       {/* Workspace */}
       <div className="flex-1 overflow-auto pt-12 relative">
+        {viewMode === "elevations" && (
+          <div className="absolute inset-0 z-10">
+            <ElevationGallery walls={walls} onWallSelect={setSelectedWall} />
+          </div>
+        )}
         <ConfigGrid
            placedModules={placedModules}
            onPlace={handlePlace}
