@@ -174,17 +174,19 @@ export default function View3DFromElevations({ walls = [] }) {
     // W/Y walls are long face (width), Z/X are end face (depth)
     const wWallLength = wWalls.length > 0 ? wWalls.reduce((s, w) => s + (w.length || 5), 0) * 0.6 : (yWalls.length > 0 ? yWalls.reduce((s, w) => s + (w.length || 5), 0) * 0.6 : 9);
     const endWallLength = (zWall || xWall) ? ((zWall?.length || xWall?.length || 8) * 0.6) : 4.8;
-    const wallH = 2.4;
-    const pitchAngle = 25 * Math.PI / 180;
-    const roofPeak = (endWallLength / 2) * Math.tan(pitchAngle);
-    const roofOverhang = 0.3;
-    const roofW = wWallLength + roofOverhang * 2;
-    const roofD = endWallLength + roofOverhang * 2;
+
+    // The elevation images include the roof — use a fixed aspect ratio to size the panels.
+    // Long face: use a 3:1 width:height ratio (typical for these elevations)
+    // End face:  use a 1:1 ratio (square-ish gable end)
+    const longFaceH = wWallLength / 3;
+    const endFaceH = endWallLength * 0.9;
 
     // Building dimensions
     const bW = wWallLength;  // building width (X axis)
     const bD = endWallLength; // building depth (Z axis)
-    const bH = wallH;
+    // Spouting line sits at ~60% of the total elevation image height
+    const spoutingFraction = 0.60;
+    const bH = longFaceH * spoutingFraction; // wall height up to spouting
 
     // Center at origin
     const ox = -bW / 2;
