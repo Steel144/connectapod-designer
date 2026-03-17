@@ -85,6 +85,14 @@ const PANEL_GROUPS = [
     items: [],
   },
   {
+    key: "connectionmodules",
+    label: "Connection Modules",
+    color: "#FDF0EB",
+    border: "#F15A22",
+    price: 18000,
+    items: [],
+  },
+  {
     key: "deck",
     label: "Deck",
     color: "#FDF0EB",
