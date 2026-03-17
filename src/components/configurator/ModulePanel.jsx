@@ -195,6 +195,10 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
          const matchesAdditionalCategories = categories.includes(group.label);
          const matchesVariant = variants.some(v => v.toLowerCase().includes(group.label.toLowerCase()));
 
+         if (m.code === "30C") {
+           console.log(`[DEBUG 30C] group=${group.label}, category=${m.category}, descriptions=${descriptions.join(", ")}, variants=${variants.join(", ")}, matchesPrimary=${matchesPrimaryCategory}, matchesDesc=${matchesDescription}, matchesAddl=${matchesAdditionalCategories}, matchesVar=${matchesVariant}`);
+         }
+
          return matchesPrimaryCategory || matchesDescription || matchesAdditionalCategories || matchesVariant;
        });
 
