@@ -1,7 +1,7 @@
 import React from "react";
 
 export default function PrintableElevationsSheet({ walls, onClose }) {
-  const elevations = walls.filter(w => w.elevationImage);
+  const elevations = walls;
   
   console.log('All walls:', walls);
   console.log('Elevations with images:', elevations);
