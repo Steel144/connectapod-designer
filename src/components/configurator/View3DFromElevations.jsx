@@ -194,122 +194,60 @@ export default function View3DFromElevations({ walls = [] }) {
 
     // ── Wall faces ─────────────────────────────────────────────────────────
 
+    // Each elevation image already includes the roof — render the full image
+    // with its bottom edge at y=0 (ground) so the spouting line aligns at bH.
     const makeFaceMesh = (imgUrl, width, height, flipped = false) => {
       const geo = new THREE.PlaneGeometry(width, height);
       if (imgUrl) {
         const tex = loader.load(imgUrl);
         tex.magFilter = THREE.LinearFilter;
         tex.minFilter = THREE.LinearFilter;
-        if (flipped) tex.repeat.set(-1, 1);
-        if (flipped) tex.offset.set(1, 0);
-        const mat = new THREE.MeshLambertMaterial({ map: tex, color: 0xffffff });
-        return new THREE.Mesh(geo, mat);
+        if (flipped) { tex.repeat.set(-1, 1); tex.offset.set(1, 0); }
+        return new THREE.Mesh(geo, new THREE.MeshLambertMaterial({ map: tex, color: 0xffffff, transparent: true }));
       }
       const fallbackTex = createWeatherboardTexture();
       fallbackTex.repeat.set(width / 1.5, 1);
-      return new THREE.Mesh(geo, new THREE.MeshLambertMaterial({ map: fallbackTex, color: 0xffffff }));
+      return new THREE.Mesh(geo, new THREE.MeshLambertMaterial({ map: fallbackTex }));
     };
 
-    // W face — front (negative Z, facing -Z)
-    // Composite multiple panels side by side if needed
-    const makeCompositeWallFace = (wallArr, totalW, faceZ, rotY, flippedOverride = false) => {
+    // Long faces: full image height so roof in image sits above bH naturally
+    const makeCompositeWallFace = (wallArr, totalW, faceH, faceZ, rotY, flippedOverride = false) => {
       if (wallArr.length === 0) return;
-      if (wallArr.length === 1) {
-        const wall = wallArr[0];
-        const mesh = makeFaceMesh(wall.elevationImage, totalW, bH, flippedOverride ? !wall.flipped : wall.flipped);
-        mesh.position.set(0, bH / 2, faceZ);
-        mesh.rotation.y = rotY;
-        mesh.castShadow = true;
-        scene.add(mesh);
-        return;
-      }
-      // Multiple panels — lay them side by side
       const panelW = totalW / wallArr.length;
       wallArr.forEach((wall, i) => {
-        const mesh = makeFaceMesh(wall.elevationImage, panelW, bH, flippedOverride ? !wall.flipped : wall.flipped);
+        const isFlipped = flippedOverride ? !wall.flipped : wall.flipped;
+        const mesh = makeFaceMesh(wall.elevationImage, panelW, faceH, isFlipped);
         const startX = -totalW / 2 + panelW * (i + 0.5);
-        mesh.position.set(startX, bH / 2, faceZ);
+        // position: bottom of image at y=0, so centre is at faceH/2
+        mesh.position.set(startX, faceH / 2, faceZ);
         mesh.rotation.y = rotY;
-        mesh.castShadow = true;
         scene.add(mesh);
       });
     };
 
     // W = front face (min Z)
-    makeCompositeWallFace(wWalls, bW, oz, 0);
+    makeCompositeWallFace(wWalls, bW, longFaceH, oz, 0);
 
     // Y = back face (max Z) — mirror X so it reads correctly from outside
-    makeCompositeWallFace(yWalls, bW, oz + bD, Math.PI, true);
+    makeCompositeWallFace(yWalls, bW, longFaceH, oz + bD, Math.PI, true);
 
     // Z = left end face (min X, facing -X)
     if (zWall) {
-      const mesh = makeFaceMesh(zWall.elevationImage, bD, bH, zWall.flipped);
-      mesh.position.set(ox, bH / 2, 0);
+      const mesh = makeFaceMesh(zWall.elevationImage, bD, endFaceH, zWall.flipped);
+      // bottom of image at y=0
+      mesh.position.set(ox, endFaceH / 2, 0);
       mesh.rotation.y = -Math.PI / 2;
-      mesh.castShadow = true;
       scene.add(mesh);
     }
 
     // X = right end face (max X, facing +X)
     if (xWall) {
-      const mesh = makeFaceMesh(xWall.elevationImage, bD, bH, xWall.flipped);
-      mesh.position.set(ox + bW, bH / 2, 0);
+      const isFlipped = xWall.flipped;
+      const mesh = makeFaceMesh(xWall.elevationImage, bD, endFaceH, isFlipped);
+      mesh.position.set(ox + bW, endFaceH / 2, 0);
       mesh.rotation.y = Math.PI / 2;
-      mesh.castShadow = true;
       scene.add(mesh);
     }
-
-    // ── Gable triangles on ends ─────────────────────────────────────────────
-
-    const makeGableTriangle = (xPos, facingLeft) => {
-      const verts = new Float32Array([
-        0, 0, -bD / 2,
-        0, 0,  bD / 2,
-        0, roofPeak, 0,
-      ]);
-      const uvs = new Float32Array([0, 0, 1, 0, 0.5, 1]);
-      const geo = new THREE.BufferGeometry();
-      geo.setAttribute("position", new THREE.BufferAttribute(verts, 3));
-      geo.setAttribute("uv", new THREE.BufferAttribute(uvs, 2));
-      geo.setIndex([0, 2, 1]);
-      geo.computeVertexNormals();
-      const wbTex = createWeatherboardTexture();
-      const mesh = new THREE.Mesh(geo, new THREE.MeshLambertMaterial({ map: wbTex, color: 0xffffff, side: THREE.DoubleSide }));
-      mesh.position.set(xPos, bH, 0);
-      scene.add(mesh);
-    };
-
-    makeGableTriangle(ox, true);
-    makeGableTriangle(ox + bW, false);
-
-    // ── Pitched roof ────────────────────────────────────────────────────────
-    const roofVerts = new Float32Array([
-      -roofW/2, 0, -roofD/2,
-       roofW/2, 0, -roofD/2,
-       roofW/2, 0,  roofD/2,
-      -roofW/2, 0,  roofD/2,
-      -roofW/2, roofPeak, 0,
-       roofW/2, roofPeak, 0,
-    ]);
-    const roofIndices = new Uint32Array([
-      0, 5, 4, 0, 1, 5, // front slope
-      3, 4, 5, 3, 5, 2, // back slope
-    ]);
-    const roofUVs = new Float32Array([
-      0, 0, 1, 0, 1, 1, 0, 1, 0, 0.5, 1, 0.5
-    ]);
-    const roofGeo = new THREE.BufferGeometry();
-    roofGeo.setAttribute("position", new THREE.BufferAttribute(roofVerts, 3));
-    roofGeo.setAttribute("uv", new THREE.BufferAttribute(roofUVs, 2));
-    roofGeo.setIndex(new THREE.BufferAttribute(roofIndices, 1));
-    roofGeo.computeVertexNormals();
-
-    const roofTex = createStandingSeamTexture();
-    roofTex.repeat.set(bW / 0.6, 1);
-    const roofMesh = new THREE.Mesh(roofGeo, new THREE.MeshLambertMaterial({ map: roofTex, color: 0xffffff }));
-    roofMesh.castShadow = true;
-    roofMesh.position.set(0, bH, 0);
-    scene.add(roofMesh);
 
     // ── Face labels on ground ───────────────────────────────────────────────
     const makeLabel = (text, x, z) => {
