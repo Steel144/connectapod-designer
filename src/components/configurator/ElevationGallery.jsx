@@ -287,40 +287,23 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
                   const yRows = pav.rows.filter(r => r.type === "Y");
                   const wRows = pav.rows.filter(r => r.type === "W");
                   const zxRows = pav.rows.filter(r => r.type === "ZX");
+                  
+                  // Get Z and X walls from any ZX rows to attach to Y rows
+                  const zWallFromZX = zxRows.find(r => r.zWall && r.zWall.elevationImage)?.zWall;
+                  const xWallFromZX = zxRows.find(r => r.xWall && r.xWall.elevationImage)?.xWall;
+                  
                   return (
                     <>
                       {yRows.map((row) => (
                         <ElevationRow
                           key={`${pav.pavilionNum}-${row.yPos}-Y`}
                           pavilionNum={pav.pavilionNum}
-                          endLeft={row.zWall}
+                          endLeft={zWallFromZX || row.zWall}
                           midWalls={row.midWalls || []}
-                          endRight={row.xWall}
+                          endRight={xWallFromZX || row.xWall}
                           rowLabel="Y face (outside / top)"
                           isYFace={true}
                         />
-                      ))}
-                      {zxRows.map((row) => (
-                        <div key={`${pav.pavilionNum}-zx-${row.yPos}`} className="flex flex-col gap-1">
-                          {row.zWall && row.zWall.elevationImage && (
-                            <>
-                              <div className="flex items-center gap-2">
-                                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Z face (left end)</span>
-                                <div className="flex-1 h-px bg-gray-200" />
-                              </div>
-                              <ElevationImage wall={row.zWall} label={row.zWall.type || "End"} face="Z" />
-                            </>
-                          )}
-                          {row.xWall && row.xWall.elevationImage && (
-                            <>
-                              <div className="flex items-center gap-2">
-                                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">X face (right end)</span>
-                                <div className="flex-1 h-px bg-gray-200" />
-                              </div>
-                              <ElevationImage wall={row.xWall} label={row.xWall.type || "End"} face="X" />
-                            </>
-                          )}
-                        </div>
                       ))}
                       {wRows.map((row) => (
                         <ElevationRow
