@@ -314,8 +314,8 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
 
     let filtered = allWalls;
 
-    if (isConnection && (face === "Z" || face === "X")) {
-     // Connection modules on end faces: filter by width and Connection variant
+    if (isConnection) {
+     // Connection modules: filter by width and Connection variant
      filtered = allWalls.filter(w => {
        const matchesWidth = Math.abs(w.width - faceWidthM) < 0.05;
        const matchesVariant = !w.variants || w.variants.length === 0 || w.variants.includes("Connection");
