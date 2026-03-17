@@ -92,7 +92,7 @@ const PANEL_GROUPS = [
   },
   {
     key: "connectionmodules",
-    label: "Connection Modules",
+    label: "Connection",
     color: "#FDF0EB",
     border: "#F15A22",
     price: 18000,
@@ -173,7 +173,7 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
        "Bathroom": ["W", "bathroom"],
        "Kitchen": ["K", "kitchen"],
        "Laundry": ["L", "laundry"],
-       "Connection Modules": ["C", "connection modules", "connectionmodules"],
+       "Connection": ["C", "connection", "connectionmodules"],
        "Deck": ["DK", "D", "deck"],
        "Soffit": ["SO", "soffit"],
      };
@@ -190,8 +190,8 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
          const variants = Array.isArray(m.variants) ? m.variants.map(v => v.toLowerCase()) : [];
          const isConnection = variants.some(v => v.includes("connection"));
 
-         // Connection modules should ONLY appear in Connection Modules group
-         if (isConnection && group.label !== "Connection Modules") return false;
+         // Connection modules should ONLY appear in Connection group
+         if (isConnection && group.label !== "Connection") return false;
 
          // Check primary category, description tags, additional categories, and variants
          return m.category === group.label || 
