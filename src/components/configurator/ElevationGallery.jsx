@@ -117,6 +117,9 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
             if (yWalls.length > 0 || wWalls.length > 0 || zWall || xWall) {
               if (yWalls.length > 0) rows.push({ type: "Y", yPos, zWall, midWalls: yWalls, xWall });
               if (wWalls.length > 0) rows.push({ type: "W", yPos, zWall, midWalls: wWalls, xWall });
+              if ((zWall || xWall) && yWalls.length === 0 && wWalls.length === 0) {
+                rows.push({ type: "ZX", yPos, zWall, xWall });
+              }
             }
           });
 
