@@ -4,6 +4,7 @@ import { X } from "lucide-react";
 const UNIT_TYPES = [
   { label: "Standard", value: "Standard", walls: ["W (Front)", "Y (Rear)"] },
   { label: "Deck", value: "Deck", walls: ["W (Front)", "Y (Rear)"] },
+  { label: "Connection", value: "Connection", walls: ["W (Front)", "Z (Left)"] },
   { label: "End", value: "End", walls: ["W (Front)", "Y (Rear)"], note: "W + Y + one end wall (auto on grid)" },
 ];
 
