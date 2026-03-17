@@ -284,7 +284,7 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
     modWidthM = attachedMod.w ? attachedMod.w * CELL_M : modWidthM;
 
     const isDeck = chassis === "DK" || chassis === "SO";
-    const isEnd = chassis === "EF" || chassis === "LF" || chassis === "RF" || chassis === "ER";
+    const isEnd = chassis === "EF" || chassis === "LF" || chassis === "RF" || chassis === "ER" || chassis === "End";
     const isLongFace = face === "W" || face === "Y";
 
     const faceWidthM = isLongFace ? modWidthM : attachedMod.h * CELL_M;
