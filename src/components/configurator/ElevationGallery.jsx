@@ -227,34 +227,29 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
             paddingBottom: "100px",
           }}
         >
-          <div className="flex flex-col" style={{ width: "max-content", gap: `${Math.round((zoom / 100) * 128)}px` }}>
-            {pavilions.map((pav) => {
-              // Group rows by yPos to show both Y and W faces together
-              const rowsByYPos = {};
-              pav.rows.forEach(row => {
-                if (!rowsByYPos[row.yPos]) rowsByYPos[row.yPos] = [];
-                rowsByYPos[row.yPos].push(row);
-              });
-              const uniqueYPositions = Object.keys(rowsByYPos).map(Number).sort((a, b) => a - b);
-
+          <div className="flex flex-col" style={{ gap: `${Math.round((zoom / 100) * 128)}px` }}>
+            {Array.from({ length: Math.ceil(pavilions.length / 3) }).map((_, rowIdx) => {
+              const pavs = pavilions.slice(rowIdx * 3, (rowIdx + 1) * 3);
               return (
-                <div key={pav.pavilionNum} className="flex flex-col" style={{ gap: `${Math.round((zoom / 100) * 64)}px` }}>
+                <div key={`row-${rowIdx}`} className="flex flex-col" style={{ gap: `${Math.round((zoom / 100) * 64)}px` }}>
                   <div className="text-sm font-bold text-gray-800 uppercase tracking-widest ml-1 px-3 py-2 bg-orange-100 rounded w-fit">
-                    Pavilion {pav.pavilionNum}
+                    Pavilion {pavs[0].pavilionNum}{pavs.length > 1 ? ` - ${pavs[pavs.length - 1].pavilionNum}` : ""}
                   </div>
-                  <div className="flex flex-col" style={{ gap: `${Math.round((zoom / 100) * 64)}px` }}>
-                    {uniqueYPositions.map((yPos) => (
-                      <div key={`pav-${pav.pavilionNum}-ypos-${yPos}`} className="flex flex-col" style={{ gap: `${Math.round((zoom / 100) * 32)}px` }}>
-                        {rowsByYPos[yPos].sort((a, b) => a.type === "Y" ? -1 : 1).map(row => (
-                          <ElevationRow
-                            key={`${pav.pavilionNum}-${row.yPos}-${row.type}`}
-                            pavilionNum={pav.pavilionNum}
-                            endLeft={row.zWall}
-                            midWalls={row.midWalls}
-                            endRight={row.xWall}
-                            rowLabel={row.type === "Y" ? "Y face (outside / top)" : "W face (outside / bottom)"}
-                          />
-                        ))}
+                  <div className="flex gap-8" style={{ gap: `${Math.round((zoom / 100) * 128)}px` }}>
+                    {pavs.map((pav) => (
+                      <div key={pav.pavilionNum} className="flex flex-col" style={{ gap: `${Math.round((zoom / 100) * 64)}px` }}>
+                        {pav.rows
+                          .sort((a, b) => a.type === "Y" ? -1 : 1)
+                          .map((row) => (
+                            <ElevationRow
+                              key={`${pav.pavilionNum}-${row.yPos}-${row.type}`}
+                              pavilionNum={pav.pavilionNum}
+                              endLeft={row.zWall}
+                              midWalls={row.midWalls}
+                              endRight={row.xWall}
+                              rowLabel={row.type === "Y" ? "Y face (outside / top)" : "W face (outside / bottom)"}
+                            />
+                          ))}
                       </div>
                     ))}
                   </div>
