@@ -107,7 +107,21 @@ export default function AddModuleModal({ category, onSave, onClose }) {
             />
           </div>
 
-          {field("Code *", "code", "text", "e.g. 010")}
+          <div>
+            <div className="flex items-center justify-between mb-1">
+              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide">Code *</label>
+              <button type="button" onClick={() => setField("code", generateCode())} className="text-xs text-[#F15A22] hover:underline">
+                Auto-generate
+              </button>
+            </div>
+            <input
+              type="text"
+              value={form.code}
+              onChange={e => setField("code", e.target.value)}
+              placeholder="e.g. 30C (3m Connection)"
+              className="w-full border border-gray-200 px-3 py-1.5 text-sm focus:outline-none focus:border-[#F15A22]"
+            />
+          </div>
 
           {/* Width + Depth */}
           <div className="grid grid-cols-2 gap-3">
