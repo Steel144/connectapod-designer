@@ -642,7 +642,7 @@ export default function Configurator() {
            onMoveWall={handleMoveWall}
            onWallSelect={setSelectedWall}
            onModuleSelect={setSelectedModule}
-           hidden={viewMode === "3d" || viewMode === "elevations"}
+           hidden={viewMode === "3d" || viewMode === "elevations" || viewMode === "3d-elevations"}
            customModules={customModules}
          />
       </div>
