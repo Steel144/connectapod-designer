@@ -185,11 +185,11 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
           <div className="flex-1 h-px bg-gray-200" />
         </div>
         <div className="flex items-center gap-2">
-          {/* Left ZX end cap (only for Y faces) */}
-          {isYFace && endLeft && endLeft.face === "Z" && (
+          {/* Left end cap */}
+          {endLeft && (
             <div className="flex items-center shrink-0">
               <div className="flex flex-col items-center gap-0">
-                <ElevationImage wall={endLeft} label={endLeft.type || "End"} face="Z" tight mirrorH={mirrorH} />
+                <ElevationImage wall={endLeft} label={endLeft.type || "End"} face={endLeft.face} tight mirrorH={mirrorH} />
                 <span className="text-[8px] text-gray-400 mt-0.5">Left</span>
               </div>
             </div>
@@ -204,11 +204,11 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
             ))}
           </div>
 
-          {/* Right ZX end cap (only for Y faces) */}
-          {isYFace && endRight && endRight.face === "X" && (
+          {/* Right end cap */}
+          {endRight && (
             <div className="flex items-center shrink-0">
               <div className="flex flex-col items-center gap-0">
-                <ElevationImage wall={endRight} label={endRight.type || "End"} face="X" tight mirrorH={mirrorH} />
+                <ElevationImage wall={endRight} label={endRight.type || "End"} face={endRight.face} tight mirrorH={mirrorH} />
                 <span className="text-[8px] text-gray-400 mt-0.5">Right</span>
               </div>
             </div>
