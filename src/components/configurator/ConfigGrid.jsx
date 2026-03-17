@@ -751,18 +751,32 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
            );
            })}
 
+        {/* Red center stripe — 4.8m wide (8 cells) */}
+        <div
+          className="absolute pointer-events-none"
+          style={{
+            left: 0,
+            top: (GRID_ROWS / 2 - 4) * CELL_H,
+            width: GRID_COLS * CELL_W,
+            height: 8 * CELL_H,
+            backgroundColor: "rgba(239, 68, 68, 0.15)",
+            borderTop: "2px solid rgb(239, 68, 68)",
+            borderBottom: "2px solid rgb(239, 68, 68)",
+          }}
+        />
+
         {/* Selection box */}
-        {selectionBox && (
-          <div
-            className="absolute pointer-events-none border-2 border-indigo-500 bg-indigo-50/30"
-            style={{
-              left: Math.min(selectionBox.startX, selectionBox.cursorX),
-              top: Math.min(selectionBox.startY, selectionBox.cursorY),
-              width: Math.abs(selectionBox.cursorX - selectionBox.startX),
-              height: Math.abs(selectionBox.cursorY - selectionBox.startY),
-            }}
-          />
-        )}
+         {selectionBox && (
+           <div
+             className="absolute pointer-events-none border-2 border-indigo-500 bg-indigo-50/30"
+             style={{
+               left: Math.min(selectionBox.startX, selectionBox.cursorX),
+               top: Math.min(selectionBox.startY, selectionBox.cursorY),
+               width: Math.abs(selectionBox.cursorX - selectionBox.startX),
+               height: Math.abs(selectionBox.cursorY - selectionBox.startY),
+             }}
+           />
+         )}
 
       </div>
 
