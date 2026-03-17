@@ -326,18 +326,6 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
                   );
                 })()}
                 </div>
-                {pavIdx === 0 && (
-                <div className="flex flex-col" style={{ gap: `${Math.round((zoom / 100) * 32)}px`, marginTop: `${Math.round((zoom / 100) * 40)}px` }}>
-                  <div className="text-sm font-bold text-gray-800 uppercase tracking-widest ml-1 px-3 py-2 bg-red-100 rounded w-fit">
-                    Connection Module Section
-                  </div>
-                  <div className="flex items-center gap-4 ml-1 p-4 bg-gray-100 rounded border-2 border-gray-300">
-                    <div className="text-sm text-gray-600 font-semibold">
-                      Connection modules span between pavilions
-                    </div>
-                  </div>
-                </div>
-                )}
                 ))}
           </div>
         </div>
