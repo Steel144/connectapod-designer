@@ -16,6 +16,7 @@ const CATALOGUE = [
   { category: "Bathroom", description: "Standard bathroom module with shower, vanity, and toilet.", modules: [] },
   { category: "Laundry", description: "Modules with offset wall panels to create corner connections between perpendicular rows.", modules: [] },
   { category: "Kitchen", description: "End-of-row kitchen modules with finished end wall and full cabinetry layout.", modules: [] },
+  { category: "Connection Modules", description: "Modules that connect separate pavilions or buildings.", modules: [] },
   { category: "Soffit", description: "Soffit-only modules.", modules: [] },
   { category: "Deck", description: "Outdoor deck modules with wall panels and soffit options.", modules: [] },
 ];
