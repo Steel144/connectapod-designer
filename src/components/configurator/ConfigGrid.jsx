@@ -31,9 +31,8 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
   };
 
   const connectionWidth = getConnectionModuleWidth();
-  // Cap at 5 cells (3m / 0.6m per cell), min 4 cells for pavilion stripe height
-  const maxSpacing = Math.min(connectionWidth, 5);
-  const pavilionSpacing = Math.max(4, maxSpacing);
+  // Pavilion spacing: 4.2m = 7 cells (4.2 / 0.6)
+  const pavilionSpacing = 7;
 
   // Selection and drag state
   const [selected, setSelected] = useState(new Set());
