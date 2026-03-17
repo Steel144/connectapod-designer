@@ -243,6 +243,10 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
          return a.width - b.width;
        });
 
+       if (group.label === "Connection") {
+         console.log(`[ModulePanel] Connection group items:`, sorted.map(i => ({ code: i.code, chassis: i.chassis })));
+       }
+
        return {
          ...group,
          items: sorted,
