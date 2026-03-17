@@ -309,9 +309,9 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
                         <ElevationRow
                           key={`${pav.pavilionNum}-${row.yPos}-W`}
                           pavilionNum={pav.pavilionNum}
-                          endLeft={row.xWall}
+                          endLeft={xWallFromZX || row.xWall}
                           midWalls={row.midWalls || []}
-                          endRight={row.zWall}
+                          endRight={zWallFromZX || row.zWall}
                           rowLabel="W face (outside / bottom)"
                           isYFace={false}
                         />
