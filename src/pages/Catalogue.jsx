@@ -301,7 +301,6 @@ export default function Catalogue() {
 
     const builtins = cat.category !== "Uncategorized" ? cat.modules
       .filter(m => {
-        if (purgedCodes.has(m.code)) return false; // Never show purged modules
         if (overriddenModuleCodes.has(m.code)) return false;
         if (!deletedCodes.has(m.code)) return true;
         return editMode; // Only show deleted modules in edit mode
