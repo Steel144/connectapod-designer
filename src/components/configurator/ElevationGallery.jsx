@@ -106,9 +106,9 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
     });
 
     return { pavilions, hasAny: withImage.length > 0 };
-    }, [walls, placedModules, getPavilion]);
+    }, [walls, placedModules]);
 
-  if (!hasAny) {
+    if (!hasAny) {
     return (
       <div className="w-full h-full flex items-center justify-center bg-gray-50">
         <div className="text-center text-gray-400 max-w-xs">
