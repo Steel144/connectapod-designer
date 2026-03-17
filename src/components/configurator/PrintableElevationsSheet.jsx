@@ -68,9 +68,9 @@ export default function PrintableElevationsSheet({ walls, onClose }) {
         return (
           <div key={face} className="bg-white flex flex-col p-0" style={{ pageBreakAfter: isLast ? "avoid" : "always", minHeight: "100vh" }}>
             {/* Header with logo */}
-            <div className="flex items-center px-6 pt-4 pb-2 border-b" style={{ borderColor: "#F15A22" }}>
+            <div className="flex items-center justify-between px-6 pt-4 pb-2 border-b" style={{ borderColor: "#F15A22" }}>
               <img src="https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/61a42fba4_ConnectapodArchLogo-01.png" alt="connectapod" style={{ height: "40px", width: "auto" }} />
-              <span style={{ marginLeft: "8mm", color: "#666", fontSize: "12pt" }}>Elevations</span>
+              <span style={{ color: "#666", fontSize: "12pt" }}>Elevations</span>
             </div>
             
             {/* Main content */}
