@@ -13,6 +13,7 @@ const inferUnitType = (variants) => {
   if (!Array.isArray(variants)) return "";
   if (variants.includes("End Left") || variants.includes("End Right") || variants.includes("End")) return "End";
   if (variants.includes("Deck")) return "Deck";
+  if (variants.includes("Connection")) return "Connection";
   if (variants.includes("Standard")) return "Standard";
   return "";
 };
