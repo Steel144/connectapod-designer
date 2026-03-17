@@ -41,52 +41,61 @@ export default function ElevationGallery({ walls = [], onWallSelect = () => {} }
     }
   };
 
-  // Group walls by face — with fallback for walls missing the face property
-  const { wWalls, yWalls, zWall, xWall, hasAny } = useMemo(() => {
+  // Group walls by pavilion, then by face
+  const { pavilions, hasAny } = useMemo(() => {
     const withImage = walls.filter(w => w.elevationImage);
+    if (withImage.length === 0) return { pavilions: [], hasAny: false };
 
-    // Infer face from orientation if missing
-    const inferFace = (w) => {
-      if (w.face) return w.face;
-      if (w.orientation === "vertical") return "Z"; // treat all vertical end walls as Z (left end)
-      // horizontal: no reliable way to distinguish W vs Y without grid context
-      // use a heuristic: if this wall's y is the smallest among horizontal walls, it's W (top)
-      return null;
-    };
+    // Cluster walls into pavilions by x-proximity (CLUSTERING_DISTANCE)
+    const CLUSTERING_DISTANCE = 5; // meters
+    const pavilionGroups = [];
+    const sorted = [...withImage].sort((a, b) => a.x - b.x);
 
-    // For walls without face, split horizontal ones by relative y position
-    const horizontal = withImage.filter(w => w.orientation === "horizontal" || w.face === "W" || w.face === "Y");
-    const vertical = withImage.filter(w => w.orientation === "vertical" || w.face === "Z" || w.face === "X");
+    sorted.forEach((wall) => {
+      const existingGroup = pavilionGroups.find(
+        (group) => Math.abs(group[0].x - wall.x) < CLUSTERING_DISTANCE
+      );
+      if (existingGroup) {
+        existingGroup.push(wall);
+      } else {
+        pavilionGroups.push([wall]);
+      }
+    });
 
-    // Determine midpoint y to split W (top) from Y (bottom)
-    const ys = horizontal.map(w => w.y);
-    const midY = ys.length > 0 ? (Math.min(...ys) + Math.max(...ys)) / 2 : 0;
+    // For each pavilion, group walls by face
+    const pavilions = pavilionGroups.map((group) => {
+      const horizontal = group.filter(w => w.orientation === "horizontal" || w.face === "W" || w.face === "Y");
+      const vertical = group.filter(w => w.orientation === "vertical" || w.face === "Z" || w.face === "X");
 
-    const getFace = (w) => {
-      if (w.face) return w.face;
-      if (w.orientation === "vertical") return "Z";
-      return w.y <= midY ? "W" : "Y";
-    };
+      // Determine midpoint y to split W (top) from Y (bottom)
+      const ys = horizontal.map(w => w.y);
+      const midY = ys.length > 0 ? (Math.min(...ys) + Math.max(...ys)) / 2 : 0;
 
-    const w = horizontal.filter(w => getFace(w) === "W").sort((a, b) => a.x - b.x).reverse();
-    const y = horizontal.filter(w => getFace(w) === "Y").sort((a, b) => b.x - a.x).reverse();
+      const getFace = (w) => {
+        if (w.face) return w.face;
+        if (w.orientation === "vertical") return "Z";
+        return w.y <= midY ? "W" : "Y";
+      };
 
-    // For vertical/end walls, split by x position (left vs right)
-    const vertXs = vertical.map(w => w.x);
-    const midX = vertXs.length > 0 ? (Math.min(...vertXs) + Math.max(...vertXs)) / 2 : 0;
-    const zCandidates = vertical.filter(w => w.face === "Z" || (!w.face && w.x <= midX));
-    const xCandidates = vertical.filter(w => w.face === "X" || (!w.face && w.x > midX));
+      const wWalls = horizontal.filter(w => getFace(w) === "W").sort((a, b) => a.x - b.x).reverse();
+      const yWalls = horizontal.filter(w => getFace(w) === "Y").sort((a, b) => b.x - a.x).reverse();
 
-    const z = zCandidates[0] || null;
-    const x = xCandidates[0] || null;
+      // For vertical/end walls, split by x position (left vs right)
+      const vertXs = vertical.map(w => w.x);
+      const midX = vertXs.length > 0 ? (Math.min(...vertXs) + Math.max(...vertXs)) / 2 : 0;
+      const zCandidates = vertical.filter(w => w.face === "Z" || (!w.face && w.x <= midX));
+      const xCandidates = vertical.filter(w => w.face === "X" || (!w.face && w.x > midX));
 
-    return {
-      wWalls: w,
-      yWalls: y,
-      zWall: z,
-      xWall: x,
-      hasAny: withImage.length > 0,
-    };
+      return {
+        pavilionNum: pavilionGroups.indexOf(group) + 1,
+        wWalls,
+        yWalls,
+        zWall: zCandidates[0] || null,
+        xWall: xCandidates[0] || null,
+      };
+    });
+
+    return { pavilions, hasAny: withImage.length > 0 };
   }, [walls]);
 
   if (!hasAny) {
