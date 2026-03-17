@@ -5,6 +5,7 @@ const UNIT_TYPES = [
   { label: "Standard", value: "Standard", walls: ["W (Front)", "Y (Rear)"] },
   { label: "Deck", value: "Deck", walls: ["W (Front)", "Y (Rear)"] },
   { label: "End", value: "End", walls: ["W (Front)", "Y (Rear)"], note: "W + Y + one end wall (auto on grid)" },
+  { label: "Connection", value: "Connection", walls: ["Z (Left)", "X (Right)"], note: "Z + X wall elevations" },
 ];
 
 // Infer unit type from saved variants array
