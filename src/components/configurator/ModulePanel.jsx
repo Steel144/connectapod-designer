@@ -197,7 +197,7 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
          return m.category === group.label || 
                 descriptions.includes(group.label) || 
                 categories.includes(group.label) ||
-                (group.label === "Connection Modules" && (descriptions.includes("Connection") || variants.includes("connection")));
+                (group.label === "Connection" && (descriptions.includes("Connection") || variants.includes("connection")));
        });
 
        const customItems = categoryModules.map(m => {
