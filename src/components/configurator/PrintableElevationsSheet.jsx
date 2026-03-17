@@ -88,8 +88,8 @@ export default function PrintableElevationsSheet({ walls, onClose }) {
           const isLastFace = Object.entries(groupedByFace).filter(([, w]) => w.length > 0).length === faceIdx + 1;
           const isLastPavilion = pavilionIdx === pavilionClusters.length - 1;
 
-        return (
-          <div key={face} className="bg-white flex flex-col p-0" style={{ pageBreakAfter: isLast ? "avoid" : "always", minHeight: "100vh" }}>
+          return (
+            <div key={`${pavilionIdx}-${face}`} className="bg-white flex flex-col p-0" style={{ pageBreakAfter: (isLastFace && isLastPavilion) ? "avoid" : "always", minHeight: "100vh" }}>
             {/* Header with logo */}
             <div className="flex items-center justify-between px-6 pt-4 pb-2 border-b" style={{ borderColor: "#F15A22" }}>
               <img src="https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/61a42fba4_ConnectapodArchLogo-01.png" alt="connectapod" style={{ height: "40px", width: "auto" }} />
