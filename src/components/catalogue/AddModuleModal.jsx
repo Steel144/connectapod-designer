@@ -4,8 +4,7 @@ import { X } from "lucide-react";
 const UNIT_TYPES = [
   { label: "Standard", value: "Standard", walls: ["W (Front)", "Y (Rear)"] },
   { label: "Deck", value: "Deck", walls: ["W (Front)", "Y (Rear)"] },
-  { label: "End Left (Z)", value: "End Left", walls: ["W (Front)", "Y (Rear)", "Z (Left End)"] },
-  { label: "End Right (X)", value: "End Right", walls: ["W (Front)", "Y (Rear)", "X (Right End)"] },
+  { label: "End", value: "End", walls: ["W (Front)", "Y (Rear)", "Z (Left End)", "X (Right End)"], note: "End wall auto-determined on grid" },
 ];
 
 export default function AddModuleModal({ category, onSave, onClose }) {
