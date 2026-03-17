@@ -87,10 +87,10 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
       }
     });
 
-    // Create pavilions for those with walls
+    // Create pavilions for those with walls (include pavilion 2 even if empty to show structure)
     const pavilions = [3, 2, 1].map((pavNum) => {
       const wallsInPavilion = pavilionGroups[pavNum];
-      if (wallsInPavilion.length === 0) return null;
+      if (wallsInPavilion.length === 0 && pavNum !== 2) return null;
 
         // Group by y-position within this pavilion
          const yGroups = {};
