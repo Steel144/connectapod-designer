@@ -373,6 +373,14 @@ export default function Catalogue() {
           </div>
           <div className="flex items-center gap-2 ml-auto">
             <button
+              onClick={() => setBulkUploadOpen(true)}
+              className="flex items-center gap-2 px-3 py-1.5 text-xs text-gray-600 border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22] transition-all"
+              title="Bulk upload floor plan images"
+            >
+              <Upload size={14} />
+              Bulk Upload
+            </button>
+            <button
               onClick={() => setPrintMode(true)}
               className="flex items-center gap-2 px-3 py-1.5 text-xs text-gray-600 border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22] transition-all"
               title="Print catalogue as PDF"
