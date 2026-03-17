@@ -608,6 +608,11 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
               <span className="absolute text-[9px] font-semibold text-slate-700 text-center leading-tight px-0.5 py-0.5 pointer-events-none" style={{ top: '50%', left: '50%', transform: 'translate(-50%, -50%) rotate(-90deg)', whiteSpace: 'nowrap', opacity: 0.4 }}>
                 {mod.label}
               </span>
+              {getPavilion(mod.y) && (
+                <span className="absolute text-[8px] font-bold text-slate-500 pointer-events-none" style={{ bottom: '2px', right: '2px', opacity: 0.6 }}>
+                  P{getPavilion(mod.y)}
+                </span>
+              )}
               {/* Action buttons above the module, same distance as label below */}
               <div className="absolute opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1" style={{ top: '-26px', left: '50%', transform: 'translateX(-50%)', whiteSpace: 'nowrap' }}>
                 <button
