@@ -188,6 +188,10 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
          const descriptions = (m.description || "").split(",").map(s => s.trim()).filter(Boolean);
          const categories = Array.isArray(m.categories) ? m.categories : [];
          const variants = Array.isArray(m.variants) ? m.variants.map(v => v.toLowerCase()) : [];
+         const isConnection = variants.some(v => v.includes("connection"));
+
+         // Connection modules should ONLY appear in Connection Modules group
+         if (isConnection && group.label !== "Connection Modules") return false;
 
          // Check primary category, description tags, additional categories, and variants
          return m.category === group.label || 
