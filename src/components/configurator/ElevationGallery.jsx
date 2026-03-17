@@ -72,10 +72,18 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
 
     // For each pavilion, group walls by y-position (row), then by face
     const pavilions = pavilionGroups.map((group) => {
+      // Find pavilion-level end walls (leftmost and rightmost across all y positions)
+      const vertical = group.filter(w => w.orientation === "vertical" || w.face === "Z" || w.face === "X");
+      const vertXs = vertical.map(w => w.x);
+      const minX = vertXs.length > 0 ? Math.min(...vertXs) : null;
+      const maxX = vertXs.length > 0 ? Math.max(...vertXs) : null;
+      const pavZWall = vertical.find(w => minX !== null && Math.abs(w.x - minX) < 0.1) || null;
+      const pavXWall = vertical.find(w => maxX !== null && Math.abs(w.x - maxX) < 0.1) || null;
+
       // Group by unique y coordinates to create rows
       const yGroups = {};
       group.forEach(w => {
-        const yKey = Math.round(w.y * 100) / 100; // Round to avoid floating point issues
+        const yKey = Math.round(w.y * 100) / 100;
         if (!yGroups[yKey]) yGroups[yKey] = [];
         yGroups[yKey].push(w);
       });
@@ -86,19 +94,13 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
       const rows = yPositions.flatMap(yPos => {
         const wallsAtY = yGroups[yPos];
         const horizontal = wallsAtY.filter(w => w.orientation === "horizontal" || w.face === "W" || w.face === "Y");
-        const vertical = wallsAtY.filter(w => w.orientation === "vertical" || w.face === "Z" || w.face === "X");
         
         const wWalls = horizontal.filter(w => !w.face || w.face === "W").sort((a, b) => a.x - b.x);
         const yWalls = horizontal.filter(w => w.face === "Y").sort((a, b) => b.x - a.x);
-        
-        const vertXs = vertical.map(w => w.x);
-        const midX = vertXs.length > 0 ? (Math.min(...vertXs) + Math.max(...vertXs)) / 2 : 0;
-        const zWall = vertical.find(w => w.face === "Z" || (!w.face && w.x <= midX)) || null;
-        const xWall = vertical.find(w => w.face === "X" || (!w.face && w.x > midX)) || null;
 
         return [
-          { type: "Y", yPos, zWall, midWalls: yWalls, xWall },
-          { type: "W", yPos, zWall, midWalls: wWalls, xWall }
+          { type: "Y", yPos, zWall: pavZWall, midWalls: yWalls, xWall: pavXWall },
+          { type: "W", yPos, zWall: pavZWall, midWalls: wWalls, xWall: pavXWall }
         ].filter(r => r.midWalls.length > 0 || r.zWall || r.xWall);
       });
 
