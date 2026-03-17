@@ -611,8 +611,6 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
              width: GRID_COLS * CELL_W,
              height: 8 * CELL_H,
              backgroundColor: "rgba(59, 130, 246, 0.075)",
-             borderTop: "2px solid rgb(59, 130, 246)",
-             borderBottom: "2px solid rgb(59, 130, 246)",
            }}
          />
          <div
