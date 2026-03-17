@@ -33,6 +33,12 @@ function getIcon(key, size = 18) {
         <rect x="2" y="13" width="9" height="9" rx="1"/><rect x="13" y="13" width="9" height="9" rx="1"/>
       </svg>
     ),
+    connectionmodules: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="#F15A22" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" width={s} height={s}>
+        <rect x="3" y="5" width="8" height="14" rx="1"/><rect x="13" y="5" width="8" height="14" rx="1"/>
+        <line x1="11" y1="7" x2="13" y2="7"/><line x1="11" y1="12" x2="13" y2="12"/><line x1="11" y1="17" x2="13" y2="17"/>
+      </svg>
+    ),
     deck: (
       <svg viewBox="0 0 24 24" fill="none" stroke="#F15A22" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" width={s} height={s}>
         <path d="M3 12h18"/><path d="M3 6h18"/><path d="M3 18h18"/>
