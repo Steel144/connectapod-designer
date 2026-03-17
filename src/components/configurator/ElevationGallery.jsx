@@ -210,11 +210,9 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
         onMouseUp={handleCanvasMouseUp}
         onMouseLeave={handleCanvasMouseUp}
         onWheel={(e) => {
-          e.preventDefault();
           if (e.ctrlKey || e.metaKey) {
+            e.preventDefault();
             adjustZoom(e.deltaY < 0 ? 1 : -1);
-          } else {
-            setPan(p => ({ x: p.x - e.deltaX, y: p.y - e.deltaY }));
           }
         }}
       >
