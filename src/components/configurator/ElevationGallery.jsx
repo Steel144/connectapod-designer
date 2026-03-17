@@ -174,6 +174,11 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
     </div>
   );
 
+  const getPavilionLabel = (pavNum) => {
+    const labels = { 3: "Pavilion 1", 2: "Connection Module", 1: "Pavilion 2" };
+    return labels[pavNum] || `Pavilion ${pavNum}`;
+  };
+
   const ElevationRow = ({ pavilionNum, endLeft, midWalls, endRight, rowLabel, isYFace, mirrorH }) => {
     const hasContent = endLeft || midWalls.length > 0 || endRight;
     if (!hasContent) return null;
