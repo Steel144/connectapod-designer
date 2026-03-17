@@ -51,28 +51,25 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
     }
   };
 
-  // Group walls by pavilion: each y-position is one pavilion with Y/W faces, shared Z/X ends
+  // Group walls by pavilion: each pavilion stripe (1-3) groups all walls within it
   const { pavilions, hasAny } = useMemo(() => {
     // Add pavilion info to each wall
     const wallsWithPavilion = walls.map(w => ({ ...w, pavilionNum: getPavilion(w.y) }));
     const withImage = wallsWithPavilion.filter(w => w.elevationImage);
     if (withImage.length === 0) return { pavilions: [], hasAny: false };
 
-    // Group all walls by y-position
-    const yGroups = {};
+    // Group all walls by pavilion number (1, 2, 3)
+    const pavilionGroups = { 1: [], 2: [], 3: [] };
     withImage.forEach(w => {
-      const yKey = Math.round(w.y * 100) / 100;
-      if (!yGroups[yKey]) yGroups[yKey] = [];
-      yGroups[yKey].push(w);
+      if (w.pavilionNum && pavilionGroups[w.pavilionNum]) {
+        pavilionGroups[w.pavilionNum].push(w);
+      }
     });
 
-    // Get unique y-positions sorted
-    const yPositions = Object.keys(yGroups).map(Number).sort((a, b) => a - b);
-
-    // Create pavilions: one per y-position
-    const pavilions = yPositions.map((yPos, pavIndex) => {
-      const wallsAtY = yGroups[yPos];
-      const pavilionNum = getPavilion(yPos);
+    // Create pavilions for those with walls
+    const pavilions = [3, 2, 1].map((pavNum) => {
+      const wallsInPavilion = pavilionGroups[pavNum];
+      if (wallsInPavilion.length === 0) return null;
 
       // Find Z and X walls (ends)
       const verticalWalls = wallsAtY.filter(w => w.face === "Z" || w.face === "X");
