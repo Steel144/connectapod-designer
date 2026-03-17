@@ -188,22 +188,14 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
          const descriptions = (m.description || "").split(",").map(s => s.trim()).filter(Boolean);
          const categories = Array.isArray(m.categories) ? m.categories : [];
          const variants = Array.isArray(m.variants) ? m.variants.map(v => v.toLowerCase()) : [];
-         const isConnection = variants.some(v => v.includes("connection")) || 
-                              descriptions.some(d => d.toLowerCase() === "connection") ||
-                              m.category === "Connection";
 
-         // Connection modules should ONLY appear in Connection group
-         if (isConnection && group.label !== "Connection") return false;
+         // Check if this module matches the group
+         const matchesPrimaryCategory = m.category === group.label;
+         const matchesDescription = descriptions.includes(group.label);
+         const matchesAdditionalCategories = categories.includes(group.label);
+         const matchesVariant = variants.some(v => v.toLowerCase().includes(group.label.toLowerCase()));
 
-         // For Connection group, match Connection modules by variant, category, or description
-         if (group.label === "Connection") {
-           return isConnection;
-         }
-
-         // Check primary category, description tags, and additional categories
-         return m.category === group.label || 
-                descriptions.includes(group.label) || 
-                categories.includes(group.label);
+         return matchesPrimaryCategory || matchesDescription || matchesAdditionalCategories || matchesVariant;
        });
 
        const customItems = categoryModules.map(m => {
