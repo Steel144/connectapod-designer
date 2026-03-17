@@ -264,6 +264,7 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
                   {pav.rows.map((row, idx) => (
                     <ElevationRow
                       key={`${pav.pavilionNum}-${row.yPos}-${row.type}`}
+                      pavilionNum={pav.pavilionNum}
                       endLeft={row.zWall}
                       midWalls={row.midWalls}
                       endRight={row.xWall}
