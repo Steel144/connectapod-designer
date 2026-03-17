@@ -196,8 +196,7 @@ export default function View3DFromElevations({ walls = [] }) {
 
     // ── Wall faces ─────────────────────────────────────────────────────────
 
-    // Each elevation image already includes the roof — render the full image
-    // with its bottom edge at y=0 (ground) so the spouting line aligns at bH.
+    // Render the full elevation image with proper depth and no bleed-through
     const makeFaceMesh = (imgUrl, width, height, flipped = false) => {
       const geo = new THREE.PlaneGeometry(width, height);
       if (imgUrl) {
@@ -205,11 +204,11 @@ export default function View3DFromElevations({ walls = [] }) {
         tex.magFilter = THREE.LinearFilter;
         tex.minFilter = THREE.LinearFilter;
         if (flipped) { tex.repeat.set(-1, 1); tex.offset.set(1, 0); }
-        return new THREE.Mesh(geo, new THREE.MeshLambertMaterial({ map: tex, color: 0xffffff, transparent: true }));
+        return new THREE.Mesh(geo, new THREE.MeshLambertMaterial({ map: tex, color: 0xffffff }));
       }
       const fallbackTex = createWeatherboardTexture();
       fallbackTex.repeat.set(width / 1.5, 1);
-      return new THREE.Mesh(geo, new THREE.MeshLambertMaterial({ map: fallbackTex }));
+      return new THREE.Mesh(geo, new THREE.MeshLambertMaterial({ map: fallbackTex, color: 0xffffff }));
     };
 
     // Long faces: full image height so roof in image sits above bH naturally
