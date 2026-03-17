@@ -111,7 +111,7 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
             const xWall = verticalWalls.find(w => w.face === "X") || null;
 
             const horizontal = wallsAtY.filter(w => w.face === "W" || w.face === "Y");
-            const wWalls = horizontal.filter(w => w.face === "W").sort((a, b) => a.x - b.x);
+            const wWalls = horizontal.filter(w => w.face === "W").sort((a, b) => b.x - a.x);
             const yWalls = horizontal.filter(w => w.face === "Y").sort((a, b) => a.x - b.x);
 
             if (yWalls.length > 0 || wWalls.length > 0 || zWall || xWall) {
