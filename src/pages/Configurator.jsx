@@ -696,14 +696,24 @@ export default function Configurator() {
                        <img src={selectedModule.floorPlanImage} alt={selectedModule.label} className="w-full h-full object-contain" style={{ transform: `rotate(${selectedModule.rotation || 0}deg) ${selectedModule.flipped ? 'scaleX(-1)' : ''}` }} />
                      </div>
                    </div>
-                 ) : selectedWall && selectedWall.elevationImage ? (
+                 ) : selectedWall ? (
                    <div className="flex flex-col h-full gap-2">
                      <div>
                        <p className="text-xs font-semibold text-gray-900 break-words">{selectedWall.label}</p>
                        <p className="text-[10px] text-gray-500">{selectedWall.type}</p>
+                       {selectedWall.face && <span className="text-[10px] font-bold text-[#F15A22]">Face {selectedWall.face}</span>}
                      </div>
-                     <div className="flex-1 bg-gray-50 rounded overflow-hidden">
-                       <img src={selectedWall.elevationImage} alt={selectedWall.label} className="w-full h-full object-contain" />
+                     <div className="flex-1 bg-gray-50 rounded overflow-hidden flex items-center justify-center">
+                       {selectedWall.elevationImage ? (
+                         <img src={selectedWall.elevationImage} alt={selectedWall.label} className="w-full h-full object-contain" style={{ transform: selectedWall.flipped ? 'scaleX(-1)' : undefined }} />
+                       ) : (
+                         <div className="flex flex-col items-center gap-2 text-gray-400">
+                           <div className="w-16 h-24 border-2 border-gray-300 rounded flex items-center justify-center">
+                             <span className="text-2xl font-bold text-gray-300">{selectedWall.face || "W"}</span>
+                           </div>
+                           <p className="text-[10px] text-center">No elevation image</p>
+                         </div>
+                       )}
                      </div>
                    </div>
                  ) : (
