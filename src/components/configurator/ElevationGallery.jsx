@@ -261,18 +261,15 @@ export default function ElevationGallery({ walls = [], onWallSelect = () => {} }
                   Pavilion {pav.pavilionNum}
                 </div>
                 <div className="flex flex-col" style={{ gap: `${Math.round((zoom / 100) * 64)}px` }}>
-                  <ElevationRow
-                    endLeft={pav.zWall}
-                    midWalls={pav.yWalls}
-                    endRight={pav.xWall}
-                    rowLabel="Y face (outside / top)"
-                  />
-                  <ElevationRow
-                    endLeft={pav.xWall}
-                    midWalls={pav.wWalls}
-                    endRight={pav.zWall}
-                    rowLabel="W face (outside / bottom)"
-                  />
+                  {pav.rows.map((row, idx) => (
+                    <ElevationRow
+                      key={`${pav.pavilionNum}-${row.yPos}-${row.type}`}
+                      endLeft={row.zWall}
+                      midWalls={row.midWalls}
+                      endRight={row.xWall}
+                      rowLabel={row.type === "Y" ? "Y face (outside / top)" : "W face (outside / bottom)"}
+                    />
+                  ))}
                 </div>
               </div>
             ))}
