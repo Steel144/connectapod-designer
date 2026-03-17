@@ -248,34 +248,25 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
           }}
         >
           <div className="flex flex-col" style={{ gap: `${Math.round((zoom / 100) * 128)}px` }}>
-            {Array.from({ length: Math.ceil(pavilions.length / 3) }).map((_, rowIdx) => {
-              const pavs = pavilions.slice(rowIdx * 3, (rowIdx + 1) * 3);
-              return (
-                <div key={`row-${rowIdx}`} className="flex flex-col" style={{ gap: `${Math.round((zoom / 100) * 64)}px` }}>
-                  <div className="text-sm font-bold text-gray-800 uppercase tracking-widest ml-1 px-3 py-2 bg-orange-100 rounded w-fit">
-                    Pavilion {pavs.filter(Boolean)[0]?.pavilionNum}{pavs.filter(Boolean).length > 1 ? ` - ${pavs.filter(Boolean)[pavs.filter(Boolean).length - 1]?.pavilionNum}` : ""}
-                  </div>
-                  <div className="flex gap-8" style={{ gap: `${Math.round((zoom / 100) * 128)}px` }}>
-                    {pavs.filter(Boolean).map((pav) => (
-                      <div key={pav.pavilionNum} className="flex flex-col" style={{ gap: `${Math.round((zoom / 100) * 64)}px` }}>
-                        {pav.rows
-                          .sort((a, b) => a.type === "Y" ? -1 : 1)
-                          .map((row) => (
-                            <ElevationRow
-                              key={`${pav.pavilionNum}-${row.yPos}-${row.type}`}
-                              pavilionNum={pav.pavilionNum}
-                              endLeft={row.zWall}
-                              midWalls={row.midWalls}
-                              endRight={row.xWall}
-                              rowLabel={row.type === "Y" ? "Y face (outside / top)" : "W face (outside / bottom)"}
-                            />
-                          ))}
-                      </div>
-                    ))}
-                  </div>
+            {pavilions.filter(Boolean).map((pav) => (
+              <div key={pav.pavilionNum} className="flex flex-col" style={{ gap: `${Math.round((zoom / 100) * 64)}px` }}>
+                <div className="text-sm font-bold text-gray-800 uppercase tracking-widest ml-1 px-3 py-2 bg-orange-100 rounded w-fit">
+                  Pavilion {pav.pavilionNum}
                 </div>
-              );
-            })}
+                {pav.rows
+                  .sort((a, b) => a.type === "Y" ? -1 : 1)
+                  .map((row) => (
+                    <ElevationRow
+                      key={`${pav.pavilionNum}-${row.yPos}-${row.type}`}
+                      pavilionNum={pav.pavilionNum}
+                      endLeft={row.zWall}
+                      midWalls={row.midWalls}
+                      endRight={row.xWall}
+                      rowLabel={row.type === "Y" ? "Y face (outside / top)" : "W face (outside / bottom)"}
+                    />
+                  ))}
+              </div>
+            ))}
           </div>
         </div>
       </div>
