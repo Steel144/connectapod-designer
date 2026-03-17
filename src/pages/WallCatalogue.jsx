@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { ChevronLeft, Pencil, Upload, X, Loader2, Plus, Trash2, Printer } from "lucide-react";
+import { ChevronLeft, Pencil, Upload, X, Loader2, Plus, Trash2, Printer, Copy } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { toast } from "sonner";
@@ -233,6 +233,30 @@ export default function WallCatalogue() {
     await base44.entities.WallEntry.delete(entryId);
     queryClient.invalidateQueries({ queryKey: ["wallEntries"] });
     toast.success("Wall removed");
+  };
+
+  const handleDuplicateWall = async (wall, groupKey) => {
+    const baseCodes = customWalls.filter(w => w.code.startsWith(wall.code)).map(w => w.code);
+    const nextSuffix = baseCodes.length > 0 ? String.fromCharCode(97 + baseCodes.length) : "a";
+    const newCode = `${wall.code}${nextSuffix}`;
+    await base44.entities.WallEntry.create({
+      groupKey,
+      code: newCode,
+      name: wall.name,
+      width: wall.width,
+      description: wall.description || "",
+      variants: wall.variants || [],
+      windowStyle: wall.windowStyle,
+      openingPanes: wall.openingPanes,
+      windowHeight: wall.windowHeight,
+      windowWidth: wall.windowWidth,
+      doorStyle: wall.doorStyle,
+      doorHeight: wall.doorHeight,
+      doorWidth: wall.doorWidth,
+      price: wall.price,
+    });
+    queryClient.invalidateQueries({ queryKey: ["wallEntries"] });
+    toast.success(`Duplicated as ${newCode}`);
   };
 
   const handleEditWall = async (data) => {
@@ -503,6 +527,13 @@ export default function WallCatalogue() {
                     </span>
                     {editMode && !wall._deleted && (
                       <div className="flex items-center gap-1">
+                        <button
+                          onClick={() => handleDuplicateWall(wall, group.key)}
+                          className="text-gray-300 hover:text-blue-500 transition-colors"
+                          title="Duplicate wall"
+                        >
+                          <Copy size={13} />
+                        </button>
                         <button
                           onClick={() => setEditingWall(wall)}
                           className="text-gray-300 hover:text-[#F15A22] transition-colors"
