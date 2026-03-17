@@ -80,10 +80,13 @@ export default function PrintableElevationsSheet({ walls, onClose }) {
       >
         Close
       </button>
-      {Object.entries(groupedByFace).map(([face, walls], idx) => {
-        if (walls.length === 0) return null;
-        
-        const isLast = Object.entries(groupedByFace).filter(([, w]) => w.length > 0).length === idx + 1;
+      {pavilionClusters.map((pavilionWalls, pavilionIdx) => {
+        const groupedByFace = groupWallsByFace(pavilionWalls);
+        return Object.entries(groupedByFace).map(([face, walls], faceIdx) => {
+          if (walls.length === 0) return null;
+          
+          const isLastFace = Object.entries(groupedByFace).filter(([, w]) => w.length > 0).length === faceIdx + 1;
+          const isLastPavilion = pavilionIdx === pavilionClusters.length - 1;
 
         return (
           <div key={face} className="bg-white flex flex-col p-0" style={{ pageBreakAfter: isLast ? "avoid" : "always", minHeight: "100vh" }}>
