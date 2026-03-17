@@ -63,12 +63,6 @@ export default function PrintableElevationsSheet({ walls, onClose }) {
 
         return (
           <div key={face} className="bg-white flex flex-col p-0" style={{ pageBreakAfter: isLast ? "avoid" : "always", minHeight: "100vh" }}>
-            {/* Header with logo */}
-            <div className="flex items-center px-6 pt-4 pb-2 border-b" style={{ borderColor: "#F15A22" }}>
-              <span style={{ color: "#F15A22", fontWeight: "bold", fontSize: "20pt", letterSpacing: "0.04em" }}>connectapod</span>
-              <span style={{ marginLeft: "8mm", color: "#666", fontSize: "12pt" }}>Elevations</span>
-            </div>
-            
             {/* Main content */}
             <div className="flex-1 flex flex-col p-8">
                {/* Elevations grid */}
