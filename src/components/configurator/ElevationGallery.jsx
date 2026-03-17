@@ -286,6 +286,27 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
                       rowLabel={row.type === "Y" ? "Y face (outside / top)" : "W face (outside / bottom)"}
                     />
                   ))}
+                
+                {/* Separate ZX (vertical ends) rows */}
+                {pav.rows
+                  .flatMap(row => [
+                    row.zWall ? { type: "Z", wall: row.zWall, yPos: row.yPos } : null,
+                    row.xWall ? { type: "X", wall: row.xWall, yPos: row.yPos } : null
+                  ])
+                  .filter(Boolean)
+                  .map((item) => (
+                    <div key={`${pav.pavilionNum}-zx-${item.type}-${item.yPos}`} className="flex flex-col gap-1">
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{item.type} face (end)</span>
+                        <div className="flex-1 h-px bg-gray-200" />
+                      </div>
+                      <div className="flex items-center">
+                        <div className="flex items-center">
+                          <ElevationImage wall={item.wall} label={item.wall.type || "End"} face={item.type} tight />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
               </div>
             ))}
           </div>
