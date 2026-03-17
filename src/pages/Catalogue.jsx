@@ -471,11 +471,11 @@ export default function Catalogue() {
                 )}
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {cat.modules.map(mod => (
-                  <div
-                    key={mod.code}
-                    className={`bg-white border p-4 transition-all group relative ${mod._deleted ? "border-red-200 opacity-50" : "border-gray-200 hover:shadow-md hover:border-[#F15A22]"}`}
-                  >
+                {cat.modules.map((mod, idx) => (
+                    <div
+                      key={`${mod.code}-${idx}`}
+                      className={`bg-white border p-4 transition-all group relative ${mod._deleted ? "border-red-200 opacity-50" : "border-gray-200 hover:shadow-md hover:border-[#F15A22]"}`}
+                    >
                     {editMode && (
                        <div className="absolute top-2 right-2 flex items-center gap-1 z-10">
                          {mod._deleted ? (
