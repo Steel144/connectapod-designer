@@ -451,28 +451,41 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
       // Snap to nearest module face — no selection required
        const WALL_OFFSET = 0.308; // 185mm offset
        if (wallTemplate.orientation === "horizontal") {
+         let bestDist = Infinity;
          for (const mod of placedModules) {
            const distToYFace = Math.abs(exactY - (mod.y + mod.h));
            const distToWFace = Math.abs(exactY - mod.y);
 
            if (distToYFace <= SNAP_THRESHOLD && exactX >= mod.x - SNAP_THRESHOLD && exactX <= mod.x + mod.w + SNAP_THRESHOLD) {
-             snapped = { x: mod.x, y: mod.y + mod.h, length: mod.w, face: "Y" };
-             break;
+             if (distToYFace < bestDist) {
+               bestDist = distToYFace;
+               snapped = { x: mod.x, y: mod.y + mod.h, length: mod.w, face: "Y" };
+             }
            }
            if (distToWFace <= SNAP_THRESHOLD && exactX >= mod.x - SNAP_THRESHOLD && exactX <= mod.x + mod.w + SNAP_THRESHOLD) {
-             snapped = { x: mod.x, y: mod.y - WALL_OFFSET, length: mod.w, face: "W", rotation: 180 };
-             break;
+             if (distToWFace < bestDist) {
+               bestDist = distToWFace;
+               snapped = { x: mod.x, y: mod.y - WALL_OFFSET, length: mod.w, face: "W", rotation: 180 };
+             }
            }
          }
        } else {
+         let bestDist = Infinity;
          for (const mod of placedModules) {
-           if (Math.abs(exactX - mod.x) <= SNAP_THRESHOLD && exactY >= mod.y - SNAP_THRESHOLD && exactY <= mod.y + mod.h + SNAP_THRESHOLD) {
-             snapped = { x: mod.x, y: mod.y, length: mod.h, face: "Z" };
-             break;
+           const distToZFace = Math.abs(exactX - mod.x);
+           const distToXFace = Math.abs(exactX - (mod.x + mod.w));
+
+           if (distToZFace <= SNAP_THRESHOLD && exactY >= mod.y - SNAP_THRESHOLD && exactY <= mod.y + mod.h + SNAP_THRESHOLD) {
+             if (distToZFace < bestDist) {
+               bestDist = distToZFace;
+               snapped = { x: mod.x, y: mod.y, length: mod.h, face: "Z" };
+             }
            }
-           if (Math.abs(exactX - (mod.x + mod.w)) <= SNAP_THRESHOLD && exactY >= mod.y - SNAP_THRESHOLD && exactY <= mod.y + mod.h + SNAP_THRESHOLD) {
-             snapped = { x: mod.x + mod.w - WALL_OFFSET, y: mod.y, length: mod.h, face: "X" };
-             break;
+           if (distToXFace <= SNAP_THRESHOLD && exactY >= mod.y - SNAP_THRESHOLD && exactY <= mod.y + mod.h + SNAP_THRESHOLD) {
+             if (distToXFace < bestDist) {
+               bestDist = distToXFace;
+               snapped = { x: mod.x + mod.w - WALL_OFFSET, y: mod.y, length: mod.h, face: "X" };
+             }
            }
          }
        }
