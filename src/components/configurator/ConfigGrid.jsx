@@ -787,6 +787,15 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
             borderBottom: "2px solid rgb(239, 68, 68)",
           }}
         />
+        <div
+          className="absolute pointer-events-none text-red-700 font-bold text-sm"
+          style={{
+            left: "12px",
+            top: (GRID_ROWS / 2 - 4) * CELL_H + 4,
+          }}
+        >
+          Pavilion 2
+        </div>
 
         {/* Blue stripe — 4.8m wide (8 cells) below red */}
         <div
