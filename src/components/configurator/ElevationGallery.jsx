@@ -46,23 +46,31 @@ export default function ElevationGallery({ walls = [], onWallSelect = () => {} }
     const withImage = walls.filter(w => w.elevationImage);
     if (withImage.length === 0) return { pavilions: [], hasAny: false };
 
-    // Cluster walls into pavilions by x-proximity (CLUSTERING_DISTANCE)
-    const CLUSTERING_DISTANCE = 20; // meters
-    const pavilionGroups = [];
+    // Cluster walls into pavilions by finding the largest gap in x-coordinates
     const sorted = [...withImage].sort((a, b) => a.x - b.x);
-
-    sorted.forEach((wall) => {
-      const existingGroup = pavilionGroups.find((group) => {
-        const minX = Math.min(...group.map(w => w.x));
-        const maxX = Math.max(...group.map(w => w.x));
-        return wall.x >= minX - CLUSTERING_DISTANCE && wall.x <= maxX + CLUSTERING_DISTANCE;
-      });
-      if (existingGroup) {
-        existingGroup.push(wall);
-      } else {
-        pavilionGroups.push([wall]);
+    const xs = sorted.map(w => w.x);
+    const uniqueXs = [...new Set(xs)].sort((a, b) => a - b);
+    
+    // Find the largest gap between consecutive unique x values
+    let maxGap = 0;
+    let gapIndex = -1;
+    for (let i = 0; i < uniqueXs.length - 1; i++) {
+      const gap = uniqueXs[i + 1] - uniqueXs[i];
+      if (gap > maxGap) {
+        maxGap = gap;
+        gapIndex = i;
       }
-    });
+    }
+    
+    // Split pavilions at the largest gap
+    const pavilionGroups = [];
+    if (gapIndex >= 0 && maxGap > 1) {
+      const splitX = (uniqueXs[gapIndex] + uniqueXs[gapIndex + 1]) / 2;
+      pavilionGroups.push(sorted.filter(w => w.x <= splitX));
+      pavilionGroups.push(sorted.filter(w => w.x > splitX));
+    } else {
+      pavilionGroups.push(sorted);
+    }
 
     // For each pavilion, group walls by face
     const pavilions = pavilionGroups.map((group) => {
