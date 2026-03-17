@@ -272,7 +272,7 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
                   <div className="flex flex-col" style={{ gap: `${Math.round((zoom / 100) * 64)}px` }}>
                     {uniqueYPositions.map((yPos) => (
                       <div key={`pav-${pav.pavilionNum}-ypos-${yPos}`} className="flex flex-col" style={{ gap: `${Math.round((zoom / 100) * 32)}px` }}>
-                        {rowsByYPos[yPos].map(row => (
+                        {rowsByYPos[yPos].sort((a, b) => a.type === "Y" ? -1 : 1).map(row => (
                           <ElevationRow
                             key={`${pav.pavilionNum}-${row.yPos}-${row.type}`}
                             pavilionNum={pav.pavilionNum}
