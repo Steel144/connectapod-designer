@@ -810,6 +810,15 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
             borderBottom: "2px solid rgb(59, 130, 246)",
           }}
         />
+        <div
+          className="absolute pointer-events-none text-blue-700 font-bold text-sm"
+          style={{
+            left: "12px",
+            top: (GRID_ROWS / 2 + 4) * CELL_H + 4,
+          }}
+        >
+          Pavilion 1
+        </div>
 
         {/* Selection box */}
          {selectionBox && (
