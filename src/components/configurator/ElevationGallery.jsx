@@ -327,13 +327,7 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
                 })()}
                 </div>
                 ))}
-            {pavilions.some(p => p && p.pavilionNum === 2) && (
-              <div className="flex flex-col" style={{ gap: `${Math.round((zoom / 100) * 64)}px` }}>
-                <div className="text-sm font-bold text-gray-800 uppercase tracking-widest ml-1 px-3 py-2 bg-orange-100 rounded w-fit">
-                  Connection Modules
-                </div>
-              </div>
-            )}
+
           </div>
         </div>
       </div>
