@@ -315,24 +315,18 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
     let filtered = allWalls;
 
     if (isConnection && (face === "Z" || face === "X")) {
-     // Connection modules on end faces: filter by width, orientation, and Connection variant
+     // Connection modules on end faces: filter by width and Connection variant
      filtered = allWalls.filter(w => {
        const matchesWidth = Math.abs(w.width - faceWidthM) < 0.05;
        const matchesVariant = !w.variants || w.variants.length === 0 || w.variants.includes("Connection");
-       return w.orientation === "vertical" && matchesWidth && matchesVariant;
+       return matchesWidth && matchesVariant;
      });
     } else if (isEnd && (face === "Z" || face === "X")) {
-     // End modules on end faces: filter by width and orientation only
-     filtered = allWalls.filter(w => {
-       const matchesWidth = Math.abs(w.width - faceWidthM) < 0.05;
-       return w.orientation === "vertical" && matchesWidth;
-     });
+     // End modules on end faces: filter by width only
+     filtered = allWalls.filter(w => Math.abs(w.width - faceWidthM) < 0.05);
     } else if (!isEnd && !isConnection && !isDeck && (face === "W" || face === "Y")) {
      // Regular modules on long faces: show all walls that match width
-     filtered = allWalls.filter(w => {
-       const matchesWidth = Math.abs(w.width - faceWidthM) < 0.05;
-       return w.orientation === "horizontal" && matchesWidth;
-     });
+     filtered = allWalls.filter(w => Math.abs(w.width - faceWidthM) < 0.05);
     } else {
      filtered = [];
     }
