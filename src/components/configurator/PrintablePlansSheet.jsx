@@ -44,6 +44,14 @@ export default function PrintablePlansSheet({ placedModules, onClose }) {
       </button>
       <div className="bg-white flex flex-col p-0 relative" style={{ minHeight: "100vh" }}>
 
+         {/* Header with logo */}
+         <div className="flex items-center px-6 pt-4 pb-2 border-b" style={{ borderColor: "#F15A22" }}>
+           <img src="https://cdn.base44.com/apps/681f7621a23c39b9c5620c5d/assets/connectapod-logo.png" alt="Connectapod" style={{ height: "36px", objectFit: "contain" }} onError={(e) => { e.target.style.display='none'; }} />
+           <div className="ml-4">
+             <span style={{ color: "#F15A22", fontWeight: "bold", fontSize: "18px", letterSpacing: "0.04em" }}>connectapod</span>
+           </div>
+         </div>
+
          {/* Main content */}
          <div className="flex-1 flex flex-col p-6">
            {/* Grid view */}
