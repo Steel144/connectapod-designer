@@ -312,21 +312,20 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
 
     const faceWidthM = isLongFace ? modWidthM : attachedMod.h * CELL_M;
 
-    if ((face === "Z" || face === "X") && !isEnd && !isConnection) {
-     return { compatibleWalls: [], filterReason: `Connection walls only on End/Connection chassis (module is ${chassis})` };
-    }
-
-    if (face === "W" || face === "Y") {
-     return { compatibleWalls: [], filterReason: `Connection walls only on Z/X elevations (face ${face})` };
-    }
-
     let filtered = allWalls;
 
     if ((isEnd || isConnection) && (face === "Z" || face === "X")) {
+     // Connection modules on end faces: filter by width and orientation
      filtered = allWalls.filter(w => {
        const matchesWidth = Math.abs(w.width - faceWidthM) < 0.05;
        const matchesVariant = !w.variants || w.variants.length === 0 || w.variants.includes("Connection");
        return w.orientation === "vertical" && matchesWidth && matchesVariant;
+     });
+    } else if (!isEnd && !isConnection && !isDeck && (face === "W" || face === "Y")) {
+     // Regular modules on long faces: show all walls that match width
+     filtered = allWalls.filter(w => {
+       const matchesWidth = Math.abs(w.width - faceWidthM) < 0.05;
+       return w.orientation === "horizontal" && matchesWidth;
      });
     } else {
      filtered = [];
