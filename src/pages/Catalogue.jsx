@@ -56,12 +56,6 @@ export default function Catalogue() {
   });
   const deletedCodes = new Set(deletedModules.map(d => d.moduleCode));
 
-  const { data: purgedModules = [] } = useQuery({
-    queryKey: ["purgedModules"],
-    queryFn: () => base44.entities.PurgedModule.list(),
-  });
-  const purgedCodes = new Set(purgedModules.map(p => p.moduleCode));
-
   const handleAddModule = async (data) => {
     await base44.entities.ModuleEntry.create(data);
     queryClient.invalidateQueries({ queryKey: ["moduleEntries"] });
