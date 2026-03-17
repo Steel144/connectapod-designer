@@ -72,6 +72,7 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
     // Create pavilions: one per y-position
     const pavilions = yPositions.map((yPos, pavIndex) => {
       const wallsAtY = yGroups[yPos];
+      const pavilionNum = getPavilion(yPos);
 
       // Find Z and X walls (ends)
       const verticalWalls = wallsAtY.filter(w => w.face === "Z" || w.face === "X");
