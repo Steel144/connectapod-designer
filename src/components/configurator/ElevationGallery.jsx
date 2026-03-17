@@ -292,30 +292,42 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
                   const zWallFromZX = zxRows.find(r => r.zWall && r.zWall.elevationImage)?.zWall;
                   const xWallFromZX = zxRows.find(r => r.xWall && r.xWall.elevationImage)?.xWall;
                   
+                  const allYPositions = new Set([...yRows.map(r => r.yPos), ...wRows.map(r => r.yPos)]);
+                  const sortedYPositions = Array.from(allYPositions).sort((a, b) => a - b);
+                  
                   return (
                     <>
-                      {yRows.map((row) => (
-                        <ElevationRow
-                          key={`${pav.pavilionNum}-${row.yPos}-Y`}
-                          pavilionNum={pav.pavilionNum}
-                          endLeft={zWallFromZX || row.zWall}
-                          midWalls={row.midWalls || []}
-                          endRight={xWallFromZX || row.xWall}
-                          rowLabel="Y face (outside / top)"
-                          isYFace={true}
-                        />
-                      ))}
-                      {wRows.map((row) => (
-                        <ElevationRow
-                          key={`${pav.pavilionNum}-${row.yPos}-W`}
-                          pavilionNum={pav.pavilionNum}
-                          endLeft={row.zWall}
-                          midWalls={row.midWalls || []}
-                          endRight={row.xWall}
-                          rowLabel="W face (outside / bottom)"
-                          isYFace={false}
-                        />
-                      ))}
+                      {sortedYPositions.map((yPos) => {
+                        const yRow = yRows.find(r => r.yPos === yPos);
+                        const wRow = wRows.find(r => r.yPos === yPos);
+                        
+                        return (
+                          <div key={`${pav.pavilionNum}-${yPos}-pair`} className="flex flex-col gap-2">
+                            {yRow && (
+                              <ElevationRow
+                                key={`${pav.pavilionNum}-${yPos}-Y`}
+                                pavilionNum={pav.pavilionNum}
+                                endLeft={zWallFromZX || yRow.zWall}
+                                midWalls={yRow.midWalls || []}
+                                endRight={xWallFromZX || yRow.xWall}
+                                rowLabel="Y face (outside / top)"
+                                isYFace={true}
+                              />
+                            )}
+                            {wRow && (
+                              <ElevationRow
+                                key={`${pav.pavilionNum}-${yPos}-W`}
+                                pavilionNum={pav.pavilionNum}
+                                endLeft={wRow.zWall}
+                                midWalls={wRow.midWalls || []}
+                                endRight={wRow.xWall}
+                                rowLabel="W face (outside / bottom)"
+                                isYFace={false}
+                              />
+                            )}
+                          </div>
+                        );
+                      })}
                     </>
                   );
                 })()}
