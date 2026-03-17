@@ -286,7 +286,7 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
             {pavilions.filter(Boolean).map((pav) => (
               <div key={pav.pavilionNum} className="flex flex-col" style={{ gap: `${Math.round((zoom / 100) * 64)}px` }}>
                 <div className="text-sm font-bold text-gray-800 uppercase tracking-widest ml-1 px-3 py-2 bg-orange-100 rounded w-fit">
-                  Pavilion {pav.pavilionNum}
+                  {getPavilionLabel(pav.pavilionNum)}
                 </div>
                 {(() => {
                   const yRows = pav.rows.filter(r => r.type === "Y");
