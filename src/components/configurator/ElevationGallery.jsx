@@ -55,7 +55,7 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
   const { pavilions, hasAny } = useMemo(() => {
     // Add pavilion info to each wall
     const wallsWithPavilion = walls.map(w => ({ ...w, pavilionNum: getPavilion(w.y) }));
-    const withImage = walls.filter(w => w.elevationImage);
+    const withImage = wallsWithPavilion.filter(w => w.elevationImage);
     if (withImage.length === 0) return { pavilions: [], hasAny: false };
 
     // Group all walls by y-position
