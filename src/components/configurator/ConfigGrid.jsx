@@ -784,7 +784,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
             top: (GRID_ROWS / 2 - 12) * CELL_H + 4,
           }}
         >
-          Pavilion 3
+          Pavilion 1
         </div>
 
         {/* Red center stripe — 4.8m wide (8 cells) */}
