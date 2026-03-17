@@ -284,72 +284,40 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
                   Pavilion {pav.pavilionNum}
                 </div>
                 {(() => {
-                   const yRows = pav.rows.filter(r => r.type === "Y");
-                   const wRows = pav.rows.filter(r => r.type === "W");
-                   const zxRows = pav.rows.filter(r => r.type === "ZX");
-
-                   // Get Z and X walls from any ZX rows to attach to Y rows
-                   const zWallFromZX = zxRows.find(r => r.zWall && r.zWall.elevationImage)?.zWall;
-                   const xWallFromZX = zxRows.find(r => r.xWall && r.xWall.elevationImage)?.xWall;
-
-                   // Pair Y and W rows by yPos
-                   const pairedRows = [];
-                   const processedYPos = new Set();
-
-                   wRows.forEach(wRow => {
-                     const yRow = yRows.find(r => Math.abs(r.yPos - wRow.yPos) < 0.1);
-                     pairedRows.push({ wRow, yRow });
-                     processedYPos.add(wRow.yPos);
-                   });
-
-                   // Add any Y rows without matching W rows
-                   yRows.forEach(yRow => {
-                     if (!processedYPos.has(yRow.yPos)) {
-                       pairedRows.push({ wRow: null, yRow });
-                     }
-                   });
-
-                   return (
-                     <>
-                       {pairedRows.map(({ wRow, yRow }, idx) => (
-                         <div key={idx} className="flex flex-col gap-1">
-                           {wRow && (
-                             <ElevationRow
-                               pavilionNum={pav.pavilionNum}
-                               endLeft={wRow.zWall}
-                               midWalls={wRow.midWalls || []}
-                               endRight={wRow.xWall}
-                               rowLabel="W face (outside / bottom)"
-                               isYFace={false}
-                             />
-                           )}
-                           {yRow && (
-                             <div style={{ marginLeft: wRow ? `${imgHeight + 32}px` : "0" }}>
-                               <ElevationRow
-                                 pavilionNum={pav.pavilionNum}
-                                 endLeft={zWallFromZX || yRow.zWall}
-                                 midWalls={yRow.midWalls || []}
-                                 endRight={xWallFromZX || yRow.xWall}
-                                 rowLabel="Y face (outside / top)"
-                                 isYFace={true}
-                               />
-                             </div>
-                           )}
-                         </div>
-                       ))}
-                       {zxRows.map((row) => (
-                         <ElevationRow
-                           key={`${pav.pavilionNum}-${row.yPos}-ZX`}
-                           pavilionNum={pav.pavilionNum}
-                           endLeft={row.zWall}
-                           midWalls={[]}
-                           endRight={row.xWall}
-                           rowLabel="Ends"
-                           isYFace={false}
-                         />
-                       ))}
-                     </>
-                   );
+                  const yRows = pav.rows.filter(r => r.type === "Y");
+                  const wRows = pav.rows.filter(r => r.type === "W");
+                  const zxRows = pav.rows.filter(r => r.type === "ZX");
+                  
+                  // Get Z and X walls from any ZX rows to attach to Y rows
+                  const zWallFromZX = zxRows.find(r => r.zWall && r.zWall.elevationImage)?.zWall;
+                  const xWallFromZX = zxRows.find(r => r.xWall && r.xWall.elevationImage)?.xWall;
+                  
+                  return (
+                    <>
+                      {yRows.map((row) => (
+                        <ElevationRow
+                          key={`${pav.pavilionNum}-${row.yPos}-Y`}
+                          pavilionNum={pav.pavilionNum}
+                          endLeft={zWallFromZX || row.zWall}
+                          midWalls={row.midWalls || []}
+                          endRight={xWallFromZX || row.xWall}
+                          rowLabel="Y face (outside / top)"
+                          isYFace={true}
+                        />
+                      ))}
+                      {wRows.map((row) => (
+                        <ElevationRow
+                          key={`${pav.pavilionNum}-${row.yPos}-W`}
+                          pavilionNum={pav.pavilionNum}
+                          endLeft={row.zWall}
+                          midWalls={row.midWalls || []}
+                          endRight={row.xWall}
+                          rowLabel="W face (outside / bottom)"
+                          isYFace={false}
+                        />
+                      ))}
+                    </>
+                  );
                 })()}
               </div>
             ))}
