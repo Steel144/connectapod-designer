@@ -237,7 +237,7 @@ export default function Catalogue() {
     toast.success(`Duplicated as ${newCode}`);
   };
 
-  const validCategories = Array.from(new Set(CATALOGUE.map(c => c.category)));
+  const validCategories = Array.from(new Set([...CATALOGUE.map(c => c.category), "Connection Modules"]));
   const categories = ["All", ...validCategories, "Uncategorized"];
 
   // Codes that have a custom override via originalCode
