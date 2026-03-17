@@ -131,7 +131,7 @@ export default function ElevationGallery({ walls = [], onWallSelect = () => {} }
     </div>
   );
 
-  const ElevationRow = ({ endLeft, midWalls, endRight, rowLabel }) => {
+  const ElevationRow = ({ endLeft, midWalls, endRight, rowLabel, mirrorH }) => {
     const hasContent = endLeft || midWalls.length > 0 || endRight;
     if (!hasContent) return null;
 
@@ -142,26 +142,26 @@ export default function ElevationGallery({ walls = [], onWallSelect = () => {} }
           <div className="flex-1 h-px bg-gray-200" />
         </div>
         <div className="flex items-center">
-          {/* Z end — left, separated */}
+          {/* Left end */}
           {endLeft && (
             <div className="flex items-center shrink-0" style={{ marginRight: `${Math.round((zoom / 100) * 48)}px` }}>
-              <ElevationImage wall={endLeft} label={endLeft.type || "End"} face={endLeft.face || "Z"} tight />
+              <ElevationImage wall={endLeft} label={endLeft.type || "End"} face={endLeft.face || "Z"} tight mirrorH={mirrorH} />
             </div>
           )}
 
           {/* Middle walls joined tightly — no gap between */}
           <div className="flex items-center">
-            {midWalls.map((wall, idx) => (
+            {midWalls.map((wall) => (
               <div key={wall.id} className="flex items-center" style={{ marginRight: "-1px" }}>
-                <ElevationImage wall={wall} label={wall.type || "Wall"} face={wall.face} tight />
+                <ElevationImage wall={wall} label={wall.type || "Wall"} face={wall.face} tight mirrorH={mirrorH} />
               </div>
             ))}
           </div>
 
-          {/* X end — right, separated */}
+          {/* Right end */}
           {endRight && (
             <div className="flex items-center shrink-0" style={{ marginLeft: `${Math.round((zoom / 100) * 48)}px` }}>
-              <ElevationImage wall={endRight} label={endRight.type || "End"} face={endRight.face || "X"} tight />
+              <ElevationImage wall={endRight} label={endRight.type || "End"} face={endRight.face || "X"} tight mirrorH={mirrorH} />
             </div>
           )}
         </div>
