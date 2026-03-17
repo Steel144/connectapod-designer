@@ -462,7 +462,6 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
       let snapped = null;
 
       // Snap to nearest module face — no selection required
-       const WALL_OFFSET = 0.308; // 185mm offset
        if (wallTemplate.orientation === "horizontal") {
          let bestDist = Infinity;
          for (const mod of placedModules) {
@@ -478,7 +477,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
            if (distToWFace <= SNAP_THRESHOLD && exactX >= mod.x - SNAP_THRESHOLD && exactX <= mod.x + mod.w + SNAP_THRESHOLD) {
              if (distToWFace < bestDist) {
                bestDist = distToWFace;
-               snapped = { x: mod.x, y: mod.y - WALL_OFFSET, length: mod.w, face: "W", rotation: 180 };
+               snapped = { x: mod.x, y: mod.y, length: mod.w, face: "W" };
              }
            }
          }
@@ -497,7 +496,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
            if (distToXFace <= SNAP_THRESHOLD && exactY >= mod.y - SNAP_THRESHOLD && exactY <= mod.y + mod.h + SNAP_THRESHOLD) {
              if (distToXFace < bestDist) {
                bestDist = distToXFace;
-               snapped = { x: mod.x + mod.w - WALL_OFFSET, y: mod.y, length: mod.h, face: "X" };
+               snapped = { x: mod.x + mod.w, y: mod.y, length: mod.h, face: "X" };
              }
            }
          }
