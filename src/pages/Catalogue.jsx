@@ -96,12 +96,6 @@ export default function Catalogue() {
         await base44.entities.ModuleEntry.delete(customModule.id);
       }
       
-      // Mark as permanently purged
-      const existing = await base44.entities.PurgedModule.filter({ moduleCode: code });
-      if (existing.length === 0) {
-        await base44.entities.PurgedModule.create({ moduleCode: code });
-      }
-      
       // Remove associated DeletedModule record if it exists
       const deleted = await base44.entities.DeletedModule.filter({ moduleCode: code });
       if (deleted.length > 0) {
@@ -117,7 +111,6 @@ export default function Catalogue() {
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ["moduleEntries"] }),
         queryClient.invalidateQueries({ queryKey: ["deletedModules"] }),
-        queryClient.invalidateQueries({ queryKey: ["purgedModules"] }),
         queryClient.invalidateQueries({ queryKey: ["floorPlanImages"] })
       ]);
       toast.success("Module purged forever");
