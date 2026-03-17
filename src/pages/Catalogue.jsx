@@ -243,7 +243,7 @@ export default function Catalogue() {
     toast.success(`Duplicated as ${newCode}`);
   };
 
-  const validCategories = Array.from(new Set([...CATALOGUE.map(c => c.category), "Connection Modules"]));
+  const validCategories = Array.from(new Set([...CATALOGUE.map(c => c.category), "Connection"]));
   const categories = ["All", ...validCategories, "Uncategorized"];
 
   // Codes that have a custom override via originalCode
@@ -300,6 +300,13 @@ export default function Catalogue() {
       customs = customModules.filter(c => {
         const descriptions = (c.description || "").split(",").map(s => s.trim()).filter(Boolean);
         const categories = Array.isArray(c.categories) ? c.categories : [];
+        const variants = Array.isArray(c.variants) ? c.variants.map(v => v.toLowerCase()) : [];
+        const isConnection = variants.some(v => v.includes("connection"));
+
+        if (cat.category === "Connection") {
+          return isConnection || c.category === "Connection" || descriptions.includes("Connection");
+        }
+
         return descriptions.includes(cat.category) || c.category === cat.category || categories.includes(cat.category);
       }).map(c => ({
           code: c.code, name: c.name, width: c.width || 3.0, depth: c.depth || 4.8,
