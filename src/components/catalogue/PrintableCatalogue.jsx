@@ -97,7 +97,7 @@ export default function PrintableCatalogue({ title, categories, onClose }) {
 
         <div className="footer" style={{ borderTop: "1.5pt solid #F15A22" }}>
           <p style={{ margin: 0 }}>
-            <span style={{ color: "#F15A22", fontWeight: "bold" }}>connectapod</span> · {title} Catalogue · {new Date().getFullYear()}
+            <span style={{ color: "#F15A22", fontWeight: "bold" }}>connectapod</span> · {title} · {new Date().getFullYear()}
           </p>
         </div>
       </div>
