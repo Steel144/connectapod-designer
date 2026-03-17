@@ -559,8 +559,78 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
         onDragOver={handleDragOver}
         onMouseDown={startSelectionBox}
       >
-        {/* Placed modules */}
-        {placedModules.map((mod) => {
+        {/* Colour stripes — rendered first so they appear behind */}
+         {/* Green strip — 4.8m wide (8 cells) */}
+         <div
+           className="absolute pointer-events-none"
+           style={{
+             left: 0,
+             top: (GRID_ROWS / 2 - 12) * CELL_H,
+             width: GRID_COLS * CELL_W,
+             height: 8 * CELL_H,
+             backgroundColor: "rgba(34, 197, 94, 0.075)",
+             borderTop: "2px solid rgb(34, 197, 94)",
+             borderBottom: "2px solid rgb(34, 197, 94)",
+           }}
+         />
+         <div
+           className="absolute pointer-events-none text-green-700 font-bold text-sm"
+           style={{
+             left: "12px",
+             top: (GRID_ROWS / 2 - 12) * CELL_H + 4,
+           }}
+         >
+           Pavilion 1
+         </div>
+
+         {/* Red center stripe — 4.8m wide (8 cells) */}
+         <div
+           className="absolute pointer-events-none"
+           style={{
+             left: 0,
+             top: (GRID_ROWS / 2 - 4) * CELL_H,
+             width: GRID_COLS * CELL_W,
+             height: 8 * CELL_H,
+             backgroundColor: "rgba(239, 68, 68, 0.075)",
+             borderTop: "2px solid rgb(239, 68, 68)",
+             borderBottom: "2px solid rgb(239, 68, 68)",
+           }}
+         />
+         <div
+           className="absolute pointer-events-none text-red-700 font-bold text-sm"
+           style={{
+             left: "12px",
+             top: (GRID_ROWS / 2 - 4) * CELL_H + 4,
+           }}
+         >
+           Connection Module
+         </div>
+
+         {/* Blue stripe — 4.8m wide (8 cells) below red */}
+         <div
+           className="absolute pointer-events-none"
+           style={{
+             left: 0,
+             top: (GRID_ROWS / 2 + 4) * CELL_H,
+             width: GRID_COLS * CELL_W,
+             height: 8 * CELL_H,
+             backgroundColor: "rgba(59, 130, 246, 0.075)",
+             borderTop: "2px solid rgb(59, 130, 246)",
+             borderBottom: "2px solid rgb(59, 130, 246)",
+           }}
+         />
+         <div
+           className="absolute pointer-events-none text-blue-700 font-bold text-sm"
+           style={{
+             left: "12px",
+             top: (GRID_ROWS / 2 + 4) * CELL_H + 4,
+           }}
+         >
+           Pavilion 2
+         </div>
+
+         {/* Placed modules */}
+         {placedModules.map((mod) => {
           const isDragging = dragging?.isPlaced && dragging.selectedIds?.has(mod.id);
           const isSelected = selected.has(mod.id);
 
