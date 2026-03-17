@@ -4,15 +4,13 @@ import { X } from "lucide-react";
 const UNIT_TYPES = [
   { label: "Standard", value: "Standard", walls: ["W (Front)", "Y (Rear)"] },
   { label: "Deck", value: "Deck", walls: ["W (Front)", "Y (Rear)"] },
-  { label: "End Left (Z)", value: "End Left", walls: ["W (Front)", "Y (Rear)", "Z (Left End)"] },
-  { label: "End Right (X)", value: "End Right", walls: ["W (Front)", "Y (Rear)", "X (Right End)"] },
+  { label: "End", value: "End", walls: ["W (Front)", "Y (Rear)", "Z (Left End)", "X (Right End)"], note: "End wall auto-determined on grid" },
 ];
 
 // Infer unit type from saved variants array
 const inferUnitType = (variants) => {
   if (!Array.isArray(variants)) return "";
-  if (variants.includes("End Left")) return "End Left";
-  if (variants.includes("End Right")) return "End Right";
+  if (variants.includes("End Left") || variants.includes("End Right") || variants.includes("End")) return "End";
   if (variants.includes("Deck")) return "Deck";
   if (variants.includes("Standard")) return "Standard";
   return "";
