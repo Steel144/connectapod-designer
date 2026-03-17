@@ -129,11 +129,16 @@ export default function Catalogue() {
       }
     }
 
-    if (editingModule._custom) {
-      // For custom modules, just update directly
+    // Get the full module from customModules to preserve all fields
+    const fullModule = editingModule._custom 
+      ? customModules.find(m => m.id === editingModule._id)
+      : customModules.find(c => c.originalCode === editingModule.code);
+
+    if (editingModule._custom && fullModule) {
+      // For custom modules, update directly while preserving categories field
       await base44.entities.ModuleEntry.update(editingModule._id, {
         ...data,
-        category: editingModule.category,
+        categories: fullModule.categories || [],
         originalCode: editingModule.originalCode || undefined,
       });
     } else {
@@ -143,7 +148,7 @@ export default function Catalogue() {
         // Update existing override
         await base44.entities.ModuleEntry.update(existingOverride.id, {
           ...data,
-          category: editingModule.category,
+          categories: existingOverride.categories || [],
           originalCode: editingModule.code,
         });
       } else {
@@ -152,7 +157,7 @@ export default function Catalogue() {
           base44.entities.DeletedModule.create({ moduleCode: editingModule.code }),
           base44.entities.ModuleEntry.create({
             ...data,
-            category: editingModule.category,
+            categories: [],
             originalCode: editingModule.code,
           }),
         ]);
