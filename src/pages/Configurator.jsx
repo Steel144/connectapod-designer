@@ -11,6 +11,7 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { BookOpen, FolderOpen, Save, Trash2, ChevronLeft, ChevronRight, Undo2, Box, Grid2X2, Image } from "lucide-react";
 import View3D from "@/components/configurator/View3D";
+import View3DFromElevations from "@/components/configurator/View3DFromElevations";
 import ElevationGallery from "@/components/configurator/ElevationGallery";
 import PrintablePlansSheet from "@/components/configurator/PrintablePlansSheet";
 import PrintableElevationsSheet from "@/components/configurator/PrintableElevationsSheet";
