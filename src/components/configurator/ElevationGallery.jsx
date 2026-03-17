@@ -174,7 +174,7 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
     </div>
   );
 
-  const ElevationRow = ({ pavilionNum, endLeft, midWalls, endRight, rowLabel, mirrorH }) => {
+  const ElevationRow = ({ pavilionNum, endLeft, midWalls, endRight, rowLabel, isYFace, mirrorH }) => {
     const hasContent = endLeft || midWalls.length > 0 || endRight;
     if (!hasContent) return null;
 
@@ -184,11 +184,14 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
           <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Pavilion {pavilionNum} - {rowLabel}</span>
           <div className="flex-1 h-px bg-gray-200" />
         </div>
-        <div className="flex items-center">
-          {/* Left end */}
-          {endLeft && (
-            <div className="flex items-center shrink-0" style={{ marginRight: `${Math.round((zoom / 100) * 48)}px` }}>
-              <ElevationImage wall={endLeft} label={endLeft.type || "End"} face={endLeft.face || "Z"} tight mirrorH={mirrorH} />
+        <div className="flex items-center gap-2">
+          {/* Left ZX end cap (only for Y faces) */}
+          {isYFace && endLeft && endLeft.face === "Z" && (
+            <div className="flex items-center shrink-0">
+              <div className="flex flex-col items-center gap-0">
+                <ElevationImage wall={endLeft} label={endLeft.type || "End"} face="Z" tight mirrorH={mirrorH} />
+                <span className="text-[8px] text-gray-400 mt-0.5">Left</span>
+              </div>
             </div>
           )}
 
@@ -201,10 +204,13 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
             ))}
           </div>
 
-          {/* Right end */}
-          {endRight && (
-            <div className="flex items-center shrink-0" style={{ marginLeft: `${Math.round((zoom / 100) * 48)}px` }}>
-              <ElevationImage wall={endRight} label={endRight.type || "End"} face={endRight.face || "X"} tight mirrorH={mirrorH} />
+          {/* Right ZX end cap (only for Y faces) */}
+          {isYFace && endRight && endRight.face === "X" && (
+            <div className="flex items-center shrink-0">
+              <div className="flex flex-col items-center gap-0">
+                <ElevationImage wall={endRight} label={endRight.type || "End"} face="X" tight mirrorH={mirrorH} />
+                <span className="text-[8px] text-gray-400 mt-0.5">Right</span>
+              </div>
             </div>
           )}
         </div>
