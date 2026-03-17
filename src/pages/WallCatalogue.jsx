@@ -136,32 +136,12 @@ const WALL_GROUPS = [
     ]
   },
   {
-    key: "musgrove",
-    label: "3.0m Musgrove Joinery Walls",
-    series: "WYM200-220",
+    key: "connection",
+    label: "Connection Walls",
+    series: "ZX400-410",
     walls: [
-      { code: "WM201/YM201 (MD1820S2R-PLU89399)", name: "Musgrove – Door Right 1820", width: 3000, variants: ["Standard (WM201/YM201)", "Left End (WM201L/YM201L)", "Right End (WM201R/YM201R)"], description: "795+1815+390mm, door right sliding, PLU89399, 15mm reveal" },
-      { code: "WM202/YM202", name: "Musgrove – Plain 3000", width: 3000, variants: ["Standard (WM202/YM202)", "Left End (WM202L/YM202L)", "Right End (WM202R/YM202R)"], description: "3000mm plain Musgrove wall" },
-      { code: "WM203/YM203 (MD1820S2R-PLU89399)", name: "Musgrove – Door Left 1820", width: 3000, variants: ["Standard (WM203/YM203)", "Left End (WM203L/YM203L)", "Right End (WM203R/YM203R)"], description: "390+1815+795mm mirror of WM201" },
-      { code: "WM204/YM204", name: "Musgrove – Plain Mirror 3000", width: 3000, variants: ["Standard (WM204/YM204)", "Left End (WM204L/YM204L)", "Right End (WM204R/YM204R)"], description: "3000mm plain mirror" },
-      { code: "WM205/YM205 (MW1509A2-PLU94686)", name: "Musgrove – 2-Panel Awning Left 1509", width: 3000, variants: ["Standard (WM205/YM205)", "Left End (WM205L/YM205L)", "Right End (WM205R/YM205R)"], description: "1040+1520+440mm, 2 awning windows, PLU94686" },
-      { code: "WM206/YM206 (MW1509A2-PLU94686)", name: "Musgrove – 2-Panel Awning Right 1509", width: 3000, variants: ["Standard (WM206/YM206)", "Left End (WM206L/YM206L)", "Right End (WM206R/YM206R)"], description: "440+1520+1040mm mirror of WM205" },
-      { code: "WM207/YM207 (MW0909A1S-PLU99707)", name: "Musgrove – 1-Panel Opaque Left 0909", width: 3000, variants: ["Standard (WM207/YM207)", "Left End (WM207L/YM207L)", "Right End (WM207R/YM207R)"], description: "1640+920+440mm, opaque safety glass, PLU99707" },
-      { code: "WM208/YM208 (MW0909A1S-PLU99707)", name: "Musgrove – 1-Panel Opaque Right 0909", width: 3000, variants: ["Standard (WM208/YM208)", "Left End (WM208L/YM208L)", "Right End (WM208R/YM208R)"], description: "440+920+1640mm mirror, opaque safety glass" },
-      { code: "WM209/YM209 (MD0921HLSG-PLU90858)", name: "Musgrove – High Left Door SG 0921", width: 3000, variants: ["Standard (WM209/YM209)", "Left End (WM209L/YM209L)", "Right End (WM209R/YM209R)"], description: "440+920+1640mm, high left door sliding glass, PLU90858" },
-    ]
-  },
-  {
-    key: "musgrove-gable",
-    label: "5.2m Musgrove Joinery Gable Walls",
-    series: "XZM000-010",
-    walls: [
-      { code: "ZM031-F/XM031-F (MD1820S2RG-PLU89399)", name: "Musgrove Gable – Door Right 1820", width: 5200, variants: ["Standard (ZM031-F/XM031-F)"], description: "185+2335+1815+650+185mm, gable door right" },
-      { code: "ZM032-F/XM032-F (MD1820S2LG-PLU89399)", name: "Musgrove Gable – Door Left 1820", width: 5200, variants: ["Standard (ZM032-F/XM032-F)"], description: "Gable door left, PLU89399, 15mm reveal" },
-      { code: "ZM033-F/XM033-F (MD1820S2RG-PLU89399)", name: "Musgrove Gable – Door Right 1820 (B)", width: 5200, variants: ["Standard (ZM033-F/XM033-F)"], description: "Variant B, door right gable" },
-      { code: "ZM034-F/XM034-F (MD1820S2LG-PLU89399)", name: "Musgrove Gable – Door Left 1820 (B)", width: 5200, variants: ["Standard (ZM034-F/XM034-F)"], description: "Variant B, door left gable" },
-      { code: "ZM035-F/XM035-F (MW1509A2-PLU94686)", name: "Musgrove Gable – 2-Panel Awning Left", width: 5200, variants: ["Standard (ZM035-F/XM035-F)"], description: "185+590+1520+2690+185mm, 2 awning panes left" },
-      { code: "ZM036-F/XM036-F (MW1509A2-PLU94686)", name: "Musgrove Gable – 2-Panel Awning Right", width: 5200, variants: ["Standard (ZM036-F/XM036-F)"], description: "Mirror of ZM035, awning right" },
+      { code: "ZC-STD/XC-STD", name: "Standard Connection Wall", width: 3000, variants: ["Standard"], description: "Standard connection module wall" },
+      { code: "ZC-OPN/XC-OPN", name: "Opening Connection Wall", width: 3000, variants: ["Standard"], description: "Connection wall with opening" },
     ]
   },
 ];
