@@ -2,6 +2,10 @@ import React from "react";
 
 export default function PrintableElevationsSheet({ walls, onClose }) {
   const elevations = walls.filter(w => w.elevationImage);
+  
+  console.log('All walls:', walls);
+  console.log('Elevations with images:', elevations);
+  console.log('X face walls:', walls.filter(w => w.face === "X"));
 
   React.useEffect(() => {
     const timer = setTimeout(() => {
