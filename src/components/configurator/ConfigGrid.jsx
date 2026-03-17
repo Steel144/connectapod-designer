@@ -563,17 +563,16 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
          {(() => {
            const midpoint = GRID_ROWS / 2;
            const centerModules = placedModules.filter(m => m.y >= midpoint - 4 && m.y < midpoint + 4);
-           
+
            let centerLeft = 0;
-           let centerRight = GRID_COLS;
-           let centerWidth = GRID_COLS;
-           
+           let centerWidth = 0;
+
            if (centerModules.length > 0) {
              centerLeft = Math.min(...centerModules.map(m => m.x));
-             centerRight = Math.max(...centerModules.map(m => m.x + m.w));
+             const centerRight = Math.max(...centerModules.map(m => m.x + m.w));
              centerWidth = centerRight - centerLeft;
            }
-           
+
            return (
              <>
                {/* Green strip — full width */}
@@ -597,28 +596,32 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                  Pavilion 1
                </div>
 
-               {/* Red center stripe — flexible width */}
-               <div
-                 className="absolute pointer-events-none"
-                 style={{
-                   left: centerLeft * CELL_W,
-                   top: (GRID_ROWS / 2 - 4) * CELL_H,
-                   width: centerWidth * CELL_W,
-                   height: 8 * CELL_H,
-                   backgroundColor: "rgba(239, 68, 68, 0.075)",
-                   transition: "all 0.2s ease-out",
-                 }}
-               />
-               <div
-                 className="absolute pointer-events-none text-red-700 font-bold text-sm"
-                 style={{
-                   left: centerLeft * CELL_W + 12,
-                   top: (GRID_ROWS / 2 - 4) * CELL_H + 4,
-                   transition: "left 0.2s ease-out",
-                 }}
-               >
-                 Connection Module
-               </div>
+               {/* Red center stripe — fits to actual module width */}
+               {centerWidth > 0 && (
+                 <>
+                   <div
+                     className="absolute pointer-events-none"
+                     style={{
+                       left: centerLeft * CELL_W,
+                       top: (GRID_ROWS / 2 - 4) * CELL_H,
+                       width: centerWidth * CELL_W,
+                       height: 8 * CELL_H,
+                       backgroundColor: "rgba(239, 68, 68, 0.075)",
+                       transition: "all 0.2s ease-out",
+                     }}
+                   />
+                   <div
+                     className="absolute pointer-events-none text-red-700 font-bold text-sm"
+                     style={{
+                       left: centerLeft * CELL_W + 12,
+                       top: (GRID_ROWS / 2 - 4) * CELL_H + 4,
+                       transition: "left 0.2s ease-out",
+                     }}
+                   >
+                     Connection Module
+                   </div>
+                 </>
+               )}
 
                {/* Blue stripe — full width */}
                <div
