@@ -39,6 +39,7 @@ export default function Catalogue() {
   const [addingToCategory, setAddingToCategory] = useState(null);
   const [editingModule, setEditingModule] = useState(null);
   const [printMode, setPrintMode] = useState(false);
+  const [bulkUploadOpen, setBulkUploadOpen] = useState(false);
   const queryClient = useQueryClient();
   const fileInputRef = useRef(null);
   const [pendingUploadCode, setPendingUploadCode] = useState(null);
