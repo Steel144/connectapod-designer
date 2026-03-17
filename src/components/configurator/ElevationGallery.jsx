@@ -51,10 +51,31 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
     }
   };
 
+  // Helper to get pavilion from a wall, checking if it's snapped to a module
+  const getWallPavilion = (wall) => {
+    // If wall has explicit pavilionNum, use it
+    if (wall.pavilionNum !== null && wall.pavilionNum !== undefined) {
+      return wall.pavilionNum;
+    }
+    
+    // Try to find the module this wall is snapped to
+    const THRESHOLD = 1.0;
+    const snappedMod = placedModules.find(mod => {
+      if (wall.face === "Y") return Math.abs(wall.y - (mod.y + mod.h)) < THRESHOLD && Math.abs(wall.x - mod.x) < THRESHOLD;
+      if (wall.face === "W") return Math.abs(wall.y - (mod.y - 0.31)) < THRESHOLD && Math.abs(wall.x - mod.x) < THRESHOLD;
+      if (wall.face === "Z") return Math.abs(wall.y - mod.y) < THRESHOLD && Math.abs(wall.x - mod.x) < THRESHOLD;
+      if (wall.face === "X") return Math.abs(wall.y - mod.y) < THRESHOLD && Math.abs(wall.x - (mod.x + mod.w - 0.31)) < THRESHOLD;
+      return false;
+    });
+    
+    if (snappedMod) return getPavilion(snappedMod.y);
+    return getPavilion(wall.y);
+  };
+
   // Group walls by pavilion: each pavilion stripe (1-3) groups all walls within it
   const { pavilions, hasAny } = useMemo(() => {
     // Add pavilion info to each wall
-    const wallsWithPavilion = walls.map(w => ({ ...w, pavilionNum: getPavilion(w.y) }));
+    const wallsWithPavilion = walls.map(w => ({ ...w, pavilionNum: getWallPavilion(w) }));
     const withImage = wallsWithPavilion.filter(w => w.elevationImage);
     if (withImage.length === 0) return { pavilions: [], hasAny: false };
 
