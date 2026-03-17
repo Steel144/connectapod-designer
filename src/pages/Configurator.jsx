@@ -43,6 +43,7 @@ export default function Configurator() {
   const [selectedWall, setSelectedWall] = useState(null);
   const [selectedModule, setSelectedModule] = useState(null);
   const [printMode, setPrintMode] = useState(null);
+  const [viewMode, setViewMode] = useState("2d");
   const { data: customWalls = [] } = useQuery({
     queryKey: ["wallEntries"],
     queryFn: () => base44.entities.WallEntry.list(),
