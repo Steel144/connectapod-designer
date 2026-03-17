@@ -1,6 +1,16 @@
 import React, { useState, useMemo, useRef, useCallback } from "react";
 import { ZoomIn, ZoomOut, Maximize2 } from "lucide-react";
 
+const GRID_ROWS = 40;
+
+const getPavilion = (wallY) => {
+  const midpoint = GRID_ROWS / 2;
+  if (wallY >= midpoint - 12 && wallY < midpoint - 4) return 3; // Green
+  if (wallY >= midpoint - 4 && wallY < midpoint + 4) return 2;  // Red
+  if (wallY >= midpoint + 4 && wallY < midpoint + 12) return 1; // Blue
+  return null;
+};
+
 export default function ElevationGallery({ walls = [], placedModules = [], onWallSelect = () => {} }) {
   const [zoom, setZoom] = useState(50);
   const [pan, setPan] = useState({ x: 0, y: 0 });
