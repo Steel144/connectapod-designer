@@ -112,7 +112,7 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
 
             const horizontal = wallsAtY.filter(w => w.face === "W" || w.face === "Y");
             const wWalls = horizontal.filter(w => w.face === "W").sort((a, b) => b.x - a.x);
-            const yWalls = horizontal.filter(w => w.face === "Y").sort((a, b) => b.x - a.x);
+            const yWalls = horizontal.filter(w => w.face === "Y").sort((a, b) => a.x - b.x);
 
             if (yWalls.length > 0 || wWalls.length > 0 || zWall || xWall) {
               if (yWalls.length > 0) rows.push({ type: "Y", yPos, zWall: (zWall && zWall.elevationImage) ? zWall : null, midWalls: yWalls, xWall: (xWall && xWall.elevationImage) ? xWall : null });
