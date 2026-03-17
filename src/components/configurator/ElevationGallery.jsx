@@ -290,8 +290,8 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
                 {/* Separate ZX (vertical ends) rows */}
                 {pav.rows
                   .flatMap(row => [
-                    row.zWall ? { type: "Z", wall: row.zWall, yPos: row.yPos } : null,
-                    row.xWall ? { type: "X", wall: row.xWall, yPos: row.yPos } : null
+                    (row.zWall && row.zWall.elevationImage) ? { type: "Z", wall: row.zWall, yPos: row.yPos } : null,
+                    (row.xWall && row.xWall.elevationImage) ? { type: "X", wall: row.xWall, yPos: row.yPos } : null
                   ])
                   .filter(Boolean)
                   .map((item) => (
