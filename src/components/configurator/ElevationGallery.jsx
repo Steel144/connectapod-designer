@@ -41,52 +41,60 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
     }
   };
 
-  // Group walls by pavilion using Z/X end walls as row markers
+  // Group walls by pavilion using Z/X end walls as x-position boundaries
   const { pavilions, hasAny } = useMemo(() => {
     const withImage = walls.filter(w => w.elevationImage);
     if (withImage.length === 0) return { pavilions: [], hasAny: false };
 
-    // Group all walls by y-position
-    const yGroups = {};
-    withImage.forEach(w => {
-      const yKey = Math.round(w.y * 100) / 100;
-      if (!yGroups[yKey]) yGroups[yKey] = [];
-      yGroups[yKey].push(w);
-    });
+    // Find all Z/X walls and their x-positions to define pavilion boundaries
+    const endWalls = withImage.filter(w => w.face === "Z" || w.face === "X");
+    const uniqueXPositions = [...new Set(endWalls.map(w => Math.round(w.x * 100) / 100))].sort((a, b) => a - b);
 
-    // Get unique y-positions sorted
-    const yPositions = Object.keys(yGroups).map(Number).sort((a, b) => a - b);
+    // Create pavilions using consecutive Z/X x-positions as boundaries
+    const pavilions = [];
+    for (let i = 0; i < uniqueXPositions.length - 1; i++) {
+      const pavLeftX = uniqueXPositions[i];
+      const pavRightX = uniqueXPositions[i + 1];
 
-    // Create a pavilion for each y-position (each Z/X pair defines a pavilion level)
-    const pavilions = yPositions.map((yPos, pavilionIndex) => {
-      const wallsAtY = yGroups[yPos];
+      // Get all walls within this pavilion's x-range
+      const pavWalls = withImage.filter(w => w.x >= pavLeftX && w.x <= pavRightX);
+      if (pavWalls.length === 0) continue;
 
-      // Separate vertical (end) and horizontal walls at this y-position
-      const verticalWalls = wallsAtY.filter(w => w.orientation === "vertical" || w.face === "Z" || w.face === "X");
-      const horizontal = wallsAtY.filter(w => w.orientation === "horizontal" || w.face === "W" || w.face === "Y");
+      // Group by y-position within this pavilion
+      const yGroups = {};
+      pavWalls.forEach(w => {
+        const yKey = Math.round(w.y * 100) / 100;
+        if (!yGroups[yKey]) yGroups[yKey] = [];
+        yGroups[yKey].push(w);
+      });
 
-      // Find Z and X walls
-      const vertXs = verticalWalls.map(w => w.x);
-      const minX = vertXs.length > 0 ? Math.min(...vertXs) : null;
-      const maxX = vertXs.length > 0 ? Math.max(...vertXs) : null;
-      const zWall = verticalWalls.find(w => minX !== null && Math.abs(w.x - minX) < 0.1 && w.face === "Z") || null;
-      const xWall = verticalWalls.find(w => maxX !== null && Math.abs(w.x - maxX) < 0.1 && w.face === "X") || null;
+      const yPositions = Object.keys(yGroups).map(Number).sort((a, b) => a - b);
 
-      // Separate W and Y walls
-      const wWalls = horizontal.filter(w => !w.face || w.face === "W").sort((a, b) => a.x - b.x);
-      const yWalls = horizontal.filter(w => w.face === "Y").sort((a, b) => b.x - a.x);
+      // For each y-position, create rows
+      const rows = yPositions.flatMap(yPos => {
+        const wallsAtY = yGroups[yPos];
 
-      // Create rows: Y first, then W
-      const rows = [
-        { type: "Y", yPos, zWall, midWalls: yWalls, xWall },
-        { type: "W", yPos, zWall, midWalls: wWalls, xWall }
-      ].filter(r => r.midWalls.length > 0 || r.zWall || r.xWall);
+        // Find Z and X walls at this y-position
+        const verticalWalls = wallsAtY.filter(w => w.face === "Z" || w.face === "X");
+        const zWall = verticalWalls.find(w => w.face === "Z") || null;
+        const xWall = verticalWalls.find(w => w.face === "X") || null;
 
-      return {
-        pavilionNum: pavilionIndex + 1,
+        // Separate W and Y walls
+        const horizontal = wallsAtY.filter(w => w.face === "W" || w.face === "Y");
+        const wWalls = horizontal.filter(w => w.face === "W").sort((a, b) => a.x - b.x);
+        const yWalls = horizontal.filter(w => w.face === "Y").sort((a, b) => b.x - a.x);
+
+        return [
+          { type: "Y", yPos, zWall, midWalls: yWalls, xWall },
+          { type: "W", yPos, zWall, midWalls: wWalls, xWall }
+        ].filter(r => r.midWalls.length > 0 || r.zWall || r.xWall);
+      });
+
+      pavilions.push({
+        pavilionNum: pavilions.length + 1,
         rows,
-      };
-    });
+      });
+    }
 
     return { pavilions, hasAny: withImage.length > 0 };
   }, [walls, placedModules]);
