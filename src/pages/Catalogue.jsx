@@ -581,7 +581,10 @@ export default function Catalogue() {
                     {mod.description && <p className="text-xs text-gray-500 leading-relaxed mb-2">{mod.description}</p>}
                     {editMode && (
                       <button
-                        onClick={() => setEditingModule({ ...mod, category: cat.category })}
+                        onClick={() => {
+                          const fullMod = customModules.find(m => m.code === mod.code) || mod;
+                          setEditingModule({ ...fullMod, category: cat.category });
+                        }}
                         className="text-xs text-gray-400 hover:text-[#F15A22] mb-2 transition-colors flex items-center gap-1"
                         title="Edit module details"
                       >
