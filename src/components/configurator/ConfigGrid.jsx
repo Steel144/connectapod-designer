@@ -610,7 +610,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
               </span>
               {getPavilion(mod.y) && (
                 <span className="absolute text-[8px] font-bold text-slate-500 pointer-events-none" style={{ bottom: '2px', right: '2px', opacity: 0.6 }}>
-                  P{getPavilion(mod.y)}
+                  {(() => { const p = getPavilion(mod.y); const labels = { 3: "P1", 2: "CM", 1: "P2" }; return labels[p] || `P${p}`; })()}
                 </span>
               )}
               {/* Action buttons above the module, same distance as label below */}
