@@ -448,6 +448,11 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
       if (!mod && customModules.length > 0) {
         const customMod = customModules.find(c => c.code === modType);
         if (customMod) {
+          const variants = (customMod.variants || []).map(v => v.toLowerCase());
+          const isEnd = variants.some(v => v.includes("end"));
+          const isConnection = variants.some(v => v.includes("connection"));
+          const chassis = isConnection ? "CM" : isEnd ? "LF" : "SF";
+          
           mod = {
             type: customMod.code,
             label: customMod.name,
@@ -457,6 +462,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
             price: customMod.price || 0,
             groupKey: customMod.category || "Living",
             description: customMod.description || "",
+            chassis: chassis,
             color: "#FDF0EB",
             border: "#F15A22",
           };
