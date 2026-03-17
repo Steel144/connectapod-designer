@@ -41,35 +41,33 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
     }
   };
 
-  // Group walls by pavilion, then by face
+  // Group walls by pavilion using end modules as boundaries
   const { pavilions, hasAny } = useMemo(() => {
     const withImage = walls.filter(w => w.elevationImage);
     if (withImage.length === 0) return { pavilions: [], hasAny: false };
 
-    // Cluster walls into pavilions by finding the largest gap in x-coordinates
-    const sorted = [...withImage].sort((a, b) => a.x - b.x);
-    const xs = sorted.map(w => w.x);
-    const uniqueXs = [...new Set(xs)].sort((a, b) => a - b);
-    
-    // Find the largest gap between consecutive unique x values
-    let maxGap = 0;
-    let gapIndex = -1;
-    for (let i = 0; i < uniqueXs.length - 1; i++) {
-      const gap = uniqueXs[i + 1] - uniqueXs[i];
-      if (gap > maxGap) {
-        maxGap = gap;
-        gapIndex = i;
-      }
-    }
-    
-    // Split pavilions at the largest gap
+    // Find all end modules (pairs that face each other)
+    const isEndModule = (m) => m.chassis === "EF" || m.chassis === "ER" || m.chassis === "LF" || m.chassis === "RF";
+    const endModules = placedModules.filter(isEndModule).sort((a, b) => a.x - b.x);
+
+    // Create pavilions between consecutive pairs of end modules
     const pavilionGroups = [];
-    if (gapIndex >= 0 && maxGap > 1) {
-      const splitX = (uniqueXs[gapIndex] + uniqueXs[gapIndex + 1]) / 2;
-      pavilionGroups.push(sorted.filter(w => w.x <= splitX));
-      pavilionGroups.push(sorted.filter(w => w.x > splitX));
+    
+    if (endModules.length >= 2) {
+      for (let i = 0; i < endModules.length - 1; i++) {
+        const leftEnd = endModules[i];
+        const rightEnd = endModules[i + 1];
+        const minX = leftEnd.x;
+        const maxX = rightEnd.x + (rightEnd.w || 1);
+        
+        const pavWalls = withImage.filter(w => w.x >= minX && w.x <= maxX);
+        if (pavWalls.length > 0) {
+          pavilionGroups.push(pavWalls);
+        }
+      }
     } else {
-      pavilionGroups.push(sorted);
+      // Fallback: if fewer than 2 end modules, just use all walls
+      pavilionGroups.push(withImage);
     }
 
     // For each pavilion, group walls by y-position (row), then by face
