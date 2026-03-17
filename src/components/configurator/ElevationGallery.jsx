@@ -238,10 +238,11 @@ export default function ElevationGallery({ walls = [], onWallSelect = () => {} }
               rowLabel="Y face (outside / top)"
             />
             <ElevationRow
-              endLeft={zWall}
-              midWalls={wWalls}
-              endRight={xWall}
+              endLeft={xWall}
+              midWalls={[...wWalls].reverse()}
+              endRight={zWall}
               rowLabel="W face (outside / bottom)"
+              mirrorH
             />
           </div>
         </div>
