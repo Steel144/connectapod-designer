@@ -196,7 +196,7 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
           )}
 
           {/* Middle walls joined tightly — no gap between */}
-          <div className="flex items-center" style={{ marginLeft: !isYFace ? `${Math.round((zoom / 100) * 120)}px` : "0" }}>
+          <div className="flex items-center">
             {midWalls.map((wall) => (
               <div key={wall.id} className="flex items-center" style={{ marginRight: "-1px" }}>
                 <ElevationImage wall={wall} label={wall.type || "Wall"} face={wall.face} tight mirrorH={mirrorH} />
@@ -306,16 +306,15 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
                         />
                       ))}
                       {wRows.map((row) => (
-                        <div key={`${pav.pavilionNum}-${row.yPos}-W`} style={{ marginLeft: `${Math.round((zoom / 100) * 800)}px` }}>
-                          <ElevationRow
-                            pavilionNum={pav.pavilionNum}
-                            endLeft={row.zWall}
-                            midWalls={row.midWalls || []}
-                            endRight={row.xWall}
-                            rowLabel="W face (outside / bottom)"
-                            isYFace={false}
-                          />
-                        </div>
+                        <ElevationRow
+                          key={`${pav.pavilionNum}-${row.yPos}-W`}
+                          pavilionNum={pav.pavilionNum}
+                          endLeft={row.zWall}
+                          midWalls={row.midWalls || []}
+                          endRight={row.xWall}
+                          rowLabel="W face (outside / bottom)"
+                          isYFace={false}
+                        />
                       ))}
                     </>
                   );
