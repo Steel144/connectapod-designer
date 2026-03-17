@@ -71,7 +71,7 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
     }
 
     // For each pavilion, group walls by y-position (row), then by face
-    const pavilions = pavilionGroups.map((group) => {
+    const pavilions = pavilionGroups.map((group, pavilionIndex) => {
       // Find pavilion-level end walls (leftmost and rightmost across all y positions)
       const vertical = group.filter(w => w.orientation === "vertical" || w.face === "Z" || w.face === "X");
       const vertXs = vertical.map(w => w.x);
