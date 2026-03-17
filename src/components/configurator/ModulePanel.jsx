@@ -187,10 +187,13 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
          if (deletedCodes.has(m.code)) return false;
          const descriptions = (m.description || "").split(",").map(s => s.trim()).filter(Boolean);
          const categories = Array.isArray(m.categories) ? m.categories : [];
+         const variants = Array.isArray(m.variants) ? m.variants.map(v => v.toLowerCase()) : [];
 
-         // For Connection Modules, also check for "Connection" in descriptions
+         // For Connection Modules, check descriptions, variants, category, and categories
          if (group.label === "Connection Modules") {
-           return descriptions.includes("Connection Modules") || descriptions.includes("Connection") || m.category === group.label || categories.includes(group.label);
+           return descriptions.includes("Connection Modules") || descriptions.includes("Connection") || 
+                  variants.includes("connection") || 
+                  m.category === group.label || categories.includes(group.label);
          }
 
          return descriptions.includes(group.label) || m.category === group.label || categories.includes(group.label);
