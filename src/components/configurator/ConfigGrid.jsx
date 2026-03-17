@@ -588,39 +588,45 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
              centerWidth = centerRight - centerLeft;
            }
 
+           const p1Top = midpoint - pavilionSpacing / 2 - 4;
+           const cmTop = midpoint - pavilionSpacing / 2;
+           const p2Top = midpoint + pavilionSpacing / 2;
+
            return (
              <>
-               {/* Green strip — full width */}
+               {/* Green strip — Pavilion 1 */}
                <div
                  className="absolute pointer-events-none"
                  style={{
                    left: 0,
-                   top: (GRID_ROWS / 2 - 12) * CELL_H,
+                   top: p1Top * CELL_H,
                    width: GRID_COLS * CELL_W,
-                   height: 8 * CELL_H,
+                   height: 4 * CELL_H,
                    backgroundColor: "rgba(34, 197, 94, 0.075)",
+                   transition: "top 0.2s ease-out",
                  }}
                />
                <div
                  className="absolute pointer-events-none text-green-700 font-bold text-sm"
                  style={{
                    left: "12px",
-                   top: (GRID_ROWS / 2 - 12) * CELL_H + 4,
+                   top: p1Top * CELL_H + 4,
+                   transition: "top 0.2s ease-out",
                  }}
                >
                  Pavilion 1
                </div>
 
-               {/* Red center stripe — fits to actual module width */}
+               {/* Red center stripe — dynamic height matching connection module */}
                {centerWidth > 0 && (
                  <>
                    <div
                      className="absolute pointer-events-none"
                      style={{
                        left: centerLeft * CELL_W,
-                       top: (GRID_ROWS / 2 - 4) * CELL_H,
+                       top: cmTop * CELL_H,
                        width: centerWidth * CELL_W,
-                       height: 8 * CELL_H,
+                       height: pavilionSpacing * CELL_H,
                        backgroundColor: "rgba(239, 68, 68, 0.075)",
                        transition: "all 0.2s ease-out",
                      }}
@@ -629,8 +635,8 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                      className="absolute pointer-events-none text-red-700 font-bold text-sm"
                      style={{
                        left: centerLeft * CELL_W + 12,
-                       top: (GRID_ROWS / 2 - 4) * CELL_H + 4,
-                       transition: "left 0.2s ease-out",
+                       top: cmTop * CELL_H + 4,
+                       transition: "all 0.2s ease-out",
                      }}
                    >
                      Connection Module
@@ -638,22 +644,24 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                  </>
                )}
 
-               {/* Blue stripe — full width */}
+               {/* Blue stripe — Pavilion 2 */}
                <div
                  className="absolute pointer-events-none"
                  style={{
                    left: 0,
-                   top: (GRID_ROWS / 2 + 4) * CELL_H,
+                   top: p2Top * CELL_H,
                    width: GRID_COLS * CELL_W,
-                   height: 8 * CELL_H,
+                   height: 4 * CELL_H,
                    backgroundColor: "rgba(59, 130, 246, 0.075)",
+                   transition: "top 0.2s ease-out",
                  }}
                />
                <div
                  className="absolute pointer-events-none text-blue-700 font-bold text-sm"
                  style={{
                    left: "12px",
-                   top: (GRID_ROWS / 2 + 4) * CELL_H + 4,
+                   top: p2Top * CELL_H + 4,
+                   transition: "top 0.2s ease-out",
                  }}
                >
                  Pavilion 2
