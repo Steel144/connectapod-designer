@@ -60,9 +60,18 @@ export default function Configurator() {
     return customWalls
       .filter(w => !deletedCodes.has(w.code))
       .map(w => {
-        const codeMatch = w.code && w.code.match(/^(WY|ZX)(\d{2})-/);
-        const parsedOrientation = codeMatch ? (codeMatch[1] === "ZX" ? "vertical" : "horizontal") : "horizontal";
-        const parsedWidthM = codeMatch ? parseInt(codeMatch[2], 10) / 10 : (w.width ? w.width / 1000 : 3.0);
+        let parsedOrientation = "horizontal";
+        let parsedWidthM = w.width ? w.width / 1000 : 3.0;
+
+        // Try to detect orientation from code prefix
+        if (w.code) {
+          if (w.code.startsWith("ZX") || w.code.startsWith("ZC-") || w.code.startsWith("XC-")) {
+            parsedOrientation = "vertical";
+          } else if (w.code.startsWith("WY")) {
+            parsedOrientation = "horizontal";
+          }
+        }
+
         return {
           type: w.code,
           label: w.name,
