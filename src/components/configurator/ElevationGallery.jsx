@@ -277,6 +277,7 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
           style={{
             transform: `translate(${pan.x}px, ${pan.y}px)`,
             position: "relative",
+            minHeight: "100%",
             paddingBottom: "100px",
             paddingTop: "40px",
             paddingLeft: "40px",
