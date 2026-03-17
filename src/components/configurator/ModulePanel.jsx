@@ -314,62 +314,14 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
 
     let filtered = allWalls;
 
-    let variantFilter = null;
-    if (isDeck) {
-      variantFilter = "Deck";
-    } else if (isEnd && !isLongFace) {
-      variantFilter = "End";
-    } else if (!isDeck && !isEnd) {
-      variantFilter = "Standard";
-    }
-
-    if (!isLongFace) {
-      filtered = filtered.filter(w => {
-        const matchesType = w.orientation === "vertical" && Math.abs(w.width - faceWidthM) < 0.05;
-        const matchesVariant = !variantFilter || !w.variants || w.variants.length === 0 || w.variants.includes(variantFilter);
-        return matchesType && matchesVariant;
-      });
-
-      if (isEnd) {
-        const endWalls = allWalls.filter(w =>
-          w.orientation === "vertical" &&
-          Math.abs(w.width - 4.8) < 0.05 &&
-          (!w.variants || w.variants.length === 0 || w.variants.includes("End"))
-        );
-        filtered = [...filtered, ...endWalls];
-        filtered = Array.from(new Map(filtered.map(w => [w.type, w])).values());
-      }
-    } else if (isDeck) {
-      filtered = filtered.filter(w => {
+    if (isEnd && (face === "Z" || face === "X")) {
+      filtered = allWalls.filter(w => {
         const matchesWidth = Math.abs(w.width - faceWidthM) < 0.05;
-        const matchesVariant = !w.variants || w.variants.length === 0 || w.variants.includes("Deck");
-        return w.orientation === "horizontal" && matchesWidth && matchesVariant;
+        const matchesVariant = !w.variants || w.variants.length === 0 || w.variants.includes("Connection");
+        return w.orientation === "vertical" && matchesWidth && matchesVariant;
       });
     } else {
-      filtered = filtered.filter(w => {
-        const isCompatible = w.orientation === "horizontal" && Math.abs(w.width - faceWidthM) < 0.05;
-        const matchesVariant = !w.variants || w.variants.length === 0 || w.variants.includes("Standard");
-        return isCompatible && matchesVariant;
-      });
-
-      if (isEnd) {
-        const endWalls = allWalls.filter(w =>
-          w.orientation === "vertical" &&
-          Math.abs(w.width - 4.8) < 0.05
-        );
-        filtered = [...filtered, ...endWalls];
-        filtered = Array.from(new Map(filtered.map(w => [w.type, w])).values());
-      }
-    }
-
-    // Always include 4.8m walls when an end module is selected, regardless of face
-    if (isEnd && !selectedWall && selectedModule) {
-      const endWalls = allWalls.filter(w =>
-        w.orientation === "vertical" &&
-        Math.abs(w.width - 4.8) < 0.05
-      );
-      filtered = [...filtered, ...endWalls];
-      filtered = Array.from(new Map(filtered.map(w => [w.type, w])).values());
+      filtered = [];
     }
 
     const context = selectedWall ? `Face ${face}` : `${chassis} module`;
