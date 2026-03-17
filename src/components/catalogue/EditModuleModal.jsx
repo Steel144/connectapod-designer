@@ -50,6 +50,12 @@ export default function EditModuleModal({ module: mod, onSave, onClose }) {
     return `${desc}${variant}${size}`;
   };
 
+  const generateCode = () => {
+    const widthNum = Math.round(parseFloat(form.width) * 10);
+    const suffix = form.unitType === "Connection" ? "C" : form.unitType === "Deck" ? "D" : form.unitType === "End" ? "E" : "";
+    return `${widthNum}${suffix}`;
+  };
+
   const handleSubmit = () => {
     if (!form.name || !form.code) return;
     const descriptionCategories = form.description.split(",").map(s => s.trim()).filter(Boolean);
