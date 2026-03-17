@@ -217,6 +217,10 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
           return matches;
         });
 
+       if (group.label === "Connection") {
+         console.log(`[ModulePanel] Connection categoryModules:`, categoryModules.map(m => ({ code: m.code })));
+       }
+
        const customItems = categoryModules.map(m => {
          const variants = (m.variants || []).map(v => v.toLowerCase());
          const isEnd = variants.some(v => v.includes("end"));
