@@ -300,28 +300,29 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
 
     const isDeck = chassis === "DK" || chassis === "SO";
     const isEnd = chassis === "EF" || chassis === "LF" || chassis === "RF" || chassis === "ER" || chassis === "End";
+    const isConnection = chassis === "CM";
     const isLongFace = face === "W" || face === "Y";
 
     const faceWidthM = isLongFace ? modWidthM : attachedMod.h * CELL_M;
 
-    if ((face === "Z" || face === "X") && !isEnd) {
-      return { compatibleWalls: [], filterReason: `Connection walls only on End chassis (module is ${chassis})` };
+    if ((face === "Z" || face === "X") && !isEnd && !isConnection) {
+     return { compatibleWalls: [], filterReason: `Connection walls only on End/Connection chassis (module is ${chassis})` };
     }
 
     if (face === "W" || face === "Y") {
-      return { compatibleWalls: [], filterReason: `Connection walls only on Z/X elevations (face ${face})` };
+     return { compatibleWalls: [], filterReason: `Connection walls only on Z/X elevations (face ${face})` };
     }
 
     let filtered = allWalls;
 
-    if (isEnd && (face === "Z" || face === "X")) {
-      filtered = allWalls.filter(w => {
-        const matchesWidth = Math.abs(w.width - faceWidthM) < 0.05;
-        const matchesVariant = !w.variants || w.variants.length === 0 || w.variants.includes("Connection");
-        return w.orientation === "vertical" && matchesWidth && matchesVariant;
-      });
+    if ((isEnd || isConnection) && (face === "Z" || face === "X")) {
+     filtered = allWalls.filter(w => {
+       const matchesWidth = Math.abs(w.width - faceWidthM) < 0.05;
+       const matchesVariant = !w.variants || w.variants.length === 0 || w.variants.includes("Connection");
+       return w.orientation === "vertical" && matchesWidth && matchesVariant;
+     });
     } else {
-      filtered = [];
+     filtered = [];
     }
 
     const context = selectedWall ? `Face ${face}` : `${chassis} module`;
