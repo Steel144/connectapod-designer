@@ -705,7 +705,7 @@ export default function Configurator() {
                      </div>
                      <div className="flex-1 bg-gray-50 rounded overflow-hidden flex items-center justify-center">
                        {selectedWall.elevationImage ? (
-                         <img src={selectedWall.elevationImage} alt={selectedWall.label} className="w-full h-full object-contain" style={{ transform: selectedWall.face === 'W' ? (selectedWall.flipped ? 'scaleX(1)' : 'scaleX(-1)') : (selectedWall.flipped ? 'scaleX(-1)' : undefined) }} />
+                         <img src={selectedWall.elevationImage} alt={selectedWall.label} className="w-full h-full object-contain" style={{ transform: selectedWall.flipped ? 'scaleX(-1)' : undefined }} />
                        ) : (
                          <div className="flex flex-col items-center gap-2 text-gray-400">
                            <div className="w-16 h-24 border-2 border-gray-300 rounded flex items-center justify-center">
