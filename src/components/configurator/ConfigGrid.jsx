@@ -830,7 +830,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
             top: (GRID_ROWS / 2 + 4) * CELL_H + 4,
           }}
         >
-          Pavilion 1
+          Pavilion 2
         </div>
 
         {/* Selection box */}
