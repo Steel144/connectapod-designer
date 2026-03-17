@@ -129,6 +129,13 @@ export default function Catalogue() {
       }
     }
 
+    // For Connection modules, ensure category is set to "Connection Modules"
+    let finalData = { ...data };
+    const isConnection = data.variants && data.variants.includes("Connection");
+    if (isConnection) {
+      finalData.category = "Connection Modules";
+    }
+
     // Get the full module from customModules to preserve all fields
     const fullModule = editingModule._custom 
       ? customModules.find(m => m.id === editingModule._id)
@@ -137,7 +144,7 @@ export default function Catalogue() {
     if (editingModule._custom && fullModule) {
       // For custom modules, update directly
       await base44.entities.ModuleEntry.update(editingModule._id, {
-        ...data,
+        ...finalData,
         originalCode: editingModule.originalCode || undefined,
       });
     } else {
@@ -146,7 +153,7 @@ export default function Catalogue() {
       if (existingOverride) {
         // Update existing override
         await base44.entities.ModuleEntry.update(existingOverride.id, {
-          ...data,
+          ...finalData,
           categories: existingOverride.categories || [],
           originalCode: editingModule.code,
         });
@@ -155,7 +162,7 @@ export default function Catalogue() {
         await Promise.all([
           base44.entities.DeletedModule.create({ moduleCode: editingModule.code }),
           base44.entities.ModuleEntry.create({
-            ...data,
+            ...finalData,
             categories: [],
             originalCode: editingModule.code,
           }),
