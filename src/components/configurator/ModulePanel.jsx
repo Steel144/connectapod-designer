@@ -189,14 +189,11 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
          const categories = Array.isArray(m.categories) ? m.categories : [];
          const variants = Array.isArray(m.variants) ? m.variants.map(v => v.toLowerCase()) : [];
 
-         // For Connection Modules, check descriptions, variants, category, and categories
-         if (group.label === "Connection Modules") {
-           return descriptions.includes("Connection Modules") || descriptions.includes("Connection") || 
-                  variants.includes("connection") || 
-                  m.category === group.label || categories.includes(group.label);
-         }
-
-         return descriptions.includes(group.label) || m.category === group.label || categories.includes(group.label);
+         // Check primary category, description tags, additional categories, and variants
+         return m.category === group.label || 
+                descriptions.includes(group.label) || 
+                categories.includes(group.label) ||
+                (group.label === "Connection Modules" && (descriptions.includes("Connection") || variants.includes("connection")));
        });
 
        const customItems = categoryModules.map(m => {
