@@ -47,7 +47,7 @@ export default function ElevationGallery({ walls = [], onWallSelect = () => {} }
     if (withImage.length === 0) return { pavilions: [], hasAny: false };
 
     // Cluster walls into pavilions by x-proximity (CLUSTERING_DISTANCE)
-    const CLUSTERING_DISTANCE = 5; // meters
+    const CLUSTERING_DISTANCE = 20; // meters
     const pavilionGroups = [];
     const sorted = [...withImage].sort((a, b) => a.x - b.x);
 
