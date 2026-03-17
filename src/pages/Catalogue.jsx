@@ -338,7 +338,7 @@ export default function Catalogue() {
         (m.description || "").toLowerCase().includes(search.toLowerCase())
       ),
     }))
-    .filter(cat => cat.modules.length > 0);
+    .filter(cat => cat.modules.length > 0 || editMode);
 
   if (printMode) {
     const printCategories = filtered.map(cat => ({
