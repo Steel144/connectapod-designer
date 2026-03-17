@@ -135,10 +135,9 @@ export default function Catalogue() {
       : customModules.find(c => c.originalCode === editingModule.code);
 
     if (editingModule._custom && fullModule) {
-      // For custom modules, update directly while preserving categories field
+      // For custom modules, update directly
       await base44.entities.ModuleEntry.update(editingModule._id, {
         ...data,
-        categories: fullModule.categories || [],
         originalCode: editingModule.originalCode || undefined,
       });
     } else {
