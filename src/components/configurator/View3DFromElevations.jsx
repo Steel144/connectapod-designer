@@ -184,9 +184,11 @@ export default function View3DFromElevations({ walls = [] }) {
     // Building dimensions
     const bW = wWallLength;  // building width (X axis)
     const bD = endWallLength; // building depth (Z axis)
-    // Spouting line sits at ~60% of the total elevation image height
-    const spoutingFraction = 0.60;
+    // Spouting line sits at ~30% of the total elevation image height
+    const spoutingFraction = 0.30;
     const bH = longFaceH * spoutingFraction; // wall height up to spouting
+    const roofPitch = 20 * Math.PI / 180;
+    const roofPeak = (bW / 2) * Math.tan(roofPitch);
 
     // Center at origin
     const ox = -bW / 2;
