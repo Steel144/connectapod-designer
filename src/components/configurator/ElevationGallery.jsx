@@ -72,36 +72,41 @@ export default function ElevationGallery({ walls = [], onWallSelect = () => {} }
       pavilionGroups.push(sorted);
     }
 
-    // For each pavilion, group walls by face
+    // For each pavilion, group walls by y-position (row), then by face
     const pavilions = pavilionGroups.map((group) => {
-      const horizontal = group.filter(w => w.orientation === "horizontal" || w.face === "W" || w.face === "Y");
-      const vertical = group.filter(w => w.orientation === "vertical" || w.face === "Z" || w.face === "X");
+      // Group by unique y coordinates to create rows
+      const yGroups = {};
+      group.forEach(w => {
+        const yKey = Math.round(w.y * 100) / 100; // Round to avoid floating point issues
+        if (!yGroups[yKey]) yGroups[yKey] = [];
+        yGroups[yKey].push(w);
+      });
 
-      // Determine midpoint y to split W (top) from Y (bottom)
-      const ys = horizontal.map(w => w.y);
-      const midY = ys.length > 0 ? (Math.min(...ys) + Math.max(...ys)) / 2 : 0;
+      const yPositions = Object.keys(yGroups).map(Number).sort((a, b) => a - b);
+      
+      // For each y position, separate into W (top) and Y (bottom) rows
+      const rows = yPositions.flatMap(yPos => {
+        const wallsAtY = yGroups[yPos];
+        const horizontal = wallsAtY.filter(w => w.orientation === "horizontal" || w.face === "W" || w.face === "Y");
+        const vertical = wallsAtY.filter(w => w.orientation === "vertical" || w.face === "Z" || w.face === "X");
+        
+        const wWalls = horizontal.filter(w => !w.face || w.face === "W").sort((a, b) => a.x - b.x);
+        const yWalls = horizontal.filter(w => w.face === "Y").sort((a, b) => b.x - a.x);
+        
+        const vertXs = vertical.map(w => w.x);
+        const midX = vertXs.length > 0 ? (Math.min(...vertXs) + Math.max(...vertXs)) / 2 : 0;
+        const zWall = vertical.find(w => w.face === "Z" || (!w.face && w.x <= midX)) || null;
+        const xWall = vertical.find(w => w.face === "X" || (!w.face && w.x > midX)) || null;
 
-      const getFace = (w) => {
-        if (w.face) return w.face;
-        if (w.orientation === "vertical") return "Z";
-        return w.y <= midY ? "W" : "Y";
-      };
-
-      const wWalls = horizontal.filter(w => getFace(w) === "W").sort((a, b) => a.x - b.x).reverse();
-      const yWalls = horizontal.filter(w => getFace(w) === "Y").sort((a, b) => b.x - a.x).reverse();
-
-      // For vertical/end walls, split by x position (left vs right)
-      const vertXs = vertical.map(w => w.x);
-      const midX = vertXs.length > 0 ? (Math.min(...vertXs) + Math.max(...vertXs)) / 2 : 0;
-      const zCandidates = vertical.filter(w => w.face === "Z" || (!w.face && w.x <= midX));
-      const xCandidates = vertical.filter(w => w.face === "X" || (!w.face && w.x > midX));
+        return [
+          { type: "Y", yPos, zWall, midWalls: yWalls, xWall },
+          { type: "W", yPos, zWall, midWalls: wWalls, xWall }
+        ].filter(r => r.midWalls.length > 0 || r.zWall || r.xWall);
+      });
 
       return {
         pavilionNum: pavilionGroups.indexOf(group) + 1,
-        wWalls,
-        yWalls,
-        zWall: zCandidates[0] || null,
-        xWall: xCandidates[0] || null,
+        rows,
       };
     });
 
