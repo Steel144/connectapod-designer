@@ -160,7 +160,8 @@ export default function PrintableElevationsSheet({ walls, onClose }) {
               </div>
             </div>
           </div>
-        );
+          );
+        });
       })}
 
       <style>{`
