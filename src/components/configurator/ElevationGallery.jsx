@@ -72,14 +72,6 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
 
     // For each pavilion, group walls by y-position (row), then by face
     const pavilions = pavilionGroups.map((group, pavilionIndex) => {
-      // Find pavilion-level end walls (leftmost and rightmost across all y positions)
-      const vertical = group.filter(w => w.orientation === "vertical" || w.face === "Z" || w.face === "X");
-      const vertXs = vertical.map(w => w.x);
-      const minX = vertXs.length > 0 ? Math.min(...vertXs) : null;
-      const maxX = vertXs.length > 0 ? Math.max(...vertXs) : null;
-      const pavZWall = vertical.find(w => minX !== null && Math.abs(w.x - minX) < 0.1) || null;
-      const pavXWall = vertical.find(w => maxX !== null && Math.abs(w.x - maxX) < 0.1) || null;
-
       // Group by unique y coordinates to create rows
       const yGroups = {};
       group.forEach(w => {
@@ -91,16 +83,21 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
       const yPositions = Object.keys(yGroups).map(Number).sort((a, b) => a - b);
       
       // For each y position, separate into W (top) and Y (bottom) rows
-      const rows = yPositions.flatMap(yPos => {
+      const rows = yPositions.flatMap((yPos, yIndex) => {
         const wallsAtY = yGroups[yPos];
         const horizontal = wallsAtY.filter(w => w.orientation === "horizontal" || w.face === "W" || w.face === "Y");
+        const vertical = wallsAtY.filter(w => w.orientation === "vertical" || w.face === "Z" || w.face === "X");
         
         const wWalls = horizontal.filter(w => !w.face || w.face === "W").sort((a, b) => a.x - b.x);
         const yWalls = horizontal.filter(w => w.face === "Y").sort((a, b) => b.x - a.x);
+        
+        // Only show end walls (Z/X) on the first Y-level to avoid duplicates
+        const zWall = yIndex === 0 ? vertical.find(w => w.face === "Z") || null : null;
+        const xWall = yIndex === 0 ? vertical.find(w => w.face === "X") || null : null;
 
         return [
-          { type: "Y", yPos, zWall: pavZWall, midWalls: yWalls, xWall: pavXWall },
-          { type: "W", yPos, zWall: pavZWall, midWalls: wWalls, xWall: pavXWall }
+          { type: "Y", yPos, zWall, midWalls: yWalls, xWall },
+          { type: "W", yPos, zWall, midWalls: wWalls, xWall }
         ].filter(r => r.midWalls.length > 0 || r.zWall || r.xWall);
       });
 
