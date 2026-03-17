@@ -52,9 +52,11 @@ export default function ElevationGallery({ walls = [], onWallSelect = () => {} }
     const sorted = [...withImage].sort((a, b) => a.x - b.x);
 
     sorted.forEach((wall) => {
-      const existingGroup = pavilionGroups.find(
-        (group) => Math.abs(group[0].x - wall.x) < CLUSTERING_DISTANCE
-      );
+      const existingGroup = pavilionGroups.find((group) => {
+        const minX = Math.min(...group.map(w => w.x));
+        const maxX = Math.max(...group.map(w => w.x));
+        return wall.x >= minX - CLUSTERING_DISTANCE && wall.x <= maxX + CLUSTERING_DISTANCE;
+      });
       if (existingGroup) {
         existingGroup.push(wall);
       } else {
