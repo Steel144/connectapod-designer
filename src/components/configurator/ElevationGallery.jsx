@@ -196,7 +196,7 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
           )}
 
           {/* Middle walls joined tightly — no gap between */}
-          <div className="flex items-center">
+          <div className="flex items-center" style={{ marginLeft: !isYFace ? `${Math.round((zoom / 100) * 120)}px` : "0" }}>
             {midWalls.map((wall) => (
               <div key={wall.id} className="flex items-center" style={{ marginRight: "-1px" }}>
                 <ElevationImage wall={wall} label={wall.type || "Wall"} face={wall.face} tight mirrorH={mirrorH} />
