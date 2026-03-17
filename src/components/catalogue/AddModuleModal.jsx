@@ -1,6 +1,13 @@
 import React, { useState } from "react";
 import { X } from "lucide-react";
 
+const UNIT_TYPES = [
+  { label: "Standard", value: "Standard", walls: ["W (Front)", "Y (Rear)"] },
+  { label: "Deck", value: "Deck", walls: ["W (Front)", "Y (Rear)"] },
+  { label: "End Left (Z)", value: "End Left", walls: ["W (Front)", "Y (Rear)", "Z (Left End)"] },
+  { label: "End Right (X)", value: "End Right", walls: ["W (Front)", "Y (Rear)", "X (Right End)"] },
+];
+
 export default function AddModuleModal({ category, onSave, onClose }) {
   const [form, setForm] = useState({
     code: "",
@@ -10,7 +17,7 @@ export default function AddModuleModal({ category, onSave, onClose }) {
     description: "",
     price: "",
     categories: [],
-    variants: [],
+    unitType: "",
     wallElevations: [],
   });
 
@@ -18,10 +25,19 @@ export default function AddModuleModal({ category, onSave, onClose }) {
 
   const setField = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
+  const handleUnitTypeChange = (value) => {
+    const unitDef = UNIT_TYPES.find(u => u.value === value);
+    setForm(f => ({
+      ...f,
+      unitType: value,
+      wallElevations: unitDef ? unitDef.walls : [],
+    }));
+  };
+
   const generateName = () => {
     const descriptions = form.description.split(",").map(s => s.trim()).filter(Boolean);
     const desc = descriptions.length > 0 ? descriptions.join(" + ") : "Module";
-    const variant = form.variants.length > 0 ? ` (${form.variants.join(", ")})` : "";
+    const variant = form.unitType ? ` (${form.unitType})` : "";
     const size = ` ${form.width}m`;
     return `${desc}${variant}${size}`;
   };
@@ -38,12 +54,8 @@ export default function AddModuleModal({ category, onSave, onClose }) {
       description: form.description.trim(),
       price: form.price !== "" ? parseFloat(form.price) : undefined,
       categories: form.categories,
-      variants: form.variants,
+      variants: form.unitType ? [form.unitType] : [],
       wallElevations_list: form.wallElevations,
-      wallElevationZ: undefined,
-      wallElevationW: undefined,
-      wallElevationY: undefined,
-      wallElevationX: undefined,
     });
   };
 
@@ -72,15 +84,11 @@ export default function AddModuleModal({ category, onSave, onClose }) {
         </div>
 
         <div className="space-y-3">
-          {/* Name + Code */}
+          {/* Name */}
           <div>
             <div className="flex items-center justify-between mb-1">
               <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide">Name *</label>
-              <button
-                type="button"
-                onClick={() => setField("name", generateName())}
-                className="text-xs text-[#F15A22] hover:underline"
-              >
+              <button type="button" onClick={() => setField("name", generateName())} className="text-xs text-[#F15A22] hover:underline">
                 Auto-generate
               </button>
             </div>
@@ -92,6 +100,7 @@ export default function AddModuleModal({ category, onSave, onClose }) {
               className="w-full border border-gray-200 px-3 py-1.5 text-sm focus:outline-none focus:border-[#F15A22]"
             />
           </div>
+
           {field("Code *", "code", "text", "e.g. 010")}
 
           {/* Width + Depth */}
@@ -105,7 +114,6 @@ export default function AddModuleModal({ category, onSave, onClose }) {
             <span className="font-semibold text-gray-700">{sqm.toFixed(1)} m²</span> — {form.width}m wide × {form.depth}m deep
           </div>
 
-          {/* Price */}
           {field("Price ($)", "price", "number", "e.g. 25000")}
 
           {/* Description */}
@@ -115,9 +123,7 @@ export default function AddModuleModal({ category, onSave, onClose }) {
               {["Living", "Bedroom", "Bathroom", "Laundry", "Kitchen", "Soffit", "Deck"].map(opt => {
                 const active = form.description.split(",").map(s => s.trim()).includes(opt);
                 return (
-                  <button
-                    key={opt}
-                    type="button"
+                  <button key={opt} type="button"
                     onClick={() => {
                       const parts = form.description.split(",").map(s => s.trim()).filter(Boolean);
                       const updated = active ? parts.filter(p => p !== opt) : [...parts, opt];
@@ -132,16 +138,14 @@ export default function AddModuleModal({ category, onSave, onClose }) {
             </div>
           </div>
 
-          {/* Additional Categories */}
+          {/* Also Show In */}
           <div>
             <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Also Show In</label>
             <div className="flex flex-wrap gap-2">
               {["Living", "Bedroom", "Bathroom", "Laundry", "Kitchen", "Soffit", "Deck"].map(cat => {
                 const active = form.categories.includes(cat);
                 return (
-                  <button
-                    key={cat}
-                    type="button"
+                  <button key={cat} type="button"
                     onClick={() => {
                       const updated = active ? form.categories.filter(c => c !== cat) : [...form.categories, cat];
                       setField("categories", updated);
@@ -155,52 +159,32 @@ export default function AddModuleModal({ category, onSave, onClose }) {
             </div>
           </div>
 
-          {/* Wall Elevations */}
+          {/* Unit Type — sets wall elevations automatically */}
           <div>
-            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Wall Elevations</label>
-            <div className="flex flex-col gap-1 mt-1">
-              {["W (Front)", "Y (Rear)", "Z (Left End)", "X (Right End)"].map(face => (
-                <label key={face} className="flex items-center gap-2 text-sm cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={form.wallElevations.includes(face)}
-                    onChange={e => {
-                      const updated = e.target.checked
-                        ? [...form.wallElevations, face]
-                        : form.wallElevations.filter(v => v !== face);
-                      setField("wallElevations", updated);
-                    }}
-                    className="accent-[#F15A22]"
-                  />
-                  {face}
-                </label>
-              ))}
+            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Unit Type & Wall Elevations</label>
+            <div className="grid grid-cols-2 gap-2">
+              {UNIT_TYPES.map(ut => {
+                const active = form.unitType === ut.value;
+                return (
+                  <button key={ut.value} type="button"
+                    onClick={() => handleUnitTypeChange(ut.value)}
+                    className={`px-3 py-2.5 text-xs border text-left transition-colors ${active ? "bg-[#F15A22] text-white border-[#F15A22]" : "bg-white text-gray-600 border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22]"}`}
+                  >
+                    <div className="font-semibold">{ut.label}</div>
+                    <div className={`text-[10px] mt-0.5 ${active ? "text-white/80" : "text-gray-400"}`}>
+                      {ut.walls.map(w => w.split(" ")[0]).join(" + ")}
+                    </div>
+                  </button>
+                );
+              })}
             </div>
+            {form.wallElevations.length > 0 && (
+              <p className="text-[11px] text-gray-400 mt-2">
+                Wall elevations: {form.wallElevations.join(", ")}
+              </p>
+            )}
           </div>
         </div>
-
-          {/* Variants */}
-          <div className="pt-2">
-            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Variants</label>
-            <div className="flex flex-col gap-1 mt-1">
-              {["Standard", "End", "Deck"].map(variant => (
-                <label key={variant} className="flex items-center gap-2 text-sm cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={form.variants.includes(variant)}
-                    onChange={e => {
-                      const updated = e.target.checked
-                        ? [...form.variants, variant]
-                        : form.variants.filter(v => v !== variant);
-                      setField("variants", updated);
-                    }}
-                    className="accent-[#F15A22]"
-                  />
-                  {variant}
-                </label>
-              ))}
-            </div>
-          </div>
 
         <div className="flex justify-end gap-2 mt-5">
           <button onClick={onClose} className="px-4 py-2 text-sm border border-gray-200 text-gray-600 hover:border-gray-400 transition-colors">Cancel</button>
