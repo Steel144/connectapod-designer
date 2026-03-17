@@ -93,35 +93,35 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
       if (wallsInPavilion.length === 0) return null;
 
         // Group by y-position within this pavilion
-        const yGroups = {};
-        wallsInPavilion.forEach(w => {
-          const yKey = Math.round(w.y * 100) / 100;
-          if (!yGroups[yKey]) yGroups[yKey] = [];
-          yGroups[yKey].push(w);
-        });
+         const yGroups = {};
+         wallsInPavilion.forEach(w => {
+           const yKey = Math.round(w.y * 100) / 100;
+           if (!yGroups[yKey]) yGroups[yKey] = [];
+           yGroups[yKey].push(w);
+         });
 
-        const rows = [];
-        Object.keys(yGroups)
-          .map(Number)
-          .sort((a, b) => a - b)
-          .forEach(yPos => {
-            const wallsAtY = yGroups[yPos];
-            const verticalWalls = wallsAtY.filter(w => w.face === "Z" || w.face === "X");
-            const zWall = verticalWalls.find(w => w.face === "Z") || null;
-            const xWall = verticalWalls.find(w => w.face === "X") || null;
+         const rows = [];
+         Object.keys(yGroups)
+           .map(Number)
+           .sort((a, b) => a - b)
+           .forEach(yPos => {
+             const wallsAtY = yGroups[yPos];
+             const verticalWalls = wallsAtY.filter(w => (w.face === "Z" || w.face === "X") && w.elevationImage);
+             const zWall = verticalWalls.find(w => w.face === "Z") || null;
+             const xWall = verticalWalls.find(w => w.face === "X") || null;
 
-            const horizontal = wallsAtY.filter(w => w.face === "W" || w.face === "Y");
-            const wWalls = horizontal.filter(w => w.face === "W").sort((a, b) => b.x - a.x);
-            const yWalls = horizontal.filter(w => w.face === "Y").sort((a, b) => a.x - b.x);
+             const horizontal = wallsAtY.filter(w => (w.face === "W" || w.face === "Y") && w.elevationImage);
+             const wWalls = horizontal.filter(w => w.face === "W").sort((a, b) => b.x - a.x);
+             const yWalls = horizontal.filter(w => w.face === "Y").sort((a, b) => a.x - b.x);
 
-            if (yWalls.length > 0 || wWalls.length > 0 || zWall || xWall) {
-              if (yWalls.length > 0) rows.push({ type: "Y", yPos, zWall: (zWall && zWall.elevationImage) ? zWall : null, midWalls: yWalls, xWall: (xWall && xWall.elevationImage) ? xWall : null });
-              if (wWalls.length > 0) rows.push({ type: "W", yPos, zWall: (zWall && zWall.elevationImage) ? zWall : null, midWalls: wWalls, xWall: (xWall && xWall.elevationImage) ? xWall : null });
-              if ((zWall || xWall) && yWalls.length === 0 && wWalls.length === 0) {
-                rows.push({ type: "ZX", yPos, zWall: (zWall && zWall.elevationImage) ? zWall : null, xWall: (xWall && xWall.elevationImage) ? xWall : null });
-              }
-            }
-          });
+             if (yWalls.length > 0 || wWalls.length > 0 || zWall || xWall) {
+               if (yWalls.length > 0) rows.push({ type: "Y", yPos, zWall, midWalls: yWalls, xWall });
+               if (wWalls.length > 0) rows.push({ type: "W", yPos, zWall, midWalls: wWalls, xWall });
+               if ((zWall || xWall) && yWalls.length === 0 && wWalls.length === 0) {
+                 rows.push({ type: "ZX", yPos, zWall, xWall });
+               }
+             }
+           });
 
         return {
           pavilionNum: pavNum,
