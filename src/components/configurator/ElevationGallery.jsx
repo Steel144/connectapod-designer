@@ -256,7 +256,7 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
                     Pavilion {pavs[0].pavilionNum}{pavs.length > 1 ? ` - ${pavs[pavs.length - 1].pavilionNum}` : ""}
                   </div>
                   <div className="flex gap-8" style={{ gap: `${Math.round((zoom / 100) * 128)}px` }}>
-                    {pavs.map((pav) => (
+                    {pavs.filter(Boolean).map((pav) => (
                       <div key={pav.pavilionNum} className="flex flex-col" style={{ gap: `${Math.round((zoom / 100) * 64)}px` }}>
                         {pav.rows
                           .sort((a, b) => a.type === "Y" ? -1 : 1)
