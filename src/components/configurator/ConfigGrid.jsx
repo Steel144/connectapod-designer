@@ -779,6 +779,20 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
           }}
         />
 
+        {/* Blue stripe — 4.8m wide (8 cells) below red */}
+        <div
+          className="absolute pointer-events-none"
+          style={{
+            left: 0,
+            top: (GRID_ROWS / 2 + 4) * CELL_H,
+            width: GRID_COLS * CELL_W,
+            height: 8 * CELL_H,
+            backgroundColor: "rgba(59, 130, 246, 0.15)",
+            borderTop: "2px solid rgb(59, 130, 246)",
+            borderBottom: "2px solid rgb(59, 130, 246)",
+          }}
+        />
+
         {/* Selection box */}
          {selectionBox && (
            <div
