@@ -289,7 +289,7 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
                     if (row.type === "ZX") {
                       return (
                         <div key={`${pav.pavilionNum}-zx-${row.yPos}`} className="flex flex-col gap-1">
-                          {row.zWall && (
+                          {row.zWall && row.zWall.elevationImage && (
                             <>
                               <div className="flex items-center gap-2">
                                 <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Pavilion {pav.pavilionNum} - Z face (left end)</span>
@@ -298,7 +298,7 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
                               <ElevationImage wall={row.zWall} label={row.zWall.type || "End"} face="Z" />
                             </>
                           )}
-                          {row.xWall && (
+                          {row.xWall && row.xWall.elevationImage && (
                             <>
                               <div className="flex items-center gap-2">
                                 <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Pavilion {pav.pavilionNum} - X face (right end)</span>
