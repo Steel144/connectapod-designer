@@ -304,8 +304,12 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
 
     const faceWidthM = isLongFace ? modWidthM : attachedMod.h * CELL_M;
 
-    if (!isLongFace && !isEnd) {
-      return { compatibleWalls: [], filterReason: `Face ${face} only on End chassis (module is ${chassis})` };
+    if ((face === "Z" || face === "X") && !isEnd) {
+      return { compatibleWalls: [], filterReason: `Connection walls only on End chassis (module is ${chassis})` };
+    }
+
+    if (face === "W" || face === "Y") {
+      return { compatibleWalls: [], filterReason: `Connection walls only on Z/X elevations (face ${face})` };
     }
 
     let filtered = allWalls;
