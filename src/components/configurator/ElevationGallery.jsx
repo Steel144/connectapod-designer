@@ -203,7 +203,7 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
 
       {/* Canvas — pannable & zoomable */}
       <div
-        className="flex-1 overflow-hidden relative select-none bg-gray-50"
+        className="flex-1 overflow-auto relative select-none bg-gray-50"
         style={{ cursor: "grab" }}
         onMouseDown={handleCanvasMouseDown}
         onMouseMove={handleCanvasMouseMove}
