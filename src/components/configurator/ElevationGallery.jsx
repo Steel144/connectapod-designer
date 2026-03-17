@@ -301,7 +301,7 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
                         const yRow = yRows.find(r => r.yPos === yPos);
                         const wRow = wRows.find(r => r.yPos === yPos);
                         return (
-                          <div key={`${pav.pavilionNum}-${yPos}`} className="flex flex-col gap-4">
+                          <div key={`${pav.pavilionNum}-${yPos}`} className="flex flex-row gap-4 items-start">
                             {yRow && (
                               <ElevationRow
                                 pavilionNum={pav.pavilionNum}
