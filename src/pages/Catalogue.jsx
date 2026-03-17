@@ -217,6 +217,8 @@ export default function Catalogue() {
     const nextSuffix = baseCodes.length > 0 ? String.fromCharCode(97 + baseCodes.length) : "a"; // a, b, c...
     const newCode = `${mod.code}${nextSuffix}`;
 
+    // Find the full module data to preserve all fields
+    const fullMod = customModules.find(m => m.code === mod.code);
     const newModule = {
       category,
       code: newCode,
@@ -225,8 +227,9 @@ export default function Catalogue() {
       depth: mod.depth,
       description: mod.description,
       price: mod.price,
-      variants: mod.variants || [],
-      wallElevations_list: mod.wallElevations_list || [],
+      variants: fullMod?.variants || mod.variants || [],
+      wallElevations_list: fullMod?.wallElevations_list || mod.wallElevations_list || [],
+      categories: fullMod?.categories || [],
     };
 
     await base44.entities.ModuleEntry.create(newModule);
