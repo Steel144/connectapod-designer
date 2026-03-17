@@ -230,28 +230,41 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
           const wallExactY = exactY + (wall.y - draggingWall.wall.y);
 
           if (wall.orientation === "horizontal") {
+            let bestDist = Infinity;
             for (const mod of placedModules) {
               const distToYFace = Math.abs(wallExactY - (mod.y + mod.h));
               const distToWFace = Math.abs(wallExactY - mod.y);
 
               if (distToYFace <= SNAP_THRESHOLD && wallExactX >= mod.x - SNAP_THRESHOLD && wallExactX <= mod.x + mod.w + SNAP_THRESHOLD) {
-                snapped = { x: mod.x - WALL_OFFSET, y: mod.y + mod.h, length: mod.w, face: "Y" };
-                break;
+                if (distToYFace < bestDist) {
+                  bestDist = distToYFace;
+                  snapped = { x: mod.x - WALL_OFFSET, y: mod.y + mod.h, length: mod.w, face: "Y" };
+                }
               }
               if (distToWFace <= SNAP_THRESHOLD && wallExactX >= mod.x - SNAP_THRESHOLD && wallExactX <= mod.x + mod.w + SNAP_THRESHOLD) {
-                snapped = { x: mod.x - WALL_OFFSET, y: mod.y - WALL_OFFSET, length: mod.w, face: "W", rotation: 180 };
-                break;
+                if (distToWFace < bestDist) {
+                  bestDist = distToWFace;
+                  snapped = { x: mod.x - WALL_OFFSET, y: mod.y - WALL_OFFSET, length: mod.w, face: "W", rotation: 180 };
+                }
               }
             }
           } else {
+            let bestDist = Infinity;
             for (const mod of placedModules) {
-              if (Math.abs(wallExactX - mod.x) <= SNAP_THRESHOLD && wallExactY >= mod.y - SNAP_THRESHOLD && wallExactY <= mod.y + mod.h + SNAP_THRESHOLD) {
-                snapped = { x: mod.x, y: mod.y, length: mod.h, face: "Z" };
-                break;
+              const distToZFace = Math.abs(wallExactX - mod.x);
+              const distToXFace = Math.abs(wallExactX - (mod.x + mod.w));
+
+              if (distToZFace <= SNAP_THRESHOLD && wallExactY >= mod.y - SNAP_THRESHOLD && wallExactY <= mod.y + mod.h + SNAP_THRESHOLD) {
+                if (distToZFace < bestDist) {
+                  bestDist = distToZFace;
+                  snapped = { x: mod.x, y: mod.y, length: mod.h, face: "Z" };
+                }
               }
-              if (Math.abs(wallExactX - (mod.x + mod.w)) <= SNAP_THRESHOLD && wallExactY >= mod.y - SNAP_THRESHOLD && wallExactY <= mod.y + mod.h + SNAP_THRESHOLD) {
-                snapped = { x: mod.x + mod.w - 0.31, y: mod.y, length: mod.h, face: "X" };
-                break;
+              if (distToXFace <= SNAP_THRESHOLD && wallExactY >= mod.y - SNAP_THRESHOLD && wallExactY <= mod.y + mod.h + SNAP_THRESHOLD) {
+                if (distToXFace < bestDist) {
+                  bestDist = distToXFace;
+                  snapped = { x: mod.x + mod.w - 0.31, y: mod.y, length: mod.h, face: "X" };
+                }
               }
             }
           }
