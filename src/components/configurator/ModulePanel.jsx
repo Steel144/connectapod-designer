@@ -193,9 +193,9 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
          // Connection modules should ONLY appear in Connection group
          if (isConnection && group.label !== "Connection") return false;
 
-         // For Connection group, match Connection modules by variant or category
+         // For Connection group, match Connection modules by variant, category, or description
          if (group.label === "Connection") {
-           return isConnection || m.category === "Connection";
+           return isConnection || m.category === "Connection" || descriptions.includes("Connection");
          }
 
          // Check primary category, description tags, and additional categories
