@@ -165,7 +165,7 @@ export default function EditModuleModal({ module: mod, onSave, onClose }) {
             </div>
             {form.wallElevations.length > 0 && (
               <p className="text-[11px] text-gray-400 mt-2">
-                Wall elevations: {form.wallElevations.join(", ")}
+                Wall elevations: {form.wallElevations.map(w => w.split(" ")[0]).join(", ")}
               </p>
             )}
           </div>
