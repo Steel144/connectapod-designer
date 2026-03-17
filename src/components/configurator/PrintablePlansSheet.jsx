@@ -4,12 +4,16 @@ const CELL_SIZE = 40; // pixels per grid cell in print
 
 export default function PrintablePlansSheet({ placedModules, onClose }) {
   React.useEffect(() => {
-    window.print();
-    const handleAfterPrint = () => {
-      onClose?.();
-    };
-    window.addEventListener("afterprint", handleAfterPrint);
-    return () => window.removeEventListener("afterprint", handleAfterPrint);
+    const timer = setTimeout(() => {
+      window.print();
+      const handleAfterPrint = () => {
+        onClose?.();
+      };
+      window.addEventListener("afterprint", handleAfterPrint);
+      return () => window.removeEventListener("afterprint", handleAfterPrint);
+    }, 1000);
+
+    return () => clearTimeout(timer);
   }, [onClose]);
 
   const modules = placedModules || [];
