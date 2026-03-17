@@ -120,21 +120,21 @@ export default function EditWallModal({ wall, onSave, onClose }) {
                     setForm(f => ({ ...f, description: updated.join(", ") }));
                   }
                 };
-                return ["Blank Wall", "Window", "Door"].map(opt => {
-                  const active = parts.includes(opt);
-                  const disabled = opt !== "Blank Wall" && isBlank;
-                  return (
-                    <button
-                      key={opt}
-                      type="button"
-                      onClick={() => toggle(opt)}
-                      disabled={disabled}
-                      className={`px-3 py-1.5 text-xs border transition-colors ${active ? "bg-[#F15A22] text-white border-[#F15A22]" : disabled ? "bg-gray-50 text-gray-300 border-gray-100 cursor-not-allowed" : "bg-white text-gray-600 border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22]"}`}
-                    >
-                      {opt}
-                    </button>
-                  );
-                });
+                return ["Blank Wall", "Window", "Door", "Opening"].map(opt => {
+                    const active = parts.includes(opt);
+                    const disabled = opt !== "Blank Wall" && isBlank;
+                    return (
+                      <button
+                        key={opt}
+                        type="button"
+                        onClick={() => toggle(opt)}
+                        disabled={disabled}
+                        className={`px-3 py-1.5 text-xs border transition-colors ${active ? "bg-[#F15A22] text-white border-[#F15A22]" : disabled ? "bg-gray-50 text-gray-300 border-gray-100 cursor-not-allowed" : "bg-white text-gray-600 border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22]"}`}
+                      >
+                        {opt}
+                      </button>
+                    );
+                  });
               })()}
             </div>
           </div>
