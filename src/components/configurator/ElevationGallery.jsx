@@ -109,7 +109,7 @@ export default function ElevationGallery({ walls = [], onWallSelect = () => {} }
     <div className={`flex flex-col items-center ${tight ? "gap-0" : "gap-2"} shrink-0`} style={{ margin: tight ? "-1px 0" : "0" }}>
       <div
         className={`bg-white overflow-hidden ${tight ? "border-none" : "border border-gray-200 shadow-sm cursor-pointer"} transition-shadow hover:shadow-lg`}
-        style={{ height: `${imgHeight}px` }}
+        style={{ height: `${imgHeight}px`, width: `${imgHeight}px` }}
         onMouseEnter={() => onWallSelect(wall)}
         onMouseLeave={() => onWallSelect(null)}
         onClick={() => onWallSelect(wall)}
@@ -117,7 +117,7 @@ export default function ElevationGallery({ walls = [], onWallSelect = () => {} }
         <img
           src={wall.elevationImage}
           alt={label}
-          style={{ height: "100%", width: "auto", display: "block", transform: mirrorH ? (wall.flipped ? 'scaleX(1)' : 'scaleX(-1)') : (wall.flipped ? 'scaleX(-1)' : undefined) }}
+          style={{ height: "100%", width: "100%", objectFit: "contain", display: "block", transform: wall.flipped ? 'scaleX(-1)' : undefined }}
         />
       </div>
       {!tight && (
