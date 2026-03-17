@@ -257,7 +257,7 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
           <div className="flex flex-col" style={{ width: "max-content", gap: `${Math.round((zoom / 100) * 128)}px` }}>
             {pavilions.map((pav) => (
               <div key={pav.pavilionNum} className="flex flex-col" style={{ gap: `${Math.round((zoom / 100) * 64)}px` }}>
-                <div className="text-xs font-bold text-gray-500 uppercase tracking-widest ml-1">
+                <div className="text-sm font-bold text-gray-800 uppercase tracking-widest ml-1 px-3 py-2 bg-orange-100 rounded w-fit">
                   Pavilion {pav.pavilionNum}
                 </div>
                 <div className="flex flex-col" style={{ gap: `${Math.round((zoom / 100) * 64)}px` }}>
