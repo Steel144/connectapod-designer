@@ -290,10 +290,11 @@ export default function Catalogue() {
         _custom: true, _id: c.id, _deleted: false,
       }));
     } else {
-      // For other categories, get custom modules via description selections
+      // For other categories, get custom modules via description or categories field
       customs = customModules.filter(c => {
         const descriptions = (c.description || "").split(",").map(s => s.trim()).filter(Boolean);
-        return descriptions.includes(cat.category);
+        const categories = Array.isArray(c.categories) ? c.categories : [];
+        return descriptions.includes(cat.category) || c.category === cat.category || categories.includes(cat.category);
       }).map(c => ({
           code: c.code, name: c.name, width: c.width || 3.0, depth: c.depth || 4.8,
           sqm: c.sqm || parseFloat(((c.width || 3.0) * (c.depth || 4.8)).toFixed(1)),
