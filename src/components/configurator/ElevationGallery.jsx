@@ -109,6 +109,7 @@ export default function ElevationGallery({ walls = [], onWallSelect = () => {} }
     <div className={`flex flex-col items-center ${tight ? "gap-0" : "gap-2"} shrink-0`} style={{ margin: tight ? "-1px 0" : "0" }}>
       <div
         className={`bg-white overflow-hidden ${tight ? "border-none" : "border border-gray-200 shadow-sm cursor-pointer"} transition-shadow hover:shadow-lg`}
+        style={{ height: `${imgHeight}px`, boxSizing: "content-box" }}
         style={{ height: `${imgHeight}px` }}
         onMouseEnter={() => onWallSelect(wall)}
         onMouseLeave={() => onWallSelect(null)}
