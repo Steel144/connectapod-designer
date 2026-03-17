@@ -105,7 +105,7 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
       });
 
       return {
-        pavilionNum: pavilionGroups.indexOf(group) + 1,
+        pavilionNum: pavilionIndex + 1,
         rows,
       };
     });
