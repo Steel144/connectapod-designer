@@ -193,11 +193,15 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
          // Connection modules should ONLY appear in Connection group
          if (isConnection && group.label !== "Connection") return false;
 
-         // Check primary category, description tags, additional categories, and variants
+         // For Connection group, match Connection modules by variant or category
+         if (group.label === "Connection") {
+           return isConnection || m.category === "Connection";
+         }
+
+         // Check primary category, description tags, and additional categories
          return m.category === group.label || 
                 descriptions.includes(group.label) || 
-                categories.includes(group.label) ||
-                (group.label === "Connection" && (descriptions.includes("Connection") || variants.includes("connection")));
+                categories.includes(group.label);
        });
 
        const customItems = categoryModules.map(m => {
