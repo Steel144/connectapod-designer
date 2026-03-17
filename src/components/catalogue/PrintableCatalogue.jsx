@@ -32,7 +32,11 @@ export default function PrintableCatalogue({ title, categories, onClose }) {
       `}</style>
 
       <div className="print-page">
-         <h1 style={{ margin: "0 0 6mm 0", color: "#F15A22", fontSize: "16pt", fontWeight: "bold", borderLeft: "3pt solid #F15A22", paddingLeft: "4mm" }}>{title} Catalogue</h1>
+        {/* Logo header */}
+        <div style={{ display: "flex", alignItems: "center", marginBottom: "6mm", paddingBottom: "4mm", borderBottom: "2pt solid #F15A22" }}>
+          <span style={{ color: "#F15A22", fontWeight: "bold", fontSize: "20pt", letterSpacing: "0.04em" }}>connectapod</span>
+          <span style={{ marginLeft: "8mm", color: "#666", fontSize: "12pt", fontWeight: "normal" }}>{title} Catalogue</span>
+        </div>
         <p style={{ fontSize: "9pt", color: "#666", margin: "0 0 4mm 0" }}>
           Generated: {new Date().toLocaleDateString()} | Total items: {
             categories.reduce((sum, cat) => sum + (cat.items?.length || 0), 0)
