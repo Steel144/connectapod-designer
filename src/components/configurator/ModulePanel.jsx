@@ -511,16 +511,6 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
 
       <p className="text-xs text-gray-400 mt-3 text-center">Expand a category, then drag →</p>
 
-      {/* Wall image upload for selected wall */}
-      {selectedWall && (
-        <WallImageUpload 
-          wall={selectedWall} 
-          onImageAssigned={(imageUrl) => {
-            onWallImageUpdate?.(selectedWall.id, imageUrl);
-          }}
-        />
-      )}
-
       {/* Wall suggestions for selected end module */}
       {showWallSuggestions && (
         <WallSuggestions selectedModule={selectedModule} selectedWall={selectedWall} placedModules={placedModules} />
