@@ -284,53 +284,19 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
                   Pavilion {pav.pavilionNum}
                 </div>
                 {pav.rows
-                  .sort((a, b) => {
-                    if (a.type === "Y" && b.type !== "Y") return -1;
-                    if (a.type !== "Y" && b.type === "Y") return 1;
-                    if (a.type === "W" && b.type !== "W") return -1;
-                    if (a.type !== "W" && b.type === "W") return 1;
-                    return 0;
-                  })
-                  .map((row) => {
-                    if (row.type === "ZX") {
-                      return (
-                        <div key={`${pav.pavilionNum}-zx-${row.yPos}`} className="flex flex-col gap-1">
-                          {row.zWall && row.zWall.elevationImage && (
-                            <>
-                              <div className="flex items-center gap-2">
-                                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Z face (end)</span>
-                                <div className="flex-1 h-px bg-gray-200" />
-                              </div>
-                              <div className="flex items-center">
-                                <ElevationImage wall={row.zWall} label={row.zWall.type || "End"} face="Z" tight />
-                              </div>
-                            </>
-                          )}
-                          {row.xWall && row.xWall.elevationImage && (
-                            <>
-                              <div className="flex items-center gap-2">
-                                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">X face (end)</span>
-                                <div className="flex-1 h-px bg-gray-200" />
-                              </div>
-                              <div className="flex items-center">
-                                <ElevationImage wall={row.xWall} label={row.xWall.type || "End"} face="X" tight />
-                              </div>
-                            </>
-                          )}
-                        </div>
-                      );
-                    }
-                    return (
-                      <ElevationRow
-                        key={`${pav.pavilionNum}-${row.yPos}-${row.type}`}
-                        pavilionNum={pav.pavilionNum}
-                        endLeft={row.zWall}
-                        midWalls={row.midWalls}
-                        endRight={row.xWall}
-                        rowLabel={row.type === "Y" ? "Y face (outside / top)" : "W face (outside / bottom)"}
-                      />
-                    );
-                  })}
+                  .sort((a, b) => a.type === "Y" ? -1 : 1)
+                  .filter(row => row.type !== "ZX")
+                  .map((row) => (
+                    <ElevationRow
+                      key={`${pav.pavilionNum}-${row.yPos}-${row.type}`}
+                      pavilionNum={pav.pavilionNum}
+                      endLeft={row.zWall}
+                      midWalls={row.midWalls || []}
+                      endRight={row.xWall}
+                      rowLabel={row.type === "Y" ? "Y face (outside / top)" : "W face (outside / bottom)"}
+                      isYFace={row.type === "Y"}
+                    />
+                  ))}
               </div>
             ))}
           </div>
