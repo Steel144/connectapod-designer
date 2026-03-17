@@ -140,8 +140,8 @@ const WALL_GROUPS = [
     label: "Connection Walls",
     series: "ZX400-410",
     walls: [
-      { code: "ZC-STD/XC-STD", name: "Standard Connection Wall", width: 3000, variants: ["Standard"], description: "Standard connection module wall" },
-      { code: "ZC-OPN/XC-OPN", name: "Opening Connection Wall", width: 3000, variants: ["Standard"], description: "Connection wall with opening" },
+      { code: "ZC-STD/XC-STD", name: "Standard Connection Wall", width: 3000, variants: ["Standard (ZC-STD/XC-STD)", "Connection (ZC-CONN/XC-CONN)"], description: "Standard connection module wall" },
+      { code: "ZC-OPN/XC-OPN", name: "Opening Connection Wall", width: 3000, variants: ["Standard (ZC-OPN/XC-OPN)", "Connection (ZC-OPN-CONN/XC-OPN-CONN)"], description: "Connection wall with opening" },
     ]
   },
 ];
