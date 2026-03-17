@@ -115,10 +115,10 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
             const yWalls = horizontal.filter(w => w.face === "Y").sort((a, b) => b.x - a.x);
 
             if (yWalls.length > 0 || wWalls.length > 0 || zWall || xWall) {
-              if (yWalls.length > 0) rows.push({ type: "Y", yPos, zWall, midWalls: yWalls, xWall });
-              if (wWalls.length > 0) rows.push({ type: "W", yPos, zWall, midWalls: wWalls, xWall });
+              if (yWalls.length > 0) rows.push({ type: "Y", yPos, zWall: (zWall && zWall.elevationImage) ? zWall : null, midWalls: yWalls, xWall: (xWall && xWall.elevationImage) ? xWall : null });
+              if (wWalls.length > 0) rows.push({ type: "W", yPos, zWall: (zWall && zWall.elevationImage) ? zWall : null, midWalls: wWalls, xWall: (xWall && xWall.elevationImage) ? xWall : null });
               if ((zWall || xWall) && yWalls.length === 0 && wWalls.length === 0) {
-                rows.push({ type: "ZX", yPos, zWall, xWall });
+                rows.push({ type: "ZX", yPos, zWall: (zWall && zWall.elevationImage) ? zWall : null, xWall: (xWall && xWall.elevationImage) ? xWall : null });
               }
             }
           });
