@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import AddModuleModal from "@/components/catalogue/AddModuleModal";
 import EditModuleModal from "@/components/catalogue/EditModuleModal";
 import PrintableCatalogue from "@/components/catalogue/PrintableCatalogue";
+import BulkUploadModal from "@/components/catalogue/BulkUploadModal";
 
 // Category structure for organizing custom modules — all built-in modules hidden
 const CATALOGUE = [
