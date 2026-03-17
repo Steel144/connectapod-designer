@@ -123,7 +123,7 @@ export default function EditModuleModal({ module: mod, onSave, onClose }) {
           <div>
             <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Description</label>
             <div className="flex flex-wrap gap-2">
-              {["Living", "Bedroom", "Bathroom", "Laundry", "Kitchen", "Soffit", "Deck"].map(opt => {
+              {["Living", "Bedroom", "Bathroom", "Laundry", "Kitchen", "Soffit", "Deck", "Connection"].map(opt => {
                 const active = form.description.split(",").map(s => s.trim()).includes(opt);
                 return (
                   <button key={opt} type="button"
