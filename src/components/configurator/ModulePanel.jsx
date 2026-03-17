@@ -239,7 +239,6 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
 
   const customWallTypes = React.useMemo(() => customWalls
      .filter(w => !deletedWalls.some(d => d.wallCode === w.code))
-     .filter(w => w.code && (w.code.startsWith("ZC-") || w.code.startsWith("XC-")))
      .map(w => {
        const isVertical = w.code.startsWith("XC-");
        const parsedWidthM = w.width ? w.width / 1000 : 3.0;
