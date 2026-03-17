@@ -622,32 +622,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                  Pavilion 1
                </div>
 
-               {/* Red center stripe — dynamic height matching connection module */}
-               {centerWidth > 0 && (
-                 <>
-                   <div
-                     className="absolute pointer-events-none"
-                     style={{
-                       left: centerLeft * CELL_W,
-                       top: cmTop * CELL_H,
-                       width: centerWidth * CELL_W,
-                       height: pavilionSpacing * CELL_H,
-                       backgroundColor: "rgba(239, 68, 68, 0.075)",
-                       transition: "all 0.2s ease-out",
-                     }}
-                   />
-                   <div
-                     className="absolute pointer-events-none text-red-700 font-bold text-sm"
-                     style={{
-                       left: centerLeft * CELL_W + 12,
-                       top: cmTop * CELL_H + 4,
-                       transition: "all 0.2s ease-out",
-                     }}
-                   >
-                     Connection Module
-                   </div>
-                 </>
-               )}
+
 
                {/* Blue stripe — Pavilion 2 */}
                <div
