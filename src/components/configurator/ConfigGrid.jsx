@@ -698,6 +698,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                      src={wall.elevationImage} 
                      alt={wall.label}
                      className="w-full h-full object-cover pointer-events-none"
+                     style={{ transform: wall.flipped ? 'scaleX(-1)' : undefined }}
                    />
                  )}
                  {wall.face && (
