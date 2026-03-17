@@ -223,7 +223,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
           const wall = walls.find(w => w.id === wallId);
           if (!wall) return;
 
-          const SNAP_THRESHOLD = 1.5; // cells
+          const SNAP_THRESHOLD = 0.8; // cells — tight enough to avoid adjacent modules
           let snapped = null;
           const WALL_OFFSET = 0.308; // 185mm offset
           const wallExactX = exactX + (wall.x - draggingWall.wall.x);
