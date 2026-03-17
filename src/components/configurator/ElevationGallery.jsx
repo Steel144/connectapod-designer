@@ -79,9 +79,9 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
     const withImage = wallsWithPavilion.filter(w => w.elevationImage);
     if (withImage.length === 0) return { pavilions: [], hasAny: false };
 
-    // Group all walls by pavilion number (1, 2, 3)
+    // Group ALL walls (not just with images) by pavilion for structure, but only with images get displayed
     const pavilionGroups = { 1: [], 2: [], 3: [] };
-    withImage.forEach(w => {
+    wallsWithPavilion.forEach(w => {
       if (w.pavilionNum && pavilionGroups[w.pavilionNum]) {
         pavilionGroups[w.pavilionNum].push(w);
       }
