@@ -315,7 +315,8 @@ export default function Configurator() {
     setWalls((prev) => {
       if (wallData.face === "Z" || wallData.face === "X" ||
           wallData.face === "W" || wallData.face === "Y") {
-        const filtered = prev.filter(w => !(w.face === wallData.face && w.x === x && w.y === y));
+        // Remove any existing walls at the same location and face
+        const filtered = prev.filter(w => !(w.face === wallData.face && Math.abs(w.x - x) < 0.5 && Math.abs(w.y - y) < 0.5));
 
         if (wallData.face === "Z" || wallData.face === "X") {
           const opposingFace = wallData.face === "Z" ? "X" : "Z";
