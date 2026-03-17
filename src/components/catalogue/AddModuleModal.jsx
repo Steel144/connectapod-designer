@@ -142,7 +142,7 @@ export default function AddModuleModal({ category, onSave, onClose }) {
           <div>
             <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Also Show In</label>
             <div className="flex flex-wrap gap-2">
-              {["Living", "Bedroom", "Bathroom", "Laundry", "Kitchen", "Soffit", "Deck"].map(cat => {
+              {["Living", "Bedroom", "Bathroom", "Laundry", "Kitchen", "Connection Modules", "Soffit", "Deck"].map(cat => {
                 const active = form.categories.includes(cat);
                 return (
                   <button key={cat} type="button"
