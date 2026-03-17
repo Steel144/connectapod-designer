@@ -105,7 +105,7 @@ export default function ElevationGallery({ walls = [], onWallSelect = () => {} }
 
   const imgHeight = Math.round((zoom / 100) * 480);
 
-  const ElevationImage = ({ wall, label, face, tight }) => (
+  const ElevationImage = ({ wall, label, face, tight, mirrorH }) => (
     <div className={`flex flex-col items-center ${tight ? "gap-0" : "gap-2"} shrink-0`} style={{ margin: tight ? "-1px 0" : "0" }}>
       <div
         className={`bg-white overflow-hidden ${tight ? "border-none" : "border border-gray-200 shadow-sm cursor-pointer"} transition-shadow hover:shadow-lg`}
@@ -117,7 +117,7 @@ export default function ElevationGallery({ walls = [], onWallSelect = () => {} }
         <img
           src={wall.elevationImage}
           alt={label}
-          style={{ height: "100%", width: "auto", display: "block" }}
+          style={{ height: "100%", width: "auto", display: "block", transform: mirrorH ? (wall.flipped ? 'scaleX(1)' : 'scaleX(-1)') : (wall.flipped ? 'scaleX(-1)' : undefined) }}
         />
       </div>
       {!tight && (
