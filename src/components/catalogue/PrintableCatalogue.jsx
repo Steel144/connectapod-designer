@@ -54,10 +54,9 @@ export default function PrintableCatalogue({ title, categories, onClose }) {
                   <tr>
                     <th style={{ width: "10%" }}>Thumbnail</th>
                     <th style={{ width: "12%" }}>Code</th>
-                    <th style={{ width: "26%" }}>Name</th>
+                    <th style={{ width: "40%" }}>Name</th>
                     <th style={{ width: "14%" }}>Specs</th>
-                    <th style={{ width: "22%" }}>Description</th>
-                    <th style={{ width: "16%" }}>Variants</th>
+                    <th style={{ width: "24%" }}>Variants</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -76,9 +75,6 @@ export default function PrintableCatalogue({ title, categories, onClose }) {
                       <td>{item.name}</td>
                       <td style={{ fontSize: "8pt" }}>
                         {item.specs || "—"}
-                      </td>
-                      <td style={{ fontSize: "8pt" }}>
-                        {item.description || "—"}
                       </td>
                       <td style={{ fontSize: "7pt" }}>
                         {item.variants?.length > 0 ? `${item.variants.length} variant${item.variants.length !== 1 ? "s" : ""}` : "—"}
