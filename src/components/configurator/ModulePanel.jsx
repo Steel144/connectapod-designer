@@ -321,9 +321,22 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
        const matchesVariant = !w.variants || w.variants.length === 0 || w.variants.includes("Connection");
        return matchesWidth && matchesVariant;
      });
-    } else if (isEnd) {
-     // End modules can have walls on both Z/X and W/Y faces: filter by width only
-     filtered = allWalls.filter(w => Math.abs(w.width - faceWidthM) < 0.05);
+    } else if (isEnd && (face === "Z" || face === "X")) {
+     // End modules on Z/X faces: ZX-prefixed walls matching width or 4.8m
+     filtered = allWalls.filter(w => {
+       const isZXWall = w.type.startsWith("ZX-") || w.code.startsWith("ZX-");
+       const matchesWidth = Math.abs(w.width - faceWidthM) < 0.05;
+       const matches4P8m = Math.abs(w.width - 4.8) < 0.05;
+       return isZXWall && (matchesWidth || matches4P8m);
+     });
+    } else if (isEnd && (face === "W" || face === "Y")) {
+     // End modules on W/Y faces: WY-prefixed walls matching width or 4.8m
+     filtered = allWalls.filter(w => {
+       const isWYWall = w.type.startsWith("WY-") || w.code.startsWith("WY-");
+       const matchesWidth = Math.abs(w.width - faceWidthM) < 0.05;
+       const matches4P8m = Math.abs(w.width - 4.8) < 0.05;
+       return isWYWall && (matchesWidth || matches4P8m);
+     });
     } else if (!isConnection && !isDeck && (face === "W" || face === "Y")) {
      // Regular modules on long faces: show all walls that match width
      filtered = allWalls.filter(w => Math.abs(w.width - faceWidthM) < 0.05);
