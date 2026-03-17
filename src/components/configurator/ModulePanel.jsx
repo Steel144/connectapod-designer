@@ -178,6 +178,8 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
        "Soffit": ["SO", "soffit"],
      };
 
+     console.log("[ModulePanel] customModules:", customModules.map(m => ({ code: m.code, category: m.category, variants: m.variants })));
+
      return PANEL_GROUPS.map(group => {
        // Keep built-in items, filter out deleted ones
        const builtInItems = group.items.filter(item => !deletedCodes.has(item.code));
