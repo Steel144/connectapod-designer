@@ -284,19 +284,44 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
                   Pavilion {pav.pavilionNum}
                 </div>
                 {pav.rows
-                  .sort((a, b) => a.type === "Y" ? -1 : 1)
-                  .filter(row => row.type !== "ZX")
-                  .map((row) => (
-                    <ElevationRow
-                      key={`${pav.pavilionNum}-${row.yPos}-${row.type}`}
-                      pavilionNum={pav.pavilionNum}
-                      endLeft={row.zWall}
-                      midWalls={row.midWalls || []}
-                      endRight={row.xWall}
-                      rowLabel={row.type === "Y" ? "Y face (outside / top)" : "W face (outside / bottom)"}
-                      isYFace={row.type === "Y"}
-                    />
-                  ))}
+                  .sort((a, b) => a.type === "Y" ? -1 : b.type === "Y" ? 1 : 0)
+                  .map((row) => {
+                    if (row.type === "ZX") {
+                      return (
+                        <div key={`${pav.pavilionNum}-zx-${row.yPos}`} className="flex flex-col gap-1">
+                          {row.zWall && (
+                            <>
+                              <div className="flex items-center gap-2">
+                                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Pavilion {pav.pavilionNum} - Z face (left end)</span>
+                                <div className="flex-1 h-px bg-gray-200" />
+                              </div>
+                              <ElevationImage wall={row.zWall} label={row.zWall.type || "End"} face="Z" />
+                            </>
+                          )}
+                          {row.xWall && (
+                            <>
+                              <div className="flex items-center gap-2">
+                                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Pavilion {pav.pavilionNum} - X face (right end)</span>
+                                <div className="flex-1 h-px bg-gray-200" />
+                              </div>
+                              <ElevationImage wall={row.xWall} label={row.xWall.type || "End"} face="X" />
+                            </>
+                          )}
+                        </div>
+                      );
+                    }
+                    return (
+                      <ElevationRow
+                        key={`${pav.pavilionNum}-${row.yPos}-${row.type}`}
+                        pavilionNum={pav.pavilionNum}
+                        endLeft={row.zWall}
+                        midWalls={row.midWalls || []}
+                        endRight={row.xWall}
+                        rowLabel={row.type === "Y" ? "Y face (outside / top)" : "W face (outside / bottom)"}
+                        isYFace={row.type === "Y"}
+                      />
+                    );
+                  })}
               </div>
             ))}
           </div>
