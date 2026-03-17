@@ -231,17 +231,17 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
 
   const customWallTypes = React.useMemo(() => customWalls
      .filter(w => !deletedWalls.some(d => d.wallCode === w.code))
+     .filter(w => w.code && (w.code.startsWith("ZC-") || w.code.startsWith("XC-")))
      .map(w => {
-       const codeMatch = w.code && w.code.match(/^(WY|ZX)(\d{2})-/);
-       const parsedOrientation = codeMatch ? (codeMatch[1] === "ZX" ? "vertical" : "horizontal") : "horizontal";
-       const parsedWidthM = codeMatch ? parseInt(codeMatch[2], 10) / 10 : (w.width ? w.width / 1000 : 3.0);
+       const isVertical = w.code.startsWith("XC-");
+       const parsedWidthM = w.width ? w.width / 1000 : 3.0;
        return {
          type: w.code,
          label: w.name,
          description: w.description || "",
          mpCode: w.code,
          width: parsedWidthM,
-         orientation: parsedOrientation,
+         orientation: isVertical ? "vertical" : "horizontal",
          length: Math.round(parsedWidthM / 0.6),
          thickness: 0.31,
          variants: w.variants || [],
