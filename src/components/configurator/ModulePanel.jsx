@@ -173,6 +173,7 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
        "Bathroom": ["W", "bathroom"],
        "Kitchen": ["K", "kitchen"],
        "Laundry": ["L", "laundry"],
+       "Connection Modules": ["CM", "connection modules", "connectionmodules"],
        "Deck": ["DK", "D", "deck"],
        "Soffit": ["SO", "soffit"],
      };
