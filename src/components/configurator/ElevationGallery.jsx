@@ -284,7 +284,7 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
           }}
         >
           <div className="flex flex-col" style={{ gap: `${Math.round((zoom / 100) * 128)}px` }}>
-            {pavilions.filter(Boolean).map((pav) => (
+            {pavilions.filter(Boolean).map((pav, pavIdx) => (
               <div key={pav.pavilionNum} className="flex flex-col" style={{ gap: `${Math.round((zoom / 100) * 64)}px` }}>
                 <div className="text-sm font-bold text-gray-800 uppercase tracking-widest ml-1 px-3 py-2 bg-orange-100 rounded w-fit">
                   {getPavilionLabel(pav.pavilionNum)}
