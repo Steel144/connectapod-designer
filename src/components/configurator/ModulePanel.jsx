@@ -210,7 +210,7 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
 
           const matches = matchesPrimaryCategory || matchesDescription || matchesAdditionalCategories || matchesVariant;
 
-          if (m.code === "30C") {
+          if (m.code === "30C" || (group.label === "Connection" && m.code === "30C")) {
             console.log(`[DEBUG 30C] group=${group.label}, category=${m.category}, descriptions=${descriptions.join(", ")}, variants=${variants.join(", ")}, matchesPrimary=${matchesPrimaryCategory}, matchesDesc=${matchesDescription}, matchesAddl=${matchesAdditionalCategories}, matchesVar=${matchesVariant}, RESULT=${matches}`);
           }
 
