@@ -242,7 +242,6 @@ export default function ElevationGallery({ walls = [], onWallSelect = () => {} }
               midWalls={[...wWalls].reverse()}
               endRight={zWall}
               rowLabel="W face (outside / bottom)"
-              mirrorH
             />
           </div>
         </div>
