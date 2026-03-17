@@ -306,15 +306,16 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
                         />
                       ))}
                       {wRows.map((row) => (
-                        <ElevationRow
-                          key={`${pav.pavilionNum}-${row.yPos}-W`}
-                          pavilionNum={pav.pavilionNum}
-                          endLeft={row.zWall}
-                          midWalls={row.midWalls || []}
-                          endRight={row.xWall}
-                          rowLabel="W face (outside / bottom)"
-                          isYFace={false}
-                        />
+                        <div key={`${pav.pavilionNum}-${row.yPos}-W`} style={{ marginLeft: `${Math.round((zoom / 100) * 400)}px` }}>
+                          <ElevationRow
+                            pavilionNum={pav.pavilionNum}
+                            endLeft={row.zWall}
+                            midWalls={row.midWalls || []}
+                            endRight={row.xWall}
+                            rowLabel="W face (outside / bottom)"
+                            isYFace={false}
+                          />
+                        </div>
                       ))}
                     </>
                   );
