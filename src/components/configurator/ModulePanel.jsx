@@ -324,7 +324,7 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
     } else if (isEnd && (face === "Z" || face === "X")) {
      // End modules on Z/X faces: ZX-prefixed walls matching width or 4.8m
      filtered = allWalls.filter(w => {
-       const isZXWall = w.type.startsWith("ZX-") || w.code.startsWith("ZX-");
+       const isZXWall = (w.type?.startsWith("ZX-")) || (w.code?.startsWith("ZX-"));
        const matchesWidth = Math.abs(w.width - faceWidthM) < 0.05;
        const matches4P8m = Math.abs(w.width - 4.8) < 0.05;
        return isZXWall && (matchesWidth || matches4P8m);
@@ -332,7 +332,7 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
     } else if (isEnd && (face === "W" || face === "Y")) {
      // End modules on W/Y faces: WY-prefixed walls matching width or 4.8m
      filtered = allWalls.filter(w => {
-       const isWYWall = w.type.startsWith("WY-") || w.code.startsWith("WY-");
+       const isWYWall = (w.type?.startsWith("WY-")) || (w.code?.startsWith("WY-"));
        const matchesWidth = Math.abs(w.width - faceWidthM) < 0.05;
        const matches4P8m = Math.abs(w.width - 4.8) < 0.05;
        return isWYWall && (matchesWidth || matches4P8m);
