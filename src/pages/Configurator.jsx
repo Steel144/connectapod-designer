@@ -348,6 +348,13 @@ export default function Configurator() {
     setWalls((prev) => prev.filter((w) => w.id !== id));
   };
 
+  const handleFlipWall = (id) => {
+    pushHistory(placedModules, walls);
+    setWalls((prev) =>
+      prev.map((w) => w.id === id ? { ...w, flipped: !w.flipped } : w)
+    );
+  };
+
   const handleMoveWall = (id, x, y, wallUpdate) => {
     pushHistory(placedModules, walls);
     setWalls((prev) =>
@@ -611,6 +618,7 @@ export default function Configurator() {
            wallTypes={availableWallTypes}
            onPlaceWall={handlePlaceWall}
            onRemoveWall={handleRemoveWall}
+           onFlipWall={handleFlipWall}
            onMoveWall={handleMoveWall}
            onWallSelect={setSelectedWall}
            onModuleSelect={setSelectedModule}
