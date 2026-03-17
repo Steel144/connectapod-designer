@@ -504,7 +504,6 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
 
       if (snapped) {
          const wallWithFace = { ...wallTemplate, length: snapped.length, face: snapped.face };
-         if (snapped.rotation) wallWithFace.rotation = snapped.rotation;
          if (onPlaceWall) onPlaceWall(wallWithFace, snapped.x, snapped.y)
        } else {
          // Allow freeform placement if no snap
