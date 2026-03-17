@@ -620,6 +620,8 @@ export default function Configurator() {
             onWallSelect={setSelectedWall}
             onModuleSelect={setSelectedModule}
             customModules={customModules}
+            floorPlanImages={floorPlanImages}
+            wallImages={wallImages}
           />
         )}
         </div>
