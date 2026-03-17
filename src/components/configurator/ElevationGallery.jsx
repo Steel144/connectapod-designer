@@ -111,7 +111,7 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
     });
 
     return { pavilions, hasAny: withImage.length > 0 };
-  }, [walls]);
+  }, [walls, placedModules]);
 
   if (!hasAny) {
     return (
