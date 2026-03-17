@@ -502,7 +502,10 @@ export default function Catalogue() {
                                <Copy size={13} />
                              </button>
                              <button
-                               onClick={() => setEditingModule({ ...mod, category: cat.category })}
+                               onClick={() => {
+                                 const fullMod = customModules.find(m => m.code === mod.code) || mod;
+                                 setEditingModule({ ...fullMod, category: cat.category });
+                               }}
                                className="text-gray-300 hover:text-[#F15A22] transition-colors"
                                title="Edit module"
                              >
