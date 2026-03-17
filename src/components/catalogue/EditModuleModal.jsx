@@ -129,11 +129,12 @@ export default function EditModuleModal({ module: mod, onSave, onClose }) {
                 const active = form.description.split(",").map(s => s.trim()).includes(opt);
                 return (
                   <button key={opt} type="button"
-                    onClick={() => {
-                      const parts = form.description.split(",").map(s => s.trim()).filter(Boolean);
-                      const updated = active ? parts.filter(p => p !== opt) : [...parts, opt];
-                      setForm(f => ({ ...f, description: updated.join(", ") }));
-                    }}
+                   onClick={(e) => {
+                     e.stopPropagation();
+                     const parts = form.description.split(",").map(s => s.trim()).filter(Boolean);
+                     const updated = active ? parts.filter(p => p !== opt) : [...parts, opt];
+                     setForm(f => ({ ...f, description: updated.join(", ") }));
+                   }}
                     className={`px-3 py-1.5 text-xs border transition-colors ${active ? "bg-[#F15A22] text-white border-[#F15A22]" : "bg-white text-gray-600 border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22]"}`}
                   >
                     {opt}
