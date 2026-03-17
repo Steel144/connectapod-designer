@@ -13,6 +13,7 @@ import { BookOpen, FolderOpen, Save, Trash2, ChevronLeft, ChevronRight, Undo2, B
 
 import PrintablePlansSheet from "@/components/configurator/PrintablePlansSheet";
 import PrintableElevationsSheet from "@/components/configurator/PrintableElevationsSheet";
+import ElevationGallery from "@/components/configurator/ElevationGallery";
 
 const generateId = () => `mod-${Math.random().toString(36).substr(2, 9)}`;
 const generateWallId = () => `wall-${Math.random().toString(36).substr(2, 9)}`;
