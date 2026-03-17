@@ -239,19 +239,28 @@ export default function ElevationGallery({ walls = [], onWallSelect = () => {} }
             paddingBottom: "100px",
           }}
         >
-          <div className="flex flex-col" style={{ width: "max-content", gap: `${Math.round((zoom / 100) * 64)}px` }}>
-            <ElevationRow
-              endLeft={zWall}
-              midWalls={yWalls}
-              endRight={xWall}
-              rowLabel="Y face (outside / top)"
-            />
-            <ElevationRow
-              endLeft={xWall}
-              midWalls={wWalls}
-              endRight={zWall}
-              rowLabel="W face (outside / bottom)"
-            />
+          <div className="flex flex-col" style={{ width: "max-content", gap: `${Math.round((zoom / 100) * 128)}px` }}>
+            {pavilions.map((pav) => (
+              <div key={pav.pavilionNum} className="flex flex-col" style={{ gap: `${Math.round((zoom / 100) * 64)}px` }}>
+                <div className="text-xs font-bold text-gray-500 uppercase tracking-widest ml-1">
+                  Pavilion {pav.pavilionNum}
+                </div>
+                <div className="flex flex-col" style={{ gap: `${Math.round((zoom / 100) * 64)}px` }}>
+                  <ElevationRow
+                    endLeft={pav.zWall}
+                    midWalls={pav.yWalls}
+                    endRight={pav.xWall}
+                    rowLabel="Y face (outside / top)"
+                  />
+                  <ElevationRow
+                    endLeft={pav.xWall}
+                    midWalls={pav.wWalls}
+                    endRight={pav.zWall}
+                    rowLabel="W face (outside / bottom)"
+                  />
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
