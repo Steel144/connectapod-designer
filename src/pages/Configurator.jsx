@@ -523,6 +523,13 @@ export default function Configurator() {
               <Box size={13} />
               3D
             </button>
+            <button
+              onClick={() => setViewMode("3d-elevations")}
+              className={`flex items-center gap-1.5 px-3 py-1.5 text-xs transition-all ${viewMode === "3d-elevations" ? "bg-[#F15A22] text-white" : "bg-white text-gray-600 hover:text-[#F15A22]"}`}
+            >
+              <Box size={13} />
+              3D Render
+            </button>
           </div>
 
           <button
