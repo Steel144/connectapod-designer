@@ -161,10 +161,10 @@ export default function PrintableElevationsSheet({ walls, onClose }) {
             </div>
           </div>
           );
-        });
-      })}
+          });
+          })}
 
-      <style>{`
+          <style>{`
          @page { margin: 0; size: A4 landscape; }
          @media print {
            body { margin: 0; padding: 0; }
