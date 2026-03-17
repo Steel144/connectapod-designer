@@ -321,10 +321,10 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
        const matchesVariant = !w.variants || w.variants.length === 0 || w.variants.includes("Connection");
        return matchesWidth && matchesVariant;
      });
-    } else if (isEnd && (face === "Z" || face === "X")) {
-     // End modules on end faces: filter by width only
+    } else if (isEnd) {
+     // End modules can have walls on both Z/X and W/Y faces: filter by width only
      filtered = allWalls.filter(w => Math.abs(w.width - faceWidthM) < 0.05);
-    } else if (!isEnd && !isConnection && !isDeck && (face === "W" || face === "Y")) {
+    } else if (!isConnection && !isDeck && (face === "W" || face === "Y")) {
      // Regular modules on long faces: show all walls that match width
      filtered = allWalls.filter(w => Math.abs(w.width - faceWidthM) < 0.05);
     } else {
