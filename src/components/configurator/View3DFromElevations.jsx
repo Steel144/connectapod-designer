@@ -250,6 +250,39 @@ export default function View3DFromElevations({ walls = [] }) {
       scene.add(mesh);
     }
 
+    // ── Pitched roof ────────────────────────────────────────────────────────
+    // Two sloped faces meeting at a ridge
+    const roofVerts = new Float32Array([
+      // Front slope verts (lower edge at z=-bD/2, upper at ridge)
+      -bW/2, 0, -bD/2,
+       bW/2, 0, -bD/2,
+      -bW/2, roofPeak, 0,
+       bW/2, roofPeak, 0,
+      // Back slope verts (lower edge at z=+bD/2, upper at ridge)
+      -bW/2, 0,  bD/2,
+       bW/2, 0,  bD/2,
+    ]);
+    const roofIndices = new Uint32Array([
+      0, 2, 1, 1, 2, 3, // front slope (CCW when viewed from outside)
+      4, 5, 6, 5, 7, 6, // back slope
+    ]);
+    const roofUVs = new Float32Array([
+      0, 0, 1, 0, 0, 1, 1, 1, // front
+      0, 0, 1, 0, 0, 1, 1, 1, // back
+    ]);
+    const roofGeo = new THREE.BufferGeometry();
+    roofGeo.setAttribute("position", new THREE.BufferAttribute(roofVerts, 3));
+    roofGeo.setAttribute("uv", new THREE.BufferAttribute(roofUVs, 2));
+    roofGeo.setIndex(new THREE.BufferAttribute(roofIndices, 1));
+    roofGeo.computeVertexNormals();
+
+    const roofTex = createStandingSeamTexture();
+    roofTex.repeat.set(bW / 0.6, 1);
+    const roofMesh = new THREE.Mesh(roofGeo, new THREE.MeshLambertMaterial({ map: roofTex, color: 0x4a4a4a }));
+    roofMesh.castShadow = true;
+    roofMesh.position.set(0, bH, 0);
+    scene.add(roofMesh);
+
     // ── Face labels on ground ───────────────────────────────────────────────
     const makeLabel = (text, x, z) => {
       const c = document.createElement("canvas");
