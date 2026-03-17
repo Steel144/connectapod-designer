@@ -600,7 +600,7 @@ export default function Configurator() {
       <div className="flex-1 pt-12 relative flex">
         {viewMode === "elevations" ? (
           <div className="flex-1 z-10">
-            <ElevationGallery walls={walls} onWallSelect={setSelectedWall} />
+            <ElevationGallery walls={walls} placedModules={placedModules} onWallSelect={setSelectedWall} />
           </div>
         ) : (
           <ConfigGrid
