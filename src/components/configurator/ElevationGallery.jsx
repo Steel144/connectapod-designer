@@ -219,10 +219,10 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
         <div
           style={{
             transform: `translate(${pan.x}px, ${pan.y}px)`,
-            position: "absolute",
-            top: 40,
-            left: 40,
+            position: "relative",
             paddingBottom: "100px",
+            paddingTop: "40px",
+            paddingLeft: "40px",
           }}
         >
           <div className="flex flex-col" style={{ gap: `${Math.round((zoom / 100) * 128)}px` }}>
