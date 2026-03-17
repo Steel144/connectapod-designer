@@ -185,24 +185,26 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
        const builtInItems = group.items.filter(item => !deletedCodes.has(item.code));
 
        // Find custom modules for this category
-       const categoryModules = customModules.filter(m => {
-         if (deletedCodes.has(m.code)) return false;
-         const descriptions = (m.description || "").split(",").map(s => s.trim()).filter(Boolean);
-         const categories = Array.isArray(m.categories) ? m.categories : [];
-         const variants = Array.isArray(m.variants) ? m.variants.map(v => v.toLowerCase()) : [];
+        const categoryModules = customModules.filter(m => {
+          if (deletedCodes.has(m.code)) return false;
+          const descriptions = (m.description || "").split(",").map(s => s.trim()).filter(Boolean);
+          const categories = Array.isArray(m.categories) ? m.categories : [];
+          const variants = Array.isArray(m.variants) ? m.variants.map(v => v.toLowerCase()) : [];
 
-         // Check if this module matches the group
-         const matchesPrimaryCategory = m.category === group.label;
-         const matchesDescription = descriptions.includes(group.label);
-         const matchesAdditionalCategories = categories.includes(group.label);
-         const matchesVariant = variants.some(v => v.toLowerCase().includes(group.label.toLowerCase()));
+          // Check if this module matches the group
+          const matchesPrimaryCategory = m.category === group.label;
+          const matchesDescription = descriptions.includes(group.label);
+          const matchesAdditionalCategories = categories.includes(group.label);
+          const matchesVariant = variants.some(v => v.toLowerCase().includes(group.label.toLowerCase()));
 
-         if (m.code === "30C") {
-           console.log(`[DEBUG 30C] group=${group.label}, category=${m.category}, descriptions=${descriptions.join(", ")}, variants=${variants.join(", ")}, matchesPrimary=${matchesPrimaryCategory}, matchesDesc=${matchesDescription}, matchesAddl=${matchesAdditionalCategories}, matchesVar=${matchesVariant}`);
-         }
+          const matches = matchesPrimaryCategory || matchesDescription || matchesAdditionalCategories || matchesVariant;
 
-         return matchesPrimaryCategory || matchesDescription || matchesAdditionalCategories || matchesVariant;
-       });
+          if (m.code === "30C") {
+            console.log(`[DEBUG 30C] group=${group.label}, category=${m.category}, descriptions=${descriptions.join(", ")}, variants=${variants.join(", ")}, matchesPrimary=${matchesPrimaryCategory}, matchesDesc=${matchesDescription}, matchesAddl=${matchesAdditionalCategories}, matchesVar=${matchesVariant}, RESULT=${matches}`);
+          }
+
+          return matches;
+        });
 
        const customItems = categoryModules.map(m => {
          const variants = (m.variants || []).map(v => v.toLowerCase());
