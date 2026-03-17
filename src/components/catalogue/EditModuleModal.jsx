@@ -144,7 +144,7 @@ export default function EditModuleModal({ module: mod, onSave, onClose }) {
           {/* Unit Type — sets wall elevations automatically */}
           <div>
             <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Unit Type & Wall Elevations</label>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="flex gap-2 flex-wrap">
               {UNIT_TYPES.map(ut => {
                 const active = form.unitType === ut.value;
                 return (
@@ -154,7 +154,7 @@ export default function EditModuleModal({ module: mod, onSave, onClose }) {
                   >
                     <div className="font-semibold">{ut.label}</div>
                     <div className={`text-[10px] mt-0.5 ${active ? "text-white/80" : "text-gray-400"}`}>
-                      {ut.walls.map(w => w.split(" ")[0]).join(" + ")}
+                      {ut.note || ut.walls.map(w => w.split(" ")[0]).join(" + ")}
                     </div>
                   </button>
                 );
