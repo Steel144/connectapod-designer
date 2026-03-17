@@ -3,10 +3,6 @@ import React from "react";
 export default function PrintableElevationsSheet({ walls, onClose }) {
   const elevations = walls;
   
-  console.log('All walls:', walls);
-  console.log('Elevations with images:', elevations);
-  console.log('X face walls:', walls.filter(w => w.face === "X"));
-
   React.useEffect(() => {
     const timer = setTimeout(() => {
       window.print();
@@ -20,29 +16,53 @@ export default function PrintableElevationsSheet({ walls, onClose }) {
     return () => clearTimeout(timer);
   }, [onClose]);
 
-  // Group by face with dynamic position-based inference
-  const horizontal = elevations.filter(w => w.orientation === "horizontal" || w.face === "W" || w.face === "Y");
-  const vertical = elevations.filter(w => w.orientation === "vertical" || w.face === "Z" || w.face === "X");
+  // Group walls by pavilion based on x-position clusters
+  const clusterWallsByPavilion = () => {
+    const sorted = [...elevations].sort((a, b) => a.x - b.x);
+    const clusters = [];
+    const threshold = 0.5; // x-distance to consider walls in same pavilion
 
-  // Calculate midpoint for horizontal walls to split W (top) from Y (bottom)
-  const ys = horizontal.map(w => w.y).filter(y => y !== undefined);
-  const midY = ys.length > 0 ? (Math.min(...ys) + Math.max(...ys)) / 2 : 0;
-
-  // Calculate midpoint for vertical walls to split Z (left) from X (right)
-  const xs = vertical.map(w => w.x).filter(x => x !== undefined);
-  const midX = xs.length > 0 ? (Math.min(...xs) + Math.max(...xs)) / 2 : 0;
-
-  const getFace = (w) => {
-    if (w.face) return w.face;
-    if (w.orientation === "vertical") return w.x <= midX ? "Z" : "X";
-    return w.y <= midY ? "W" : "Y";
+    for (const wall of sorted) {
+      let foundCluster = false;
+      for (const cluster of clusters) {
+        if (Math.abs(cluster[0].x - wall.x) < threshold) {
+          cluster.push(wall);
+          foundCluster = true;
+          break;
+        }
+      }
+      if (!foundCluster) {
+        clusters.push([wall]);
+      }
+    }
+    return clusters;
   };
 
-  const groupedByFace = {
-    W: horizontal.filter(w => getFace(w) === "W").sort((a, b) => a.x - b.x),
-    Y: horizontal.filter(w => getFace(w) === "Y").sort((a, b) => a.x - b.x),
-    Z: vertical.filter(w => getFace(w) === "Z"),
-    X: vertical.filter(w => getFace(w) === "X"),
+  const pavilionClusters = clusterWallsByPavilion();
+
+  // Group walls by face within each pavilion
+  const groupWallsByFace = (pavilionWalls) => {
+    const horizontal = pavilionWalls.filter(w => w.orientation === "horizontal" || w.face === "W" || w.face === "Y");
+    const vertical = pavilionWalls.filter(w => w.orientation === "vertical" || w.face === "Z" || w.face === "X");
+
+    const ys = horizontal.map(w => w.y).filter(y => y !== undefined);
+    const midY = ys.length > 0 ? (Math.min(...ys) + Math.max(...ys)) / 2 : 0;
+
+    const xs = vertical.map(w => w.x).filter(x => x !== undefined);
+    const midX = xs.length > 0 ? (Math.min(...xs) + Math.max(...xs)) / 2 : 0;
+
+    const getFace = (w) => {
+      if (w.face) return w.face;
+      if (w.orientation === "vertical") return w.x <= midX ? "Z" : "X";
+      return w.y <= midY ? "W" : "Y";
+    };
+
+    return {
+      W: horizontal.filter(w => getFace(w) === "W").sort((a, b) => a.x - b.x),
+      Y: horizontal.filter(w => getFace(w) === "Y").sort((a, b) => a.x - b.x),
+      Z: vertical.filter(w => getFace(w) === "Z"),
+      X: vertical.filter(w => getFace(w) === "X"),
+    };
   };
 
   const faceLabels = {
