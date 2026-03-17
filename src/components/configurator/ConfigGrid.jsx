@@ -451,7 +451,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
           const variants = (customMod.variants || []).map(v => v.toLowerCase());
           const isEnd = variants.some(v => v.includes("end"));
           const isConnection = variants.some(v => v.includes("connection"));
-          const chassis = isConnection ? "CM" : isEnd ? "LF" : "SF";
+          const chassis = isConnection ? "C" : isEnd ? "LF" : "SF";
           
           mod = {
             type: customMod.code,

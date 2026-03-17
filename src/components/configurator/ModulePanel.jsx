@@ -173,7 +173,7 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
        "Bathroom": ["W", "bathroom"],
        "Kitchen": ["K", "kitchen"],
        "Laundry": ["L", "laundry"],
-       "Connection Modules": ["CM", "connection modules", "connectionmodules"],
+       "Connection Modules": ["C", "connection modules", "connectionmodules"],
        "Deck": ["DK", "D", "deck"],
        "Soffit": ["SO", "soffit"],
      };
@@ -200,7 +200,7 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
          const variants = (m.variants || []).map(v => v.toLowerCase());
          const isEnd = variants.some(v => v.includes("end"));
          const isConnection = variants.some(v => v.includes("connection"));
-         const chassis = isConnection ? "CM" : isEnd ? "LF" : "SF";
+         const chassis = isConnection ? "C" : isEnd ? "LF" : "SF";
          
          return {
            code: m.code,
@@ -308,7 +308,7 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
 
     const isDeck = chassis === "DK" || chassis === "SO";
     const isEnd = chassis === "EF" || chassis === "LF" || chassis === "RF" || chassis === "ER" || chassis === "End";
-    const isConnection = chassis === "CM";
+    const isConnection = chassis === "C";
     const isLongFace = face === "W" || face === "Y";
 
     const faceWidthM = isLongFace ? modWidthM : attachedMod.h * CELL_M;
