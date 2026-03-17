@@ -4,7 +4,7 @@ import { X } from "lucide-react";
 const UNIT_TYPES = [
   { label: "Standard", value: "Standard", walls: ["W (Front)", "Y (Rear)"] },
   { label: "Deck", value: "Deck", walls: ["W (Front)", "Y (Rear)"] },
-  { label: "End", value: "End", walls: ["W (Front)", "Y (Rear)", "Z (Left End)", "X (Right End)"], note: "End wall auto-determined on grid" },
+  { label: "End", value: "End", walls: ["W (Front)", "Y (Rear)"], note: "W + Y + one end wall (auto on grid)" },
 ];
 
 // Infer unit type from saved variants array
