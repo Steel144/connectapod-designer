@@ -20,6 +20,21 @@ const getPavilion = (moduleY) => {
 export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, onRotate, onFlip, walls = [], wallTypes = [], onPlaceWall, onRemoveWall, onFlipWall, onMoveWall, onWallSelect, onModuleSelect, hidden = false, customModules = [] }) {
   const gridRef = useRef(null);
 
+  // Calculate dynamic pavilion spacing based on connection module width
+  const getConnectionModuleWidth = () => {
+    const midpoint = GRID_ROWS / 2;
+    const centerModules = placedModules.filter(m => m.y >= midpoint - 4 && m.y < midpoint + 4);
+    if (centerModules.length === 0) return 0;
+    const centerLeft = Math.min(...centerModules.map(m => m.x));
+    const centerRight = Math.max(...centerModules.map(m => m.x + m.w));
+    return centerRight - centerLeft;
+  };
+
+  const connectionWidth = getConnectionModuleWidth();
+  // Cap at 5 cells (3m / 0.6m per cell), min 4 cells for pavilion stripe height
+  const maxSpacing = Math.min(connectionWidth, 5);
+  const pavilionSpacing = Math.max(4, maxSpacing);
+
   // Selection and drag state
   const [selected, setSelected] = useState(new Set());
   const [dragging, setDragging] = useState(null);
