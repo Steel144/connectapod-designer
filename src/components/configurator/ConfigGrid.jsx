@@ -807,7 +807,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
             top: (GRID_ROWS / 2 - 4) * CELL_H + 4,
           }}
         >
-          Pavilion 2
+          Connection Module
         </div>
 
         {/* Blue stripe — 4.8m wide (8 cells) below red */}
