@@ -96,9 +96,11 @@ export default function PrintableElevationsSheet({ walls, onClose }) {
                    <div className="flex flex-col gap-12">
                      {walls.map(wall => (
                        <div key={wall.id} className="flex flex-col items-center gap-3">
-                         <div className="bg-white flex items-center justify-center" style={{ maxHeight: "87px", maxWidth: "350px" }}>
-                           {wall.elevationImage && (
+                         <div className="bg-gray-100 flex items-center justify-center border border-gray-300" style={{ maxHeight: "87px", maxWidth: "350px", minHeight: "87px", minWidth: "350px" }}>
+                           {wall.elevationImage ? (
                              <img src={wall.elevationImage} alt={wall.label} className="h-auto w-auto max-h-full object-contain" />
+                           ) : (
+                             <p className="text-gray-400 text-xs">No image</p>
                            )}
                          </div>
                          <p className="text-xs font-bold text-gray-900 text-center whitespace-nowrap">{wall.label || wall.type}</p>
