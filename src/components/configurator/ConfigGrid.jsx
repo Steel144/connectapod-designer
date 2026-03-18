@@ -493,19 +493,22 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
        if (wallTemplate.orientation === "horizontal") {
          let bestDist = Infinity;
          for (const mod of placedModules) {
+           const isCM = isConnectionModule(mod);
            const distToYFace = Math.abs(exactY - (mod.y + mod.h));
            const distToWFace = Math.abs(exactY - mod.y);
 
            if (distToYFace <= SNAP_THRESHOLD && exactX >= mod.x - SNAP_THRESHOLD && exactX <= mod.x + mod.w + SNAP_THRESHOLD) {
              if (distToYFace < bestDist) {
                bestDist = distToYFace;
-               snapped = { x: mod.x, y: mod.y + mod.h, length: mod.w, face: "Y" };
+               const snapY = isCM ? mod.y + mod.h - wallTemplate.thickness : mod.y + mod.h;
+               snapped = { x: mod.x, y: snapY, length: mod.w, face: "Y" };
              }
            }
            if (distToWFace <= SNAP_THRESHOLD && exactX >= mod.x - SNAP_THRESHOLD && exactX <= mod.x + mod.w + SNAP_THRESHOLD) {
              if (distToWFace < bestDist) {
                bestDist = distToWFace;
-               snapped = { x: mod.x, y: mod.y - wallTemplate.thickness, length: mod.w, face: "W" };
+               const snapY = isCM ? mod.y : mod.y - wallTemplate.thickness;
+               snapped = { x: mod.x, y: snapY, length: mod.w, face: "W" };
              }
            }
          }
