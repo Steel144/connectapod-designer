@@ -432,18 +432,16 @@ export default function Configurator() {
   };
 
   const handleLoad = (design) => {
-    const imgs = floorPlanImagesRef.current;
-    const wImgs = wallImagesRef.current;
     const grid = (design.grid || []).map(m => {
       const moduleType = m.type || m.moduleType;
       let full = moduleType ? MODULE_TYPES.find(mt => mt.type === moduleType) : null;
       if (!full && m.label) full = MODULE_TYPES.find(mt => mt.label === m.label);
       full = full || {};
       const resolvedType = moduleType || full.type || null;
-      return { ...full, ...m, type: resolvedType, floorPlanImage: imgs[resolvedType] || null };
+      return { ...full, ...m, type: resolvedType, floorPlanImage: floorPlanImages[resolvedType] || null };
     });
     const loadedWalls = (design.walls || []).map(w => {
-      if (w.type && wImgs[w.type]) return { ...w, elevationImage: wImgs[w.type] };
+      if (w.type && wallImages[w.type]) return { ...w, elevationImage: wallImages[w.type] };
       return { ...w, elevationImage: w.elevationImage || null };
     });
     setPlacedModules(grid);
