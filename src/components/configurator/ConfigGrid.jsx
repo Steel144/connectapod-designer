@@ -580,17 +580,17 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
       >
         {/* Colour stripes — fixed absolute Y bands */}
         <>
-          {/* Green strip — Pavilion 1 (rows 2–6) */}
-          <div className="absolute pointer-events-none" style={{ left: 0, top: 2 * CELL_H, width: GRID_COLS * CELL_W, height: 4 * CELL_H, backgroundColor: "rgba(34, 197, 94, 0.075)" }} />
-          <div className="absolute pointer-events-none text-green-700 font-bold text-sm" style={{ left: "12px", top: 2 * CELL_H + 4 }}>Pavilion 1</div>
+          {/* Green strip — Pavilion 1 (rows 9–13) */}
+          <div className="absolute pointer-events-none" style={{ left: 0, top: 9 * CELL_H, width: GRID_COLS * CELL_W, height: 4 * CELL_H, backgroundColor: "rgba(34, 197, 94, 0.075)" }} />
+          <div className="absolute pointer-events-none text-green-700 font-bold text-sm" style={{ left: "12px", top: 9 * CELL_H + 4 }}>Pavilion 1</div>
 
-          {/* Red strip — Connection Module (row 12) */}
-          <div className="absolute pointer-events-none" style={{ left: 0, top: 12 * CELL_H, width: GRID_COLS * CELL_W, height: 1 * CELL_H, backgroundColor: "rgba(239, 68, 68, 0.075)" }} />
-          <div className="absolute pointer-events-none text-red-700 font-bold text-sm" style={{ left: "12px", top: 12 * CELL_H + 4 }}>Connection Module</div>
+          {/* Red strip — Connection Module (row 19) */}
+          <div className="absolute pointer-events-none" style={{ left: 0, top: 19 * CELL_H, width: GRID_COLS * CELL_W, height: 1 * CELL_H, backgroundColor: "rgba(239, 68, 68, 0.075)" }} />
+          <div className="absolute pointer-events-none text-red-700 font-bold text-sm" style={{ left: "12px", top: 19 * CELL_H + 4 }}>Connection Module</div>
 
-          {/* Blue stripe — Pavilion 2 (rows 19–23) */}
-          <div className="absolute pointer-events-none" style={{ left: 0, top: 19 * CELL_H, width: GRID_COLS * CELL_W, height: 4 * CELL_H, backgroundColor: "rgba(59, 130, 246, 0.075)" }} />
-          <div className="absolute pointer-events-none text-blue-700 font-bold text-sm" style={{ left: "12px", top: 19 * CELL_H + 4 }}>Pavilion 2</div>
+          {/* Blue stripe — Pavilion 2 (rows 26–30) */}
+          <div className="absolute pointer-events-none" style={{ left: 0, top: 26 * CELL_H, width: GRID_COLS * CELL_W, height: 4 * CELL_H, backgroundColor: "rgba(59, 130, 246, 0.075)" }} />
+          <div className="absolute pointer-events-none text-blue-700 font-bold text-sm" style={{ left: "12px", top: 26 * CELL_H + 4 }}>Pavilion 2</div>
         </>
 
          {/* Placed modules */}
