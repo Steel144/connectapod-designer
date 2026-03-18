@@ -148,9 +148,9 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
           <p className="text-base font-medium text-gray-500 mb-1">No elevations yet</p>
           <p className="text-sm text-gray-400">Upload elevation images to walls in your design to view them here</p>
         </div>
-      </div>
-    );
-  }
+        </div>
+        );
+        }
 
   const imgHeight = Math.round((zoom / 100) * 480);
 
