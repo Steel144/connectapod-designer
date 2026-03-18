@@ -584,8 +584,8 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
           <div className="absolute pointer-events-none" style={{ left: 0, top: 8 * CELL_H, width: GRID_COLS * CELL_W, height: 4 * CELL_H, backgroundColor: "rgba(34, 197, 94, 0.075)" }} />
           <div className="absolute pointer-events-none text-green-700 font-bold text-sm" style={{ left: "12px", top: 8 * CELL_H + 4 }}>Pavilion 1</div>
 
-          {/* Red strip — Connection Module (rows 18–22) */}
-          <div className="absolute pointer-events-none" style={{ left: 0, top: 18 * CELL_H, width: GRID_COLS * CELL_W, height: 4 * CELL_H, backgroundColor: "rgba(239, 68, 68, 0.075)" }} />
+          {/* Red strip — Connection Module (rows 18–20) */}
+          <div className="absolute pointer-events-none" style={{ left: 0, top: 18 * CELL_H, width: GRID_COLS * CELL_W, height: 2 * CELL_H, backgroundColor: "rgba(239, 68, 68, 0.075)" }} />
           <div className="absolute pointer-events-none text-red-700 font-bold text-sm" style={{ left: "12px", top: 18 * CELL_H + 4 }}>Connection Module</div>
 
           {/* Blue stripe — Pavilion 2 (rows 28–32) */}
