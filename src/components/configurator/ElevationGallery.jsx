@@ -5,9 +5,9 @@ const GRID_ROWS = 40;
 
 const getPavilion = (wallY) => {
   const midpoint = GRID_ROWS / 2;
-  if (wallY >= midpoint - 12 && wallY < midpoint - 4) return 3; // Green
-  if (wallY >= midpoint - 4 && wallY < midpoint + 4) return 2;  // Red
-  if (wallY >= midpoint + 4 && wallY < midpoint + 12) return 1; // Blue
+  if (wallY >= midpoint - 12 && wallY < midpoint - 4) return 3;
+  if (wallY >= midpoint - 4 && wallY < midpoint + 4) return 2;
+  if (wallY >= midpoint + 4 && wallY < midpoint + 12) return 1;
   return null;
 };
 
@@ -51,14 +51,10 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
     }
   };
 
-  // Helper to get pavilion from a wall, checking if it's snapped to a module
   const getWallPavilion = (wall) => {
-    // If wall has explicit pavilionNum, use it
     if (wall.pavilionNum !== null && wall.pavilionNum !== undefined) {
       return wall.pavilionNum;
     }
-    
-    // Try to find the module this wall is snapped to
     const THRESHOLD = 1.0;
     const snappedMod = placedModules.find(mod => {
       if (wall.face === "Y") return Math.abs(wall.y - (mod.y + mod.h)) < THRESHOLD && Math.abs(wall.x - mod.x) < THRESHOLD;
@@ -67,78 +63,70 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
       if (wall.face === "X") return Math.abs(wall.y - mod.y) < THRESHOLD && Math.abs(wall.x - (mod.x + mod.w - 0.31)) < THRESHOLD;
       return false;
     });
-    
     if (snappedMod) return getPavilion(snappedMod.y);
     return getPavilion(wall.y);
   };
 
-  // Group walls by pavilion: each pavilion stripe (1-3) groups all walls within it
   const { pavilions, hasAny } = useMemo(() => {
-    // Add pavilion info to each wall
     const wallsWithPavilion = walls.map(w => ({ ...w, pavilionNum: getWallPavilion(w) }));
-    
-    // Group ALL walls by pavilion (including those without images for proper grouping)
+
     const pavilionGroups = { 1: [], 2: [], 3: [] };
     wallsWithPavilion.forEach(w => {
       if (w.pavilionNum && pavilionGroups[w.pavilionNum]) {
         pavilionGroups[w.pavilionNum].push(w);
       }
     });
-    
+
     const withImage = wallsWithPavilion.filter(w => w.elevationImage);
     if (withImage.length === 0) return { pavilions: [], hasAny: false };
 
-    // Create pavilions for those with walls (include pavilion 2 even if empty to show structure)
     const pavilions = [3, 2, 1].map((pavNum) => {
       const wallsInPavilion = pavilionGroups[pavNum];
       if (wallsInPavilion.length === 0 && pavNum !== 2) return null;
 
-        // Group by y-position within this pavilion
-         const yGroups = {};
-         wallsInPavilion.forEach(w => {
-           const yKey = Math.round(w.y * 100) / 100;
-           if (!yGroups[yKey]) yGroups[yKey] = [];
-           yGroups[yKey].push(w);
-         });
+      const yGroups = {};
+      wallsInPavilion.forEach(w => {
+        const yKey = Math.round(w.y * 100) / 100;
+        if (!yGroups[yKey]) yGroups[yKey] = [];
+        yGroups[yKey].push(w);
+      });
 
-         const rows = [];
-         Object.keys(yGroups)
-           .map(Number)
-           .sort((a, b) => a - b)
-           .forEach(yPos => {
-             const wallsAtY = yGroups[yPos];
-             // Include ALL vertical walls (with or without image) for correct end caps
-             const allVerticalWalls = wallsAtY.filter(w => w.face === "Z" || w.face === "X");
-             const zWall = allVerticalWalls.find(w => w.face === "Z") || null;
-             const xWall = allVerticalWalls.find(w => w.face === "X") || null;
+      const rows = [];
+      Object.keys(yGroups)
+        .map(Number)
+        .sort((a, b) => a - b)
+        .forEach(yPos => {
+          const wallsAtY = yGroups[yPos];
 
-             // Include ALL horizontal walls — those without images get a placeholder
-             const allHorizontal = wallsAtY.filter(w => w.face === "W" || w.face === "Y");
-             const wWalls = allHorizontal.filter(w => w.face === "W").sort((a, b) => b.x - a.x);
-             const yWalls = allHorizontal.filter(w => w.face === "Y").sort((a, b) => a.x - b.x);
+          // Include ALL vertical walls (with or without image)
+          const allVerticalWalls = wallsAtY.filter(w => w.face === "Z" || w.face === "X");
+          const zWall = allVerticalWalls.find(w => w.face === "Z") || null;
+          const xWall = allVerticalWalls.find(w => w.face === "X") || null;
 
-             // Only show a row if at least one wall in it has an image (so we don't show rows for completely unassigned walls)
-             const hasAnyImageInRow = [...yWalls, ...wWalls, zWall, xWall].some(w => w && w.elevationImage);
+          // Include ALL horizontal walls — those without images get a placeholder
+          const allHorizontal = wallsAtY.filter(w => w.face === "W" || w.face === "Y");
+          const wWalls = allHorizontal.filter(w => w.face === "W").sort((a, b) => b.x - a.x);
+          const yWalls = allHorizontal.filter(w => w.face === "Y").sort((a, b) => a.x - b.x);
 
-             if (hasAnyImageInRow) {
-               if (yWalls.length > 0) rows.push({ type: "Y", yPos, zWall, midWalls: yWalls, xWall });
-               if (wWalls.length > 0) rows.push({ type: "W", yPos, zWall, midWalls: wWalls, xWall });
-               if ((zWall || xWall) && yWalls.length === 0 && wWalls.length === 0) {
-                 rows.push({ type: "ZX", yPos, zWall, xWall });
-               }
-             }
-           });
+          // Only show a row if at least one wall in it has an image
+          const hasAnyImageInRow = [...yWalls, ...wWalls, zWall, xWall].some(w => w && w.elevationImage);
 
-        return {
-          pavilionNum: pavNum,
-          rows,
-        };
+          if (hasAnyImageInRow) {
+            if (yWalls.length > 0) rows.push({ type: "Y", yPos, zWall, midWalls: yWalls, xWall });
+            if (wWalls.length > 0) rows.push({ type: "W", yPos, zWall, midWalls: wWalls, xWall });
+            if ((zWall || xWall) && yWalls.length === 0 && wWalls.length === 0) {
+              rows.push({ type: "ZX", yPos, zWall, xWall });
+            }
+          }
+        });
+
+      return { pavilionNum: pavNum, rows };
     });
 
     return { pavilions, hasAny: withImage.length > 0 };
-    }, [walls, placedModules]);
+  }, [walls, placedModules]);
 
-    if (!hasAny) {
+  if (!hasAny) {
     return (
       <div className="w-full h-full flex items-center justify-center bg-gray-50">
         <div className="text-center text-gray-400 max-w-xs">
@@ -148,49 +136,49 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
           <p className="text-base font-medium text-gray-500 mb-1">No elevations yet</p>
           <p className="text-sm text-gray-400">Upload elevation images to walls in your design to view them here</p>
         </div>
-        </div>
-        );
-        }
+      </div>
+    );
+  }
 
   const imgHeight = Math.round((zoom / 100) * 480);
 
-  const ElevationImage = ({ wall, label, face, tight, mirrorH }) => {
+  const ElevationImage = ({ wall, label, face, tight }) => {
     const placeholderWidth = Math.round((zoom / 100) * 240);
     return (
-    <div className={`flex flex-col items-center ${tight ? "gap-0" : "gap-2"} shrink-0`} style={{ margin: tight ? "-1px 0" : "0" }}>
-      <div
-        className={`overflow-hidden ${tight ? "" : "bg-white border border-gray-200 cursor-pointer"}`}
-        style={{ height: `${imgHeight}px`, width: wall.elevationImage ? "auto" : `${placeholderWidth}px` }}
-        onMouseEnter={() => onWallSelect(wall)}
-        onMouseLeave={() => onWallSelect(null)}
-        onClick={() => onWallSelect(wall)}
-      >
-        {wall.elevationImage ? (
-          <img
-            src={wall.elevationImage}
-            alt={label}
-            style={{ height: "100%", width: "auto", display: "block", transform: wall.flipped ? 'scaleX(-1)' : undefined, pointerEvents: "none" }}
-          />
-        ) : (
-          <div
-            className="w-full h-full flex flex-col items-center justify-center gap-1"
-            style={{ background: "repeating-linear-gradient(45deg, #f3f4f6, #f3f4f6 6px, #e5e7eb 6px, #e5e7eb 12px)", border: "1.5px dashed #d1d5db" }}
-          >
-            <span className="text-[10px] font-semibold text-gray-400 text-center px-1 leading-tight">No image</span>
-            <span className="text-[9px] text-gray-400 text-center px-1 leading-tight truncate max-w-full">{wall.type}</span>
+      <div className={`flex flex-col items-center ${tight ? "gap-0" : "gap-2"} shrink-0`} style={{ margin: tight ? "-1px 0" : "0" }}>
+        <div
+          className={`overflow-hidden ${tight ? "" : "bg-white border border-gray-200 cursor-pointer"}`}
+          style={{ height: `${imgHeight}px`, width: wall.elevationImage ? "auto" : `${placeholderWidth}px` }}
+          onMouseEnter={() => onWallSelect(wall)}
+          onMouseLeave={() => onWallSelect(null)}
+          onClick={() => onWallSelect(wall)}
+        >
+          {wall.elevationImage ? (
+            <img
+              src={wall.elevationImage}
+              alt={label}
+              style={{ height: "100%", width: "auto", display: "block", transform: wall.flipped ? "scaleX(-1)" : undefined, pointerEvents: "none" }}
+            />
+          ) : (
+            <div
+              className="w-full h-full flex flex-col items-center justify-center gap-1"
+              style={{ background: "repeating-linear-gradient(45deg, #f3f4f6, #f3f4f6 6px, #e5e7eb 6px, #e5e7eb 12px)", border: "1.5px dashed #d1d5db" }}
+            >
+              <span className="text-[10px] font-semibold text-gray-400 text-center px-1 leading-tight">No image</span>
+              <span className="text-[9px] text-gray-400 text-center px-1 leading-tight truncate max-w-full">{wall.type}</span>
+            </div>
+          )}
+        </div>
+        {!tight && (
+          <div className="text-center">
+            <span className="inline-block bg-[#F15A22] text-white text-[10px] font-bold px-2 py-0.5 rounded mb-1">
+              {face}
+            </span>
+            <p className="text-[11px] font-medium text-gray-500 whitespace-nowrap">{label}</p>
           </div>
         )}
       </div>
-      {!tight && (
-        <div className="text-center">
-          <span className="inline-block bg-[#F15A22] text-white text-[10px] font-bold px-2 py-0.5 rounded mb-1">
-            {face}
-          </span>
-          <p className="text-[11px] font-medium text-gray-500 whitespace-nowrap">{label}</p>
-        </div>
-      )}
-    </div>
-  );
+    );
   };
 
   const getPavilionLabel = (pavNum) => {
@@ -198,7 +186,7 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
     return labels[pavNum] || `Pavilion ${pavNum}`;
   };
 
-  const ElevationRow = ({ pavilionNum, endLeft, midWalls, endRight, rowLabel, isYFace, mirrorH }) => {
+  const ElevationRow = ({ pavilionNum, endLeft, midWalls, endRight, rowLabel }) => {
     const hasContent = endLeft || midWalls.length > 0 || endRight;
     if (!hasContent) return null;
 
@@ -209,30 +197,25 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
           <div className="flex-1 h-px bg-gray-200" />
         </div>
         <div className="flex items-center gap-2">
-          {/* Left end cap */}
           {endLeft && (
             <div className="flex items-center shrink-0">
               <div className="flex flex-col items-center gap-0">
-                <ElevationImage wall={endLeft} label={endLeft.type || "End"} face={endLeft.face} tight mirrorH={mirrorH} />
+                <ElevationImage wall={endLeft} label={endLeft.type || "End"} face={endLeft.face} tight />
                 <span className="text-[8px] text-gray-400 mt-0.5">Left</span>
               </div>
             </div>
           )}
-
-          {/* Middle walls joined tightly — no gap between */}
           <div className="flex items-center">
             {midWalls.map((wall) => (
               <div key={wall.id} className="flex items-center" style={{ marginRight: "-1px" }}>
-                <ElevationImage wall={wall} label={wall.type || "Wall"} face={wall.face} tight mirrorH={mirrorH} />
+                <ElevationImage wall={wall} label={wall.type || "Wall"} face={wall.face} tight />
               </div>
             ))}
           </div>
-
-          {/* Right end cap */}
           {endRight && (
             <div className="flex items-center shrink-0">
               <div className="flex flex-col items-center gap-0">
-                <ElevationImage wall={endRight} label={endRight.type || "End"} face={endRight.face} tight mirrorH={mirrorH} />
+                <ElevationImage wall={endRight} label={endRight.type || "End"} face={endRight.face} tight />
                 <span className="text-[8px] text-gray-400 mt-0.5">Right</span>
               </div>
             </div>
@@ -244,40 +227,24 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
 
   return (
     <div className="w-full h-full bg-white flex flex-col">
-      {/* Toolbar */}
       <div className="flex items-center justify-between px-6 py-3 bg-white border-b border-gray-200 shrink-0">
         <div className="flex items-center gap-2">
           <span className="text-xs font-semibold text-gray-500 uppercase tracking-widest">Elevations</span>
           <span className="text-xs text-gray-400">{walls.filter(w => w.elevationImage).length} wall{walls.filter(w => w.elevationImage).length !== 1 ? "s" : ""}</span>
         </div>
         <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-1">
-          <button
-            onClick={() => adjustZoom(-1)}
-            disabled={zoom <= zoomLevels[0]}
-            className="p-1.5 rounded hover:bg-white hover:shadow-sm transition-all text-gray-500 hover:text-gray-800 disabled:opacity-30 disabled:cursor-not-allowed"
-            title="Zoom out"
-          >
+          <button onClick={() => adjustZoom(-1)} disabled={zoom <= zoomLevels[0]} className="p-1.5 rounded hover:bg-white hover:shadow-sm transition-all text-gray-500 hover:text-gray-800 disabled:opacity-30 disabled:cursor-not-allowed" title="Zoom out">
             <ZoomOut size={15} />
           </button>
-          <button
-            onClick={() => { setZoom(100); setPan({ x: 0, y: 0 }); }}
-            className="min-w-[52px] text-center text-xs font-semibold text-gray-600 hover:text-[#F15A22] py-1 px-2 rounded hover:bg-white transition-all"
-            title="Reset zoom & position"
-          >
+          <button onClick={() => { setZoom(100); setPan({ x: 0, y: 0 }); }} className="min-w-[52px] text-center text-xs font-semibold text-gray-600 hover:text-[#F15A22] py-1 px-2 rounded hover:bg-white transition-all" title="Reset zoom & position">
             {zoom}%
           </button>
-          <button
-            onClick={() => adjustZoom(1)}
-            disabled={zoom >= zoomLevels[zoomLevels.length - 1]}
-            className="p-1.5 rounded hover:bg-white hover:shadow-sm transition-all text-gray-500 hover:text-gray-800 disabled:opacity-30 disabled:cursor-not-allowed"
-            title="Zoom in"
-          >
+          <button onClick={() => adjustZoom(1)} disabled={zoom >= zoomLevels[zoomLevels.length - 1]} className="p-1.5 rounded hover:bg-white hover:shadow-sm transition-all text-gray-500 hover:text-gray-800 disabled:opacity-30 disabled:cursor-not-allowed" title="Zoom in">
             <ZoomIn size={15} />
           </button>
         </div>
       </div>
 
-      {/* Canvas — pannable & zoomable */}
       <div
         className="flex-1 overflow-auto relative select-none bg-gray-50"
         style={{ cursor: "grab" }}
@@ -292,18 +259,9 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
           }
         }}
       >
-        <div
-          style={{
-            transform: `translate(${pan.x}px, ${pan.y}px)`,
-            position: "relative",
-            minHeight: "100%",
-            paddingBottom: "100px",
-            paddingTop: "40px",
-            paddingLeft: "40px",
-          }}
-        >
+        <div style={{ transform: `translate(${pan.x}px, ${pan.y}px)`, position: "relative", minHeight: "100%", paddingBottom: "100px", paddingTop: "40px", paddingLeft: "40px" }}>
           <div className="flex flex-col" style={{ gap: `${Math.round((zoom / 100) * 128)}px` }}>
-            {pavilions.filter(Boolean).map((pav, pavIdx) => (
+            {pavilions.filter(Boolean).map((pav) => (
               <div key={pav.pavilionNum} className="flex flex-col" style={{ gap: `${Math.round((zoom / 100) * 64)}px` }}>
                 <div className="text-sm font-bold text-gray-800 uppercase tracking-widest ml-1 px-3 py-2 bg-orange-100 rounded w-fit">
                   {getPavilionLabel(pav.pavilionNum)}
@@ -312,11 +270,8 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
                   const yRows = pav.rows.filter(r => r.type === "Y");
                   const wRows = pav.rows.filter(r => r.type === "W");
                   const zxRows = pav.rows.filter(r => r.type === "ZX");
-                  
-                  // Get Z and X walls from any ZX rows to attach to Y rows
                   const zWallFromZX = zxRows.find(r => r.zWall && r.zWall.elevationImage)?.zWall;
                   const xWallFromZX = zxRows.find(r => r.xWall && r.xWall.elevationImage)?.xWall;
-                  
                   return (
                     <>
                       {yRows.map((row) => (
@@ -327,7 +282,6 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
                           midWalls={row.midWalls || []}
                           endRight={xWallFromZX || row.xWall}
                           rowLabel="Y face (outside / top)"
-                          isYFace={true}
                         />
                       ))}
                       {wRows.map((row) => (
@@ -338,15 +292,13 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
                           midWalls={row.midWalls || []}
                           endRight={zWallFromZX || row.zWall}
                           rowLabel="W face (outside / bottom)"
-                          isYFace={false}
                         />
                       ))}
                     </>
                   );
                 })()}
-                </div>
-                ))}
-
+              </div>
+            ))}
           </div>
         </div>
       </div>
