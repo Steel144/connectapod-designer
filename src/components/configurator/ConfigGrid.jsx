@@ -373,25 +373,6 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
       const mod = placedModules.find((m) => m.id === id);
       if (!mod) return;
       
-      // Check if moving deck/soffit adjacent to non-end module
-      const isDeckOrSoffit = mod.type?.toLowerCase().includes("deck") || mod.type?.toLowerCase().includes("soffit");
-      if (isDeckOrSoffit) {
-        const newX = mod.x + deltaX;
-        const newY = mod.y + deltaY;
-        const adjacentMod = placedModules.find(m => {
-          if (m.id === id) return false;
-          const isAdjacent = (m.x === newX + mod.w && m.y < newY + mod.h && m.y + m.h > newY) ||
-                            (m.x + m.w === newX && m.y < newY + mod.h && m.y + m.h > newY) ||
-                            (m.y === newY + mod.h && m.x < newX + mod.w && m.x + m.w > newX) ||
-                            (m.y + m.h === newY && m.x < newX + mod.w && m.x + m.w > newX);
-          return isAdjacent;
-        });
-        const isAdjacentModEnd = adjacentMod?.chassis === "EF" || adjacentMod?.chassis === "ER" || adjacentMod?.chassis === "LF" || adjacentMod?.chassis === "RF";
-        if (adjacentMod && !isAdjacentModEnd) {
-          return; // Don't allow deck next to non-end module
-        }
-      }
-      
       const canPlace = canPlaceGroup(mod, mod.x + deltaX, mod.y + deltaY, dragging.selectedIds);
       console.log("Module", id, "canPlace:", canPlace, "delta:", deltaX, deltaY, "newPos:", mod.x + deltaX, mod.y + deltaY);
       if (canPlace) {
