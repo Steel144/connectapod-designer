@@ -85,8 +85,7 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
       if (pav && modsByPavilion[pav]) modsByPavilion[pav].push(mod);
     });
 
-    const anyModules = Object.values(modsByPavilion).some(a => a.length > 0);
-    if (!anyModules) return { pavilions: [], hasAny: false };
+    if (!Object.values(modsByPavilion).some(a => a.length > 0)) return { pavilions: [], hasAny: false };
 
     // Helper: find the wall placed on a specific face of a module
     const findWall = (mod, face) => {
