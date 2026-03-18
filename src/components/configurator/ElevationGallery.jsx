@@ -188,7 +188,7 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
               className="w-full h-full flex flex-col items-center justify-center gap-1"
               style={{ background: "repeating-linear-gradient(45deg, #f3f4f6, #f3f4f6 6px, #e5e7eb 6px, #e5e7eb 12px)", border: "1.5px dashed #d1d5db" }}
             >
-              <span className="text-[10px] font-semibold text-gray-400 text-center px-1 leading-tight">No image</span>
+              <span className="text-[10px] font-semibold text-gray-400 text-center px-1 leading-tight">No wall specified</span>
               <span className="text-[9px] text-gray-400 text-center px-1 leading-tight truncate max-w-full">{wall.type}</span>
             </div>
           )}
