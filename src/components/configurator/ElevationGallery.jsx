@@ -78,15 +78,15 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
   };
 
   const { pavilions, hasAny } = useMemo(() => {
-    const withImage = walls.filter(w => w.elevationImage);
-    if (withImage.length === 0) return { pavilions: [], hasAny: false };
-
-    // Group placed modules by pavilion
+    // Group placed modules by pavilion — show pavilion if any module touches the band
     const modsByPavilion = { 1: [], 2: [], 3: [] };
     placedModules.forEach(mod => {
-      const pav = getPavilion(mod.y);
+      const pav = getModulePavilion(mod);
       if (pav && modsByPavilion[pav]) modsByPavilion[pav].push(mod);
     });
+
+    const anyModules = Object.values(modsByPavilion).some(a => a.length > 0);
+    if (!anyModules) return { pavilions: [], hasAny: false };
 
     // Helper: find the wall placed on a specific face of a module
     const findWall = (mod, face) => {
