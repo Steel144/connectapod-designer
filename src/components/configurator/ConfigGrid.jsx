@@ -82,7 +82,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
       return x >= m.x && x < m.x + m.w && y >= m.y && y < m.y + m.h;
     });
 
-  const isConnectionModule = (mod) => mod.y >= 19 && mod.y < 20;
+  const isConnectionModule = (mod) => mod.chassis === "C" || (mod.y >= 18 && mod.y < 21 && mod.h <= 2);
 
   const canPlace = (mod, cx, cy, excludeId = null) => {
     if (cx < 0 || cy < 0 || cx + mod.w > GRID_COLS || cy + mod.h > GRID_ROWS) return false;
