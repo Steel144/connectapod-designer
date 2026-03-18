@@ -154,11 +154,13 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
 
   const imgHeight = Math.round((zoom / 100) * 480);
 
-  const ElevationImage = ({ wall, label, face, tight, mirrorH }) => (
+  const ElevationImage = ({ wall, label, face, tight, mirrorH }) => {
+    const placeholderWidth = Math.round((zoom / 100) * 240);
+    return (
     <div className={`flex flex-col items-center ${tight ? "gap-0" : "gap-2"} shrink-0`} style={{ margin: tight ? "-1px 0" : "0" }}>
       <div
         className={`overflow-hidden ${tight ? "" : "bg-white border border-gray-200 cursor-pointer"}`}
-        style={{ height: `${imgHeight}px`, width: wall.elevationImage ? "auto" : `${Math.round((zoom / 100) * 240)}px` }}
+        style={{ height: `${imgHeight}px`, width: wall.elevationImage ? "auto" : `${placeholderWidth}px` }}
         onMouseEnter={() => onWallSelect(wall)}
         onMouseLeave={() => onWallSelect(null)}
         onClick={() => onWallSelect(wall)}
@@ -169,7 +171,15 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
             alt={label}
             style={{ height: "100%", width: "auto", display: "block", transform: wall.flipped ? 'scaleX(-1)' : undefined, pointerEvents: "none" }}
           />
-        ) : null}
+        ) : (
+          <div
+            className="w-full h-full flex flex-col items-center justify-center gap-1"
+            style={{ background: "repeating-linear-gradient(45deg, #f3f4f6, #f3f4f6 6px, #e5e7eb 6px, #e5e7eb 12px)", border: "1.5px dashed #d1d5db" }}
+          >
+            <span className="text-[10px] font-semibold text-gray-400 text-center px-1 leading-tight">No image</span>
+            <span className="text-[9px] text-gray-400 text-center px-1 leading-tight truncate max-w-full">{wall.type}</span>
+          </div>
+        )}
       </div>
       {!tight && (
         <div className="text-center">
