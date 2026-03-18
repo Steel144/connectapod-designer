@@ -223,10 +223,6 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
          };
        });
 
-       if (group.label === "Connection") {
-         console.log(`[ModulePanel] Connection customItems:`, customItems.map(i => ({ code: i.code, chassis: i.chassis })));
-       }
-
        // Merge built-in and custom items
        const allItems = [...builtInItems, ...customItems];
        const sorted = allItems.sort((a, b) => {
