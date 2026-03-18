@@ -157,7 +157,7 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
           <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">
             <Maximize2 size={28} className="text-gray-300" />
           </div>
-          <p className="text-base font-medium text-gray-500 mb-1">No elevations yet</p>
+          <p className="text-base font-medium text-gray-500 mb-1">No modules in pavilion bands</p>
           <p className="text-sm text-gray-400">Place modules in the coloured pavilion bands to view elevations here</p>
         </div>
       </div>
