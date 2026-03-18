@@ -173,10 +173,7 @@ export default function Configurator() {
     localStorage.setItem("configurator_walls", JSON.stringify(walls));
   }, [walls]);
 
-  const wallImagesRef = useRef(wallImages);
-  const floorPlanImagesRef = useRef(floorPlanImages);
-  useEffect(() => { wallImagesRef.current = wallImages; }, [wallImages]);
-  useEffect(() => { floorPlanImagesRef.current = floorPlanImages; }, [floorPlanImages]);
+
 
   // When floorPlanImages loads/updates, apply images to any placed modules missing them
   useEffect(() => {
