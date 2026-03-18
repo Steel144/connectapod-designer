@@ -178,13 +178,12 @@ export default function Configurator() {
   useEffect(() => { wallImagesRef.current = wallImages; }, [wallImages]);
   useEffect(() => { floorPlanImagesRef.current = floorPlanImages; }, [floorPlanImages]);
 
-  // When floorPlanImages loads/updates, apply images to any placed modules missing them
+  // When floorPlanImages loads/updates, apply images to all placed modules
   useEffect(() => {
     if (!floorPlanImages || Object.keys(floorPlanImages).length === 0) return;
     setPlacedModules(prev => prev.map(m => {
-      if (m.floorPlanImage) return m;
       const img = floorPlanImages[m.type] || (m.originalCode && floorPlanImages[m.originalCode]);
-      return img ? { ...m, floorPlanImage: img } : m;
+      return img ? { ...m, floorPlanImage: img } : { ...m, floorPlanImage: m.floorPlanImage };
     }));
   }, [floorPlanImages]);
 
