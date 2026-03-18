@@ -147,7 +147,7 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
       return { pavilionNum: pavNum, rows };
     });
 
-    return { pavilions, hasAny: anyModules };
+    return { pavilions, hasAny: true };
   }, [walls, placedModules]);
 
   if (!hasAny) {
