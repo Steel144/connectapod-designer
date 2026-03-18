@@ -135,7 +135,6 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
   const startDragPlaced = (e, mod) => {
     e.preventDefault();
     e.stopPropagation();
-    console.log("startDragPlaced triggered for module:", mod.id);
     const rect = gridRef.current.getBoundingClientRect();
     const offsetX = e.clientX - rect.left - mod.x * CELL_W;
     const offsetY = e.clientY - rect.top - mod.y * CELL_H;
