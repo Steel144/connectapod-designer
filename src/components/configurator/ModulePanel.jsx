@@ -217,10 +217,6 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
           return matches;
         });
 
-       if (group.label === "Connection") {
-         console.log(`[ModulePanel] Connection categoryModules:`, categoryModules.map(m => ({ code: m.code })));
-       }
-
        const customItems = categoryModules.map(m => {
          const variants = (m.variants || []).map(v => v.toLowerCase());
          const isEnd = variants.some(v => v.includes("end"));
@@ -241,6 +237,10 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
            originalCode: m.originalCode || undefined,
          };
        });
+
+       if (group.label === "Connection") {
+         console.log(`[ModulePanel] Connection customItems:`, customItems.map(i => ({ code: i.code, chassis: i.chassis })));
+       }
 
        // Merge built-in and custom items
        const allItems = [...builtInItems, ...customItems];
