@@ -296,6 +296,27 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
                   const zxRows = pav.rows.filter(r => r.type === "ZX");
                   const zWallFromZX = zxRows.find(r => r.zWall && r.zWall.elevationImage)?.zWall;
                   const xWallFromZX = zxRows.find(r => r.xWall && r.xWall.elevationImage)?.xWall;
+                  // Connection module: only show Z and X end faces
+                  if (pav.pavilionNum === 2) {
+                    const zWall = zWallFromZX || (yRows[0]?.zWall) || null;
+                    const xWall = xWallFromZX || (yRows[0]?.xWall) || null;
+                    if (!zWall && !xWall) return null;
+                    return (
+                      <div className="flex items-end gap-6">
+                        {zWall && (
+                          <div className="flex flex-col items-center gap-1">
+                            <ElevationImage wall={zWall} label={zWall.type || "End"} face="Z" tight={false} />
+                          </div>
+                        )}
+                        {xWall && (
+                          <div className="flex flex-col items-center gap-1">
+                            <ElevationImage wall={xWall} label={xWall.type || "End"} face="X" tight={false} />
+                          </div>
+                        )}
+                      </div>
+                    );
+                  }
+
                   return (
                     <>
                       {yRows.map((row) => (
