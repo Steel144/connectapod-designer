@@ -4,9 +4,9 @@ import { ZoomIn, ZoomOut, Maximize2 } from "lucide-react";
 const GRID_ROWS = 40;
 
 const getPavilion = (wallY) => {
-  if (wallY >= 8 && wallY < 12) return 3;
-  if (wallY >= 18 && wallY < 20) return 2;
-  if (wallY >= 28 && wallY < 32) return 1;
+  if (wallY >= 2 && wallY < 6) return 3;
+  if (wallY >= 20 && wallY < 21) return 2;
+  if (wallY >= 34 && wallY < 38) return 1;
   return null;
 };
 
