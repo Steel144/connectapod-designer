@@ -15,9 +15,9 @@ const modTouchesBand = (mod, bandStart, bandEnd) =>
   mod.y < bandEnd && mod.y + mod.h > bandStart;
 
 const getModulePavilion = (mod) => {
-  if (modTouchesBand(mod, 2, 6)) return 3;
-  if (modTouchesBand(mod, 12, 13)) return 2;
-  if (modTouchesBand(mod, 19, 23)) return 1;
+  if (modTouchesBand(mod, 9, 13)) return 3;
+  if (modTouchesBand(mod, 19, 20)) return 2;
+  if (modTouchesBand(mod, 26, 30)) return 1;
   return null;
 };
 
