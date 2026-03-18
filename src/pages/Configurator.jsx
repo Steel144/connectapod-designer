@@ -255,13 +255,6 @@ export default function Configurator() {
     const oldMod = placedModules.find((m) => m.id === id);
     if (!oldMod) return;
     
-    // Check if moving end module to non-end position
-    const isEndModule = oldMod.chassis === "EF" || oldMod.chassis === "ER" || oldMod.chassis === "LF" || oldMod.chassis === "RF";
-    if (isEndModule) {
-      toast.error("End modules can only be placed on end positions");
-      return;
-    }
-    
     pushHistory(placedModules, walls);
     
     const deltaX = x - oldMod.x;
