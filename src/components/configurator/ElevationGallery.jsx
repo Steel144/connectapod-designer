@@ -302,18 +302,26 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
                     const xWall = xWallFromZX || (yRows[0]?.xWall) || null;
                     if (!zWall && !xWall) return null;
                     return (
-                      <div className="flex items-end gap-6">
+                      <>
                         {zWall && (
-                          <div className="flex flex-col items-center gap-1">
-                            <ElevationImage wall={zWall} label={zWall.type || "End"} face="Z" tight={false} />
-                          </div>
+                          <ElevationRow
+                            pavilionNum={pav.pavilionNum}
+                            endLeft={null}
+                            midWalls={[zWall]}
+                            endRight={null}
+                            rowLabel="Z face (left end)"
+                          />
                         )}
                         {xWall && (
-                          <div className="flex flex-col items-center gap-1">
-                            <ElevationImage wall={xWall} label={xWall.type || "End"} face="X" tight={false} />
-                          </div>
+                          <ElevationRow
+                            pavilionNum={pav.pavilionNum}
+                            endLeft={null}
+                            midWalls={[xWall]}
+                            endRight={null}
+                            rowLabel="X face (right end)"
+                          />
                         )}
-                      </div>
+                      </>
                     );
                   }
 
