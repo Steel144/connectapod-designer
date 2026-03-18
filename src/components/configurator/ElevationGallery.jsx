@@ -123,12 +123,9 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
         const yFaceWalls = modsAtY.map(mod => findWall(mod, "Y") || makePlaceholder(mod, "Y"));
         const wFaceWalls = modsAtY.map(mod => findWall(mod, "W") || makePlaceholder(mod, "W"));
 
-        // End cap walls (Z/X) — only real walls, no placeholders for end caps
-        const endMods = modsAtY.filter(mod => mod.chassis === "EF" || mod.chassis === "LF" || mod.chassis === "RF" || mod.chassis === "ER");
-        const leftEndMod = endMods.find(mod => mod.x === Math.min(...modsAtY.map(m => m.x)));
-        const rightEndMod = endMods.find(mod => mod.x === Math.max(...modsAtY.map(m => m.x)));
-        const zWall = leftEndMod ? findWall(leftEndMod, "Z") : null;
-        const xWall = rightEndMod ? findWall(rightEndMod, "X") : null;
+        // End cap walls (Z/X) — search all walls in this pavilion for Z/X face walls
+        const zWall = walls.find(w => w.face === "Z" && modsAtY.some(mod => Math.abs(w.y - mod.y) < 0.5 && Math.abs(w.x - mod.x) < 0.5)) || null;
+        const xWall = walls.find(w => w.face === "X" && modsAtY.some(mod => Math.abs(w.y - mod.y) < 0.5 && Math.abs(w.x - (mod.x + mod.w - 0.31)) < 0.5)) || null;
 
         // Only show a face row if at least one wall in it has an image
         const hasYImage = yFaceWalls.some(w => w.elevationImage) || [zWall, xWall].some(w => w?.elevationImage);
