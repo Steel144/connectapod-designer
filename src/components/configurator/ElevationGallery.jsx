@@ -10,6 +10,17 @@ const getPavilion = (wallY) => {
   return null;
 };
 
+// Returns true if a module (with y and h) overlaps the given band
+const modTouchesBand = (mod, bandStart, bandEnd) =>
+  mod.y < bandEnd && mod.y + mod.h > bandStart;
+
+const getModulePavilion = (mod) => {
+  if (modTouchesBand(mod, 8, 12)) return 3;
+  if (modTouchesBand(mod, 18, 22)) return 2;
+  if (modTouchesBand(mod, 28, 32)) return 1;
+  return null;
+};
+
 export default function ElevationGallery({ walls = [], placedModules = [], onWallSelect = () => {} }) {
   const [zoom, setZoom] = useState(50);
   const [pan, setPan] = useState({ x: 0, y: 0 });
