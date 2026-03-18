@@ -494,14 +494,6 @@ export default function Configurator() {
     setDraggingSummary({ startX: e.clientX, startY: e.clientY, summaryX: summaryPos.x, summaryY: summaryPos.y });
   };
 
-  const handleSummaryMove = (e) => {
-    if (!draggingSummary) return;
-    setSummaryPos({
-      x: draggingSummary.summaryX + (e.clientX - draggingSummary.startX),
-      y: draggingSummary.summaryY + (e.clientY - draggingSummary.startY),
-    });
-  };
-
   if (printMode === "plans") {
     return <PrintablePlansSheet placedModules={placedModules} onClose={() => setPrintMode(null)} />;
   }
