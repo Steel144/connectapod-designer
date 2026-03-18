@@ -5,8 +5,8 @@ const GRID_ROWS = 40;
 
 const getPavilion = (wallY) => {
   if (wallY >= 2 && wallY < 6) return 3;
-  if (wallY >= 20 && wallY < 21) return 2;
-  if (wallY >= 34 && wallY < 38) return 1;
+  if (wallY >= 12 && wallY < 13) return 2;
+  if (wallY >= 19 && wallY < 23) return 1;
   return null;
 };
 
