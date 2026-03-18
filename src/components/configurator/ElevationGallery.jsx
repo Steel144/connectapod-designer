@@ -143,12 +143,16 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
   const imgHeight = Math.round((zoom / 100) * 480);
 
   const ElevationImage = ({ wall, label, face, tight }) => {
-    const placeholderWidth = Math.round((zoom / 100) * 240);
+    // Compute the wall's physical pixel width from its length (cells) or width (metres)
+    const CELL_M = 0.6;
+    const wallWidthM = wall.width ?? (wall.length ? wall.length * CELL_M : CELL_M);
+    // Scale: at 100% zoom, 1 metre = 100px (so a 3m wall = 300px)
+    const wallWidthPx = Math.round((zoom / 100) * wallWidthM * 100);
     return (
       <div className={`flex flex-col items-center ${tight ? "gap-0" : "gap-2"} shrink-0`} style={{ margin: tight ? "-1px 0" : "0" }}>
         <div
           className={`overflow-hidden ${tight ? "" : "bg-white border border-gray-200 cursor-pointer"}`}
-          style={{ height: `${imgHeight}px`, width: wall.elevationImage ? "auto" : `${placeholderWidth}px` }}
+          style={{ height: `${imgHeight}px`, width: wall.elevationImage ? "auto" : `${wallWidthPx}px` }}
           onMouseEnter={() => onWallSelect(wall)}
           onMouseLeave={() => onWallSelect(null)}
           onClick={() => onWallSelect(wall)}
