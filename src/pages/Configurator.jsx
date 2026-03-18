@@ -175,13 +175,13 @@ export default function Configurator() {
 
 
 
-  // When floorPlanImages loads/updates, apply images to any placed modules missing them
+  // When floorPlanImages loads/updates, apply images to all placed modules
   useEffect(() => {
-    if (!floorPlanImages || Object.keys(floorPlanImages).length === 0) return;
+    if (Object.keys(floorPlanImages).length === 0) return;
     setPlacedModules(prev => prev.map(m => {
-      if (m.floorPlanImage) return m; // Keep existing image
       const img = floorPlanImages[m.type] || (m.originalCode && floorPlanImages[m.originalCode]);
-      return img ? { ...m, floorPlanImage: img } : m;
+      // Always update with current floorPlanImages, even if module already has an image
+      return { ...m, floorPlanImage: img || m.floorPlanImage };
     }));
   }, [floorPlanImages]);
 
