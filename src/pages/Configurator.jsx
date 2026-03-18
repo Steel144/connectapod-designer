@@ -178,6 +178,16 @@ export default function Configurator() {
   useEffect(() => { wallImagesRef.current = wallImages; }, [wallImages]);
   useEffect(() => { floorPlanImagesRef.current = floorPlanImages; }, [floorPlanImages]);
 
+  // When floorPlanImages loads/updates, apply images to any placed modules missing them
+  useEffect(() => {
+    if (!floorPlanImages || Object.keys(floorPlanImages).length === 0) return;
+    setPlacedModules(prev => prev.map(m => {
+      if (m.floorPlanImage) return m;
+      const img = floorPlanImages[m.type] || (m.originalCode && floorPlanImages[m.originalCode]);
+      return img ? { ...m, floorPlanImage: img } : m;
+    }));
+  }, [floorPlanImages]);
+
   const handlePlace = (mod, x, y) => {
     // Check if placing deck/soffit on non-end module
     const isDeckOrSoffit = mod.type?.toLowerCase().includes("deck") || mod.type?.toLowerCase().includes("soffit");
