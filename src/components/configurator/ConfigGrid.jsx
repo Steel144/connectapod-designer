@@ -368,14 +368,11 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
     // Move all selected modules by same delta
     dragging.selectedIds.forEach((id) => {
       const mod = placedModules.find((m) => m.id === id);
-      const isEndModule = mod?.chassis === "EF" || mod?.chassis === "ER" || mod?.chassis === "LF" || mod?.chassis === "RF" || mod?.variants?.some?.(v => v.toLowerCase().includes("end"));
-      if (mod && isEndModule) {
-        return; // Don't move end modules
-      }
+      if (!mod) return;
       
       // Check if moving deck/soffit adjacent to non-end module
-      const isDeckOrSoffit = mod?.type?.toLowerCase().includes("deck") || mod?.type?.toLowerCase().includes("soffit");
-      if (mod && isDeckOrSoffit) {
+      const isDeckOrSoffit = mod.type?.toLowerCase().includes("deck") || mod.type?.toLowerCase().includes("soffit");
+      if (isDeckOrSoffit) {
         const newX = mod.x + deltaX;
         const newY = mod.y + deltaY;
         const adjacentMod = placedModules.find(m => {
@@ -392,7 +389,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
         }
       }
       
-      if (mod && canPlaceGroup(mod, mod.x + deltaX, mod.y + deltaY, dragging.selectedIds)) {
+      if (canPlaceGroup(mod, mod.x + deltaX, mod.y + deltaY, dragging.selectedIds)) {
         onMove(id, mod.x + deltaX, mod.y + deltaY);
         
         // Move walls attached to this module
