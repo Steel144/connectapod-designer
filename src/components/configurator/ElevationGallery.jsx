@@ -164,9 +164,7 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
             alt={label}
             style={{ height: "100%", width: "auto", display: "block", transform: wall.flipped ? 'scaleX(-1)' : undefined, pointerEvents: "none" }}
           />
-        ) : (
-          <div className="w-full h-full bg-black" />
-        )}
+        ) : null}
       </div>
       {!tight && (
         <div className="text-center">
