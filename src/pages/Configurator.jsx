@@ -458,7 +458,7 @@ export default function Configurator() {
     setDraggingPanel({ startX: e.clientX, startY: e.clientY, panelX: panelPos.x, panelY: panelPos.y });
   };
 
-  const handleMouseMove = (e) => {
+  const handleMouseMove = useCallback((e) => {
     if (draggingPanel) {
       setPanelPos({
         x: draggingPanel.panelX + (e.clientX - draggingPanel.startX),
@@ -466,14 +466,26 @@ export default function Configurator() {
       });
     }
     if (draggingSummary) {
-      handleSummaryMove(e);
+      setSummaryPos({
+        x: draggingSummary.summaryX + (e.clientX - draggingSummary.startX),
+        y: draggingSummary.summaryY + (e.clientY - draggingSummary.startY),
+      });
     }
-  };
+  }, [draggingPanel, draggingSummary]);
 
-  const handleMouseUp = () => {
+  const handleMouseUp = useCallback(() => {
     setDraggingPanel(null);
     setDraggingSummary(null);
-  };
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseup", handleMouseUp);
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, [handleMouseMove, handleMouseUp]);
 
   const handleSummaryMouseDown = (e) => {
     if (e.target.closest("button")) return;
