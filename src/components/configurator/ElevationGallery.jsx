@@ -191,6 +191,7 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
       )}
     </div>
   );
+  };
 
   const getPavilionLabel = (pavNum) => {
     const labels = { 3: "Pavilion 1", 2: "Connection Module", 1: "Pavilion 2" };
