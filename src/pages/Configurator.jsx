@@ -188,6 +188,29 @@ export default function Configurator() {
     }));
   }, [floorPlanImages]);
 
+  // Fix walls that were placed outside a connection module — nudge them inside
+  useEffect(() => {
+    const WALL_THICKNESS = 0.31;
+    const isCM = (mod) => mod.chassis === "C" || (mod.y >= 18 && mod.y < 21 && mod.h <= 2);
+    const cmModules = placedModules.filter(isCM);
+    if (cmModules.length === 0) return;
+
+    setWalls(prev => prev.map(w => {
+      if (w.orientation !== "horizontal") return w;
+      for (const mod of cmModules) {
+        // W face: wall should be AT mod.y (inside top), not at mod.y - thickness (outside)
+        if (w.face === "W" && Math.abs(w.x - mod.x) < 0.5 && Math.abs(w.y - (mod.y - WALL_THICKNESS)) < 0.1) {
+          return { ...w, y: mod.y };
+        }
+        // Y face: wall should be at mod.y + mod.h - thickness (inside bottom), not mod.y + mod.h (outside)
+        if (w.face === "Y" && Math.abs(w.x - mod.x) < 0.5 && Math.abs(w.y - (mod.y + mod.h)) < 0.1) {
+          return { ...w, y: mod.y + mod.h - WALL_THICKNESS };
+        }
+      }
+      return w;
+    }));
+  }, [placedModules]);
+
   const handlePlace = (mod, x, y) => {
     // Check if placing deck/soffit on non-end module
     const isDeckOrSoffit = mod.type?.toLowerCase().includes("deck") || mod.type?.toLowerCase().includes("soffit");
