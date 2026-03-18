@@ -178,18 +178,7 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
        "Soffit": ["SO", "soffit"],
      };
 
-     console.log("[ModulePanel] customModules count:", customModules.length);
-     customModules.forEach(m => {
-       if (m.code === "30C") {
-         console.log("[ModulePanel] Found 30C:", {
-           code: m.code,
-           category: m.category,
-           description: m.description,
-           categories: m.categories,
-           variants: m.variants
-         });
-       }
-     });
+
 
      return PANEL_GROUPS.map(group => {
        // Keep built-in items, filter out deleted ones
