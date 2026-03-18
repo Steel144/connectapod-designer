@@ -578,99 +578,20 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
         onDragOver={handleDragOver}
         onMouseDown={startSelectionBox}
       >
-        {/* Colour stripes — rendered first so they appear behind */}
-         {(() => {
-           const midpoint = GRID_ROWS / 2;
-           const centerModules = placedModules.filter(m => m.y >= midpoint - 4 && m.y < midpoint + 4);
+        {/* Colour stripes — fixed absolute Y bands */}
+        <>
+          {/* Green strip — Pavilion 1 (rows 8–12) */}
+          <div className="absolute pointer-events-none" style={{ left: 0, top: 8 * CELL_H, width: GRID_COLS * CELL_W, height: 4 * CELL_H, backgroundColor: "rgba(34, 197, 94, 0.075)" }} />
+          <div className="absolute pointer-events-none text-green-700 font-bold text-sm" style={{ left: "12px", top: 8 * CELL_H + 4 }}>Pavilion 1</div>
 
-           let centerLeft = 0;
-           let centerWidth = 0;
+          {/* Red strip — Connection Module (rows 18–22) */}
+          <div className="absolute pointer-events-none" style={{ left: 0, top: 18 * CELL_H, width: GRID_COLS * CELL_W, height: 4 * CELL_H, backgroundColor: "rgba(239, 68, 68, 0.075)" }} />
+          <div className="absolute pointer-events-none text-red-700 font-bold text-sm" style={{ left: "12px", top: 18 * CELL_H + 4 }}>Connection Module</div>
 
-           if (centerModules.length > 0) {
-             centerLeft = Math.min(...centerModules.map(m => m.x));
-             const centerRight = Math.max(...centerModules.map(m => m.x + m.w));
-             centerWidth = centerRight - centerLeft;
-           }
-
-           const p1Top = midpoint - pavilionSpacing / 2 - 4;
-           const cmTop = midpoint - pavilionSpacing / 2;
-           const p2Top = midpoint + pavilionSpacing / 2;
-
-           return (
-             <>
-               {/* Green strip — Pavilion 1 */}
-               <div
-                 className="absolute pointer-events-none"
-                 style={{
-                   left: 0,
-                   top: p1Top * CELL_H,
-                   width: GRID_COLS * CELL_W,
-                   height: 4 * CELL_H,
-                   backgroundColor: "rgba(34, 197, 94, 0.075)",
-                   transition: "top 0.2s ease-out",
-                 }}
-               />
-               <div
-                 className="absolute pointer-events-none text-green-700 font-bold text-sm"
-                 style={{
-                   left: "12px",
-                   top: p1Top * CELL_H + 4,
-                   transition: "top 0.2s ease-out",
-                 }}
-               >
-                 Pavilion 1
-               </div>
-
-
-
-               {/* Red strip — Connection Module (1200mm / 2 cells, centered) */}
-               <div
-                 className="absolute pointer-events-none"
-                 style={{
-                   left: 0,
-                   top: (midpoint - 1) * CELL_H,
-                   width: GRID_COLS * CELL_W,
-                   height: 2 * CELL_H,
-                   backgroundColor: "rgba(239, 68, 68, 0.075)",
-                   transition: "top 0.2s ease-out",
-                 }}
-               />
-               <div
-                 className="absolute pointer-events-none text-red-700 font-bold text-sm"
-                 style={{
-                   left: "12px",
-                   top: (midpoint - 1) * CELL_H + 4,
-                   transition: "top 0.2s ease-out",
-                 }}
-               >
-                 Connection Module
-               </div>
-
-               {/* Blue stripe — Pavilion 2 */}
-               <div
-                 className="absolute pointer-events-none"
-                 style={{
-                   left: 0,
-                   top: p2Top * CELL_H,
-                   width: GRID_COLS * CELL_W,
-                   height: 4 * CELL_H,
-                   backgroundColor: "rgba(59, 130, 246, 0.075)",
-                   transition: "top 0.2s ease-out",
-                 }}
-               />
-               <div
-                 className="absolute pointer-events-none text-blue-700 font-bold text-sm"
-                 style={{
-                   left: "12px",
-                   top: p2Top * CELL_H + 4,
-                   transition: "top 0.2s ease-out",
-                 }}
-               >
-                 Pavilion 2
-               </div>
-             </>
-           );
-         })()}
+          {/* Blue stripe — Pavilion 2 (rows 28–32) */}
+          <div className="absolute pointer-events-none" style={{ left: 0, top: 28 * CELL_H, width: GRID_COLS * CELL_W, height: 4 * CELL_H, backgroundColor: "rgba(59, 130, 246, 0.075)" }} />
+          <div className="absolute pointer-events-none text-blue-700 font-bold text-sm" style={{ left: "12px", top: 28 * CELL_H + 4 }}>Pavilion 2</div>
+        </>
 
          {/* Placed modules */}
          {placedModules.map((mod) => {
