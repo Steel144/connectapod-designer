@@ -68,62 +68,80 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
   };
 
   const { pavilions, hasAny } = useMemo(() => {
-    const wallsWithPavilion = walls.map(w => ({ ...w, pavilionNum: getWallPavilion(w) }));
-
-    const pavilionGroups = { 1: [], 2: [], 3: [] };
-    wallsWithPavilion.forEach(w => {
-      if (w.pavilionNum && pavilionGroups[w.pavilionNum]) {
-        pavilionGroups[w.pavilionNum].push(w);
-      }
-    });
-
-    const withImage = wallsWithPavilion.filter(w => w.elevationImage);
+    const withImage = walls.filter(w => w.elevationImage);
     if (withImage.length === 0) return { pavilions: [], hasAny: false };
 
-    const pavilions = [3, 2, 1].map((pavNum) => {
-      const wallsInPavilion = pavilionGroups[pavNum];
-      if (wallsInPavilion.length === 0 && pavNum !== 2) return null;
+    // Group placed modules by pavilion
+    const modsByPavilion = { 1: [], 2: [], 3: [] };
+    placedModules.forEach(mod => {
+      const pav = getPavilion(mod.y);
+      if (pav && modsByPavilion[pav]) modsByPavilion[pav].push(mod);
+    });
 
-      const yGroups = {};
-      wallsInPavilion.forEach(w => {
-        const yKey = Math.round(w.y * 100) / 100;
-        if (!yGroups[yKey]) yGroups[yKey] = [];
-        yGroups[yKey].push(w);
+    // Helper: find the wall placed on a specific face of a module
+    const findWall = (mod, face) => {
+      const WALL_OFFSET = 0.31;
+      return walls.find(w => {
+        if (w.face !== face) return false;
+        if (face === "Y") return Math.abs(w.x - mod.x) < 0.5 && Math.abs(w.y - (mod.y + mod.h)) < 0.5;
+        if (face === "W") return Math.abs(w.x - mod.x) < 0.5 && Math.abs(w.y - (mod.y - WALL_OFFSET)) < 0.5;
+        if (face === "Z") return Math.abs(w.y - mod.y) < 0.5 && Math.abs(w.x - mod.x) < 0.5;
+        if (face === "X") return Math.abs(w.y - mod.y) < 0.5 && Math.abs(w.x - (mod.x + mod.w - WALL_OFFSET)) < 0.5;
+        return false;
+      }) || null;
+    };
+
+    // Make a placeholder wall object for modules that have no wall assigned
+    const makePlaceholder = (mod, face) => ({
+      id: `placeholder-${mod.id}-${face}`,
+      type: null,
+      face,
+      elevationImage: null,
+      width: mod.w * 0.6, // convert grid cells to metres
+      length: mod.w,
+      x: mod.x,
+      y: mod.y,
+    });
+
+    const pavilions = [3, 2, 1].map((pavNum) => {
+      const modsInPav = modsByPavilion[pavNum];
+      if (modsInPav.length === 0) return null;
+
+      // Group modules by their Y row
+      const yRows = {};
+      modsInPav.forEach(mod => {
+        const yKey = mod.y;
+        if (!yRows[yKey]) yRows[yKey] = [];
+        yRows[yKey].push(mod);
       });
 
       const rows = [];
-      Object.keys(yGroups)
-        .map(Number)
-        .sort((a, b) => a - b)
-        .forEach(yPos => {
-          const wallsAtY = yGroups[yPos];
+      Object.keys(yRows).map(Number).sort((a, b) => a - b).forEach(yPos => {
+        const modsAtY = yRows[yPos].sort((a, b) => a.x - b.x);
 
-          // Include ALL vertical walls (with or without image)
-          const allVerticalWalls = wallsAtY.filter(w => w.face === "Z" || w.face === "X");
-          const zWall = allVerticalWalls.find(w => w.face === "Z") || null;
-          const xWall = allVerticalWalls.find(w => w.face === "X") || null;
+        // For each module in this row, find its W and Y face walls (or make a placeholder)
+        const yFaceWalls = modsAtY.map(mod => findWall(mod, "Y") || makePlaceholder(mod, "Y"));
+        const wFaceWalls = modsAtY.map(mod => findWall(mod, "W") || makePlaceholder(mod, "W"));
 
-          // Include ALL horizontal walls — those without images get a placeholder
-          const allHorizontal = wallsAtY.filter(w => w.face === "W" || w.face === "Y");
-          const wWalls = allHorizontal.filter(w => w.face === "W").sort((a, b) => b.x - a.x);
-          const yWalls = allHorizontal.filter(w => w.face === "Y").sort((a, b) => a.x - b.x);
+        // End cap walls (Z/X) — only real walls, no placeholders for end caps
+        const endMods = modsAtY.filter(mod => mod.chassis === "EF" || mod.chassis === "LF" || mod.chassis === "RF" || mod.chassis === "ER");
+        const leftEndMod = endMods.find(mod => mod.x === Math.min(...modsAtY.map(m => m.x)));
+        const rightEndMod = endMods.find(mod => mod.x === Math.max(...modsAtY.map(m => m.x)));
+        const zWall = leftEndMod ? findWall(leftEndMod, "Z") : null;
+        const xWall = rightEndMod ? findWall(rightEndMod, "X") : null;
 
-          // Only show a row if at least one wall in it has an image
-          const hasAnyImageInRow = [...yWalls, ...wWalls, zWall, xWall].some(w => w && w.elevationImage);
+        // Only show a face row if at least one wall in it has an image
+        const hasYImage = yFaceWalls.some(w => w.elevationImage) || [zWall, xWall].some(w => w?.elevationImage);
+        const hasWImage = wFaceWalls.some(w => w.elevationImage) || [zWall, xWall].some(w => w?.elevationImage);
 
-          if (hasAnyImageInRow) {
-            if (yWalls.length > 0) rows.push({ type: "Y", yPos, zWall, midWalls: yWalls, xWall });
-            if (wWalls.length > 0) rows.push({ type: "W", yPos, zWall, midWalls: wWalls, xWall });
-            if ((zWall || xWall) && yWalls.length === 0 && wWalls.length === 0) {
-              rows.push({ type: "ZX", yPos, zWall, xWall });
-            }
-          }
-        });
+        if (hasYImage) rows.push({ type: "Y", yPos, zWall, midWalls: yFaceWalls, xWall });
+        if (hasWImage) rows.push({ type: "W", yPos, zWall, midWalls: wFaceWalls, xWall });
+      });
 
       return { pavilionNum: pavNum, rows };
     });
 
-    return { pavilions, hasAny: withImage.length > 0 };
+    return { pavilions, hasAny: true };
   }, [walls, placedModules]);
 
   if (!hasAny) {
