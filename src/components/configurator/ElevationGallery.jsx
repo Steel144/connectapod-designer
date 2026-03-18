@@ -107,15 +107,20 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
            .sort((a, b) => a - b)
            .forEach(yPos => {
              const wallsAtY = yGroups[yPos];
-             const verticalWalls = wallsAtY.filter(w => (w.face === "Z" || w.face === "X") && w.elevationImage);
-             const zWall = verticalWalls.find(w => w.face === "Z") || null;
-             const xWall = verticalWalls.find(w => w.face === "X") || null;
+             // Include ALL vertical walls (with or without image) for correct end caps
+             const allVerticalWalls = wallsAtY.filter(w => w.face === "Z" || w.face === "X");
+             const zWall = allVerticalWalls.find(w => w.face === "Z") || null;
+             const xWall = allVerticalWalls.find(w => w.face === "X") || null;
 
-             const horizontal = wallsAtY.filter(w => (w.face === "W" || w.face === "Y") && w.elevationImage);
-             const wWalls = horizontal.filter(w => w.face === "W").sort((a, b) => b.x - a.x);
-             const yWalls = horizontal.filter(w => w.face === "Y").sort((a, b) => a.x - b.x);
+             // Include ALL horizontal walls — those without images get a placeholder
+             const allHorizontal = wallsAtY.filter(w => w.face === "W" || w.face === "Y");
+             const wWalls = allHorizontal.filter(w => w.face === "W").sort((a, b) => b.x - a.x);
+             const yWalls = allHorizontal.filter(w => w.face === "Y").sort((a, b) => a.x - b.x);
 
-             if (yWalls.length > 0 || wWalls.length > 0 || zWall || xWall) {
+             // Only show a row if at least one wall in it has an image (so we don't show rows for completely unassigned walls)
+             const hasAnyImageInRow = [...yWalls, ...wWalls, zWall, xWall].some(w => w && w.elevationImage);
+
+             if (hasAnyImageInRow) {
                if (yWalls.length > 0) rows.push({ type: "Y", yPos, zWall, midWalls: yWalls, xWall });
                if (wWalls.length > 0) rows.push({ type: "W", yPos, zWall, midWalls: wWalls, xWall });
                if ((zWall || xWall) && yWalls.length === 0 && wWalls.length === 0) {
