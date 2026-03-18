@@ -136,12 +136,8 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
         const zWall = walls.find(w => w.face === "Z" && modsAtY.some(mod => Math.abs(w.y - mod.y) < 0.5 && Math.abs(w.x - mod.x) < 0.5)) || null;
         const xWall = walls.find(w => w.face === "X" && modsAtY.some(mod => Math.abs(w.y - mod.y) < 0.5 && Math.abs(w.x - (mod.x + mod.w - 0.31)) < 0.5)) || null;
 
-        // Only show a face row if at least one wall in it has an image
-        const hasYImage = yFaceWalls.some(w => w.elevationImage) || [zWall, xWall].some(w => w?.elevationImage);
-        const hasWImage = wFaceWalls.some(w => w.elevationImage) || [zWall, xWall].some(w => w?.elevationImage);
-
-        if (hasYImage) rows.push({ type: "Y", yPos, zWall, midWalls: yFaceWalls, xWall });
-        if (hasWImage) rows.push({ type: "W", yPos, zWall, midWalls: wFaceWalls, xWall });
+        rows.push({ type: "Y", yPos, zWall, midWalls: yFaceWalls, xWall });
+        rows.push({ type: "W", yPos, zWall, midWalls: wFaceWalls, xWall });
       });
 
       return { pavilionNum: pavNum, rows };
