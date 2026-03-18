@@ -188,7 +188,6 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
       return;
     }
     if (!dragging) return;
-    if (dragging) console.log("onMouseMove - dragging:", dragging.mod.id, "cursor:", e.clientX, e.clientY);
     setDragging((d) => d ? { ...d, cursorX: e.clientX, cursorY: e.clientY } : null);
   }, [dragging, draggingWall, selectionBox]);
 
