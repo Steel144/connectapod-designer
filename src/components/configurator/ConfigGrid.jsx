@@ -10,9 +10,9 @@ const GRID_COLS = 75;
 const GRID_ROWS = 40;
 
 const getPavilion = (moduleY) => {
-  if (moduleY >= 8 && moduleY < 12) return 3;  // Green — Pavilion 1
-  if (moduleY >= 20 && moduleY < 21) return 2; // Red — Connection Module
-  if (moduleY >= 28 && moduleY < 32) return 1; // Blue — Pavilion 2
+  if (moduleY >= 2 && moduleY < 6) return 3;   // Green — Pavilion 1
+  if (moduleY >= 14 && moduleY < 15) return 2; // Red — Connection Module
+  if (moduleY >= 27 && moduleY < 31) return 1; // Blue — Pavilion 2
   return null;
 };
 
