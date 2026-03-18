@@ -391,7 +391,9 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
         }
       }
       
-      if (canPlaceGroup(mod, mod.x + deltaX, mod.y + deltaY, dragging.selectedIds)) {
+      const canPlace = canPlaceGroup(mod, mod.x + deltaX, mod.y + deltaY, dragging.selectedIds);
+      console.log("Module", id, "canPlace:", canPlace, "delta:", deltaX, deltaY, "newPos:", mod.x + deltaX, mod.y + deltaY);
+      if (canPlace) {
         onMove(id, mod.x + deltaX, mod.y + deltaY);
         
         // Move walls attached to this module
