@@ -224,6 +224,15 @@ export default function Configurator() {
     }));
   }, [floorPlanImages, customModules]);
 
+  // When wallImages loads/updates, enrich all placed walls with elevation images
+  useEffect(() => {
+    if (Object.keys(wallImages).length === 0) return;
+    setWalls(prev => prev.map(w => {
+      const img = w.elevationImage || wallImages[w.type];
+      return { ...w, elevationImage: img || null };
+    }));
+  }, [wallImages]);
+
   // Fix walls that were placed outside a connection module — nudge them inside
   useEffect(() => {
     const WALL_THICKNESS = 0.31;
