@@ -399,9 +399,9 @@ export default function WallCatalogue() {
       {/* Header */}
       <div className="sticky top-0 z-30 bg-white/80 backdrop-blur border-b border-gray-200 px-6 py-2.5">
         <div className="max-w-7xl mx-auto flex items-center gap-4">
-          <div className="shrink-0">
-            <span className="text-base font-bold text-gray-900 tracking-tight">connectapod</span>
-            <span className="ml-2 text-xs text-gray-400">Wall Catalogue</span>
+          <div className="shrink-0 flex items-center gap-3">
+            <img src="https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/495de7770_ConnectapodArchLogo-01.png" alt="connectapod" className="h-8 w-auto" />
+            <span className="text-xs text-gray-400">Wall Catalogue</span>
           </div>
           <div className="flex items-center gap-2 ml-auto">
             <button

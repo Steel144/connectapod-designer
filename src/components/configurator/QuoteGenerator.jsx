@@ -26,18 +26,31 @@ export default function QuoteGenerator({ placedModules, walls, open, onClose }) 
     const col2 = pageW - margin;
     let y = margin;
 
-    // Header bar
-    doc.setFillColor(241, 90, 34); // #F15A22
-    doc.rect(0, 0, pageW, 18, "F");
-    doc.setTextColor(255, 255, 255);
-    doc.setFontSize(13);
-    doc.setFont("helvetica", "bold");
-    doc.text("connectapod", margin, 12);
+    // Add logo image
+    const logoUrl = "https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/495de7770_ConnectapodArchLogo-01.png";
+    try {
+      doc.addImage(logoUrl, "PNG", margin, 8, 55, 20);
+    } catch (e) {
+      // fallback text if image fails
+      doc.setFillColor(241, 90, 34);
+      doc.rect(0, 0, pageW, 18, "F");
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(13);
+      doc.setFont("helvetica", "bold");
+      doc.text("connectapod", margin, 12);
+    }
+
+    // Header line
+    doc.setDrawColor(241, 90, 34);
+    doc.setLineWidth(0.5);
+    doc.line(0, 30, pageW, 30);
+
+    doc.setTextColor(120, 120, 120);
     doc.setFontSize(9);
     doc.setFont("helvetica", "normal");
-    doc.text("Design Studio — Building Quote", pageW - margin, 12, { align: "right" });
+    doc.text("Design Studio — Building Quote", pageW - margin, 22, { align: "right" });
 
-    y = 30;
+    y = 36;
 
     // Quote title
     doc.setTextColor(30, 30, 30);
