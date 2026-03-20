@@ -122,7 +122,7 @@ export default function Configurator() {
       try {
         const images = await base44.entities.FloorPlanImage.list();
         const entries = {};
-        images.forEach(img => {
+        (Array.isArray(images) ? images : []).forEach(img => {
           if (img.moduleType && img.imageUrl) {
             entries[img.moduleType] = img.imageUrl;
             entries[img.moduleType.toLowerCase()] = img.imageUrl;
