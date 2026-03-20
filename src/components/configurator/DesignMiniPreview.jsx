@@ -2,10 +2,10 @@ import React, { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 
-export default function DesignMiniPreview({ grid = [], walls = [] }) {
+export default function DesignMiniPreview({ grid = [], walls = [], floorPlanImages: propFloorPlanImages, wallImages: propWallImages }) {
   const CELL = 6; // pixels per grid cell
 
-  const { data: floorPlanImages = {} } = useQuery({
+  const { data: queryFloorPlanImages = {} } = useQuery({
     queryKey: ["floorPlanImages", "miniPreview"],
     queryFn: async () => {
       const images = await base44.entities.FloorPlanImage.list();
@@ -15,7 +15,7 @@ export default function DesignMiniPreview({ grid = [], walls = [] }) {
     refetchOnMount: true,
   });
 
-  const { data: wallImages = {} } = useQuery({
+  const { data: queryWallImages = {} } = useQuery({
     queryKey: ["wallImages", "miniPreview"],
     queryFn: async () => {
       const images = await base44.entities.WallImage.list();
@@ -24,6 +24,9 @@ export default function DesignMiniPreview({ grid = [], walls = [] }) {
     staleTime: 0,
     refetchOnMount: true,
   });
+
+  const floorPlanImages = propFloorPlanImages || queryFloorPlanImages;
+  const wallImages = propWallImages || queryWallImages;
 
   const bounds = useMemo(() => {
     if (grid.length === 0) return { minX: 0, minY: 0, maxX: 10, maxY: 10 };
