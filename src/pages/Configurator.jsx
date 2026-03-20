@@ -260,14 +260,11 @@ export default function Configurator() {
     pushHistory(placedModules, walls);
     const fullMod = MODULE_TYPES.find(m => m.type === mod.type) || mod;
     const newMod = { ...fullMod, ...mod, id: generateId(), x, y };
-    // Check for image using the type, originalCode, or custom module code
-    if (floorPlanImages[mod.type]) {
-      newMod.floorPlanImage = floorPlanImages[mod.type];
-    } else if (mod.originalCode && floorPlanImages[mod.originalCode]) {
-      newMod.floorPlanImage = floorPlanImages[mod.originalCode];
-    } else if (floorPlanImages[newMod.type]) {
-      newMod.floorPlanImage = floorPlanImages[newMod.type];
-    }
+    // Check for image using the type or originalCode (case-insensitive)
+    const imgUrl = floorPlanImages[mod.type]
+      || floorPlanImages[mod.type?.toLowerCase()]
+      || (mod.originalCode && (floorPlanImages[mod.originalCode] || floorPlanImages[mod.originalCode?.toLowerCase()]));
+    if (imgUrl) newMod.floorPlanImage = imgUrl;
     setPlacedModules((prev) => [...prev, newMod]);
   };
 
