@@ -26,7 +26,10 @@ export default function Configurator() {
     try { return JSON.parse(localStorage.getItem("configurator_modules") || "[]"); } catch { return []; }
   });
   const [walls, setWalls] = useState(() => {
-    try { return JSON.parse(localStorage.getItem("configurator_walls") || "[]"); } catch { return []; }
+    try {
+      const saved = JSON.parse(localStorage.getItem("configurator_walls") || "[]");
+      return saved.map(w => ({ ...w, type: w.type || w.mpCode || w.label }));
+    } catch { return []; }
   });
 
   const pushHistory = useCallback((modules, w) => {
