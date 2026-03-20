@@ -11,17 +11,17 @@ export default function DesignCatalogue() {
 
   const { data: templates = [], isLoading } = useQuery({
     queryKey: ["homeDesigns", "templates"],
-    queryFn: () => base44.entities.HomeDesign.filter({ is_template: true }),
+    queryFn: async () => { try { return await base44.entities.HomeDesign.filter({ is_template: true }); } catch { return []; } },
   });
 
   const { data: moduleEntries = [] } = useQuery({
     queryKey: ["moduleEntries"],
-    queryFn: () => base44.entities.ModuleEntry.list(),
+    queryFn: async () => { try { return await base44.entities.ModuleEntry.list(); } catch { return []; } },
   });
 
   const { data: floorPlanImageList = [] } = useQuery({
     queryKey: ["floorPlanImages"],
-    queryFn: () => base44.entities.FloorPlanImage.list(),
+    queryFn: async () => { try { return await base44.entities.FloorPlanImage.list(); } catch { return []; } },
   });
 
   // Build lookup: moduleType code -> imageUrl
