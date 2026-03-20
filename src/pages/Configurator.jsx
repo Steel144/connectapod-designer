@@ -136,7 +136,7 @@ export default function Configurator() {
 
   const { data: customModules = [] } = useQuery({
     queryKey: ["moduleEntries"],
-    queryFn: async () => { try { return await base44.entities.ModuleEntry.list(); } catch { return []; } },
+    queryFn: async () => { try { const r = await base44.entities.ModuleEntry.list(); return Array.isArray(r) ? r : []; } catch { return []; } },
   });
 
   const saveMutation = useMutation({
