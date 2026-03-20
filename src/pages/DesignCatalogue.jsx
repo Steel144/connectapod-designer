@@ -33,7 +33,7 @@ export default function DesignCatalogue() {
   // Build lookup: label -> imageUrl (via ModuleEntry name -> code -> image)
   const labelToImage = useMemo(() => {
     const map = {};
-    for (const entry of moduleEntries) {
+    for (const entry of (Array.isArray(moduleEntries) ? moduleEntries : [])) {
       const imgUrl = floorPlanImages[entry.code] || (entry.originalCode && floorPlanImages[entry.originalCode]);
       if (imgUrl) map[entry.name] = imgUrl;
     }
