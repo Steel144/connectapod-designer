@@ -137,6 +137,7 @@ export default function Configurator() {
         return {}; 
       }
     },
+    staleTime: 0,
   });
 
   const { data: customModules = [] } = useQuery({
