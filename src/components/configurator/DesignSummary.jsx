@@ -74,7 +74,7 @@ export default function DesignSummary({ placedModules, onSave, onClear, isSaving
           className="w-full h-9 rounded-none border-gray-200 text-gray-600 hover:border-[#F15A22] hover:text-[#F15A22] text-sm"
         >
           <FileText size={14} className="mr-1.5" />
-          Get Quote PDF
+          Get Estimate PDF
         </Button>
       </div>
     </div>
