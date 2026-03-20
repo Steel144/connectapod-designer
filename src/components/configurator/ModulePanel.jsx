@@ -185,7 +185,7 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
        const builtInItems = group.items.filter(item => !deletedCodes.has(item.code));
 
        // Find custom modules for this category
-        const categoryModules = customModules.filter(m => {
+        const categoryModules = (Array.isArray(customModules) ? customModules : []).filter(m => {
           if (deletedCodes.has(m.code)) return false;
           const descriptions = (m.description || "").split(",").map(s => s.trim()).filter(Boolean);
           const categories = Array.isArray(m.categories) ? m.categories : [];
