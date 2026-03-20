@@ -1,9 +1,9 @@
 import React from "react";
-import { Layers, DollarSign, Maximize2, Save, Trash2 } from "lucide-react";
+import { Layers, DollarSign, Maximize2, Save, Trash2, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { GROUP_ICONS } from "./ModulePanel.jsx";
 
-export default function DesignSummary({ placedModules, onSave, onClear, isSaving }) {
+export default function DesignSummary({ placedModules, onSave, onClear, isSaving, onQuote }) {
   const totalSqm = placedModules.reduce((sum, m) => sum + m.sqm, 0);
   const totalPrice = placedModules.reduce((sum, m) => sum + m.price, 0);
   const moduleCount = placedModules.length;
@@ -48,22 +48,33 @@ export default function DesignSummary({ placedModules, onSave, onClear, isSaving
         </div>
       )}
 
-      <div className="flex gap-2">
+      <div className="flex gap-2 flex-col">
+        <div className="flex gap-2">
+          <Button
+            onClick={onSave}
+            disabled={moduleCount === 0 || isSaving}
+            className="flex-1 bg-[#F15A22] hover:bg-[#d94e1a] text-white text-sm h-9 rounded-none"
+          >
+            <Save size={14} className="mr-1.5" />
+            {isSaving ? "Saving..." : "Save Design"}
+          </Button>
+          <Button
+            onClick={onClear}
+            disabled={moduleCount === 0}
+            variant="outline"
+            className="h-9 rounded-none border-gray-200 text-gray-500 hover:text-red-500 hover:border-red-200"
+          >
+            <Trash2 size={14} />
+          </Button>
+        </div>
         <Button
-          onClick={onSave}
-          disabled={moduleCount === 0 || isSaving}
-          className="flex-1 bg-[#F15A22] hover:bg-[#d94e1a] text-white text-sm h-9 rounded-none"
-        >
-          <Save size={14} className="mr-1.5" />
-          {isSaving ? "Saving..." : "Save Design"}
-        </Button>
-        <Button
-          onClick={onClear}
+          onClick={onQuote}
           disabled={moduleCount === 0}
           variant="outline"
-          className="h-9 rounded-none border-gray-200 text-gray-500 hover:text-red-500 hover:border-red-200"
+          className="w-full h-9 rounded-none border-gray-200 text-gray-600 hover:border-[#F15A22] hover:text-[#F15A22] text-sm"
         >
-          <Trash2 size={14} />
+          <FileText size={14} className="mr-1.5" />
+          Get Quote PDF
         </Button>
       </div>
     </div>
