@@ -6,7 +6,7 @@ export default function DesignMiniPreview({ grid = [], walls = [] }) {
   const CELL = 6; // pixels per grid cell
 
   const { data: floorPlanImages = {} } = useQuery({
-    queryKey: ["floorPlanImages"],
+    queryKey: ["floorPlanImages", "miniPreview"],
     queryFn: async () => {
       const images = await base44.entities.FloorPlanImage.list();
       return Object.fromEntries(images.map(img => [img.moduleType, img.imageUrl]));
