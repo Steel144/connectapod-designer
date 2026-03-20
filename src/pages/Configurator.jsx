@@ -481,10 +481,10 @@ export default function Configurator() {
       return { ...m, type: resolvedType, floorPlanImage: img || null, sqm, price };
     });
     const loadedWalls = (design.walls || []).map(w => {
-      // Prioritize: existing image from design → lookup by type
-      // If wallImages is empty (still loading), keep the design's elevationImage
-      const img = w.elevationImage || (Object.keys(wallImages).length > 0 ? wallImages[w.type] : null);
-      return { ...w, elevationImage: img || null };
+      // Ensure type is preserved; prioritize: existing image from design → lookup by type
+      const wallType = w.type || w.mpCode;
+      const img = w.elevationImage || (Object.keys(wallImages).length > 0 ? wallImages[wallType] : null);
+      return { ...w, type: wallType, elevationImage: img || null };
     });
     setPlacedModules(grid);
     setWalls(loadedWalls);
