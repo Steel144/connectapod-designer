@@ -114,6 +114,7 @@ export default function Configurator() {
         return Object.fromEntries(images.map(img => [img.wallType, img.imageUrl]));
       } catch { return {}; }
     },
+    staleTime: 0,
   });
 
   const { data: floorPlanImages = {} } = useQuery({
