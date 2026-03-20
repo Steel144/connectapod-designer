@@ -1,7 +1,17 @@
 import React, { useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { base44 } from "@/api/base44Client";
 
 export default function DesignMiniPreview({ grid = [], walls = [] }) {
   const CELL = 6; // pixels per grid cell
+
+  const { data: floorPlanImages = {} } = useQuery({
+    queryKey: ["floorPlanImages"],
+    queryFn: async () => {
+      const images = await base44.entities.FloorPlanImage.list();
+      return Object.fromEntries(images.map(img => [img.moduleType, img.imageUrl]));
+    },
+  });
 
   const bounds = useMemo(() => {
     if (grid.length === 0) return { minX: 0, minY: 0, maxX: 10, maxY: 10 };
@@ -31,23 +41,53 @@ export default function DesignMiniPreview({ grid = [], walls = [] }) {
         style={{ maxWidth: "100%", maxHeight: "100%" }}
         preserveAspectRatio="xMidYMid meet"
       >
+        <defs>
+          {grid.map((m, i) => {
+            const imgUrl = m.floorPlanImage || floorPlanImages[m.type] || (m.originalCode && floorPlanImages[m.originalCode]);
+            if (!imgUrl) return null;
+            return (
+              <pattern
+                key={`pat-${m.id || i}`}
+                id={`img-${m.id || i}`}
+                patternUnits="userSpaceOnUse"
+                x={toX(m.x)}
+                y={toY(m.y)}
+                width={(m.w || 5) * CELL}
+                height={(m.h || 8) * CELL}
+              >
+                <image
+                  href={imgUrl}
+                  x={0}
+                  y={0}
+                  width={(m.w || 5) * CELL}
+                  height={(m.h || 8) * CELL}
+                  preserveAspectRatio="xMidYMid slice"
+                />
+              </pattern>
+            );
+          })}
+        </defs>
+
         {/* Background */}
         <rect x={0} y={0} width={W} height={H} fill="#F5F5F3" />
 
         {/* Modules */}
-        {grid.map((m, i) => (
-          <g key={m.id || i}>
-            <rect
-              x={toX(m.x)}
-              y={toY(m.y)}
-              width={(m.w || 5) * CELL}
-              height={(m.h || 8) * CELL}
-              fill="#FDF0EB"
-              stroke="#F15A22"
-              strokeWidth={0.8}
-            />
-          </g>
-        ))}
+        {grid.map((m, i) => {
+          const imgUrl = m.floorPlanImage || floorPlanImages[m.type] || (m.originalCode && floorPlanImages[m.originalCode]);
+          return (
+            <g key={m.id || i}>
+              <rect
+                x={toX(m.x)}
+                y={toY(m.y)}
+                width={(m.w || 5) * CELL}
+                height={(m.h || 8) * CELL}
+                fill={imgUrl ? `url(#img-${m.id || i})` : "#FDF0EB"}
+                stroke="#F15A22"
+                strokeWidth={0.8}
+              />
+            </g>
+          );
+        })}
 
         {/* Walls */}
         {walls.map((w, i) => {
