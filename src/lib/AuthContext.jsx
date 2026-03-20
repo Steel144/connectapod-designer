@@ -96,7 +96,10 @@ export const AuthProvider = ({ children }) => {
       setIsAuthenticated(true);
       setIsLoadingAuth(false);
     } catch (error) {
-      console.error('User auth check failed:', error);
+      // 401 is expected on public apps without auth — user is just anonymous
+      if (error?.status !== 401) {
+        console.error('User auth check failed:', error);
+      }
       setIsLoadingAuth(false);
       setIsAuthenticated(false);
       
