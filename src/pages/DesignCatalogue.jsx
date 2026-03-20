@@ -42,7 +42,7 @@ export default function DesignCatalogue() {
 
   // Enrich grid items with resolved images
   const enrichedTemplates = useMemo(() =>
-    templates.map(design => ({
+    (Array.isArray(templates) ? templates : []).map(design => ({
       ...design,
       grid: (design.grid || []).map(m => {
         const type = m.type || m.moduleType;
