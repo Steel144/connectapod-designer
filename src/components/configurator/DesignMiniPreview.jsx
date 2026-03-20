@@ -134,45 +134,15 @@ export default function DesignMiniPreview({ grid = [], walls = [] }) {
           const ww = isH ? (w.length || 5) * CELL : (w.thickness || 0.31) * CELL;
           const wh = isH ? (w.thickness || 0.31) * CELL : (w.length || 5) * CELL;
           const imgUrl = w.elevationImage || wallImages[w.type];
-          return imgUrl ? (
-            <g key={w.id || i}>
-              <defs>
-                <pattern
-                  id={`wall-img-${w.id || i}`}
-                  patternUnits="userSpaceOnUse"
-                  x={toX(w.x)}
-                  y={toY(w.y)}
-                  width={Math.max(ww, 1)}
-                  height={Math.max(wh, 1)}
-                >
-                  <image
-                    href={imgUrl}
-                    x={0}
-                    y={0}
-                    width={Math.max(ww, 1)}
-                    height={Math.max(wh, 1)}
-                    preserveAspectRatio="xMidYMid slice"
-                  />
-                </pattern>
-              </defs>
-              <rect
-                x={toX(w.x)}
-                y={toY(w.y)}
-                width={Math.max(ww, 1)}
-                height={Math.max(wh, 1)}
-                fill={`url(#wall-img-${w.id || i})`}
-                opacity={0.8}
-              />
-            </g>
-          ) : (
+          return (
             <rect
               key={w.id || i}
               x={toX(w.x)}
               y={toY(w.y)}
               width={Math.max(ww, 1)}
               height={Math.max(wh, 1)}
-              fill="#4B5563"
-              opacity={0.6}
+              fill={imgUrl ? `url(#wall-img-${w.id || i})` : "#4B5563"}
+              opacity={0.8}
             />
           );
         })}
