@@ -482,11 +482,11 @@ export default function Configurator() {
       return { ...m, type: resolvedType, floorPlanImage: img || null, sqm, price };
     });
     const loadedWalls = (design.walls || []).map(w => {
-      // Ensure type is preserved; prioritize: existing image from design → lookup by type
-      const wallType = w.type || w.mpCode;
-      const img = w.elevationImage || (Object.keys(wallImages).length > 0 ? wallImages[wallType] : null);
-      return { ...w, type: wallType, elevationImage: img || null };
-    });
+       // Ensure type is preserved; prioritize: saved image → lookup by type → fallback
+       const wallType = w.type || w.mpCode;
+       const img = w.elevationImage || wallImages[wallType] || null;
+       return { ...w, type: wallType, elevationImage: img };
+     });
     setPlacedModules(grid);
     setWalls(loadedWalls);
     setShowSaved(false);
