@@ -166,7 +166,7 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
 
   // Merge custom modules with PANEL_GROUPS by category, supporting multi-category modules
    const dynamicPanelGroups = React.useMemo(() => {
-     const deletedCodes = new Set(deletedModules.map(d => d.moduleCode));
+     const deletedCodes = new Set((Array.isArray(deletedModules) ? deletedModules : []).map(d => d.moduleCode));
      const categoryAbbreviations = {
        "Living": ["LV", "living"],
        "Bedroom": ["B0", "B1", "B2", "B3", "B4", "bedroom"],
