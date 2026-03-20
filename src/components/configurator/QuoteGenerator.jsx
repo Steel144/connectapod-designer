@@ -56,7 +56,7 @@ export default function QuoteGenerator({ placedModules, walls, open, onClose }) 
     doc.setTextColor(120, 120, 120);
     doc.setFontSize(9);
     doc.setFont("helvetica", "normal");
-    doc.text("Design Studio — Building Quote", pageW - margin, 22, { align: "right" });
+    doc.text("Design Studio — Building Estimate", pageW - margin, 22, { align: "right" });
 
     y = 36;
 
