@@ -22,6 +22,7 @@ export default function DesignCatalogue() {
   const { data: floorPlanImageList = [] } = useQuery({
     queryKey: ["floorPlanImages"],
     queryFn: async () => { try { const r = await base44.entities.FloorPlanImage.list(); return Array.isArray(r) ? r : []; } catch { return []; } },
+    staleTime: 0,
   });
 
   // Build lookup: moduleType code -> imageUrl
