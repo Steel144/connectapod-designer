@@ -469,7 +469,7 @@ export default function Configurator() {
       groupKey: m.groupKey,
     }));
     const wallsToSave = walls.map(w => ({
-      id: w.id, type: w.type, label: w.label, x: w.x, y: w.y,
+      id: w.id, type: w.type || w.mpCode || w.label, label: w.label, x: w.x, y: w.y,
       orientation: w.orientation, length: w.length, thickness: w.thickness,
       face: w.face, rotation: w.rotation, flipped: w.flipped || false, elevationImage: w.elevationImage || null,
       mpCode: w.mpCode, description: w.description, variants: w.variants,
