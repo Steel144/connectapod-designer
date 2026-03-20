@@ -4,8 +4,8 @@ import { Button } from "@/components/ui/button";
 import { GROUP_ICONS } from "./ModulePanel.jsx";
 
 export default function DesignSummary({ placedModules, onSave, onClear, isSaving, onQuote }) {
-  const totalSqm = placedModules.reduce((sum, m) => sum + m.sqm, 0);
-  const totalPrice = placedModules.reduce((sum, m) => sum + m.price, 0);
+  const totalSqm = placedModules.reduce((sum, m) => sum + (m.sqm || 0), 0);
+  const totalPrice = placedModules.reduce((sum, m) => sum + (m.price || 0), 0);
   const moduleCount = placedModules.length;
 
   return (
