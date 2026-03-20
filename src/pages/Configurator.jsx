@@ -190,14 +190,30 @@ export default function Configurator() {
 
 
   // When floorPlanImages loads/updates, apply images to all placed modules
+  // Also depends on placedModules so it re-runs when modules are first loaded from localStorage
+  const floorPlanImagesRef = React.useRef(floorPlanImages);
+  floorPlanImagesRef.current = floorPlanImages;
+
   useEffect(() => {
     if (Object.keys(floorPlanImages).length === 0) return;
     setPlacedModules(prev => prev.map(m => {
       const img = floorPlanImages[m.type] || (m.originalCode && floorPlanImages[m.originalCode]);
-      // Always update with current floorPlanImages, even if module already has an image
-      return { ...m, floorPlanImage: img || m.floorPlanImage };
+      return { ...m, floorPlanImage: img || m.floorPlanImage || null };
     }));
   }, [floorPlanImages]);
+
+  // Also sync images when placedModules first populates (e.g. from localStorage on mount)
+  const hasInitializedImages = React.useRef(false);
+  useEffect(() => {
+    if (hasInitializedImages.current) return;
+    const imgs = floorPlanImagesRef.current;
+    if (Object.keys(imgs).length === 0 || placedModules.length === 0) return;
+    hasInitializedImages.current = true;
+    setPlacedModules(prev => prev.map(m => {
+      const img = imgs[m.type] || (m.originalCode && imgs[m.originalCode]);
+      return { ...m, floorPlanImage: img || m.floorPlanImage || null };
+    }));
+  }, [placedModules.length]);
 
   // Fix walls that were placed outside a connection module — nudge them inside
   useEffect(() => {
