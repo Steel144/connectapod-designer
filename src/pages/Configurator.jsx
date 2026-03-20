@@ -61,12 +61,12 @@ export default function Configurator() {
   }, []);
   const { data: customWalls = [] } = useQuery({
     queryKey: ["wallEntries"],
-    queryFn: async () => { try { return await base44.entities.WallEntry.list(); } catch { return []; } },
+    queryFn: async () => { try { const r = await base44.entities.WallEntry.list(); return Array.isArray(r) ? r : []; } catch { return []; } },
   });
 
   const { data: deletedWalls = [] } = useQuery({
     queryKey: ["deletedWalls"],
-    queryFn: async () => { try { return await base44.entities.DeletedWall.list(); } catch { return []; } },
+    queryFn: async () => { try { const r = await base44.entities.DeletedWall.list(); return Array.isArray(r) ? r : []; } catch { return []; } },
   });
 
   const availableWallTypes = React.useMemo(() => {
