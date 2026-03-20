@@ -47,6 +47,18 @@ export default function Configurator() {
   const [printMode, setPrintMode] = useState(null);
   const [quoteOpen, setQuoteOpen] = useState(false);
   const [viewMode, setViewMode] = useState("2d");
+
+  // Load template from catalogue if set
+  useEffect(() => {
+    const raw = sessionStorage.getItem("load_template");
+    if (raw) {
+      sessionStorage.removeItem("load_template");
+      try {
+        const design = JSON.parse(raw);
+        handleLoad(design);
+      } catch {}
+    }
+  }, []);
   const { data: customWalls = [] } = useQuery({
     queryKey: ["wallEntries"],
     queryFn: () => base44.entities.WallEntry.list(),
