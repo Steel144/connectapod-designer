@@ -103,37 +103,40 @@ export default function Configurator() {
 
   const { data: designs = [] } = useQuery({
     queryKey: ["homeDesigns"],
-    queryFn: () => base44.entities.HomeDesign.list("-created_date"),
+    queryFn: async () => { try { return await base44.entities.HomeDesign.list("-created_date"); } catch { return []; } },
   });
 
   const { data: wallImages = {} } = useQuery({
     queryKey: ["wallImages"],
     queryFn: async () => {
-      const images = await base44.entities.WallImage.list();
-      return Object.fromEntries(images.map(img => [img.wallType, img.imageUrl]));
+      try {
+        const images = await base44.entities.WallImage.list();
+        return Object.fromEntries(images.map(img => [img.wallType, img.imageUrl]));
+      } catch { return {}; }
     },
   });
 
   const { data: floorPlanImages = {} } = useQuery({
     queryKey: ["floorPlanImages"],
     queryFn: async () => {
-      const images = await base44.entities.FloorPlanImage.list();
-      // Build lookup with both original and lowercase keys for robust matching
-      const entries = {};
-      images.forEach(img => {
-        if (img.moduleType && img.imageUrl) {
-          entries[img.moduleType] = img.imageUrl;
-          entries[img.moduleType.toLowerCase()] = img.imageUrl;
-          entries[img.moduleType.trim()] = img.imageUrl;
-        }
-      });
-      return entries;
+      try {
+        const images = await base44.entities.FloorPlanImage.list();
+        const entries = {};
+        images.forEach(img => {
+          if (img.moduleType && img.imageUrl) {
+            entries[img.moduleType] = img.imageUrl;
+            entries[img.moduleType.toLowerCase()] = img.imageUrl;
+            entries[img.moduleType.trim()] = img.imageUrl;
+          }
+        });
+        return entries;
+      } catch { return {}; }
     },
   });
 
   const { data: customModules = [] } = useQuery({
     queryKey: ["moduleEntries"],
-    queryFn: () => base44.entities.ModuleEntry.list(),
+    queryFn: async () => { try { return await base44.entities.ModuleEntry.list(); } catch { return []; } },
   });
 
   const saveMutation = useMutation({
