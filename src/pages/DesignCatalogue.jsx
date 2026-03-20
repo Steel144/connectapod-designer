@@ -54,11 +54,11 @@ export default function DesignCatalogue() {
   );
 
   // Collect all unique tags
-  const allTags = ["All", ...new Set(templates.flatMap((t) => t.tags || []))];
+  const allTags = ["All", ...new Set(enrichedTemplates.flatMap((t) => t.tags || []))];
 
   const filtered = selectedTag === "All"
-    ? templates
-    : templates.filter((t) => (t.tags || []).includes(selectedTag));
+    ? enrichedTemplates
+    : enrichedTemplates.filter((t) => (t.tags || []).includes(selectedTag));
 
   const handleStartDesign = (design) => {
     // Store the template in sessionStorage so Configurator can pick it up
