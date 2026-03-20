@@ -34,7 +34,7 @@ export default function PrintableCatalogue({ title, categories, onClose }) {
       <div className="print-page">
         {/* Logo header */}
         <div style={{ display: "flex", alignItems: "center", marginBottom: "6mm", paddingBottom: "4mm", borderBottom: "2pt solid #F15A22" }}>
-          <img src="https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/495de7770_ConnectapodArchLogo-01.png" alt="connectapod" style={{ height: "14mm", width: "auto" }} />
+          <img src="https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/1a43e85d2_Connectapod-01.png" alt="connectapod" style={{ height: "14mm", width: "auto" }} />
           <span style={{ marginLeft: "8mm", color: "#666", fontSize: "12pt", fontWeight: "normal" }}>{title}</span>
         </div>
         <p style={{ fontSize: "9pt", color: "#666", margin: "0 0 4mm 0" }}>
