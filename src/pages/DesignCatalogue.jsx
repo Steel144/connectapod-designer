@@ -68,8 +68,12 @@ export default function DesignCatalogue() {
         const imgUrl = (type && floorPlanImages[type]) || (m.label && labelToImage[m.label]);
         return { ...m, type, floorPlanImage: imgUrl || m.floorPlanImage || null };
       }),
+      walls: (design.walls || []).map(w => ({
+        ...w,
+        elevationImage: w.elevationImage || (w.type && wallImages[w.type]),
+      })),
     })),
-    [templates, floorPlanImages, labelToImage]
+    [templates, floorPlanImages, labelToImage, wallImages]
   );
 
   // Collect all unique tags
