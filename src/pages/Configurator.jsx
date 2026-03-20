@@ -469,7 +469,8 @@ export default function Configurator() {
     });
     const loadedWalls = (design.walls || []).map(w => {
       // Prioritize: existing image from design → lookup by type
-      const img = w.elevationImage || wallImages[w.type];
+      // If wallImages is empty (still loading), keep the design's elevationImage
+      const img = w.elevationImage || (Object.keys(wallImages).length > 0 ? wallImages[w.type] : null);
       return { ...w, elevationImage: img || null };
     });
     setPlacedModules(grid);
