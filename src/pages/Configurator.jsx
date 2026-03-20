@@ -228,8 +228,9 @@ export default function Configurator() {
   useEffect(() => {
     if (Object.keys(wallImages).length === 0) return;
     setWalls(prev => prev.map(w => {
-      const img = w.elevationImage || wallImages[w.type];
-      return { ...w, elevationImage: img || null };
+      const wallType = w.type || w.mpCode || w.label;
+      const img = w.elevationImage || wallImages[wallType];
+      return { ...w, type: wallType, elevationImage: img || null };
     }));
   }, [wallImages]);
 
