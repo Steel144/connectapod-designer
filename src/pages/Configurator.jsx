@@ -118,7 +118,16 @@ export default function Configurator() {
     queryKey: ["floorPlanImages"],
     queryFn: async () => {
       const images = await base44.entities.FloorPlanImage.list();
-      return Object.fromEntries(images.map(img => [img.moduleType, img.imageUrl]));
+      // Build lookup with both original and lowercase keys for robust matching
+      const entries = {};
+      images.forEach(img => {
+        if (img.moduleType && img.imageUrl) {
+          entries[img.moduleType] = img.imageUrl;
+          entries[img.moduleType.toLowerCase()] = img.imageUrl;
+          entries[img.moduleType.trim()] = img.imageUrl;
+        }
+      });
+      return entries;
     },
   });
 
