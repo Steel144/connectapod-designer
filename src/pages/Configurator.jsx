@@ -718,7 +718,7 @@ export default function Configurator() {
                </button>
              </div>
              {!summaryCollapsed && (
-               <div className="p-4 h-[320px] overflow-hidden">
+               <div className="p-4 h-[320px] overflow-y-auto">
                  {selectedModule && selectedModule.floorPlanImage ? (
                    <div className="flex flex-col h-full gap-2">
                      <div>
