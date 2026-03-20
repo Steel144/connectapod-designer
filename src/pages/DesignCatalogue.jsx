@@ -94,10 +94,14 @@ export default function DesignCatalogue() {
     : enrichedTemplates.filter((t) => (t.tags || []).includes(selectedTag));
 
   const handleStartDesign = (designId) => {
+    // Find the original design from templates
+    const originalDesign = templates.find(d => d.id === designId);
+    console.log("[DesignCatalogue] Original wall sample:", originalDesign?.walls?.[0]);
+    
     // Find the enriched design with images included
     const design = enrichedTemplates.find(d => d.id === designId);
     if (design) {
-      console.log("[DesignCatalogue] Enriched design walls sample:", design.walls?.[0]);
+      console.log("[DesignCatalogue] Enriched wall sample:", design.walls?.[0]);
       sessionStorage.setItem("load_template", JSON.stringify(design));
       navigate("/Configurator");
     }
