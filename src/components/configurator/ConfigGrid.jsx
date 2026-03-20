@@ -810,5 +810,6 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
         Grid: {GRID_COLS}×{GRID_ROWS} cells · Snap: 600mm
       </p>
       </div>
+      </div>
       );
       }
