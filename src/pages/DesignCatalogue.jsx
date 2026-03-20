@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { Link, useNavigate } from "react-router-dom";
@@ -13,6 +13,45 @@ export default function DesignCatalogue() {
     queryKey: ["homeDesigns", "templates"],
     queryFn: () => base44.entities.HomeDesign.filter({ is_template: true }),
   });
+
+  const { data: moduleEntries = [] } = useQuery({
+    queryKey: ["moduleEntries"],
+    queryFn: () => base44.entities.ModuleEntry.list(),
+  });
+
+  const { data: floorPlanImageList = [] } = useQuery({
+    queryKey: ["floorPlanImages"],
+    queryFn: () => base44.entities.FloorPlanImage.list(),
+  });
+
+  // Build lookup: moduleType code -> imageUrl
+  const floorPlanImages = useMemo(() =>
+    Object.fromEntries(floorPlanImageList.map(img => [img.moduleType, img.imageUrl])),
+    [floorPlanImageList]
+  );
+
+  // Build lookup: label -> imageUrl (via ModuleEntry name -> code -> image)
+  const labelToImage = useMemo(() => {
+    const map = {};
+    for (const entry of moduleEntries) {
+      const imgUrl = floorPlanImages[entry.code] || (entry.originalCode && floorPlanImages[entry.originalCode]);
+      if (imgUrl) map[entry.name] = imgUrl;
+    }
+    return map;
+  }, [moduleEntries, floorPlanImages]);
+
+  // Enrich grid items with resolved images
+  const enrichedTemplates = useMemo(() =>
+    templates.map(design => ({
+      ...design,
+      grid: (design.grid || []).map(m => {
+        const type = m.type || m.moduleType;
+        const imgUrl = (type && floorPlanImages[type]) || (m.label && labelToImage[m.label]);
+        return { ...m, type, floorPlanImage: imgUrl || m.floorPlanImage || null };
+      }),
+    })),
+    [templates, floorPlanImages, labelToImage]
+  );
 
   // Collect all unique tags
   const allTags = ["All", ...new Set(templates.flatMap((t) => t.tags || []))];
