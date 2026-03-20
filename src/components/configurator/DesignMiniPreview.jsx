@@ -11,6 +11,8 @@ export default function DesignMiniPreview({ grid = [], walls = [] }) {
       const images = await base44.entities.FloorPlanImage.list();
       return Object.fromEntries(images.map(img => [img.moduleType, img.imageUrl]));
     },
+    staleTime: 0,
+    refetchOnMount: true,
   });
 
   const bounds = useMemo(() => {
