@@ -146,22 +146,22 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
 
   const { data: customModules = [] } = useQuery({
     queryKey: ["moduleEntries"],
-    queryFn: async () => { try { return await base44.entities.ModuleEntry.list(); } catch { return []; } },
+    queryFn: async () => { try { const r = await base44.entities.ModuleEntry.list(); return Array.isArray(r) ? r : []; } catch { return []; } },
   });
 
   const { data: deletedModules = [] } = useQuery({
     queryKey: ["deletedModules"],
-    queryFn: async () => { try { return await base44.entities.DeletedModule.list(); } catch { return []; } },
+    queryFn: async () => { try { const r = await base44.entities.DeletedModule.list(); return Array.isArray(r) ? r : []; } catch { return []; } },
   });
 
   const { data: customWalls = [] } = useQuery({
     queryKey: ["wallEntries"],
-    queryFn: async () => { try { return await base44.entities.WallEntry.list(); } catch { return []; } },
+    queryFn: async () => { try { const r = await base44.entities.WallEntry.list(); return Array.isArray(r) ? r : []; } catch { return []; } },
   });
 
   const { data: deletedWalls = [] } = useQuery({
     queryKey: ["deletedWalls"],
-    queryFn: async () => { try { return await base44.entities.DeletedWall.list(); } catch { return []; } },
+    queryFn: async () => { try { const r = await base44.entities.DeletedWall.list(); return Array.isArray(r) ? r : []; } catch { return []; } },
   });
 
   // Merge custom modules with PANEL_GROUPS by category, supporting multi-category modules
