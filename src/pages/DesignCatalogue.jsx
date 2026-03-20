@@ -138,7 +138,7 @@ export default function DesignCatalogue() {
               <div key={design.id} className="bg-white border border-gray-200 overflow-hidden hover:shadow-lg transition-all group">
                 {/* Mini grid preview */}
                 <div className="bg-[#F5F5F3] h-48 relative overflow-hidden border-b border-gray-100">
-                  <DesignMiniPreview grid={design.grid || []} walls={design.walls || []} />
+                  <DesignMiniPreview grid={design.grid || []} walls={design.walls || []} wallImages={wallImages} floorPlanImages={floorPlanImages} />
                 </div>
 
                 <div className="p-4">
