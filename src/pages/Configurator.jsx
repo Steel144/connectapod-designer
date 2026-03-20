@@ -206,7 +206,9 @@ export default function Configurator() {
   useEffect(() => {
     if (Object.keys(floorPlanImages).length === 0) return;
     setPlacedModules(prev => prev.map(m => {
-      const img = floorPlanImages[m.type] || (m.originalCode && floorPlanImages[m.originalCode]);
+      const img = floorPlanImages[m.type] 
+        || floorPlanImages[m.type?.toLowerCase()]
+        || (m.originalCode && (floorPlanImages[m.originalCode] || floorPlanImages[m.originalCode?.toLowerCase()]));
       return { ...m, floorPlanImage: img || m.floorPlanImage || null };
     }));
   }, [floorPlanImages]);
