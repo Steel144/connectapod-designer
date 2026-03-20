@@ -565,6 +565,13 @@ export default function Configurator() {
 
           </div>
 
+          <Link
+            to={createPageUrl("DesignCatalogue")}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-white bg-[#F15A22] hover:bg-[#d94e1a] border border-[#F15A22] transition-all"
+          >
+            <LayoutTemplate size={13} />
+            Design Catalogue
+          </Link>
           <button
             onClick={handleUndo}
             disabled={history.length === 0}
