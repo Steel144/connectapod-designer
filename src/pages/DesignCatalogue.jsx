@@ -66,7 +66,7 @@ export default function DesignCatalogue() {
     return map;
   }, [moduleEntries, floorPlanImages]);
 
-  // Enrich grid items with resolved images
+  // Enrich grid items with resolved images and wall data
   const enrichedTemplates = useMemo(() =>
     (Array.isArray(templates) ? templates : []).map(design => ({
       ...design,
@@ -76,12 +76,14 @@ export default function DesignCatalogue() {
         return { ...m, type, floorPlanImage: imgUrl || m.floorPlanImage || null };
       }),
       walls: (design.walls || []).map(w => {
-        const wallType = w.type || w.mpCode || w.label || w.code;
-        const elevationImage = wallImages[wallType];
-        return { ...w, code: wallType, elevationImage: elevationImage || w.elevationImage || null };
+        const wallCode = w.type || w.mpCode || w.label || w.code;
+        const wallEntry = wallEntries.find(we => we.code === wallCode);
+        const enriched = { ...wallEntry, ...w, type: wallCode };
+        const elevationImage = wallImages[wallCode];
+        return { ...enriched, elevationImage: elevationImage || w.elevationImage || null };
       }),
     })),
-    [templates, floorPlanImages, labelToImage, wallImages]
+    [templates, floorPlanImages, labelToImage, wallImages, wallEntries]
   );
 
   // Collect all unique tags
