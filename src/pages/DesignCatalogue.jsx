@@ -30,13 +30,6 @@ export default function DesignCatalogue() {
     refetchOnMount: true,
   });
 
-  const { data: wallImageList = [] } = useQuery({
-    queryKey: ["wallImages", "miniPreview"],
-    queryFn: async () => { try { const r = await base44.entities.WallImage.list(); return Array.isArray(r) ? r : []; } catch { return []; } },
-    staleTime: 0,
-    refetchOnMount: true,
-  });
-
   // Build lookup: moduleType code -> imageUrl
   const floorPlanImages = useMemo(() =>
     Object.fromEntries((Array.isArray(floorPlanImageList) ? floorPlanImageList : []).map(img => [img.moduleType, img.imageUrl])),
