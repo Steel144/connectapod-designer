@@ -78,6 +78,33 @@ export default function DesignMiniPreview({ grid = [], walls = [] }) {
               </pattern>
             );
           })}
+          {walls.map((w, i) => {
+            const imgUrl = w.elevationImage || wallImages[w.type];
+            if (!imgUrl) return null;
+            const isH = w.orientation === "horizontal";
+            const ww = isH ? (w.length || 5) * CELL : (w.thickness || 0.31) * CELL;
+            const wh = isH ? (w.thickness || 0.31) * CELL : (w.length || 5) * CELL;
+            return (
+              <pattern
+                key={`wall-pat-${w.id || i}`}
+                id={`wall-img-${w.id || i}`}
+                patternUnits="userSpaceOnUse"
+                x={toX(w.x)}
+                y={toY(w.y)}
+                width={Math.max(ww, 1)}
+                height={Math.max(wh, 1)}
+              >
+                <image
+                  href={imgUrl}
+                  x={0}
+                  y={0}
+                  width={Math.max(ww, 1)}
+                  height={Math.max(wh, 1)}
+                  preserveAspectRatio="xMidYMid slice"
+                />
+              </pattern>
+            );
+          })}
         </defs>
 
         {/* Background */}
