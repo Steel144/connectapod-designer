@@ -17,6 +17,7 @@ const LayoutWrapper = ({ children, currentPageName }) => Layout ?
 
 // Import Landing page
 import Landing from './pages/Landing';
+import DesignCatalogue from './pages/DesignCatalogue';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
