@@ -17,7 +17,7 @@ export default function QuoteGenerator({ placedModules, walls, open, onClose }) 
   const wallsTotal = walls.reduce((s, w) => s + (w.price || 0), 0);
   const grandTotal = modulesTotal + wallsTotal;
 
-  const generatePDF = () => {
+  const generatePDF = async () => {
     setGenerating(true);
     const doc = new jsPDF();
     const pageW = doc.internal.pageSize.getWidth();
@@ -26,18 +26,26 @@ export default function QuoteGenerator({ placedModules, walls, open, onClose }) 
     const col2 = pageW - margin;
     let y = margin;
 
-    // Add logo image
+    // Add logo image — preserve aspect ratio at fixed height of 14pt
     const logoUrl = "https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/1a43e85d2_Connectapod-01.png";
     try {
-      doc.addImage(logoUrl, "PNG", margin, 8, 55, 20);
+      await new Promise((resolve) => {
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        img.onload = () => {
+          const logoH = 14;
+          const logoW = (img.naturalWidth / img.naturalHeight) * logoH;
+          doc.addImage(img, "PNG", margin, 8, logoW, logoH);
+          resolve();
+        };
+        img.onerror = () => resolve();
+        img.src = logoUrl;
+      });
     } catch (e) {
-      // fallback text if image fails
-      doc.setFillColor(241, 90, 34);
-      doc.rect(0, 0, pageW, 18, "F");
-      doc.setTextColor(255, 255, 255);
+      doc.setTextColor(241, 90, 34);
       doc.setFontSize(13);
       doc.setFont("helvetica", "bold");
-      doc.text("connectapod", margin, 12);
+      doc.text("connectapod", margin, 18);
     }
 
     // Header line
