@@ -26,7 +26,7 @@ export default function DesignCatalogue() {
 
   // Build lookup: moduleType code -> imageUrl
   const floorPlanImages = useMemo(() =>
-    Object.fromEntries(floorPlanImageList.map(img => [img.moduleType, img.imageUrl])),
+    Object.fromEntries((Array.isArray(floorPlanImageList) ? floorPlanImageList : []).map(img => [img.moduleType, img.imageUrl])),
     [floorPlanImageList]
   );
 
