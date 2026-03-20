@@ -14,6 +14,7 @@ import { BookOpen, FolderOpen, Save, Trash2, ChevronLeft, ChevronRight, Undo2, B
 import PrintablePlansSheet from "@/components/configurator/PrintablePlansSheet";
 import PrintableElevationsSheet from "@/components/configurator/PrintableElevationsSheet";
 import ElevationGallery from "@/components/configurator/ElevationGallery";
+import QuoteGenerator from "@/components/configurator/QuoteGenerator";
 
 const generateId = () => `mod-${Math.random().toString(36).substr(2, 9)}`;
 const generateWallId = () => `wall-${Math.random().toString(36).substr(2, 9)}`;
@@ -44,6 +45,7 @@ export default function Configurator() {
   const [selectedWall, setSelectedWall] = useState(null);
   const [selectedModule, setSelectedModule] = useState(null);
   const [printMode, setPrintMode] = useState(null);
+  const [quoteOpen, setQuoteOpen] = useState(false);
   const [viewMode, setViewMode] = useState("2d");
   const { data: customWalls = [] } = useQuery({
     queryKey: ["wallEntries"],
