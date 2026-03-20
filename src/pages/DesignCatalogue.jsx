@@ -55,6 +55,10 @@ export default function DesignCatalogue() {
         const imgUrl = (type && floorPlanImages[type]) || (m.label && labelToImage[m.label]);
         return { ...m, type, floorPlanImage: imgUrl || m.floorPlanImage || null };
       }),
+      walls: (design.walls || []).map(w => ({
+        ...w,
+        code: w.type || w.mpCode || w.label || w.code,
+      })),
     })),
     [templates, floorPlanImages, labelToImage]
   );
