@@ -321,22 +321,27 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
     let filtered = allWalls;
 
     if (isConnection) {
-     // Connection modules: filter by width and Connection variant
+     // Connection modules: filter by width and Connection variant only
      filtered = allWalls.filter(w => {
        const matchesWidth = Math.abs(w.width - faceWidthM) < 0.05;
-       const matchesVariant = !w.variants || w.variants.length === 0 || w.variants.includes("Connection");
-       return matchesWidth && matchesVariant;
+       const isConnectionWall = Array.isArray(w.variants) && w.variants.includes("Connection");
+       return matchesWidth && isConnectionWall;
      });
     } else if (isEnd) {
-     // End modules: show walls matching width or 4.8m
+     // End modules: show walls matching width or 4.8m, but exclude Connection walls
      filtered = allWalls.filter(w => {
+       const isConnectionWall = Array.isArray(w.variants) && w.variants.includes("Connection");
+       if (isConnectionWall) return false;
        const matchesWidth = Math.abs(w.width - faceWidthM) < 0.05;
        const matches4P8m = Math.abs(w.width - 4.8) < 0.05;
        return matchesWidth || matches4P8m;
      });
     } else if (!isConnection && !isDeck && (face === "W" || face === "Y")) {
-     // Regular modules on long faces: show all walls that match width
-     filtered = allWalls.filter(w => Math.abs(w.width - faceWidthM) < 0.05);
+     // Regular modules on long faces: show walls matching width, but exclude Connection walls
+     filtered = allWalls.filter(w => {
+       const isConnectionWall = Array.isArray(w.variants) && w.variants.includes("Connection");
+       return !isConnectionWall && Math.abs(w.width - faceWidthM) < 0.05;
+     });
     } else {
      filtered = [];
     }
