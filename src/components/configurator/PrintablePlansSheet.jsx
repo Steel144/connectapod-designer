@@ -46,7 +46,7 @@ export default function PrintablePlansSheet({ placedModules, onClose }) {
       >
         Close
       </button>
-      <div className="bg-white flex flex-col p-0 relative" style={{ minHeight: "100vh" }}>
+      <div className="bg-white flex flex-col p-0 relative" style={{ height: "100vh", overflow: "hidden" }}>
 
          {/* Header with logo */}
            <div className="flex items-center justify-between px-6 pt-4 pb-2 border-b" style={{ borderColor: "#F15A22" }}>
@@ -55,13 +55,13 @@ export default function PrintablePlansSheet({ placedModules, onClose }) {
            </div>
 
          {/* Main content */}
-         <div className="flex-1 flex flex-col p-6">
+         <div className="flex-1 flex flex-col p-6" style={{ minHeight: 0 }}>
            {/* Grid view */}
-           <div className="flex-1 flex items-center justify-center overflow-hidden mb-8">
+           <div className="flex-1 flex items-center justify-center overflow-hidden mb-4" style={{ minHeight: 0 }}>
             <svg
               width={canvasWidth}
               height={canvasHeight}
-              style={{ maxWidth: "100%", height: "auto" }}
+              style={{ maxWidth: "100%", maxHeight: "100%", width: "auto", height: "auto" }}
               viewBox={`0 0 ${canvasWidth} ${canvasHeight}`}
             >
               {/* Grid background */}
