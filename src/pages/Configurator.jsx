@@ -448,9 +448,7 @@ export default function Configurator() {
 
   const handleLoad = (design) => {
     const grid = (design.grid || []).map(m => {
-      const moduleType = m.type || m.moduleType;
-      full = full || {};
-      const resolvedType = moduleType || null;
+      const resolvedType = m.type || m.moduleType || null;
       const img = floorPlanImages[resolvedType] || floorPlanImages[resolvedType?.toLowerCase()];
       const dbMod = customModules.find(c => c.code === resolvedType);
       const sqm = m.sqm || dbMod?.sqm || (dbMod ? (dbMod.width || 3) * (dbMod.depth || 4.8) : 0);
