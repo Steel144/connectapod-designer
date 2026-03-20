@@ -496,9 +496,10 @@ export default function Configurator() {
     });
     const loadedWalls = (design.walls || []).map(w => {
        // Ensure type is preserved; prioritize: saved image → lookup by type → fallback
-       const wallType = w.type || w.mpCode;
-       const img = w.elevationImage || wallImages[wallType] || null;
-       return { ...w, type: wallType, elevationImage: img };
+       const wallType = w.type || w.mpCode || w.label;
+       const img = w.elevationImage || wallImages[wallType];
+       console.log("[Configurator] Load wall:", { wallType, hasImage: !!img, wallImagesCount: Object.keys(wallImages).length });
+       return { ...w, type: wallType, elevationImage: img || null };
      });
     setPlacedModules(grid);
     setWalls(loadedWalls);
