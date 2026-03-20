@@ -820,5 +820,6 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
       </p>
       </div>
       </div>
+      </div>
       );
       }
