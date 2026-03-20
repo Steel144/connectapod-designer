@@ -6,7 +6,7 @@ import { FloorPlanSVG } from "./FloorPlanSVG.jsx";
 const CELL_SIZE = 24;
 const CELL_W = CELL_SIZE;
 const CELL_H = CELL_SIZE;
-const GRID_COLS = 75;
+const GRID_COLS = 150;
 const GRID_ROWS = 40;
 
 const getPavilion = (moduleY) => {
