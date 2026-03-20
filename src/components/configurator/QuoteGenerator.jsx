@@ -224,7 +224,7 @@ export default function QuoteGenerator({ placedModules, walls, open, onClose }) 
     doc.text(`© ${new Date().getFullYear()} connectapod. All rights reserved.`, col1, y);
     doc.text("www.connectapod.com", col2, y, { align: "right" });
 
-    const filename = `connectapod-quote-${projectName ? projectName.replace(/\s+/g, "-").toLowerCase() + "-" : ""}${Date.now().toString().slice(-6)}.pdf`;
+    const filename = `connectapod-estimate-${projectName ? projectName.replace(/\s+/g, "-").toLowerCase() + "-" : ""}${Date.now().toString().slice(-6)}.pdf`;
     doc.save(filename);
     setGenerating(false);
   };
