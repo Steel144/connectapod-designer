@@ -456,15 +456,17 @@ export default function Configurator() {
   const handleLoad = (design) => {
     const grid = (design.grid || []).map(m => {
       const resolvedType = m.type || m.moduleType || null;
-      const img = floorPlanImages[resolvedType] || floorPlanImages[resolvedType?.toLowerCase()];
+      // Prioritize: lookup by type → use existing image from design → lookup by lowercase type
+      const img = floorPlanImages[resolvedType] || floorPlanImages[resolvedType?.toLowerCase()] || m.floorPlanImage;
       const dbMod = customModules.find(c => c.code === resolvedType);
       const sqm = m.sqm || dbMod?.sqm || (dbMod ? (dbMod.width || 3) * (dbMod.depth || 4.8) : 0);
       const price = m.price || dbMod?.price || 0;
       return { ...m, type: resolvedType, floorPlanImage: img || null, sqm, price };
     });
     const loadedWalls = (design.walls || []).map(w => {
-      if (w.type && wallImages[w.type]) return { ...w, elevationImage: wallImages[w.type] };
-      return { ...w, elevationImage: w.elevationImage || null };
+      // Prioritize: lookup by type → use existing image from design
+      const img = wallImages[w.type] || w.elevationImage;
+      return { ...w, elevationImage: img || null };
     });
     setPlacedModules(grid);
     setWalls(loadedWalls);
