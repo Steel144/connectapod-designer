@@ -198,33 +198,20 @@ export default function Configurator() {
 
 
 
-  // When floorPlanImages loads/updates, apply images to all placed modules
-  // Also depends on placedModules so it re-runs when modules are first loaded from localStorage
-  const floorPlanImagesRef = React.useRef(floorPlanImages);
-  floorPlanImagesRef.current = floorPlanImages;
-
+  // When floorPlanImages or customModules loads/updates, enrich all placed modules with images, sqm, and price
   useEffect(() => {
-    if (Object.keys(floorPlanImages).length === 0) return;
+    if (Object.keys(floorPlanImages).length === 0 && customModules.length === 0) return;
     setPlacedModules(prev => prev.map(m => {
-      const img = floorPlanImages[m.type] 
+      const img = floorPlanImages[m.type]
         || floorPlanImages[m.type?.toLowerCase()]
         || (m.originalCode && (floorPlanImages[m.originalCode] || floorPlanImages[m.originalCode?.toLowerCase()]));
-      return { ...m, floorPlanImage: img || m.floorPlanImage || null };
+      // Enrich sqm and price from customModules if missing
+      const dbMod = customModules.find(c => c.code === m.type);
+      const sqm = m.sqm || dbMod?.sqm || (dbMod ? (dbMod.width || 3) * (dbMod.depth || 4.8) : 0);
+      const price = m.price || dbMod?.price || 0;
+      return { ...m, floorPlanImage: img || m.floorPlanImage || null, sqm, price };
     }));
-  }, [floorPlanImages]);
-
-  // Also sync images when placedModules first populates (e.g. from localStorage on mount)
-  const hasInitializedImages = React.useRef(false);
-  useEffect(() => {
-    if (hasInitializedImages.current) return;
-    const imgs = floorPlanImagesRef.current;
-    if (Object.keys(imgs).length === 0 || placedModules.length === 0) return;
-    hasInitializedImages.current = true;
-    setPlacedModules(prev => prev.map(m => {
-      const img = imgs[m.type] || (m.originalCode && imgs[m.originalCode]);
-      return { ...m, floorPlanImage: img || m.floorPlanImage || null };
-    }));
-  }, [placedModules.length]);
+  }, [floorPlanImages, customModules]);
 
   // Fix walls that were placed outside a connection module — nudge them inside
   useEffect(() => {
