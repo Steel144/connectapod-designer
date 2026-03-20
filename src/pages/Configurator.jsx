@@ -121,7 +121,8 @@ export default function Configurator() {
             entries[img.wallType] = img.imageUrl;
           }
         });
-        console.log("[Configurator] WallImages loaded:", Object.keys(entries).length, "images, data:", entries);
+        console.log("[Configurator] WallImages loaded:", Object.keys(entries).length, "images");
+        console.log("[Configurator] WallImages keys:", Object.keys(entries).slice(0, 5));
         return entries;
       } catch (e) { 
         console.error("[Configurator] WallImages error:", e);
