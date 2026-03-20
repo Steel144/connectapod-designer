@@ -272,16 +272,21 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
       <div
         className="flex-1 overflow-auto relative select-none bg-gray-50"
         style={{ cursor: "grab" }}
+        ref={(el) => {
+          if (el && !el._wheelListenerAdded) {
+            el._wheelListenerAdded = true;
+            el.addEventListener('wheel', (e) => {
+              if (e.ctrlKey || e.metaKey) {
+                e.preventDefault();
+                adjustZoom(e.deltaY < 0 ? 1 : -1);
+              }
+            }, { passive: false });
+          }
+        }}
         onMouseDown={handleCanvasMouseDown}
         onMouseMove={handleCanvasMouseMove}
         onMouseUp={handleCanvasMouseUp}
         onMouseLeave={handleCanvasMouseUp}
-        onWheel={(e) => {
-          if (e.ctrlKey || e.metaKey) {
-            e.preventDefault();
-            adjustZoom(e.deltaY < 0 ? 1 : -1);
-          }
-        }}
       >
         <div style={{ transform: `translate(${pan.x}px, ${pan.y}px)`, position: "relative", minHeight: "100%", paddingBottom: "100px", paddingTop: "40px", paddingLeft: "40px" }}>
           <div className="flex flex-col" style={{ gap: `${Math.round((zoom / 100) * 128)}px` }}>
