@@ -64,7 +64,7 @@ export default function QuoteGenerator({ placedModules, walls, open, onClose }) 
     doc.setTextColor(30, 30, 30);
     doc.setFontSize(20);
     doc.setFont("helvetica", "bold");
-    doc.text("QUOTATION", col1, y);
+    doc.text("ESTIMATE", col1, y);
     y += 8;
 
     // Date & quote ref
