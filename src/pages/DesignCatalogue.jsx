@@ -36,12 +36,6 @@ export default function DesignCatalogue() {
     [floorPlanImageList]
   );
 
-  // Build lookup: wallType code -> imageUrl
-  const wallImages = useMemo(() =>
-    Object.fromEntries((Array.isArray(wallImageList) ? wallImageList : []).map(img => [img.wallType, img.imageUrl])),
-    [wallImageList]
-  );
-
   // Build lookup: label -> imageUrl (via ModuleEntry name -> code -> image)
   const labelToImage = useMemo(() => {
     const map = {};
