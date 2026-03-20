@@ -242,25 +242,12 @@ export default function Configurator() {
   useEffect(() => {
     if (Object.keys(wallImages).length === 0) return;
     setWalls(prev => prev.map(w => {
-      const wallType = w.type || w.mpCode || w.label;
+      const wallType = w.type || w.mpCode || w.label || w.code;
       const img = wallImages[wallType];
       console.log("[Configurator] Enriching wall:", { wallType, found: !!img, hasElev: !!w.elevationImage });
       return { ...w, type: wallType, elevationImage: img || w.elevationImage || null };
     }));
   }, [wallImages]);
-
-  // Force re-enrich walls after loading a design to pick up images
-  const lastLoadedWallsRef = useRef(null);
-  useEffect(() => {
-    const wallsStr = JSON.stringify(walls.map(w => w.id));
-    if (wallsStr !== lastLoadedWallsRef.current && Object.keys(wallImages).length > 0) {
-      lastLoadedWallsRef.current = wallsStr;
-      setWalls(prev => prev.map(w => {
-        const wallType = w.type || w.mpCode || w.label;
-        return { ...w, type: wallType, elevationImage: wallImages[wallType] || w.elevationImage || null };
-      }));
-    }
-  }, [walls, wallImages]);
 
   // Fix walls that were placed outside a connection module — nudge them inside
   useEffect(() => {
