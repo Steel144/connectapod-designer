@@ -11,17 +11,17 @@ export default function DesignCatalogue() {
 
   const { data: templates = [], isLoading } = useQuery({
     queryKey: ["homeDesigns", "templates"],
-    queryFn: async () => { try { return await base44.entities.HomeDesign.filter({ is_template: true }); } catch { return []; } },
+    queryFn: async () => { try { const r = await base44.entities.HomeDesign.filter({ is_template: true }); return Array.isArray(r) ? r : []; } catch { return []; } },
   });
 
   const { data: moduleEntries = [] } = useQuery({
     queryKey: ["moduleEntries"],
-    queryFn: async () => { try { return await base44.entities.ModuleEntry.list(); } catch { return []; } },
+    queryFn: async () => { try { const r = await base44.entities.ModuleEntry.list(); return Array.isArray(r) ? r : []; } catch { return []; } },
   });
 
   const { data: floorPlanImageList = [] } = useQuery({
     queryKey: ["floorPlanImages"],
-    queryFn: async () => { try { return await base44.entities.FloorPlanImage.list(); } catch { return []; } },
+    queryFn: async () => { try { const r = await base44.entities.FloorPlanImage.list(); return Array.isArray(r) ? r : []; } catch { return []; } },
   });
 
   // Build lookup: moduleType code -> imageUrl
