@@ -113,9 +113,15 @@ export default function Configurator() {
     queryKey: ["wallImages"],
     queryFn: async () => {
       try {
-        const images = await base44.entities.WallImage.list();
-        const entries = Object.fromEntries(images.map(img => [img.wallType, img.imageUrl]));
-        console.log("[Configurator] WallImages loaded:", Object.keys(entries).length, "images");
+        const wallImages = await base44.entities.WallImage.list();
+        if (!Array.isArray(wallImages)) return {};
+        const entries = {};
+        wallImages.forEach(img => {
+          if (img.wallType && img.imageUrl) {
+            entries[img.wallType] = img.imageUrl;
+          }
+        });
+        console.log("[Configurator] WallImages loaded:", Object.keys(entries).length, "images, data:", entries);
         return entries;
       } catch (e) { 
         console.error("[Configurator] WallImages error:", e);
