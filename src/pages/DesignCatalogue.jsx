@@ -12,6 +12,8 @@ export default function DesignCatalogue() {
   const { data: templates = [], isLoading } = useQuery({
     queryKey: ["homeDesigns", "templates"],
     queryFn: async () => { try { const r = await base44.entities.HomeDesign.filter({ is_template: true }); return Array.isArray(r) ? r : []; } catch { return []; } },
+    staleTime: 0,
+    refetchOnMount: true,
   });
 
   const { data: moduleEntries = [] } = useQuery({
