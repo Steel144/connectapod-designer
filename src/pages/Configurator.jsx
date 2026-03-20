@@ -115,6 +115,7 @@ export default function Configurator() {
       } catch { return {}; }
     },
     staleTime: 0,
+    refetchOnMount: true,
   });
 
   const { data: floorPlanImages = {} } = useQuery({
