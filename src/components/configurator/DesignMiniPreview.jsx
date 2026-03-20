@@ -15,6 +15,16 @@ export default function DesignMiniPreview({ grid = [], walls = [] }) {
     refetchOnMount: true,
   });
 
+  const { data: wallImages = {} } = useQuery({
+    queryKey: ["wallImages", "miniPreview"],
+    queryFn: async () => {
+      const images = await base44.entities.WallImage.list();
+      return Object.fromEntries(images.map(img => [img.wallType, img.imageUrl]));
+    },
+    staleTime: 0,
+    refetchOnMount: true,
+  });
+
   const bounds = useMemo(() => {
     if (grid.length === 0) return { minX: 0, minY: 0, maxX: 10, maxY: 10 };
     const xs = grid.map((m) => m.x);
