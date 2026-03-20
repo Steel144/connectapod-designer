@@ -62,10 +62,13 @@ export default function DesignCatalogue() {
     ? enrichedTemplates
     : enrichedTemplates.filter((t) => (t.tags || []).includes(selectedTag));
 
-  const handleStartDesign = (design) => {
-    // Store the template in sessionStorage so Configurator can pick it up
-    sessionStorage.setItem("load_template", JSON.stringify(design));
-    navigate("/Configurator");
+  const handleStartDesign = (designId) => {
+    // Find the enriched design with images included
+    const design = enrichedTemplates.find(d => d.id === designId);
+    if (design) {
+      sessionStorage.setItem("load_template", JSON.stringify(design));
+      navigate("/Configurator");
+    }
   };
 
   return (
