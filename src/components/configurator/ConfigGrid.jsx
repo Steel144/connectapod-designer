@@ -540,6 +540,8 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
 
   const dragSnap = getDragSnapPos();
 
+  const SCROLL_BUFFER = 75 * CELL_W; // 75 extra cells of space on the left
+
   return (
     <div
       className="overflow-auto w-full h-full"
@@ -548,6 +550,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
       onMouseUp={onMouseUp}
       onMouseLeave={onMouseUp}
     >
+      <div style={{ paddingLeft: SCROLL_BUFFER, display: "inline-block" }}>
       <div
         ref={gridRef}
         className="relative select-none"
