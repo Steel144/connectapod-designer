@@ -229,7 +229,6 @@ export default function Configurator() {
     if (Object.keys(wallImages).length === 0) return;
     setWalls(prev => prev.map(w => {
       const img = w.elevationImage || wallImages[w.type];
-      console.log(`[Wall enrichment] Wall type: ${w.type}, Found image: ${!!img}`);
       return { ...w, elevationImage: img || null };
     }));
   }, [wallImages]);
