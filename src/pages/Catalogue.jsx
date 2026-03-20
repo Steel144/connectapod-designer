@@ -635,6 +635,9 @@ export default function Catalogue() {
           </div>
         )}
       </div>
+      <div className="text-center py-6 text-xs text-gray-400 border-t border-gray-200 bg-white mt-4">
+        © {new Date().getFullYear()} connectapod. All rights reserved.
+      </div>
     </div>
   );
 }

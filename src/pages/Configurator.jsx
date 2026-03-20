@@ -818,6 +818,11 @@ export default function Configurator() {
         placedModules={placedModules}
         walls={walls}
       />
+
+      {/* Copyright footer */}
+      <div className="fixed bottom-0 left-0 right-0 z-10 text-center py-1 text-[10px] text-gray-400 bg-white/70 backdrop-blur pointer-events-none select-none">
+        © {new Date().getFullYear()} connectapod. All rights reserved.
+      </div>
     </div>
   );
 }
