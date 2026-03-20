@@ -213,7 +213,7 @@ export default function QuoteGenerator({ placedModules, walls, open, onClose }) 
     doc.setFontSize(7.5);
     doc.text("This quote is indicative only and subject to final confirmation. Prices exclude GST, delivery, site prep and installation.", col1, y);
     y += 5;
-    doc.text("© connectapod Design Studio", col1, y);
+    doc.text(`© ${new Date().getFullYear()} connectapod. All rights reserved.`, col1, y);
     doc.text("www.connectapod.com", col2, y, { align: "right" });
 
     const filename = `connectapod-quote-${projectName ? projectName.replace(/\s+/g, "-").toLowerCase() + "-" : ""}${Date.now().toString().slice(-6)}.pdf`;
