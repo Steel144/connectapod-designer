@@ -755,6 +755,7 @@ export default function Configurator() {
                      onSave={() => setSaveModalOpen(true)}
                      onClear={handleClear}
                      isSaving={saveMutation.isPending}
+                     onQuote={() => setQuoteOpen(true)}
                    />
                  )}
                </div>
@@ -790,6 +791,13 @@ export default function Configurator() {
         onClose={() => setSaveModalOpen(false)}
         onConfirm={handleSave}
         isSaving={saveMutation.isPending}
+      />
+
+      <QuoteGenerator
+        open={quoteOpen}
+        onClose={() => setQuoteOpen(false)}
+        placedModules={placedModules}
+        walls={walls}
       />
     </div>
   );
