@@ -103,7 +103,7 @@ export default function Configurator() {
 
   const { data: designs = [] } = useQuery({
     queryKey: ["homeDesigns"],
-    queryFn: async () => { try { return await base44.entities.HomeDesign.list("-created_date"); } catch { return []; } },
+    queryFn: async () => { try { const r = await base44.entities.HomeDesign.list("-created_date"); return Array.isArray(r) ? r : []; } catch { return []; } },
   });
 
   const { data: wallImages = {} } = useQuery({
