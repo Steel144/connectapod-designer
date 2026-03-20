@@ -68,12 +68,13 @@ export default function DesignCatalogue() {
         const imgUrl = (type && floorPlanImages[type]) || (m.label && labelToImage[m.label]);
         return { ...m, type, floorPlanImage: imgUrl || m.floorPlanImage || null };
       }),
-      walls: (design.walls || []).map(w => ({
-        ...w,
-        code: w.type || w.mpCode || w.label || w.code,
-      })),
+      walls: (design.walls || []).map(w => {
+        const wallType = w.type || w.mpCode || w.label || w.code;
+        const elevationImage = wallImages[wallType];
+        return { ...w, code: wallType, elevationImage: elevationImage || w.elevationImage || null };
+      }),
     })),
-    [templates, floorPlanImages, labelToImage]
+    [templates, floorPlanImages, labelToImage, wallImages]
   );
 
   // Collect all unique tags
