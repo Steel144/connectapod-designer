@@ -97,6 +97,7 @@ export default function DesignCatalogue() {
     // Find the enriched design with images included
     const design = enrichedTemplates.find(d => d.id === designId);
     if (design) {
+      console.log("[DesignCatalogue] Enriched design walls:", design.walls);
       sessionStorage.setItem("load_template", JSON.stringify(design));
       navigate("/Configurator");
     }
