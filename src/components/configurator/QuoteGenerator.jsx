@@ -233,7 +233,7 @@ export default function QuoteGenerator({ placedModules, walls, open, onClose }) 
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-md rounded-none">
         <DialogHeader>
-          <DialogTitle className="text-base font-bold">Generate Quote PDF</DialogTitle>
+          <DialogTitle className="text-base font-bold">Generate Estimate PDF</DialogTitle>
         </DialogHeader>
 
         {/* Cost summary */}
