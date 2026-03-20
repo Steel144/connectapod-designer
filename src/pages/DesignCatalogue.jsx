@@ -30,10 +30,23 @@ export default function DesignCatalogue() {
     refetchOnMount: true,
   });
 
+  const { data: wallImageList = [] } = useQuery({
+    queryKey: ["wallImages"],
+    queryFn: async () => { try { const r = await base44.entities.WallImage.list(); return Array.isArray(r) ? r : []; } catch { return []; } },
+    staleTime: 0,
+    refetchOnMount: true,
+  });
+
   // Build lookup: moduleType code -> imageUrl
   const floorPlanImages = useMemo(() =>
     Object.fromEntries((Array.isArray(floorPlanImageList) ? floorPlanImageList : []).map(img => [img.moduleType, img.imageUrl])),
     [floorPlanImageList]
+  );
+
+  // Build lookup: wallType code -> imageUrl
+  const wallImages = useMemo(() =>
+    Object.fromEntries((Array.isArray(wallImageList) ? wallImageList : []).map(img => [img.wallType, img.imageUrl])),
+    [wallImageList]
   );
 
   // Build lookup: label -> imageUrl (via ModuleEntry name -> code -> image)
