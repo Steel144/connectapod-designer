@@ -449,11 +449,13 @@ export default function Configurator() {
   const handleLoad = (design) => {
     const grid = (design.grid || []).map(m => {
       const moduleType = m.type || m.moduleType;
-      let full = moduleType ? MODULE_TYPES.find(mt => mt.type === moduleType) : null;
-      if (!full && m.label) full = MODULE_TYPES.find(mt => mt.label === m.label);
       full = full || {};
-      const resolvedType = moduleType || full.type || null;
-      return { ...full, ...m, type: resolvedType, floorPlanImage: floorPlanImages[resolvedType] || null };
+      const resolvedType = moduleType || null;
+      const img = floorPlanImages[resolvedType] || floorPlanImages[resolvedType?.toLowerCase()];
+      const dbMod = customModules.find(c => c.code === resolvedType);
+      const sqm = m.sqm || dbMod?.sqm || (dbMod ? (dbMod.width || 3) * (dbMod.depth || 4.8) : 0);
+      const price = m.price || dbMod?.price || 0;
+      return { ...m, type: resolvedType, floorPlanImage: img || null, sqm, price };
     });
     const loadedWalls = (design.walls || []).map(w => {
       if (w.type && wallImages[w.type]) return { ...w, elevationImage: wallImages[w.type] };
