@@ -114,8 +114,13 @@ export default function Configurator() {
     queryFn: async () => {
       try {
         const images = await base44.entities.WallImage.list();
-        return Object.fromEntries(images.map(img => [img.wallType, img.imageUrl]));
-      } catch { return {}; }
+        const entries = Object.fromEntries(images.map(img => [img.wallType, img.imageUrl]));
+        console.log("[Configurator] WallImages loaded:", Object.keys(entries).length, "images");
+        return entries;
+      } catch (e) { 
+        console.error("[Configurator] WallImages error:", e);
+        return {}; 
+      }
     },
     staleTime: 0,
     refetchOnMount: true,
