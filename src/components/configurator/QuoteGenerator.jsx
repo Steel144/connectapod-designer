@@ -27,7 +27,7 @@ export default function QuoteGenerator({ placedModules, walls, open, onClose }) 
     let y = margin;
 
     // Add logo image
-    const logoUrl = "https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/495de7770_ConnectapodArchLogo-01.png";
+    const logoUrl = "https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/1a43e85d2_Connectapod-01.png";
     try {
       doc.addImage(logoUrl, "PNG", margin, 8, 55, 20);
     } catch (e) {
