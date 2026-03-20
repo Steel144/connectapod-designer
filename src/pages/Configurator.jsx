@@ -129,8 +129,12 @@ export default function Configurator() {
             entries[img.moduleType.trim()] = img.imageUrl;
           }
         });
+        console.log("[Configurator] FloorPlanImages loaded:", Object.keys(entries).length, "images");
         return entries;
-      } catch { return {}; }
+      } catch (e) { 
+        console.error("[Configurator] FloorPlanImages error:", e);
+        return {}; 
+      }
     },
   });
 
