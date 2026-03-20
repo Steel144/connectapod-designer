@@ -245,7 +245,6 @@ export default function Configurator() {
     setWalls(prev => prev.map(w => {
       const wallType = w.type || w.mpCode || w.label;
       const img = wallImages[wallType];
-      console.log("[Configurator] Wall enrichment:", { wallType, found: !!img, wallImageKeys: Object.keys(wallImages).slice(0, 3) });
       return { ...w, type: wallType, elevationImage: img || w.elevationImage || null };
     }));
   }, [wallImages]);
