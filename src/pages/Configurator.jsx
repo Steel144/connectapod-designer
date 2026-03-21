@@ -495,13 +495,19 @@ export default function Configurator() {
   const handleSave = (name, extra = {}) => {
     const totalSqm = placedModules.reduce((s, m) => s + (m.sqm || 0), 0);
     const estimatedPrice = placedModules.reduce((s, m) => s + (m.price || 0), 0);
-    const gridToSave = placedModules.map(m => ({
-      id: m.id, type: m.type, label: m.label, x: m.x, y: m.y, w: m.w, h: m.h,
-      sqm: m.sqm, price: m.price, color: m.color, border: m.border,
-      chassis: m.chassis, widthCode: m.widthCode, room: m.room,
-      baseW: m.baseW, baseH: m.baseH, rotation: m.rotation, flipped: m.flipped,
-      groupKey: m.groupKey,
-    }));
+    const gridToSave = placedModules.map(m => {
+      const dbMod = m.type ? customModules.find(c => c.code === m.type) : null;
+      const sqm = dbMod?.sqm ?? (dbMod ? (dbMod.width || 3) * (dbMod.depth || 4.8) : m.sqm) ?? 0;
+      const price = dbMod?.price ?? m.price ?? 0;
+      return {
+        id: m.id, type: m.type, label: m.label, x: m.x, y: m.y, w: m.w, h: m.h,
+        sqm, price, color: m.color, border: m.border,
+        chassis: m.chassis, widthCode: m.widthCode, room: m.room,
+        baseW: m.baseW, baseH: m.baseH, rotation: m.rotation, flipped: m.flipped,
+        groupKey: m.groupKey,
+        floorPlanImage: floorPlanImages[m.type] || floorPlanImages[m.type?.toLowerCase()] || m.floorPlanImage || null,
+      };
+    });
     const wallsToSave = walls.map(w => {
       const wallType = w.type || w.mpCode || w.label || w.code || w.wallType || null;
       const dbWall = wallType ? customWalls.find(cw => cw.code === wallType) : null;
