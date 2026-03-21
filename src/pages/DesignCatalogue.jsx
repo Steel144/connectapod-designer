@@ -76,6 +76,7 @@ export default function DesignCatalogue() {
         return { ...m, type, floorPlanImage: imgUrl || m.floorPlanImage || null };
       }),
       walls: (design.walls || []).map(w => {
+        if (design.walls?.indexOf(w) === 0) console.log("[DesignCatalogue] RAW wall object:", JSON.stringify(w));
         const wallCode = w.type || w.mpCode || w.label || w.code;
         const wallEntry = wallEntries.find(we => we.code === wallCode);
         const enriched = { ...wallEntry, ...w, type: wallCode };
