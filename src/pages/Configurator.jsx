@@ -248,7 +248,7 @@ export default function Configurator() {
 
   // When wallImages loads/updates, enrich all placed walls with elevation images
   useEffect(() => {
-    if (Object.keys(wallImages).length === 0 && walls.length === 0) return;
+    if (Object.keys(wallImages).length === 0) return;
     setWalls(prev => {
       if (prev.length === 0) return prev;
       return prev.map(w => {
