@@ -888,8 +888,12 @@ export default function Configurator() {
                      <div className="flex-1 bg-gray-50 rounded overflow-hidden flex items-center justify-center">
                        <img src={selectedModule.floorPlanImage} alt={selectedModule.label} className="w-full h-full object-contain" style={{ transform: `rotate(${selectedModule.rotation || 0}deg) ${selectedModule.flipped ? 'scaleX(-1)' : ''}` }} />
                      </div>
-                   </div>
-                 ) : selectedWall ? (
+                     <div className="flex justify-between items-center text-xs border-t border-gray-200 pt-2">
+                       <span className="text-gray-600">{selectedModule.sqm?.toFixed(1)} m²</span>
+                       <span className="font-semibold text-gray-800">${(selectedModule.price || 0).toLocaleString()}</span>
+                     </div>
+                     </div>
+                     ) : selectedWall ? (
                    <div className="flex flex-col h-full gap-2">
                      <div>
                        <p className="text-xs font-semibold text-gray-900 break-words">{selectedWall.label}</p>
