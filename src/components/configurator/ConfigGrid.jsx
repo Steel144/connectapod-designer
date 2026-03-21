@@ -900,7 +900,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                 <div className="absolute pointer-events-none" style={{ top: 0, left: '-4px', width: 10, height: 2, backgroundColor: '#CBD5E1' }} />
                 {/* Bottom tick */}
                 <div className="absolute pointer-events-none" style={{ bottom: 0, left: '-4px', width: 10, height: 2, backgroundColor: '#CBD5E1' }} />
-                <span className="relative text-xs font-semibold text-slate-400 bg-F5F5F3 px-1" style={{ backgroundColor: '#F5F5F3', writingMode: 'vertical-rl', textOrientation: 'mixed' }}>Approx. 24m</span>
+                <span className="relative text-xs font-semibold text-slate-400 bg-F5F5F3 px-1" style={{ backgroundColor: '#F5F5F3', writingMode: 'vertical-rl', textOrientation: 'mixed' }}>Approx. {depthM.toFixed(1)}m</span>
               </div>
             </>
           );
