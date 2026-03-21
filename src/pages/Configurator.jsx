@@ -127,11 +127,8 @@ export default function Configurator() {
             entries[img.wallType] = img.imageUrl;
           }
         });
-        console.log("[Configurator] WallImages loaded:", Object.keys(entries).length, "images");
-        wallImagesRef.current = entries;
         return entries;
       } catch (e) { 
-        console.error("[Configurator] WallImages error:", e);
         return {}; 
       }
     },
@@ -139,6 +136,11 @@ export default function Configurator() {
     refetchOnMount: "always",
     gcTime: Infinity,
   });
+
+  // Keep ref in sync with query data (handles cached data too)
+  useEffect(() => {
+    wallImagesRef.current = wallImages;
+  }, [wallImages]);
 
   const { data: floorPlanImages = {} } = useQuery({
     queryKey: ["floorPlanImages"],
