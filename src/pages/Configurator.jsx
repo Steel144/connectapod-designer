@@ -531,19 +531,26 @@ export default function Configurator() {
   };
 
   const handleLoad = (design) => {
-    const currentWallImages = wallImagesRef.current;
-    const currentFloorPlanImages = floorPlanImagesRef.current;
+    // Use both the ref (for sync access) and the live query data (wallImages/floorPlanImages)
+    // to ensure images are applied even when data is already cached and ref is current
+    const liveWallImages = Object.keys(wallImages).length > 0 ? wallImages : wallImagesRef.current;
+    const liveFloorPlanImages = Object.keys(floorPlanImages).length > 0 ? floorPlanImages : floorPlanImagesRef.current;
+
     const grid = (design.grid || []).map(m => {
       const resolvedType = m.type || m.moduleType || null;
-      const img = m.floorPlanImage || currentFloorPlanImages[resolvedType] || currentFloorPlanImages[resolvedType?.toLowerCase()];
+      const img = m.floorPlanImage 
+        || liveFloorPlanImages[resolvedType] 
+        || liveFloorPlanImages[resolvedType?.toLowerCase()];
       const dbMod = customModules.find(c => c.code === resolvedType);
       const sqm = m.sqm || dbMod?.sqm || (dbMod ? (dbMod.width || 3) * (dbMod.depth || 4.8) : 0);
       const price = m.price || dbMod?.price || 0;
       return { ...m, type: resolvedType, floorPlanImage: img || null, sqm, price };
     });
+
     const loadedWalls = (design.walls || []).map(w => {
       const wallType = w.type || w.mpCode || w.label || w.code || w.wallType || null;
-      const img = wallType ? (w.elevationImage || currentWallImages[wallType]) : null;
+      // Prefer saved elevationImage, then look up from live wallImages by type
+      const img = w.elevationImage || (wallType ? liveWallImages[wallType] : null);
       return {
         ...w,
         type: wallType,
@@ -552,6 +559,7 @@ export default function Configurator() {
         elevationImage: img || null,
       };
     });
+
     setPlacedModules(grid);
     setWalls(loadedWalls);
     setShowSaved(false);
