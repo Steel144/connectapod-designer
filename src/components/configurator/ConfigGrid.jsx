@@ -492,19 +492,15 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
            const distToYFace = Math.abs(exactY - (mod.y + mod.h));
            const distToWFace = Math.abs(exactY - mod.y);
 
-           if (distToYFace <= SNAP_THRESHOLD && exactX >= mod.x - SNAP_THRESHOLD && exactX <= mod.x + mod.w + SNAP_THRESHOLD) {
-             if (distToYFace < bestDist) {
-               bestDist = distToYFace;
-               const snapY = isCM ? mod.y + mod.h - wallTemplate.thickness : mod.y + mod.h;
-               snapped = { x: mod.x, y: snapY, length: mod.w, face: "Y" };
-             }
+           if (distToYFace < bestDist && exactX >= mod.x - SNAP_THRESHOLD && exactX <= mod.x + mod.w + SNAP_THRESHOLD) {
+             bestDist = distToYFace;
+             const snapY = isCM ? mod.y + mod.h - wallTemplate.thickness : mod.y + mod.h;
+             snapped = { x: mod.x, y: snapY, length: mod.w, face: "Y" };
            }
-           if (distToWFace <= SNAP_THRESHOLD && exactX >= mod.x - SNAP_THRESHOLD && exactX <= mod.x + mod.w + SNAP_THRESHOLD) {
-             if (distToWFace < bestDist) {
-               bestDist = distToWFace;
-               const snapY = isCM ? mod.y : mod.y - wallTemplate.thickness;
-               snapped = { x: mod.x, y: snapY, length: mod.w, face: "W" };
-             }
+           if (distToWFace < bestDist && exactX >= mod.x - SNAP_THRESHOLD && exactX <= mod.x + mod.w + SNAP_THRESHOLD) {
+             bestDist = distToWFace;
+             const snapY = isCM ? mod.y : mod.y - wallTemplate.thickness;
+             snapped = { x: mod.x, y: snapY, length: mod.w, face: "W" };
            }
          }
        } else {
