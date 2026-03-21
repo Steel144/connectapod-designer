@@ -866,11 +866,25 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
           const minY = Math.min(...placedModules.map(m => m.y));
           const maxY = Math.max(...placedModules.map(m => m.y + m.h));
           const widthM = (maxX - minX) * 0.6;
-          const depthM = (maxY - minY) * 0.6;
+
+          // Pavilion dimensions
+          const pavilions = [
+            { name: 'P1', yRange: [9, 13], color: '#22c55e' },
+            { name: 'P2', yRange: [26, 30], color: '#3b82f6' }
+          ];
+
+          const pavilionDimensions = pavilions.map(pav => {
+            const modsInPav = placedModules.filter(m => m.y >= pav.yRange[0] && m.y < pav.yRange[1]);
+            if (modsInPav.length === 0) return null;
+            const pavMinX = Math.min(...modsInPav.map(m => m.x));
+            const pavMaxX = Math.max(...modsInPav.map(m => m.x + m.w));
+            const pavWidth = (pavMaxX - pavMinX) * 0.6;
+            return { ...pav, minX: pavMinX, maxX: pavMaxX, width: pavWidth };
+          }).filter(Boolean);
 
           return (
             <>
-              {/* Width dimension line with label */}
+              {/* Overall width dimension line with label */}
               <div className="absolute pointer-events-none flex items-center justify-center" style={{ left: minX * CELL_W, top: (minY - 2.166) * CELL_H, width: (maxX - minX) * CELL_W, height: 1 }}>
                 <div className="absolute" style={{ height: 2, width: '100%', backgroundColor: '#CBD5E1' }} />
                 <div className="absolute pointer-events-none" style={{ left: 0, top: '-4px', width: 2, height: 10, backgroundColor: '#CBD5E1' }} />
@@ -878,6 +892,15 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                 <span className="relative text-xs font-semibold text-slate-400 px-1" style={{ backgroundColor: '#F5F5F3' }}>{widthM.toFixed(1)}m</span>
               </div>
 
+              {/* Pavilion dimensions */}
+              {pavilionDimensions.map(pav => (
+                <div key={pav.name} className="absolute pointer-events-none flex items-center justify-center" style={{ left: pav.minX * CELL_W, top: (pav.yRange[1] + 0.5) * CELL_H, width: (pav.maxX - pav.minX) * CELL_W, height: 1 }}>
+                  <div className="absolute" style={{ height: 1, width: '100%', backgroundColor: pav.color, opacity: 0.5 }} />
+                  <div className="absolute pointer-events-none" style={{ left: 0, top: '-3px', width: 1.5, height: 8, backgroundColor: pav.color, opacity: 0.5 }} />
+                  <div className="absolute pointer-events-none" style={{ right: 0, top: '-3px', width: 1.5, height: 8, backgroundColor: pav.color, opacity: 0.5 }} />
+                  <span className="relative text-xs font-semibold px-1" style={{ backgroundColor: '#F5F5F3', color: pav.color }}>≈5.2m</span>
+                </div>
+              ))}
 
             </>
           );
