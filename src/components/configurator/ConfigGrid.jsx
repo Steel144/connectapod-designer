@@ -294,6 +294,9 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
            const isEndWall = wall.face === "Z" || wall.face === "X";
 
            for (const mod of placedModules) {
+             // Only snap if wall length matches module height
+             if (Math.abs(wall.length - mod.h) > 0.1) continue;
+             
              const isEnd = mod.chassis === "EF" || mod.chassis === "ER" || mod.chassis === "LF" || mod.chassis === "RF" || mod.chassis === "End";
 
              // Only snap W/X walls to end modules
