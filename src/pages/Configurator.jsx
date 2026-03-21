@@ -249,7 +249,7 @@ export default function Configurator() {
         return { ...w, type: wallType, elevationImage: img || w.elevationImage || null };
       });
     });
-  }, [wallImages, walls.length]);
+  }, [wallImages]);
 
   // Fix walls that were placed outside a connection module — nudge them inside
   useEffect(() => {
