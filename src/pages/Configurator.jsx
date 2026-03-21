@@ -326,6 +326,9 @@ export default function Configurator() {
       || floorPlanImages[mod.type?.toLowerCase()]
       || (mod.originalCode && (floorPlanImages[mod.originalCode] || floorPlanImages[mod.originalCode?.toLowerCase()]));
     if (imgUrl) newMod.floorPlanImage = imgUrl;
+    // Look up pricing from customModules
+    const dbMod = customModules.find(c => c.code === mod.type);
+    if (dbMod?.price) newMod.price = dbMod.price;
     setPlacedModules((prev) => [...prev, newMod]);
   };
 
