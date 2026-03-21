@@ -135,7 +135,7 @@ export default function Configurator() {
         return {}; 
       }
     },
-    staleTime: 0,
+    staleTime: 5 * 60 * 1000,
     refetchOnMount: true,
   });
 
