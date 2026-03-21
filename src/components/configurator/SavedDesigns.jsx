@@ -23,12 +23,18 @@ export default function SavedDesigns({ designs, onLoad, onDelete }) {
           <div className="flex items-start justify-between mb-3">
             <h3 className="font-semibold text-gray-800 text-base leading-tight">{d.name}</h3>
             <Button
-              size="icon"
-              variant="ghost"
-              className="h-7 w-7 opacity-0 group-hover:opacity-100 text-gray-300 hover:text-red-400 transition-all"
-              onClick={() => onDelete(d.id)}
+             size="icon"
+             variant="ghost"
+             className="h-7 w-7 opacity-0 group-hover:opacity-100 text-gray-300 hover:text-red-400 transition-all"
+             onClick={(e) => {
+               e.preventDefault();
+               e.stopPropagation();
+               if (window.confirm(`Delete "${d.name}"?`)) {
+                 onDelete(d.id);
+               }
+             }}
             >
-              <Trash2 size={13} />
+             <Trash2 size={13} />
             </Button>
           </div>
 
