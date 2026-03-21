@@ -503,14 +503,14 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
            const wallLengthM = wallTemplate.length;
            const lengthMatch = Math.abs(modLengthM - wallLengthM) < 0.1;
 
-           if (lengthMatch && distToYFace < bestDist && exactX >= mod.x && exactX <= mod.x + mod.w) {
+           if (!isCM && lengthMatch && distToYFace < bestDist && exactX >= mod.x && exactX <= mod.x + mod.w) {
              bestDist = distToYFace;
-             const snapY = isCM ? mod.y + mod.h - wallTemplate.thickness : mod.y + mod.h;
+             const snapY = mod.y + mod.h;
              snapped = { x: mod.x, y: snapY, length: mod.w, face: "Y" };
            }
-           if (lengthMatch && distToWFace < bestDist && exactX >= mod.x && exactX <= mod.x + mod.w) {
+           if (!isCM && lengthMatch && distToWFace < bestDist && exactX >= mod.x && exactX <= mod.x + mod.w) {
              bestDist = distToWFace;
-             const snapY = isCM ? mod.y : mod.y - wallTemplate.thickness;
+             const snapY = mod.y - wallTemplate.thickness;
              snapped = { x: mod.x, y: snapY, length: mod.w, face: "W" };
            }
          }
