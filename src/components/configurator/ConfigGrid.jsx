@@ -879,7 +879,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
           const minY = Math.min(...placedModules.map(m => m.y));
           const maxY = Math.max(...placedModules.map(m => m.y + m.h));
           const widthM = (maxX - minX) * 0.6 + 0.4;
-          const depthM = (maxY - minY) * 0.6;
+          const depthM = (maxY - minY) * 0.6 + 0.4;
 
           return (
             <>
