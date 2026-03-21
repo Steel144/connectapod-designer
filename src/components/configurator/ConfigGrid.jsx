@@ -886,10 +886,10 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
             <>
               {/* Overall width dimension line with label */}
               <div className="absolute pointer-events-none flex items-center justify-center" style={{ left: minX * CELL_W, top: (minY - 2.166) * CELL_H, width: (maxX - minX) * CELL_W, height: 1 }}>
-                <div className="absolute" style={{ height: 3, width: '100%', backgroundColor: '#1e293b' }} />
-                <div className="absolute pointer-events-none" style={{ left: 0, top: '-6px', width: 3, height: 14, backgroundColor: '#1e293b' }} />
-                <div className="absolute pointer-events-none" style={{ right: 0, top: '-6px', width: 3, height: 14, backgroundColor: '#1e293b' }} />
-                <span className="relative text-sm font-bold text-slate-800 px-2" style={{ backgroundColor: '#ffffff', border: '1px solid #1e293b' }}>{widthM.toFixed(1)}m</span>
+                <div className="absolute" style={{ height: 2, width: '100%', backgroundColor: '#CBD5E1' }} />
+                <div className="absolute pointer-events-none" style={{ left: 0, top: '-4px', width: 2, height: 10, backgroundColor: '#CBD5E1' }} />
+                <div className="absolute pointer-events-none" style={{ right: 0, top: '-4px', width: 2, height: 10, backgroundColor: '#CBD5E1' }} />
+                <span className="relative text-xs font-semibold text-slate-400 px-1" style={{ backgroundColor: '#F5F5F3' }}>{widthM.toFixed(1)}m</span>
               </div>
 
               {/* Pavilion dimensions */}
