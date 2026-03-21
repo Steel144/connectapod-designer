@@ -455,8 +455,15 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
 
       if (!mod || !gridRef.current) return;
       if (moduleImage) mod.floorPlanImage = moduleImage;
-      const { x, y } = getCellFromClient(e.clientX, e.clientY);
-      if (canPlace(mod, x, y)) onPlace(mod, x, y);
+      let { x, y } = getCellFromClient(e.clientX, e.clientY);
+      
+      // Clamp to grid bounds
+      x = Math.max(0, Math.min(x, GRID_COLS - mod.w));
+      y = Math.max(0, Math.min(y, GRID_ROWS - mod.h));
+      
+      // Try to snap to nearby modules, otherwise place as-is
+      const snapped = magnetSnap(mod, x, y);
+      onPlace(mod, snapped.snapX, snapped.snapY);
       return;
     }
 
