@@ -301,14 +301,35 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
                   const zxRows = pav.rows.filter(r => r.type === "ZX");
                   const zWallFromZX = zxRows.find(r => r.zWall && r.zWall.elevationImage)?.zWall;
                   const xWallFromZX = zxRows.find(r => r.xWall && r.xWall.elevationImage)?.xWall;
-                  // Connection module: only show Z and X end faces
+                  // Connection module: show all faces (W, Y, Z, X)
                   if (pav.pavilionNum === 2) {
                     const zWall = zWallFromZX || (yRows[0]?.zWall) || null;
                     const xWall = xWallFromZX || (yRows[0]?.xWall) || null;
-                    if (!zWall && !xWall) return null;
+                    const hasAnyWall = zWall || xWall || yRows.some(r => r.midWalls?.length > 0) || wRows.some(r => r.midWalls?.length > 0);
+                    if (!hasAnyWall) return null;
                     return (
                       <>
-                        {zWall && (
+                        {yRows.map((row) => (
+                          <ElevationRow
+                            key={`${pav.pavilionNum}-${row.yPos}-Y`}
+                            pavilionNum={pav.pavilionNum}
+                            endLeft={zWall}
+                            midWalls={row.midWalls || []}
+                            endRight={xWall}
+                            rowLabel="Y face (outside)"
+                          />
+                        ))}
+                        {wRows.map((row) => (
+                          <ElevationRow
+                            key={`${pav.pavilionNum}-${row.yPos}-W`}
+                            pavilionNum={pav.pavilionNum}
+                            endLeft={xWall}
+                            midWalls={row.midWalls || []}
+                            endRight={zWall}
+                            rowLabel="W face (outside)"
+                          />
+                        ))}
+                        {zWall && !yRows.length && (
                           <ElevationRow
                             pavilionNum={pav.pavilionNum}
                             endLeft={null}
@@ -317,7 +338,7 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
                             rowLabel="Z face (left end)"
                           />
                         )}
-                        {xWall && (
+                        {xWall && !yRows.length && (
                           <ElevationRow
                             pavilionNum={pav.pavilionNum}
                             endLeft={null}
