@@ -99,6 +99,8 @@ export default function Configurator() {
           description: w.description || "",
           mpCode: w.code,
           width: parsedWidthM,
+          height: w.height || 0,
+          price: w.price || 0,
           orientation: parsedOrientation,
           length: Math.round(parsedWidthM / 0.6),
           thickness: 0.31,
