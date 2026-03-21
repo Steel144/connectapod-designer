@@ -522,16 +522,16 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
            // Only snap W/X walls to end modules
            if (isEndWall && !isEnd) continue;
 
-           const distToZFace = Math.abs(exactX - (mod.x + wallTemplate.thickness));
-           const distToXFace = Math.abs(exactX - (mod.x + mod.w - wallTemplate.thickness));
+           const distToZFace = Math.abs(exactX - mod.x);
+           const distToXFace = Math.abs(exactX - (mod.x + mod.w));
 
            if (distToZFace < bestDist && exactY >= mod.y - SNAP_THRESHOLD && exactY <= mod.y + mod.h + SNAP_THRESHOLD) {
              bestDist = distToZFace;
-             snapped = { x: mod.x + wallTemplate.thickness, y: mod.y, length: mod.h, face: "Z" };
+             snapped = { x: mod.x, y: mod.y, length: mod.h, face: "Z" };
            }
            if (distToXFace < bestDist && exactY >= mod.y - SNAP_THRESHOLD && exactY <= mod.y + mod.h + SNAP_THRESHOLD) {
              bestDist = distToXFace;
-             snapped = { x: mod.x + mod.w - wallTemplate.thickness, y: mod.y, length: mod.h, face: "X" };
+             snapped = { x: mod.x + mod.w, y: mod.y, length: mod.h, face: "X" };
            }
          }
          }
