@@ -260,7 +260,7 @@ export default function Configurator() {
     });
   }, [floorPlanImages, customModules]);
 
-  // When wallImages loads/updates, enrich all placed walls with elevation images
+  // When wallImages loads/updates OR a design is loaded, enrich all walls with elevation images
   useEffect(() => {
     if (Object.keys(wallImages).length === 0) return;
     setWalls(prev => {
@@ -269,7 +269,6 @@ export default function Configurator() {
       const next = prev.map(w => {
         const wallType = w.type || w.mpCode || w.label || w.code || w.wallType || null;
         const img = wallType ? (wallImages[wallType] || null) : null;
-        // Always prefer a real image URL over null — update if we now have one
         const newImg = img || w.elevationImage || null;
         const typeChanged = wallType && w.type !== wallType;
         const imgChanged = newImg !== w.elevationImage;
@@ -281,7 +280,7 @@ export default function Configurator() {
       });
       return changed ? next : prev;
     });
-  }, [wallImages, walls.length]);
+  }, [wallImages, loadCounter]);
 
   // Fix walls that were placed outside a connection module — nudge them inside
   useEffect(() => {
