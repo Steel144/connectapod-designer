@@ -473,7 +473,7 @@ export default function Configurator() {
     );
   };
 
-  const handleSave = (name) => {
+  const handleSave = (name, extra = {}) => {
     const totalSqm = placedModules.reduce((s, m) => s + (m.sqm || 0), 0);
     const estimatedPrice = placedModules.reduce((s, m) => s + (m.price || 0), 0);
     const gridToSave = placedModules.map(m => ({
