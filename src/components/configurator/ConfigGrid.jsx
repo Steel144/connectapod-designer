@@ -500,11 +500,21 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
     const wallType = e.dataTransfer.getData("wallType");
     console.log("wallType:", wallType);
     if (wallType) {
-      // Only allow wall placement if a module is selected
-      if (selected.size === 0) return;
-      
       const wallTemplate = wallTypes.find((w) => w.type === wallType);
       if (!wallTemplate || !gridRef.current) return;
+      
+      // If a wall is selected, snap new wall to match its position/orientation
+      if (selectedWallIds.size > 0) {
+        const selectedWall = Array.from(selectedWallIds)[0];
+        const matchingWall = walls.find(w => w.id === selectedWall);
+        if (matchingWall && matchingWall.orientation === wallTemplate.orientation) {
+          if (onPlaceWall) onPlaceWall(wallTemplate, matchingWall.x, matchingWall.y);
+          return;
+        }
+      }
+      
+      // Only allow wall placement if a module is selected
+      if (selected.size === 0) return;
       
       const rect = gridRef.current.getBoundingClientRect();
       const exactX = (e.clientX - rect.left) / CELL_W;
