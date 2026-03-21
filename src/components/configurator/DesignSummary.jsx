@@ -7,46 +7,30 @@ export default function DesignSummary({ placedModules, walls = [], onSave, onCle
   const totalSqm = placedModules.reduce((sum, m) => sum + (m.sqm || 0), 0);
   const totalPrice = placedModules.reduce((sum, m) => sum + (m.price || 0), 0) + walls.reduce((sum, w) => sum + (w.price || 0), 0);
   const moduleCount = placedModules.length;
+  const wallCount = walls.length;
 
   return (
-    <div className="bg-white border border-gray-200 p-5">
-      <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-4">Design Summary</p>
+    <div className="bg-white border border-gray-200 p-4">
+      <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-4">Summary</p>
       
-      <div className="grid grid-cols-3 gap-3 mb-5">
-        <div className="bg-gray-50 border border-gray-100 p-3 text-center">
-          <Layers size={16} className="text-[#F15A22] mx-auto mb-1" />
-          <p className="text-xl font-bold text-gray-800">{moduleCount}</p>
-          <p className="text-xs text-gray-400">Modules</p>
+      <div className="space-y-2 text-sm mb-5">
+        <div className="flex justify-between items-center border-b border-gray-100 pb-2">
+          <span className="text-gray-600">Modules:</span>
+          <span className="font-semibold text-gray-800">{moduleCount}</span>
         </div>
-        <div className="bg-gray-50 border border-gray-100 p-3 text-center">
-          <Maximize2 size={16} className="text-[#F15A22] mx-auto mb-1" />
-          <p className="text-xl font-bold text-gray-800">{totalSqm}</p>
-          <p className="text-xs text-gray-400">m²</p>
+        <div className="flex justify-between items-center border-b border-gray-100 pb-2">
+          <span className="text-gray-600">Walls:</span>
+          <span className="font-semibold text-gray-800">{wallCount}</span>
         </div>
-        <div className="bg-gray-50 border border-gray-100 p-3 text-center">
-          <DollarSign size={16} className="text-[#F15A22] mx-auto mb-1" />
-          <p className="text-xl font-bold text-gray-800">${(totalPrice / 1000).toFixed(0)}k</p>
-          <p className="text-xs text-gray-400">Est. Cost</p>
+        <div className="flex justify-between items-center border-b border-gray-100 pb-2">
+          <span className="text-gray-600">Total Area:</span>
+          <span className="font-semibold text-gray-800">{totalSqm.toFixed(1)} m²</span>
+        </div>
+        <div className="flex justify-between items-center pt-2 bg-gray-50 p-2 -mx-4 px-3">
+          <span className="text-gray-700 font-semibold">Estimated Price:</span>
+          <span className="text-lg font-bold text-[#F15A22]">${(totalPrice / 1000).toFixed(0)}k</span>
         </div>
       </div>
-
-      {placedModules.length > 0 && (
-        <div className="mb-4 space-y-2 max-h-[140px] overflow-y-auto border border-gray-100 p-3 bg-gray-50">
-           {placedModules.map((m) => (
-             <div key={m.id} className="flex items-center justify-between text-xs">
-               <span className="flex items-center gap-2 flex-1 min-w-0">
-                 <span className="flex items-center justify-center w-4 h-4 flex-shrink-0" style={{transform:'scale(0.75)'}}>{GROUP_ICONS[m.groupKey]}</span>
-                 <span className="text-gray-600 truncate">{m.label}</span>
-               </span>
-               <span className="text-gray-500 ml-1 flex-shrink-0">${(m.price / 1000).toFixed(0)}k</span>
-             </div>
-           ))}
-           <div className="border-t border-gray-200 pt-2 mt-2 flex justify-between text-xs font-semibold">
-             <span className="text-gray-700">Total</span>
-             <span className="text-gray-900">${(totalPrice / 1000).toFixed(0)}k</span>
-           </div>
-         </div>
-      )}
 
       <div className="flex gap-2 flex-col">
         <div className="flex gap-2">
