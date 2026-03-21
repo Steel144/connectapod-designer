@@ -496,10 +496,8 @@ export default function Configurator() {
       return { ...m, type: resolvedType, floorPlanImage: img || null, sqm, price };
     });
     const loadedWalls = (design.walls || []).map(w => {
-       // Ensure type is preserved; prioritize: saved image → lookup by type/code → fallback
-       const wallType = w.type || w.mpCode || w.label || w.code;
+       const wallType = w.type || w.mpCode || w.label || w.code || w.wallType;
        const img = w.elevationImage || wallImages[wallType];
-       console.log("[Configurator] Load wall:", { wallType, hasImage: !!img, wallImagesCount: Object.keys(wallImages).length });
        return { ...w, type: wallType, elevationImage: img || null };
      });
     setPlacedModules(grid);
