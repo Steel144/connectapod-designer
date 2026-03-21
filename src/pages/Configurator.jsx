@@ -262,9 +262,9 @@ export default function Configurator() {
     });
   }, [floorPlanImages, customModules]);
 
-  // When wallImages loads/updates OR a design is loaded, enrich all walls with elevation images
+  // When wallImages loads/updates OR a design is loaded, enrich all walls with elevation images and prices
   useEffect(() => {
-    if (Object.keys(wallImages).length === 0) return;
+    if (Object.keys(wallImages).length === 0 && customWalls.length === 0) return;
     setWalls(prev => {
       if (prev.length === 0) return prev;
       let changed = false;
@@ -272,17 +272,20 @@ export default function Configurator() {
         const wallType = w.type || w.mpCode || w.label || w.code || w.wallType || null;
         const img = wallType ? (wallImages[wallType] || null) : null;
         const newImg = img || w.elevationImage || null;
+        const dbWall = wallType ? customWalls.find(cw => cw.code === wallType) : null;
+        const price = dbWall ? (dbWall.price ?? w.price ?? 0) : (w.price ?? 0);
         const typeChanged = wallType && w.type !== wallType;
         const imgChanged = newImg !== w.elevationImage;
-        if (!typeChanged && !imgChanged) return w;
+        const priceChanged = price !== w.price;
+        if (!typeChanged && !imgChanged && !priceChanged) return w;
         changed = true;
-        const result = { ...w, elevationImage: newImg };
+        const result = { ...w, elevationImage: newImg, price };
         if (wallType) result.type = wallType;
         return result;
       });
       return changed ? next : prev;
     });
-  }, [wallImages, loadCounter]);
+  }, [wallImages, customWalls, loadCounter]);
 
   // Fix walls that were placed outside a connection module — nudge them inside
   useEffect(() => {
