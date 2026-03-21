@@ -259,8 +259,8 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
 
           const SNAP_THRESHOLD = 1.2; // cells
           let snapped = null;
-          const wallExactX = exactX + (wall.x - draggingWall.wall.x);
-          const wallExactY = exactY + (wall.y - draggingWall.wall.y);
+          const cursorCellX = cursorX / CELL_W;
+          const cursorCellY = cursorY / CELL_H;
 
           if (wall.orientation === "horizontal") {
             let bestDist = Infinity;
@@ -269,16 +269,16 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
               if (Math.abs(wall.length - mod.w) > 0.1) continue;
 
               const isCM = isConnectionModule(mod);
-              const distToYFace = Math.abs(wallExactY - (mod.y + mod.h));
-              const distToWFace = Math.abs(wallExactY - mod.y);
+              const distToYFace = Math.abs(cursorCellY - (mod.y + mod.h));
+              const distToWFace = Math.abs(cursorCellY - mod.y);
 
-              // Snap to Y face if close enough
+              // Snap to Y face if close enough and is closest
               if (distToYFace <= SNAP_THRESHOLD && distToYFace < bestDist) {
                 bestDist = distToYFace;
                 const snapY = isCM ? mod.y + mod.h - wall.thickness : mod.y + mod.h;
                 snapped = { x: mod.x, y: snapY, length: mod.w, face: "Y" };
               }
-              // Snap to W face if close enough
+              // Snap to W face if close enough and is closest
               if (distToWFace <= SNAP_THRESHOLD && distToWFace < bestDist) {
                 bestDist = distToWFace;
                 const snapY = isCM ? mod.y : mod.y - wall.thickness;
@@ -299,15 +299,15 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
              // Only snap W/X walls to end modules
              if (isEndWall && !isEnd) continue;
 
-             const distToZFace = Math.abs(wallExactX - mod.x);
-             const distToXFace = Math.abs(wallExactX - (mod.x + mod.w));
+             const distToZFace = Math.abs(cursorCellX - mod.x);
+             const distToXFace = Math.abs(cursorCellX - (mod.x + mod.w));
 
-             // Snap to Z face if close enough
+             // Snap to Z face if close enough and is closest
              if (distToZFace <= SNAP_THRESHOLD && distToZFace < bestDist) {
                bestDist = distToZFace;
                snapped = { x: mod.x, y: mod.y, length: mod.h, face: "Z" };
              }
-             // Snap to X face if close enough
+             // Snap to X face if close enough and is closest
              if (distToXFace <= SNAP_THRESHOLD && distToXFace < bestDist) {
                bestDist = distToXFace;
                snapped = { x: mod.x + mod.w - wall.thickness, y: mod.y, length: mod.h, face: "X" };
