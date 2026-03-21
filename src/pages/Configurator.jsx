@@ -226,10 +226,20 @@ export default function Configurator() {
         e.preventDefault();
         handleUndo();
       }
+      if (e.key === "Delete") {
+        e.preventDefault();
+        // Find selected modules in ConfigGrid and delete them
+        const selectedModIds = new Set();
+        document.querySelectorAll('[style*="border: 3px solid"]').forEach(el => {
+          const modId = el.getAttribute("data-module-id");
+          if (modId) selectedModIds.add(modId);
+        });
+        selectedModIds.forEach(id => handleRemove(id));
+      }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [handleUndo]);
+  }, [handleUndo, handleRemove]);
 
   useEffect(() => {
     localStorage.setItem("configurator_modules", JSON.stringify(placedModules));
