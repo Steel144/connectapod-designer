@@ -193,6 +193,10 @@ export default function Configurator() {
       queryClient.invalidateQueries({ queryKey: ["homeDesigns"] });
       toast.success("Design deleted");
     },
+    onError: (error) => {
+      console.error("Delete failed:", error);
+      toast.error("Failed to delete design");
+    },
   });
 
   const [isDraggingFromPanel, setIsDraggingFromPanel] = useState(false);
