@@ -493,21 +493,21 @@ export default function Configurator() {
   };
 
   const handleLoad = (design) => {
+    const currentWallImages = wallImagesRef.current;
+    const currentFloorPlanImages = floorPlanImagesRef.current;
     const grid = (design.grid || []).map(m => {
       const resolvedType = m.type || m.moduleType || null;
-      // Prioritize: existing image from design → lookup by type → lookup by lowercase type
-      const img = m.floorPlanImage || floorPlanImages[resolvedType] || floorPlanImages[resolvedType?.toLowerCase()];
+      const img = m.floorPlanImage || currentFloorPlanImages[resolvedType] || currentFloorPlanImages[resolvedType?.toLowerCase()];
       const dbMod = customModules.find(c => c.code === resolvedType);
       const sqm = m.sqm || dbMod?.sqm || (dbMod ? (dbMod.width || 3) * (dbMod.depth || 4.8) : 0);
       const price = m.price || dbMod?.price || 0;
       return { ...m, type: resolvedType, floorPlanImage: img || null, sqm, price };
     });
     const loadedWalls = (design.walls || []).map(w => {
-       const wallType = w.type || w.mpCode || w.label || w.code || w.wallType;
-       console.log("[Configurator] Load wall keys:", Object.keys(w), "wallType:", wallType);
-       const img = w.elevationImage || wallImages[wallType];
-       return { ...w, type: wallType, elevationImage: img || null };
-     });
+      const wallType = w.type || w.mpCode || w.label || w.code || w.wallType;
+      const img = w.elevationImage || currentWallImages[wallType];
+      return { ...w, type: wallType, elevationImage: img || null };
+    });
     setPlacedModules(grid);
     setWalls(loadedWalls);
     setShowSaved(false);
