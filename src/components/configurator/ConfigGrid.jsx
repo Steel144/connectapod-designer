@@ -162,6 +162,9 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
   };
 
   const startDragWall = (e, wall) => {
+    // Only allow dragging if a module is selected
+    if (selected.size === 0) return;
+    
     e.preventDefault();
     e.stopPropagation();
     const newWallSelection = selectedWallIds.has(wall.id) ? selectedWallIds : new Set([wall.id]);
