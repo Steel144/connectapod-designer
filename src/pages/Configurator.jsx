@@ -150,6 +150,7 @@ export default function Configurator() {
           }
         });
         console.log("[Configurator] FloorPlanImages loaded:", Object.keys(entries).length, "images");
+        floorPlanImagesRef.current = entries;
         return entries;
       } catch (e) { 
         console.error("[Configurator] FloorPlanImages error:", e);
