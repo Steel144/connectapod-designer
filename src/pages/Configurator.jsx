@@ -53,6 +53,7 @@ export default function Configurator() {
   const [printMode, setPrintMode] = useState(null);
   const [quoteOpen, setQuoteOpen] = useState(false);
   const [viewMode, setViewMode] = useState("2d");
+  const [loadCounter, setLoadCounter] = useState(0);
 
   // Load template from catalogue if set
   useEffect(() => {
