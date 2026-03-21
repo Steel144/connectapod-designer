@@ -525,8 +525,8 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
        } else {
          let bestDist = Infinity;
          for (const mod of placedModules) {
-           const distToZFace = Math.abs(exactX - mod.x);
-           const distToXFace = Math.abs(exactX - (mod.x + mod.w));
+           const distToZFace = Math.abs(exactX - (mod.x + wallTemplate.thickness));
+           const distToXFace = Math.abs(exactX - (mod.x + mod.w - wallTemplate.thickness));
 
            if (distToZFace <= SNAP_THRESHOLD && exactY >= mod.y - SNAP_THRESHOLD && exactY <= mod.y + mod.h + SNAP_THRESHOLD) {
              if (distToZFace < bestDist) {
