@@ -16,7 +16,7 @@ const getPavilion = (moduleY) => {
   return null;
 };
 
-export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, onRotate, onFlip, walls = [], wallTypes = [], onPlaceWall, onRemoveWall, onFlipWall, onMoveWall, onWallSelect, onModuleSelect, hidden = false, customModules = [] }) {
+export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, onRotate, onFlip, walls = [], wallTypes = [], onPlaceWall, onRemoveWall, onFlipWall, onMoveWall, onWallSelect, onModuleSelect, hidden = false, customModules = [], floorPlanImages = {} }) {
   const gridRef = useRef(null);
   const scrollRef = useRef(null);
 
