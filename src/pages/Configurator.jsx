@@ -353,6 +353,22 @@ export default function Configurator() {
     setPlacedModules((prev) => prev.filter((m) => m.id !== id));
   };
 
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === "Delete") {
+        e.preventDefault();
+        const selectedModIds = new Set();
+        document.querySelectorAll('[style*="border: 3px solid"]').forEach(el => {
+          const modId = el.getAttribute("data-module-id");
+          if (modId) selectedModIds.add(modId);
+        });
+        selectedModIds.forEach(id => handleRemove(id));
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [handleRemove]);
+
   const handleMove = (id, x, y) => {
     const oldMod = placedModules.find((m) => m.id === id);
     if (!oldMod) return;
