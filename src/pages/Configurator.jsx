@@ -160,8 +160,8 @@ export default function Configurator() {
         return {}; 
       }
     },
-    staleTime: 5 * 60 * 1000,
-    refetchOnMount: true,
+    staleTime: Infinity,
+    refetchOnMount: "always",
   });
 
   const { data: customModules = [] } = useQuery({
