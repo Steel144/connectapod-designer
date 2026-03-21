@@ -240,22 +240,24 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
     // Handle wall drag
     if (draggingWall) {
       const rect = gridRef.current.getBoundingClientRect();
-      const rawX = draggingWall.cursorX - rect.left - draggingWall.offsetX;
-      const rawY = draggingWall.cursorY - rect.top - draggingWall.offsetY;
+      const cursorX = draggingWall.cursorX - rect.left;
+      const cursorY = draggingWall.cursorY - rect.top;
+      const rawX = cursorX - draggingWall.offsetX;
+      const rawY = cursorY - draggingWall.offsetY;
       const exactX = rawX / CELL_W;
       const exactY = rawY / CELL_H;
-      
+
       // Only snap if the wall moved significantly (more than 0.1 cells)
       const movedX = Math.abs(exactX - draggingWall.wall.x);
       const movedY = Math.abs(exactY - draggingWall.wall.y);
       const hasMoved = movedX > 0.1 || movedY > 0.1;
-      
+
       if (hasMoved) {
         draggingWall.selectedIds.forEach((wallId) => {
           const wall = walls.find(w => w.id === wallId);
           if (!wall) return;
 
-          const SNAP_THRESHOLD = 0.8; // cells — tight enough to avoid adjacent modules
+          const SNAP_THRESHOLD = 2.0; // cells — wider threshold to find nearest face
           let snapped = null;
           const wallExactX = exactX + (wall.x - draggingWall.wall.x);
           const wallExactY = exactY + (wall.y - draggingWall.wall.y);
@@ -265,22 +267,20 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
             for (const mod of placedModules) {
               // Only snap if wall length matches module width
               if (Math.abs(wall.length - mod.w) > 0.1) continue;
-              
+
               const isCM = isConnectionModule(mod);
               const distToYFace = Math.abs(wallExactY - (mod.y + mod.h));
               const distToWFace = Math.abs(wallExactY - mod.y);
 
-              // Check if wall X overlaps or is close to module
-              const wallNearModule = wallExactX >= mod.x - SNAP_THRESHOLD && wallExactX <= mod.x + mod.w + SNAP_THRESHOLD;
-
-              if (distToYFace <= SNAP_THRESHOLD && wallNearModule) {
+              // Find closest face regardless of X position
+              if (distToYFace <= SNAP_THRESHOLD) {
                 if (distToYFace < bestDist) {
                   bestDist = distToYFace;
                   const snapY = isCM ? mod.y + mod.h - wall.thickness : mod.y + mod.h;
                   snapped = { x: mod.x, y: snapY, length: mod.w, face: "Y" };
                 }
               }
-              if (distToWFace <= SNAP_THRESHOLD && wallNearModule) {
+              if (distToWFace <= SNAP_THRESHOLD) {
                 if (distToWFace < bestDist) {
                   bestDist = distToWFace;
                   const snapY = isCM ? mod.y : mod.y - wall.thickness;
@@ -296,7 +296,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
            for (const mod of placedModules) {
              // Only snap if wall length matches module height
              if (Math.abs(wall.length - mod.h) > 0.1) continue;
-             
+
              const isEnd = mod.chassis === "EF" || mod.chassis === "ER" || mod.chassis === "LF" || mod.chassis === "RF" || mod.chassis === "End";
 
              // Only snap W/X walls to end modules
@@ -305,13 +305,13 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
              const distToZFace = Math.abs(wallExactX - mod.x);
              const distToXFace = Math.abs(wallExactX - (mod.x + mod.w));
 
-             if (distToZFace <= SNAP_THRESHOLD && wallExactY >= mod.y - SNAP_THRESHOLD && wallExactY <= mod.y + mod.h + SNAP_THRESHOLD) {
+             if (distToZFace <= SNAP_THRESHOLD) {
                if (distToZFace < bestDist) {
                  bestDist = distToZFace;
                  snapped = { x: mod.x, y: mod.y, length: mod.h, face: "Z" };
                }
              }
-             if (distToXFace <= SNAP_THRESHOLD && wallExactY >= mod.y - SNAP_THRESHOLD && wallExactY <= mod.y + mod.h + SNAP_THRESHOLD) {
+             if (distToXFace <= SNAP_THRESHOLD) {
                if (distToXFace < bestDist) {
                  bestDist = distToXFace;
                  snapped = { x: mod.x + mod.w - wall.thickness, y: mod.y, length: mod.h, face: "X" };
