@@ -267,10 +267,12 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
             for (const mod of placedModules) {
               // Only snap if wall length matches module width
               if (Math.abs(wall.length - mod.w) > 0.1) continue;
+              // Skip connection modules entirely
+              const isCM = isConnectionModule(mod);
+              if (isCM) continue;
               // Only snap if wall X is aligned with module X
               if (Math.abs(wall.x - mod.x) > 0.5) continue;
 
-              const isCM = isConnectionModule(mod);
               const distToYFace = Math.abs(cursorCellY - (mod.y + mod.h));
               const distToWFace = Math.abs(cursorCellY - mod.y);
 
