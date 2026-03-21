@@ -626,6 +626,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
           return (
             <div
               key={mod.id}
+              data-module-id={mod.id}
               onMouseDown={(e) => startDragPlaced(e, mod)}
               onMouseEnter={() => setHoveredModuleId(mod.id)}
               onMouseLeave={() => setHoveredModuleId(null)}
