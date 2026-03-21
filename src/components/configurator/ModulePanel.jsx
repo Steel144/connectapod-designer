@@ -417,9 +417,10 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
                          const imageUrl = floorPlanImages[mod.type] || floorPlanImages[item.originalCode];
                          if (imageUrl) {
                            e.dataTransfer.setData("moduleImage", imageUrl);
-                           const CELL_SIZE = 24;
-                           const dragWidth = mod.w * CELL_SIZE;
-                           const dragHeight = mod.h * CELL_SIZE;
+                           const CELL_W = 60;
+                           const CELL_H = 60;
+                           const dragWidth = mod.w * CELL_W;
+                           const dragHeight = mod.h * CELL_H;
                            const canvas = document.createElement("canvas");
                            canvas.width = dragWidth;
                            canvas.height = dragHeight;
