@@ -905,6 +905,7 @@ export default function Configurator() {
                  ) : (
                    <DesignSummary
                      placedModules={placedModules}
+                     walls={walls}
                      onSave={() => setSaveModalOpen(true)}
                      onClear={handleClear}
                      isSaving={saveMutation.isPending}
