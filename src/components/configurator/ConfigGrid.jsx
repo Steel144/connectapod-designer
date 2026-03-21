@@ -257,7 +257,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
           const wall = walls.find(w => w.id === wallId);
           if (!wall) return;
 
-          const SNAP_THRESHOLD = 2.0; // cells — wider threshold to find nearest face
+          const SNAP_THRESHOLD = 1.2; // cells
           let snapped = null;
           const wallExactX = exactX + (wall.x - draggingWall.wall.x);
           const wallExactY = exactY + (wall.y - draggingWall.wall.y);
@@ -272,20 +272,17 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
               const distToYFace = Math.abs(wallExactY - (mod.y + mod.h));
               const distToWFace = Math.abs(wallExactY - mod.y);
 
-              // Find closest face regardless of X position
-              if (distToYFace <= SNAP_THRESHOLD) {
-                if (distToYFace < bestDist) {
-                  bestDist = distToYFace;
-                  const snapY = isCM ? mod.y + mod.h - wall.thickness : mod.y + mod.h;
-                  snapped = { x: mod.x, y: snapY, length: mod.w, face: "Y" };
-                }
+              // Snap to Y face if close enough
+              if (distToYFace <= SNAP_THRESHOLD && distToYFace < bestDist) {
+                bestDist = distToYFace;
+                const snapY = isCM ? mod.y + mod.h - wall.thickness : mod.y + mod.h;
+                snapped = { x: mod.x, y: snapY, length: mod.w, face: "Y" };
               }
-              if (distToWFace <= SNAP_THRESHOLD) {
-                if (distToWFace < bestDist) {
-                  bestDist = distToWFace;
-                  const snapY = isCM ? mod.y : mod.y - wall.thickness;
-                  snapped = { x: mod.x, y: snapY, length: mod.w, face: "W" };
-                }
+              // Snap to W face if close enough
+              if (distToWFace <= SNAP_THRESHOLD && distToWFace < bestDist) {
+                bestDist = distToWFace;
+                const snapY = isCM ? mod.y : mod.y - wall.thickness;
+                snapped = { x: mod.x, y: snapY, length: mod.w, face: "W" };
               }
             }
           } else {
@@ -305,17 +302,15 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
              const distToZFace = Math.abs(wallExactX - mod.x);
              const distToXFace = Math.abs(wallExactX - (mod.x + mod.w));
 
-             if (distToZFace <= SNAP_THRESHOLD) {
-               if (distToZFace < bestDist) {
-                 bestDist = distToZFace;
-                 snapped = { x: mod.x, y: mod.y, length: mod.h, face: "Z" };
-               }
+             // Snap to Z face if close enough
+             if (distToZFace <= SNAP_THRESHOLD && distToZFace < bestDist) {
+               bestDist = distToZFace;
+               snapped = { x: mod.x, y: mod.y, length: mod.h, face: "Z" };
              }
-             if (distToXFace <= SNAP_THRESHOLD) {
-               if (distToXFace < bestDist) {
-                 bestDist = distToXFace;
-                 snapped = { x: mod.x + mod.w - wall.thickness, y: mod.y, length: mod.h, face: "X" };
-               }
+             // Snap to X face if close enough
+             if (distToXFace <= SNAP_THRESHOLD && distToXFace < bestDist) {
+               bestDist = distToXFace;
+               snapped = { x: mod.x + mod.w - wall.thickness, y: mod.y, length: mod.h, face: "X" };
              }
            }
           }
