@@ -496,6 +496,7 @@ export default function Configurator() {
     });
     const loadedWalls = (design.walls || []).map(w => {
        const wallType = w.type || w.mpCode || w.label || w.code || w.wallType;
+       console.log("[Configurator] Load wall keys:", Object.keys(w), "wallType:", wallType);
        const img = w.elevationImage || wallImages[wallType];
        return { ...w, type: wallType, elevationImage: img || null };
      });
