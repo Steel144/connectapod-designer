@@ -3,9 +3,9 @@ import { Layers, DollarSign, Maximize2, Save, Trash2, FileText } from "lucide-re
 import { Button } from "@/components/ui/button";
 import { GROUP_ICONS } from "./ModulePanel.jsx";
 
-export default function DesignSummary({ placedModules, onSave, onClear, isSaving, onQuote }) {
+export default function DesignSummary({ placedModules, walls = [], onSave, onClear, isSaving, onQuote }) {
   const totalSqm = placedModules.reduce((sum, m) => sum + (m.sqm || 0), 0);
-  const totalPrice = placedModules.reduce((sum, m) => sum + (m.price || 0), 0);
+  const totalPrice = placedModules.reduce((sum, m) => sum + (m.price || 0), 0) + walls.reduce((sum, w) => sum + (w.price || 0), 0);
   const moduleCount = placedModules.length;
 
   return (
