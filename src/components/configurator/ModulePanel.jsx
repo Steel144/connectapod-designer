@@ -298,10 +298,10 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
             attachedMod = mod; break;
           }
         } else {
-          if (face === "Z" && selectedWall.y === mod.y && selectedWall.x === mod.x + 1) {
+          if (face === "Z" && Math.abs(selectedWall.y - mod.y) < 0.5 && Math.abs(selectedWall.x - mod.x) < 0.5) {
             attachedMod = mod; break;
           }
-          if (face === "X" && selectedWall.y === mod.y && selectedWall.x === mod.x + mod.w - 1) {
+          if (face === "X" && Math.abs(selectedWall.y - mod.y) < 0.5 && Math.abs(selectedWall.x - (mod.x + mod.w - 0.31)) < 0.5) {
             attachedMod = mod; break;
           }
         }
