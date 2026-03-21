@@ -263,6 +263,9 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
           if (wall.orientation === "horizontal") {
             let bestDist = Infinity;
             for (const mod of placedModules) {
+              // Only snap if wall length matches module width
+              if (Math.abs(wall.length - mod.w) > 0.1) continue;
+              
               const isCM = isConnectionModule(mod);
               const distToYFace = Math.abs(wallExactY - (mod.y + mod.h));
               const distToWFace = Math.abs(wallExactY - mod.y);
