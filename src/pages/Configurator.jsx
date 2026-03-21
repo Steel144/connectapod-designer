@@ -236,16 +236,23 @@ export default function Configurator() {
   // When floorPlanImages or customModules loads/updates, enrich all placed modules with images, sqm, and price
   useEffect(() => {
     if (Object.keys(floorPlanImages).length === 0 && customModules.length === 0) return;
-    setPlacedModules(prev => prev.map(m => {
-      const img = floorPlanImages[m.type]
-        || floorPlanImages[m.type?.toLowerCase()]
-        || (m.originalCode && (floorPlanImages[m.originalCode] || floorPlanImages[m.originalCode?.toLowerCase()]));
-      // Enrich sqm and price from customModules if missing
-      const dbMod = customModules.find(c => c.code === m.type);
-      const sqm = m.sqm || dbMod?.sqm || (dbMod ? (dbMod.width || 3) * (dbMod.depth || 4.8) : 0);
-      const price = m.price || dbMod?.price || 0;
-      return { ...m, floorPlanImage: img || m.floorPlanImage || null, sqm, price };
-    }));
+    setPlacedModules(prev => {
+      if (prev.length === 0) return prev;
+      let changed = false;
+      const next = prev.map(m => {
+        const img = floorPlanImages[m.type]
+          || floorPlanImages[m.type?.toLowerCase()]
+          || (m.originalCode && (floorPlanImages[m.originalCode] || floorPlanImages[m.originalCode?.toLowerCase()]));
+        const dbMod = customModules.find(c => c.code === m.type);
+        const sqm = m.sqm || dbMod?.sqm || (dbMod ? (dbMod.width || 3) * (dbMod.depth || 4.8) : 0);
+        const price = m.price || dbMod?.price || 0;
+        const newImg = img || m.floorPlanImage || null;
+        if (newImg === m.floorPlanImage && sqm === m.sqm && price === m.price) return m;
+        changed = true;
+        return { ...m, floorPlanImage: newImg, sqm, price };
+      });
+      return changed ? next : prev;
+    });
   }, [floorPlanImages, customModules]);
 
   // When wallImages loads/updates, enrich all placed walls with elevation images
