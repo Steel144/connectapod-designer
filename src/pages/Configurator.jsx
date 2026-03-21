@@ -504,10 +504,11 @@ export default function Configurator() {
     }));
     const wallsToSave = walls.map(w => {
       const wallType = w.type || w.mpCode || w.label || w.code || w.wallType || null;
+      const dbWall = wallType ? customWalls.find(cw => cw.code === wallType) : null;
       return {
         id: w.id,
         type: wallType,
-        label: w.label || wallType,
+        label: dbWall?.name || w.label || wallType,
         x: w.x,
         y: w.y,
         orientation: w.orientation,
@@ -518,8 +519,11 @@ export default function Configurator() {
         flipped: w.flipped || false,
         elevationImage: w.elevationImage || null,
         mpCode: w.mpCode || wallType,
-        description: w.description,
-        variants: w.variants,
+        description: dbWall?.description || w.description,
+        variants: dbWall?.variants || w.variants,
+        price: dbWall?.price ?? w.price ?? 0,
+        width: dbWall?.width || w.width,
+        height: dbWall?.height || w.height,
       };
     });
     saveMutation.mutate({
