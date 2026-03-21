@@ -497,6 +497,33 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
       return;
     }
 
+    // Check if dropped on a selected wall to snap module
+    if (selected.size === 0 && selectedWallIds.size > 0) {
+      const selectedWall = Array.from(selectedWallIds)[0];
+      const wall = walls.find(w => w.id === selectedWall);
+      if (wall) {
+        const CELL_M = 0.6;
+        const modLengthM = mod?.w * CELL_M;
+        const wallLengthM = wall.length;
+        
+        // Check if module width matches wall length
+        if (mod && Math.abs(modLengthM - wallLengthM) < 0.1) {
+          // Snap module to wall position
+          if (wall.orientation === "horizontal") {
+            const snapX = wall.x;
+            const snapY = wall.y + wall.thickness; // Below the wall
+            onPlace(mod, snapX, snapY);
+            return;
+          } else {
+            const snapX = wall.x + wall.thickness; // Right of the wall
+            const snapY = wall.y;
+            onPlace(mod, snapX, snapY);
+            return;
+          }
+        }
+      }
+    }
+
     const wallType = e.dataTransfer.getData("wallType");
     console.log("wallType:", wallType);
     if (wallType) {
