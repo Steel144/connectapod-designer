@@ -242,9 +242,8 @@ export default function Configurator() {
   useEffect(() => {
     if (Object.keys(wallImages).length === 0) return;
     setWalls(prev => prev.map(w => {
-      const wallType = w.type || w.mpCode || w.label || w.code;
+      const wallType = w.type || w.mpCode || w.label || w.code || w.wallType;
       const img = wallImages[wallType];
-      console.log("[Configurator] Enriching wall:", { wallType, found: !!img, hasElev: !!w.elevationImage });
       return { ...w, type: wallType, elevationImage: img || w.elevationImage || null };
     }));
   }, [wallImages]);
