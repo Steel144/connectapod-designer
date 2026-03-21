@@ -280,24 +280,24 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
               }
             }
           } else {
-            let bestDist = Infinity;
-            for (const mod of placedModules) {
-              const distToZFace = Math.abs(wallExactX - mod.x);
-              const distToXFace = Math.abs(wallExactX - (mod.x + mod.w));
+           let bestDist = Infinity;
+           for (const mod of placedModules) {
+             const distToZFace = Math.abs(wallExactX - (mod.x + wall.thickness));
+             const distToXFace = Math.abs(wallExactX - (mod.x + mod.w - wall.thickness));
 
-              if (distToZFace <= SNAP_THRESHOLD && wallExactY >= mod.y - SNAP_THRESHOLD && wallExactY <= mod.y + mod.h + SNAP_THRESHOLD) {
-                if (distToZFace < bestDist) {
-                  bestDist = distToZFace;
-                  snapped = { x: mod.x + wall.thickness, y: mod.y, length: mod.h, face: "Z" };
-                }
-              }
-              if (distToXFace <= SNAP_THRESHOLD && wallExactY >= mod.y - SNAP_THRESHOLD && wallExactY <= mod.y + mod.h + SNAP_THRESHOLD) {
-                if (distToXFace < bestDist) {
-                  bestDist = distToXFace;
-                  snapped = { x: mod.x + mod.w - wall.thickness, y: mod.y, length: mod.h, face: "X" };
-                }
-              }
-            }
+             if (distToZFace <= SNAP_THRESHOLD && wallExactY >= mod.y - SNAP_THRESHOLD && wallExactY <= mod.y + mod.h + SNAP_THRESHOLD) {
+               if (distToZFace < bestDist) {
+                 bestDist = distToZFace;
+                 snapped = { x: mod.x + wall.thickness, y: mod.y, length: mod.h, face: "Z" };
+               }
+             }
+             if (distToXFace <= SNAP_THRESHOLD && wallExactY >= mod.y - SNAP_THRESHOLD && wallExactY <= mod.y + mod.h + SNAP_THRESHOLD) {
+               if (distToXFace < bestDist) {
+                 bestDist = distToXFace;
+                 snapped = { x: mod.x + mod.w - wall.thickness, y: mod.y, length: mod.h, face: "X" };
+               }
+             }
+           }
           }
 
           if (snapped) {
