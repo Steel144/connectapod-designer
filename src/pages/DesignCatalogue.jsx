@@ -77,10 +77,11 @@ export default function DesignCatalogue() {
       }),
       walls: (design.walls || []).map(w => {
         if (design.walls?.indexOf(w) === 0) console.log("[DesignCatalogue] RAW wall object:", JSON.stringify(w));
-        const wallCode = w.type || w.mpCode || w.label || w.code;
-        const wallEntry = wallEntries.find(we => we.code === wallCode);
-        const enriched = { ...wallEntry, ...w, type: wallCode };
-        const elevationImage = wallImages[wallCode];
+        const wallCode = w.type || w.mpCode || w.label || w.code || undefined;
+        const wallEntry = wallCode ? wallEntries.find(we => we.code === wallCode) : undefined;
+        const enriched = wallEntry ? { ...wallEntry, ...w } : { ...w };
+        if (wallCode) enriched.type = wallCode;
+        const elevationImage = wallCode ? wallImages[wallCode] : undefined;
         return { ...enriched, elevationImage: elevationImage || w.elevationImage || null };
       }),
     })),
