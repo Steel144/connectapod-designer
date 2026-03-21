@@ -417,6 +417,11 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
                          const imageUrl = floorPlanImages[mod.type] || floorPlanImages[item.originalCode];
                          if (imageUrl) {
                            e.dataTransfer.setData("moduleImage", imageUrl);
+                           const dragImage = new Image();
+                           dragImage.src = imageUrl;
+                           dragImage.onload = () => {
+                             e.dataTransfer.setDragImage(dragImage, dragImage.width / 2, dragImage.height / 2);
+                           };
                          }
                          onDragStart(e, mod);
                        }}
