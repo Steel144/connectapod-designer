@@ -28,7 +28,7 @@ export default function Configurator() {
   const [walls, setWalls] = useState(() => {
     try {
       const saved = JSON.parse(localStorage.getItem("configurator_walls") || "[]");
-      return saved.map(w => ({ ...w, type: w.type || w.mpCode || w.label }));
+      return saved.map(w => ({ ...w, type: w.type || w.mpCode || w.label || w.code || w.wallType }));
     } catch { return []; }
   });
 
