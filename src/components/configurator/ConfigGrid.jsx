@@ -894,7 +894,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
               </div>
 
               {/* Depth dimension line with label */}
-              <div className="absolute pointer-events-none flex items-center justify-center" style={{ left: (minX - 1.5) * CELL_W, top: minY * CELL_H, width: 1, height: (maxY - minY) * CELL_H }}>
+              <div className="absolute pointer-events-none flex items-center justify-center" style={{ left: (minX - 1.5) * CELL_W, top: (minY - 0.31) * CELL_H, width: 1, height: (maxY - minY + 0.62) * CELL_H }}>
                 <div className="absolute" style={{ width: 2, height: '100%', backgroundColor: '#CBD5E1' }} />
                 {/* Top tick */}
                 <div className="absolute pointer-events-none" style={{ top: 0, left: '-4px', width: 10, height: 2, backgroundColor: '#CBD5E1' }} />
