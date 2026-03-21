@@ -109,6 +109,9 @@ export default function Configurator() {
     queryFn: async () => { try { const r = await base44.entities.HomeDesign.list("-created_date"); return Array.isArray(r) ? r : []; } catch { return []; } },
   });
 
+  const wallImagesRef = useRef({});
+  const floorPlanImagesRef = useRef({});
+
   const { data: wallImages = {} } = useQuery({
     queryKey: ["wallImages"],
     queryFn: async () => {
