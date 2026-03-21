@@ -495,6 +495,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
       // Snap to nearest module face — no selection required
        if (wallTemplate.orientation === "horizontal") {
          let bestDist = Infinity;
+         const CELL_M = 0.6; // 600mm per cell
          for (const mod of placedModules) {
            const isCM = isConnectionModule(mod);
            const distToYFace = Math.abs(exactY - (mod.y + mod.h));
