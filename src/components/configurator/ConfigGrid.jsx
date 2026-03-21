@@ -280,13 +280,13 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
               if (distToYFace < distToWFace && distToYFace <= SNAP_THRESHOLD) {
                 if (distToYFace < bestDist) {
                   bestDist = distToYFace;
-                  const snapY = isCM ? mod.y + mod.h - wall.thickness : mod.y + mod.h;
+                  const snapY = mod.y + mod.h;
                   snapped = { x: mod.x, y: snapY, length: mod.w, face: "Y" };
                 }
               } else if (distToWFace <= SNAP_THRESHOLD) {
                 if (distToWFace < bestDist) {
                   bestDist = distToWFace;
-                  const snapY = isCM ? mod.y : mod.y - wall.thickness;
+                  const snapY = mod.y - wall.thickness;
                   snapped = { x: mod.x, y: snapY, length: mod.w, face: "W" };
                 }
               }
