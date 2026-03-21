@@ -518,6 +518,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
        } else {
          // W and X walls snap to end modules only
          let bestDist = Infinity;
+         const CELL_M = 0.6; // 600mm per cell
          const isEndWall = wallTemplate.face === "Z" || wallTemplate.face === "X";
 
          for (const mod of placedModules) {
