@@ -499,13 +499,16 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
            const isCM = isConnectionModule(mod);
            const distToYFace = Math.abs(exactY - (mod.y + mod.h));
            const distToWFace = Math.abs(exactY - mod.y);
+           const modLengthM = mod.w * CELL_M;
+           const wallLengthM = wallTemplate.length;
+           const lengthMatch = Math.abs(modLengthM - wallLengthM) < 0.1;
 
-           if (distToYFace < bestDist && exactX >= mod.x && exactX <= mod.x + mod.w) {
+           if (lengthMatch && distToYFace < bestDist && exactX >= mod.x && exactX <= mod.x + mod.w) {
              bestDist = distToYFace;
              const snapY = isCM ? mod.y + mod.h - wallTemplate.thickness : mod.y + mod.h;
              snapped = { x: mod.x, y: snapY, length: mod.w, face: "Y" };
            }
-           if (distToWFace < bestDist && exactX >= mod.x && exactX <= mod.x + mod.w) {
+           if (lengthMatch && distToWFace < bestDist && exactX >= mod.x && exactX <= mod.x + mod.w) {
              bestDist = distToWFace;
              const snapY = isCM ? mod.y : mod.y - wallTemplate.thickness;
              snapped = { x: mod.x, y: snapY, length: mod.w, face: "W" };
