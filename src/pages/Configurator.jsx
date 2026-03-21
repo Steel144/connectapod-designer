@@ -125,6 +125,7 @@ export default function Configurator() {
           }
         });
         console.log("[Configurator] WallImages loaded:", Object.keys(entries).length, "images");
+        wallImagesRef.current = entries;
         return entries;
       } catch (e) { 
         console.error("[Configurator] WallImages error:", e);
