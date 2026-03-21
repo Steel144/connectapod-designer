@@ -253,13 +253,18 @@ export default function Configurator() {
     if (Object.keys(wallImages).length === 0) return;
     setWalls(prev => {
       if (prev.length === 0) return prev;
-      return prev.map(w => {
+      let changed = false;
+      const next = prev.map(w => {
         const wallType = w.type || w.mpCode || w.label || w.code || w.wallType || null;
-        const img = wallType ? wallImages[wallType] : null;
-        const result = { ...w, elevationImage: img || w.elevationImage || null };
+        const img = wallType ? (wallImages[wallType] || null) : null;
+        const newImg = img || w.elevationImage || null;
+        if (newImg === w.elevationImage && (!wallType || w.type === wallType)) return w;
+        changed = true;
+        const result = { ...w, elevationImage: newImg };
         if (wallType) result.type = wallType;
         return result;
       });
+      return changed ? next : prev;
     });
   }, [wallImages]);
 
