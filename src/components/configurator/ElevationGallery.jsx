@@ -21,7 +21,7 @@ const getModulePavilion = (mod) => {
   return null;
 };
 
-export default function ElevationGallery({ walls = [], placedModules = [], onWallSelect = () => {} }) {
+export default function ElevationGallery({ walls = [], placedModules = [], onWallSelect = () => {}, customWalls = [] }) {
   const [zoom, setZoom] = useState(50);
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const isPanning = useRef(false);
