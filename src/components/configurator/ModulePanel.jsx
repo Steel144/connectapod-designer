@@ -540,9 +540,37 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
         >
           <div className="flex-1 bg-gray-50 rounded overflow-hidden flex items-center justify-center">
             {hoveredModule.floorPlanImage ? (
-              <img src={hoveredModule.floorPlanImage} alt={hoveredModule.label} className="w-auto h-auto max-w-[312px] max-h-[392px] object-contain" style={{ transform: `rotate(${hoveredModule.rotation || 0}deg) ${hoveredModule.flipped ? 'scaleX(-1)' : ''}` }} />
+              <img src={hoveredModule.floorPlanImage} alt={hoveredModule.label} className="w-full h-full object-contain" style={{ transform: `rotate(${hoveredModule.rotation || 0}deg) ${hoveredModule.flipped ? 'scaleX(-1)' : ''}` }} />
             ) : (
               <FloorPlanSVG code={hoveredModule.type} className="w-full h-full" />
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Magnified preview on hover — walls */}
+      {hoveredWall && (
+        <div
+          className="fixed z-[100] bg-white border-2 border-[#F15A22] shadow-xl rounded pointer-events-none flex flex-col"
+          style={{
+            width: "320px",
+            height: "400px",
+            top: "48px",
+            right: "20px",
+            padding: "4px",
+          }}
+        >
+          <div className="flex-1 bg-gray-50 rounded overflow-hidden flex items-center justify-center">
+            {hoveredWall.elevationImage ? (
+              <img src={hoveredWall.elevationImage} alt={hoveredWall.label} className="w-full h-full object-contain" />
+            ) : (
+              <div
+                style={{
+                  width: hoveredWall.orientation === "horizontal" ? "90%" : "6px",
+                  height: hoveredWall.orientation === "vertical" ? "90%" : "6px",
+                  backgroundColor: "#4B5563",
+                }}
+              />
             )}
           </div>
         </div>
