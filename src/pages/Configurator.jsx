@@ -496,6 +496,7 @@ export default function Configurator() {
       totalSqm,
       estimatedPrice,
       moduleCount: placedModules.length,
+      ...extra,
     });
   };
 
