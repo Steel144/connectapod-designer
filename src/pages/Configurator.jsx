@@ -504,9 +504,11 @@ export default function Configurator() {
       return { ...m, type: resolvedType, floorPlanImage: img || null, sqm, price };
     });
     const loadedWalls = (design.walls || []).map(w => {
-      const wallType = w.type || w.mpCode || w.label || w.code || w.wallType;
-      const img = w.elevationImage || currentWallImages[wallType];
-      return { ...w, type: wallType, elevationImage: img || null };
+      const wallType = w.type || w.mpCode || w.label || w.code || w.wallType || null;
+      const img = wallType ? (w.elevationImage || currentWallImages[wallType]) : null;
+      const result = { ...w, elevationImage: img || null };
+      if (wallType) result.type = wallType;
+      return result;
     });
     setPlacedModules(grid);
     setWalls(loadedWalls);
