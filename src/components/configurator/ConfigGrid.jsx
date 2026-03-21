@@ -816,7 +816,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                      <img 
                        src={wall.elevationImage} 
                        alt={wall.label}
-                       className="w-full h-full object-cover opacity-60"
+                       className="w-full h-full object-contain opacity-60"
                      />
                    )}
                  </div>
