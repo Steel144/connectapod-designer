@@ -255,45 +255,69 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
           const wall = walls.find(w => w.id === wallId);
           if (!wall) return;
 
-          const SNAP_THRESHOLD = 0.8; // cells
+          const SNAP_THRESHOLD = 0.8; // cells — tight enough to avoid adjacent modules
           let snapped = null;
           const wallExactX = exactX + (wall.x - draggingWall.wall.x);
           const wallExactY = exactY + (wall.y - draggingWall.wall.y);
 
           if (wall.orientation === "horizontal") {
             let bestDist = Infinity;
-            // Snap to other horizontal walls
-            for (const otherWall of walls) {
-              if (otherWall.id === wall.id || otherWall.orientation !== "horizontal") continue;
+            for (const mod of placedModules) {
+              // Only snap if wall length matches module width
+              if (Math.abs(wall.length - mod.w) > 0.1) continue;
               
-              // Match wall lengths
-              if (Math.abs(wall.length - otherWall.length) > 0.1) continue;
-              
-              const distY = Math.abs(wallExactY - otherWall.y);
-              const wallNearOther = wallExactX >= otherWall.x - SNAP_THRESHOLD && wallExactX <= otherWall.x + otherWall.length + SNAP_THRESHOLD;
+              const isCM = isConnectionModule(mod);
+              const distToYFace = Math.abs(wallExactY - (mod.y + mod.h));
+              const distToWFace = Math.abs(wallExactY - mod.y);
 
-              if (distY <= SNAP_THRESHOLD && wallNearOther && distY < bestDist) {
-                bestDist = distY;
-                snapped = { x: otherWall.x, y: otherWall.y, length: otherWall.length };
+              // Check if wall X overlaps or is close to module
+              const wallNearModule = wallExactX >= mod.x - SNAP_THRESHOLD && wallExactX <= mod.x + mod.w + SNAP_THRESHOLD;
+
+              if (distToYFace <= SNAP_THRESHOLD && wallNearModule) {
+                if (distToYFace < bestDist) {
+                  bestDist = distToYFace;
+                  const snapY = isCM ? mod.y + mod.h - wall.thickness : mod.y + mod.h;
+                  snapped = { x: mod.x, y: snapY, length: mod.w, face: "Y" };
+                }
+              }
+              if (distToWFace <= SNAP_THRESHOLD && wallNearModule) {
+                if (distToWFace < bestDist) {
+                  bestDist = distToWFace;
+                  const snapY = isCM ? mod.y : mod.y - wall.thickness;
+                  snapped = { x: mod.x, y: snapY, length: mod.w, face: "W" };
+                }
               }
             }
           } else {
-            // Snap to other vertical walls
-            let bestDist = Infinity;
-            for (const otherWall of walls) {
-              if (otherWall.id === wall.id || otherWall.orientation !== "vertical") continue;
-              
-              // Match wall lengths
-              if (Math.abs(wall.length - otherWall.length) > 0.1) continue;
-              
-              const distX = Math.abs(wallExactX - otherWall.x);
-              const wallNearOther = wallExactY >= otherWall.y - SNAP_THRESHOLD && wallExactY <= otherWall.y + otherWall.length + SNAP_THRESHOLD;
+           // W and X walls snap to end modules only
+           let bestDist = Infinity;
+           const isEndWall = wall.face === "Z" || wall.face === "X";
 
-              if (distX <= SNAP_THRESHOLD && wallNearOther && distX < bestDist) {
-                bestDist = distX;
-                snapped = { x: otherWall.x, y: otherWall.y, length: otherWall.length };
-              }
-            }
+           for (const mod of placedModules) {
+             // Only snap if wall length matches module height
+             if (Math.abs(wall.length - mod.h) > 0.1) continue;
+             
+             const isEnd = mod.chassis === "EF" || mod.chassis === "ER" || mod.chassis === "LF" || mod.chassis === "RF" || mod.chassis === "End";
+
+             // Only snap W/X walls to end modules
+             if (isEndWall && !isEnd) continue;
+
+             const distToZFace = Math.abs(wallExactX - mod.x);
+             const distToXFace = Math.abs(wallExactX - (mod.x + mod.w));
+
+             if (distToZFace <= SNAP_THRESHOLD && wallExactY >= mod.y - SNAP_THRESHOLD && wallExactY <= mod.y + mod.h + SNAP_THRESHOLD) {
+               if (distToZFace < bestDist) {
+                 bestDist = distToZFace;
+                 snapped = { x: mod.x, y: mod.y, length: mod.h, face: "Z" };
+               }
+             }
+             if (distToXFace <= SNAP_THRESHOLD && wallExactY >= mod.y - SNAP_THRESHOLD && wallExactY <= mod.y + mod.h + SNAP_THRESHOLD) {
+               if (distToXFace < bestDist) {
+                 bestDist = distToXFace;
+                 snapped = { x: mod.x + mod.w - wall.thickness, y: mod.y, length: mod.h, face: "X" };
+               }
+             }
+           }
           }
 
           if (snapped) {
