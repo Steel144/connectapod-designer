@@ -555,9 +555,8 @@ export default function Configurator() {
         || liveFloorPlanImages[resolvedType] 
         || liveFloorPlanImages[resolvedType?.toLowerCase()];
       const dbMod = customModules.find(c => c.code === resolvedType);
-      // Always prefer live catalogue values over stale saved values
-      const sqm = dbMod?.sqm || (dbMod ? (dbMod.width || 3) * (dbMod.depth || 4.8) : m.sqm || 0);
-      const price = dbMod?.price ?? m.price ?? 0;
+      const sqm = dbMod ? (dbMod.sqm ?? (dbMod.width || 3) * (dbMod.depth || 4.8)) : (m.sqm || 0);
+      const price = dbMod ? (dbMod.price ?? m.price ?? 0) : (m.price ?? 0);
       return { ...m, type: resolvedType, floorPlanImage: img || null, sqm, price };
     });
 
