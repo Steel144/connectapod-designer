@@ -545,20 +545,24 @@ export default function Configurator() {
         || liveFloorPlanImages[resolvedType] 
         || liveFloorPlanImages[resolvedType?.toLowerCase()];
       const dbMod = customModules.find(c => c.code === resolvedType);
-      const sqm = m.sqm || dbMod?.sqm || (dbMod ? (dbMod.width || 3) * (dbMod.depth || 4.8) : 0);
-      const price = m.price || dbMod?.price || 0;
+      // Always prefer live catalogue values over stale saved values
+      const sqm = dbMod?.sqm || (dbMod ? (dbMod.width || 3) * (dbMod.depth || 4.8) : m.sqm || 0);
+      const price = dbMod?.price ?? m.price ?? 0;
       return { ...m, type: resolvedType, floorPlanImage: img || null, sqm, price };
     });
 
     const loadedWalls = (design.walls || []).map(w => {
       const wallType = w.type || w.mpCode || w.label || w.code || w.wallType || null;
-      // Prefer saved elevationImage, then look up from live wallImages by type
       const img = w.elevationImage || (wallType ? liveWallImages[wallType] : null);
+      // Pull live price from WallEntry catalogue
+      const dbWall = wallType ? customWalls.find(cw => cw.code === wallType) : null;
+      const price = dbWall?.price ?? w.price ?? 0;
       return {
         ...w,
         type: wallType,
         mpCode: w.mpCode || wallType,
-        label: w.label || wallType,
+        label: dbWall?.name || w.label || wallType,
+        price,
         elevationImage: img || null,
       };
     });
