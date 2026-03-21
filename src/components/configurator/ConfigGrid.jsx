@@ -896,15 +896,18 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
 
 
 
-              {/* Pavilion width dimensions (vertical) */}
-              {pavilionDimensions.map(pav => (
-                <div key={pav.name} className="absolute pointer-events-none flex items-center justify-center" style={{ left: (pav.minX - 2.5) * CELL_W, top: pav.yRange[0] * CELL_H, width: 1, height: (pav.yRange[1] - pav.yRange[0]) * CELL_H }}>
-                  <div className="absolute" style={{ width: 1.5, height: '100%', backgroundColor: pav.color, opacity: 0.5 }} />
-                  <div className="absolute pointer-events-none" style={{ top: 0, left: '-3px', width: 8, height: 1.5, backgroundColor: pav.color, opacity: 0.5 }} />
-                  <div className="absolute pointer-events-none" style={{ bottom: 0, left: '-3px', width: 8, height: 1.5, backgroundColor: pav.color, opacity: 0.5 }} />
-                  <span className="relative text-xs font-semibold px-1" style={{ backgroundColor: '#F5F5F3', color: pav.color, writingMode: 'vertical-rl', textOrientation: 'mixed' }}>{((pav.yRange[1] - pav.yRange[0]) * 0.6).toFixed(1)}m</span>
-                </div>
-              ))}
+              {/* Pavilion width dimensions (horizontal, centered) */}
+              {pavilionDimensions.map(pav => {
+                const pavCenterX = (pav.minX + pav.maxX) / 2;
+                return (
+                  <div key={pav.name} className="absolute pointer-events-none flex items-center justify-center" style={{ left: (pav.minX - 0.5) * CELL_W, top: (pav.yRange[1] + 0.8) * CELL_H, width: (pav.maxX - pav.minX) * CELL_W, height: 1 }}>
+                    <div className="absolute" style={{ height: 1.5, width: '100%', backgroundColor: pav.color, opacity: 0.5 }} />
+                    <div className="absolute pointer-events-none" style={{ left: 0, top: '-3px', width: 1.5, height: 8, backgroundColor: pav.color, opacity: 0.5 }} />
+                    <div className="absolute pointer-events-none" style={{ right: 0, top: '-3px', width: 1.5, height: 8, backgroundColor: pav.color, opacity: 0.5 }} />
+                    <span className="relative text-xs font-semibold px-1" style={{ backgroundColor: '#F5F5F3', color: pav.color }}>≈5.2m</span>
+                  </div>
+                );
+              })}
 
             </>
           );
