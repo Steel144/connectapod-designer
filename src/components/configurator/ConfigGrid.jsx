@@ -805,8 +805,8 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                    style={{
                      left: ghostLeft,
                      top: ghostTop,
-                     width: wall.orientation === "horizontal" ? wall.length * CELL_W : (wall.height || 2400) / 1000 / 0.6 * CELL_W,
-                     height: wall.orientation === "vertical" ? wall.length * CELL_H : (wall.height || 2400) / 1000 / 0.6 * CELL_H,
+                     width: wall.orientation === "horizontal" ? wall.length * CELL_W : wall.thickness * CELL_W,
+                     height: wall.orientation === "vertical" ? wall.length * CELL_H : wall.thickness * CELL_H,
                      backgroundColor: "#4F46E5",
                      opacity: 0.5,
                      border: "2px dashed #4F46E5",
