@@ -769,9 +769,10 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                <div
                   onMouseDown={(e) => {
                     if (e.target.closest("button")) return;
+                    if (selected.size === 0) return;
                     startDragWall(e, wall);
                   }}
-                  className="absolute cursor-grab active:cursor-grabbing flex items-center justify-center overflow-hidden w-full h-full"
+                  className={`absolute flex items-center justify-center overflow-hidden w-full h-full ${selected.size > 0 ? 'cursor-grab active:cursor-grabbing' : 'cursor-not-allowed'}`}
                   style={{
                     backgroundColor: isSelected ? "#4F46E5" : "#4B5563",
                     border: isSelected ? "2px solid #4F46E5" : "1px solid #2d3748",
