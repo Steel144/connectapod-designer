@@ -155,11 +155,8 @@ export default function Configurator() {
             entries[img.moduleType.trim()] = img.imageUrl;
           }
         });
-        console.log("[Configurator] FloorPlanImages loaded:", Object.keys(entries).length, "images");
-        floorPlanImagesRef.current = entries;
         return entries;
       } catch (e) { 
-        console.error("[Configurator] FloorPlanImages error:", e);
         return {}; 
       }
     },
@@ -167,6 +164,11 @@ export default function Configurator() {
     refetchOnMount: "always",
     gcTime: Infinity,
   });
+
+  // Keep ref in sync with query data (handles cached data too)
+  useEffect(() => {
+    floorPlanImagesRef.current = floorPlanImages;
+  }, [floorPlanImages]);
 
   const { data: customModules = [] } = useQuery({
     queryKey: ["moduleEntries"],
