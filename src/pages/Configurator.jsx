@@ -249,8 +249,8 @@ export default function Configurator() {
           || floorPlanImages[m.type?.toLowerCase()]
           || (m.originalCode && (floorPlanImages[m.originalCode] || floorPlanImages[m.originalCode?.toLowerCase()]));
         const dbMod = customModules.find(c => c.code === m.type);
-        const sqm = m.sqm || dbMod?.sqm || (dbMod ? (dbMod.width || 3) * (dbMod.depth || 4.8) : 0);
-        const price = m.price || dbMod?.price || 0;
+        const sqm = dbMod?.sqm || (dbMod ? (dbMod.width || 3) * (dbMod.depth || 4.8) : m.sqm || 0);
+        const price = dbMod?.price ?? m.price ?? 0;
         const newImg = img || m.floorPlanImage || null;
         if (newImg === m.floorPlanImage && sqm === m.sqm && price === m.price) return m;
         changed = true;
