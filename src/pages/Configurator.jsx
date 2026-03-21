@@ -249,9 +249,11 @@ export default function Configurator() {
     setWalls(prev => {
       if (prev.length === 0) return prev;
       return prev.map(w => {
-        const wallType = w.type || w.mpCode || w.label || w.code || w.wallType;
-        const img = wallImages[wallType];
-        return { ...w, type: wallType, elevationImage: img || w.elevationImage || null };
+        const wallType = w.type || w.mpCode || w.label || w.code || w.wallType || null;
+        const img = wallType ? wallImages[wallType] : null;
+        const result = { ...w, elevationImage: img || w.elevationImage || null };
+        if (wallType) result.type = wallType;
+        return result;
       });
     });
   }, [wallImages]);
