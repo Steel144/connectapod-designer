@@ -417,10 +417,18 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
                          const imageUrl = floorPlanImages[mod.type] || floorPlanImages[item.originalCode];
                          if (imageUrl) {
                            e.dataTransfer.setData("moduleImage", imageUrl);
+                           const CELL_SIZE = 24;
+                           const dragWidth = mod.w * CELL_SIZE;
+                           const dragHeight = mod.h * CELL_SIZE;
+                           const canvas = document.createElement("canvas");
+                           canvas.width = dragWidth;
+                           canvas.height = dragHeight;
+                           const ctx = canvas.getContext("2d");
                            const dragImage = new Image();
                            dragImage.src = imageUrl;
                            dragImage.onload = () => {
-                             e.dataTransfer.setDragImage(dragImage, dragImage.width / 2, dragImage.height / 2);
+                             ctx.drawImage(dragImage, 0, 0, dragWidth, dragHeight);
+                             e.dataTransfer.setDragImage(canvas, dragWidth / 2, dragHeight / 2);
                            };
                          }
                          onDragStart(e, mod);
