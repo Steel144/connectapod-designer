@@ -164,6 +164,21 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
     queryFn: async () => { try { const r = await base44.entities.DeletedWall.list(); return Array.isArray(r) ? r : []; } catch { return []; } },
   });
 
+  const { data: localWallImages = {} } = useQuery({
+    queryKey: ["wallImages"],
+    queryFn: async () => {
+      try {
+        const list = await base44.entities.WallImage.list();
+        if (!Array.isArray(list)) return {};
+        const entries = {};
+        list.forEach(img => { if (img.wallType && img.imageUrl) entries[img.wallType] = img.imageUrl; });
+        return entries;
+      } catch { return {}; }
+    },
+    staleTime: 0,
+    refetchOnMount: "always",
+  });
+
   // Merge custom modules with PANEL_GROUPS by category, supporting multi-category modules
    const dynamicPanelGroups = React.useMemo(() => {
      const deletedCodes = new Set((Array.isArray(deletedModules) ? deletedModules : []).map(d => d.moduleCode));
