@@ -509,17 +509,13 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
            const distToZFace = Math.abs(exactX - (mod.x + wallTemplate.thickness));
            const distToXFace = Math.abs(exactX - (mod.x + mod.w - wallTemplate.thickness));
 
-           if (distToZFace <= SNAP_THRESHOLD && exactY >= mod.y - SNAP_THRESHOLD && exactY <= mod.y + mod.h + SNAP_THRESHOLD) {
-             if (distToZFace < bestDist) {
-               bestDist = distToZFace;
-               snapped = { x: mod.x + wallTemplate.thickness, y: mod.y, length: mod.h, face: "Z" };
-             }
+           if (distToZFace < bestDist && exactY >= mod.y - SNAP_THRESHOLD && exactY <= mod.y + mod.h + SNAP_THRESHOLD) {
+             bestDist = distToZFace;
+             snapped = { x: mod.x + wallTemplate.thickness, y: mod.y, length: mod.h, face: "Z" };
            }
-           if (distToXFace <= SNAP_THRESHOLD && exactY >= mod.y - SNAP_THRESHOLD && exactY <= mod.y + mod.h + SNAP_THRESHOLD) {
-             if (distToXFace < bestDist) {
-               bestDist = distToXFace;
-               snapped = { x: mod.x + mod.w - wallTemplate.thickness, y: mod.y, length: mod.h, face: "X" };
-             }
+           if (distToXFace < bestDist && exactY >= mod.y - SNAP_THRESHOLD && exactY <= mod.y + mod.h + SNAP_THRESHOLD) {
+             bestDist = distToXFace;
+             snapped = { x: mod.x + mod.w - wallTemplate.thickness, y: mod.y, length: mod.h, face: "X" };
            }
          }
          }
