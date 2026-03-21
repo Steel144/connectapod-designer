@@ -872,30 +872,29 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
            />
          )}
 
-      </div>
+        {/* Dimensions */}
+        {placedModules.length > 0 && (() => {
+          const minX = Math.min(...placedModules.map(m => m.x));
+          const maxX = Math.max(...placedModules.map(m => m.x + m.w));
+          const minY = Math.min(...placedModules.map(m => m.y));
+          const maxY = Math.max(...placedModules.map(m => m.y + m.h));
+          const widthM = (maxX - minX) * 0.6;
+          const depthM = (maxY - minY) * 0.6;
 
+          return (
+            <>
+              {/* Width dimension line */}
+              <div className="absolute pointer-events-none" style={{ left: minX * CELL_W, top: (minY - 1.5) * CELL_H, width: (maxX - minX) * CELL_W, height: 1, backgroundColor: '#94A3B8' }} />
+              <span className="absolute text-xs font-semibold text-slate-600 pointer-events-none" style={{ left: (minX + (maxX - minX) / 2) * CELL_W, top: (minY - 3.5) * CELL_H, transform: 'translateX(-50%)' }}>{widthM.toFixed(1)}m</span>
 
+              {/* Depth dimension line */}
+              <div className="absolute pointer-events-none" style={{ left: (minX - 1.5) * CELL_W, top: minY * CELL_H, width: 1, height: (maxY - minY) * CELL_H, backgroundColor: '#94A3B8' }} />
+              <span className="absolute text-xs font-semibold text-slate-600 pointer-events-none" style={{ left: (minX - 4) * CELL_W, top: (minY + (maxY - minY) / 2) * CELL_H, transform: 'translateY(-50%)', writingMode: 'vertical-rl', textOrientation: 'mixed' }}>{depthM.toFixed(1)}m</span>
+            </>
+          );
+        })()}
 
-      {placedModules.length > 0 && (() => {
-        const minX = Math.min(...placedModules.map(m => m.x));
-        const maxX = Math.max(...placedModules.map(m => m.x + m.w));
-        const minY = Math.min(...placedModules.map(m => m.y));
-        const maxY = Math.max(...placedModules.map(m => m.y + m.h));
-        const widthM = (maxX - minX) * 0.6;
-        const depthM = (maxY - minY) * 0.6;
-
-        return (
-          <>
-            {/* Width dimension line */}
-            <div className="absolute pointer-events-none" style={{ left: minX * CELL_W, top: (minY - 1.5) * CELL_H, width: (maxX - minX) * CELL_W, height: 1, backgroundColor: '#94A3B8' }} />
-            <span className="absolute text-xs font-semibold text-slate-600 pointer-events-none" style={{ left: (minX + (maxX - minX) / 2) * CELL_W, top: (minY - 3.5) * CELL_H, transform: 'translateX(-50%)' }}>{widthM.toFixed(1)}m</span>
-
-            {/* Depth dimension line */}
-            <div className="absolute pointer-events-none" style={{ left: (minX - 1.5) * CELL_W, top: minY * CELL_H, width: 1, height: (maxY - minY) * CELL_H, backgroundColor: '#94A3B8' }} />
-            <span className="absolute text-xs font-semibold text-slate-600 pointer-events-none" style={{ left: (minX - 4) * CELL_W, top: (minY + (maxY - minY) / 2) * CELL_H, transform: 'translateY(-50%)', writingMode: 'vertical-rl', textOrientation: 'mixed' }}>{depthM.toFixed(1)}m</span>
-          </>
-        );
-      })()}
+        </div>
       <p className="text-xs text-slate-400 mt-1 text-center">
         Grid: {GRID_COLS}×{GRID_ROWS} cells · Snap: 600mm
       </p>
