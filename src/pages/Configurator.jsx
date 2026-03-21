@@ -912,7 +912,11 @@ export default function Configurator() {
                          </div>
                        )}
                      </div>
-                   </div>
+                     <div className="flex justify-between items-center text-xs border-t border-gray-200 pt-2">
+                       <span className="text-gray-600">{selectedWall.length?.toFixed(1)} m</span>
+                       <span className="font-semibold text-gray-800">${(selectedWall.price || 0).toLocaleString()}</span>
+                     </div>
+                     </div>
                  ) : (
                    <DesignSummary
                      placedModules={placedModules}
