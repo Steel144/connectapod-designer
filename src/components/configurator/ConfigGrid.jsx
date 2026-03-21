@@ -886,14 +886,13 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
 
         return (
           <>
-            {/* Width dimension overlay */}
-            <div className="absolute pointer-events-none" style={{ left: minX * CELL_W, top: (minY - 2) * CELL_H, width: (maxX - minX) * CELL_W, height: 2 * CELL_H, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <span className="text-sm font-bold text-slate-700 bg-white/80 px-2 py-1 rounded">{widthM.toFixed(1)}m</span>
-            </div>
-            {/* Depth dimension overlay */}
-            <div className="absolute pointer-events-none" style={{ left: (minX - 3) * CELL_W, top: minY * CELL_H, width: 3 * CELL_W, height: (maxY - minY) * CELL_H, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <span className="text-sm font-bold text-slate-700 bg-white/80 px-2 py-1 rounded" style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}>{depthM.toFixed(1)}m</span>
-            </div>
+            {/* Width dimension line */}
+            <div className="absolute pointer-events-none" style={{ left: minX * CELL_W, top: (minY - 1.5) * CELL_H, width: (maxX - minX) * CELL_W, height: 1, backgroundColor: '#94A3B8' }} />
+            <span className="absolute text-xs font-semibold text-slate-600 pointer-events-none" style={{ left: (minX + (maxX - minX) / 2) * CELL_W, top: (minY - 3.5) * CELL_H, transform: 'translateX(-50%)' }}>{widthM.toFixed(1)}m</span>
+
+            {/* Depth dimension line */}
+            <div className="absolute pointer-events-none" style={{ left: (minX - 1.5) * CELL_W, top: minY * CELL_H, width: 1, height: (maxY - minY) * CELL_H, backgroundColor: '#94A3B8' }} />
+            <span className="absolute text-xs font-semibold text-slate-600 pointer-events-none" style={{ left: (minX - 4) * CELL_W, top: (minY + (maxY - minY) / 2) * CELL_H, transform: 'translateY(-50%)', writingMode: 'vertical-rl', textOrientation: 'mixed' }}>{depthM.toFixed(1)}m</span>
           </>
         );
       })()}
