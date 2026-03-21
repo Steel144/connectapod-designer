@@ -782,7 +782,7 @@ export default function Configurator() {
       <div className="flex-1 pt-16 relative flex overflow-hidden">
         {viewMode === "elevations" ? (
           <div className="flex-1 z-10">
-            <ElevationGallery walls={walls} placedModules={placedModules} onWallSelect={setSelectedWall} />
+            <ElevationGallery walls={walls} placedModules={placedModules} onWallSelect={setSelectedWall} customWalls={customWalls} />
           </div>
         ) : (
           <ConfigGrid
