@@ -499,7 +499,7 @@ export default function Configurator() {
 
   const handleSave = (name, extra = {}) => {
     const totalSqm = placedModules.reduce((s, m) => s + (m.sqm || 0), 0);
-    const estimatedPrice = placedModules.reduce((s, m) => s + (m.price || 0), 0);
+    const estimatedPrice = placedModules.reduce((s, m) => s + (m.price || 0), 0) + walls.reduce((s, w) => s + (w.price || 0), 0);
     const gridToSave = placedModules.map(m => {
       const dbMod = m.type ? customModules.find(c => c.code === m.type) : null;
       const sqm = dbMod?.sqm ?? (dbMod ? (dbMod.width || 3) * (dbMod.depth || 4.8) : m.sqm) ?? 0;
