@@ -280,8 +280,16 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
               }
             }
           } else {
+           // W and X walls snap to end modules only
            let bestDist = Infinity;
+           const isEndWall = wall.face === "Z" || wall.face === "X";
+
            for (const mod of placedModules) {
+             const isEnd = mod.chassis === "EF" || mod.chassis === "ER" || mod.chassis === "LF" || mod.chassis === "RF" || mod.chassis === "End";
+
+             // Only snap W/X walls to end modules
+             if (isEndWall && !isEnd) continue;
+
              const distToZFace = Math.abs(wallExactX - (mod.x + wall.thickness));
              const distToXFace = Math.abs(wallExactX - (mod.x + mod.w - wall.thickness));
 
