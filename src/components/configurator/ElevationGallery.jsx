@@ -301,9 +301,13 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
                   const zxRows = pav.rows.filter(r => r.type === "ZX");
                   const zWallFromZX = zxRows.find(r => r.zWall && r.zWall.elevationImage)?.zWall;
                   const xWallFromZX = zxRows.find(r => r.xWall && r.xWall.elevationImage)?.xWall;
-                  // Connection module: only show Z and X faces, only connection-type walls (ZC-/XC-)
+                  // Connection module: only show Z and X faces, only connection-type walls
                   if (pav.pavilionNum === 2) {
-                    const isConnectionWall = (w) => w && w.type && (w.type.startsWith("ZC-") || w.type.startsWith("XC-"));
+                    const isConnectionWall = (w) => {
+                      if (!w || !w.type) return false;
+                      const entry = customWalls.find(cw => cw.code === w.type);
+                      return entry ? entry.groupKey === "connection" : (w.type.startsWith("ZC-") || w.type.startsWith("XC-"));
+                    };
                     const rawZ = zWallFromZX || (yRows[0]?.zWall) || null;
                     const rawX = xWallFromZX || (yRows[0]?.xWall) || null;
                     const zWall = isConnectionWall(rawZ) ? rawZ : null;
