@@ -882,14 +882,24 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
             return { ...pav, minX: pavMinX, maxX: pavMaxX, width: pavWidth };
           }).filter(Boolean);
 
+          const depthM = (maxY - minY) * 0.6;
+
           return (
             <>
-              {/* Overall width dimension line with label */}
+              {/* Overall length dimension (horizontal) */}
               <div className="absolute pointer-events-none flex items-center justify-center" style={{ left: minX * CELL_W, top: (minY - 2.166) * CELL_H, width: (maxX - minX) * CELL_W, height: 1 }}>
                 <div className="absolute" style={{ height: 2, width: '100%', backgroundColor: '#CBD5E1' }} />
                 <div className="absolute pointer-events-none" style={{ left: 0, top: '-4px', width: 2, height: 10, backgroundColor: '#CBD5E1' }} />
                 <div className="absolute pointer-events-none" style={{ right: 0, top: '-4px', width: 2, height: 10, backgroundColor: '#CBD5E1' }} />
                 <span className="relative text-xs font-semibold text-slate-400 px-1" style={{ backgroundColor: '#F5F5F3' }}>{widthM.toFixed(1)}m</span>
+              </div>
+
+              {/* Overall width dimension (vertical) */}
+              <div className="absolute pointer-events-none flex items-center justify-center" style={{ left: (minX - 1.5) * CELL_W, top: minY * CELL_H, width: 1, height: (maxY - minY) * CELL_H }}>
+                <div className="absolute" style={{ width: 2, height: '100%', backgroundColor: '#CBD5E1' }} />
+                <div className="absolute pointer-events-none" style={{ top: 0, left: '-4px', width: 10, height: 2, backgroundColor: '#CBD5E1' }} />
+                <div className="absolute pointer-events-none" style={{ bottom: 0, left: '-4px', width: 10, height: 2, backgroundColor: '#CBD5E1' }} />
+                <span className="relative text-xs font-semibold text-slate-400 px-1" style={{ backgroundColor: '#F5F5F3', writingMode: 'vertical-rl', textOrientation: 'mixed' }}>{depthM.toFixed(1)}m</span>
               </div>
 
               {/* Pavilion dimensions */}
