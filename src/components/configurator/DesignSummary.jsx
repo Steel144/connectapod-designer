@@ -31,21 +31,21 @@ export default function DesignSummary({ placedModules, walls = [], onSave, onCle
       </div>
 
       {placedModules.length > 0 && (
-        <div className="mb-4 space-y-1.5">
-          {placedModules.map((m) => (
-            <div key={m.id} className="flex items-center justify-between text-xs">
-              <span className="flex items-center gap-1.5">
-                <span className="flex items-center justify-center w-4 h-4" style={{transform:'scale(0.75)'}}>{GROUP_ICONS[m.groupKey]}</span>
-                <span className="text-gray-600">{m.label}</span>
-              </span>
-              <span className="text-gray-400">${(m.price / 1000).toFixed(0)}k</span>
-            </div>
-          ))}
-          <div className="border-t border-gray-100 pt-1.5 flex justify-between text-xs font-semibold">
-            <span className="text-gray-600">Total</span>
-            <span className="text-gray-800">${totalPrice.toLocaleString()}</span>
-          </div>
-        </div>
+        <div className="mb-4 space-y-2 max-h-[140px] overflow-y-auto border border-gray-100 p-3 bg-gray-50">
+           {placedModules.map((m) => (
+             <div key={m.id} className="flex items-center justify-between text-xs">
+               <span className="flex items-center gap-2 flex-1 min-w-0">
+                 <span className="flex items-center justify-center w-4 h-4 flex-shrink-0" style={{transform:'scale(0.75)'}}>{GROUP_ICONS[m.groupKey]}</span>
+                 <span className="text-gray-600 truncate">{m.label}</span>
+               </span>
+               <span className="text-gray-500 ml-1 flex-shrink-0">${(m.price / 1000).toFixed(0)}k</span>
+             </div>
+           ))}
+           <div className="border-t border-gray-200 pt-2 mt-2 flex justify-between text-xs font-semibold">
+             <span className="text-gray-700">Total</span>
+             <span className="text-gray-900">${(totalPrice / 1000).toFixed(0)}k</span>
+           </div>
+         </div>
       )}
 
       <div className="flex gap-2 flex-col">
