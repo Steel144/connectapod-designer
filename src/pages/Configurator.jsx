@@ -268,8 +268,11 @@ export default function Configurator() {
       const next = prev.map(w => {
         const wallType = w.type || w.mpCode || w.label || w.code || w.wallType || null;
         const img = wallType ? (wallImages[wallType] || null) : null;
+        // Always prefer a real image URL over null — update if we now have one
         const newImg = img || w.elevationImage || null;
-        if (newImg === w.elevationImage && (!wallType || w.type === wallType)) return w;
+        const typeChanged = wallType && w.type !== wallType;
+        const imgChanged = newImg !== w.elevationImage;
+        if (!typeChanged && !imgChanged) return w;
         changed = true;
         const result = { ...w, elevationImage: newImg };
         if (wallType) result.type = wallType;
@@ -277,7 +280,7 @@ export default function Configurator() {
       });
       return changed ? next : prev;
     });
-  }, [wallImages]);
+  }, [wallImages, walls.length]);
 
   // Fix walls that were placed outside a connection module — nudge them inside
   useEffect(() => {
