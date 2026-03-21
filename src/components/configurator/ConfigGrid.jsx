@@ -313,8 +313,9 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
             if (snapped.rotation) wallUpdate.rotation = snapped.rotation;
             if (onMoveWall) onMoveWall(wall.id, snapped.x, snapped.y, wallUpdate);
           } else {
-            const newX = Math.max(0, wallExactX);
-            const newY = Math.max(0, wallExactY);
+            // No snap found - place freely but constrain to grid bounds
+            const newX = Math.max(0, Math.min(exactX, GRID_COLS - 1));
+            const newY = Math.max(0, Math.min(exactY, GRID_ROWS - 1));
             if (onMoveWall) onMoveWall(wall.id, newX, newY);
           }
         });
