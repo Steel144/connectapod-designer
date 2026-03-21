@@ -56,19 +56,23 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
   useEffect(() => {
     const onKey = (e) => {
       if (e.key === "Delete" || e.key === "Backspace") {
-        if (selected.size > 0) {
-             selected.forEach((id) => onRemove(id));
-             setSelected(new Set());
-           }
-           if (selectedWallIds.size > 0) {
-             selectedWallIds.forEach((id) => onRemoveWall && onRemoveWall(id));
-             setSelectedWallIds(new Set());
-           }
+        setSelected((prevSelected) => {
+          if (prevSelected.size > 0) {
+            prevSelected.forEach((id) => onRemove(id));
+          }
+          return new Set();
+        });
+        setSelectedWallIds((prevWalls) => {
+          if (prevWalls.size > 0) {
+            prevWalls.forEach((id) => onRemoveWall && onRemoveWall(id));
+          }
+          return new Set();
+        });
       }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [selected, selectedWallIds, onRemove, onRemoveWall]);
+  }, [onRemove, onRemoveWall]);
 
   const getCellFromClient = (clientX, clientY) => {
     const rect = gridRef.current.getBoundingClientRect();
