@@ -495,6 +495,9 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
     const wallType = e.dataTransfer.getData("wallType");
     console.log("wallType:", wallType);
     if (wallType) {
+      // Only allow wall placement if a module is selected
+      if (selected.size === 0) return;
+      
       const wallTemplate = wallTypes.find((w) => w.type === wallType);
       if (!wallTemplate || !gridRef.current) return;
       
