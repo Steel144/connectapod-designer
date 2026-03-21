@@ -876,7 +876,20 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
 
 
 
-      <p className="text-xs text-slate-400 mt-2 text-center">
+      {placedModules.length > 0 && (() => {
+        const minX = Math.min(...placedModules.map(m => m.x));
+        const maxX = Math.max(...placedModules.map(m => m.x + m.w));
+        const minY = Math.min(...placedModules.map(m => m.y));
+        const maxY = Math.max(...placedModules.map(m => m.y + m.h));
+        const widthM = (maxX - minX) * 0.6;
+        const depthM = (maxY - minY) * 0.6;
+        return (
+          <p className="text-xs text-slate-700 mt-2 text-center font-semibold">
+            Overall: {widthM.toFixed(1)}m × {depthM.toFixed(1)}m
+          </p>
+        );
+      })()}
+      <p className="text-xs text-slate-400 mt-1 text-center">
         Grid: {GRID_COLS}×{GRID_ROWS} cells · Snap: 600mm
       </p>
       </div>
