@@ -495,12 +495,26 @@ export default function Configurator() {
       baseW: m.baseW, baseH: m.baseH, rotation: m.rotation, flipped: m.flipped,
       groupKey: m.groupKey,
     }));
-    const wallsToSave = walls.map(w => ({
-      id: w.id, type: w.type || w.mpCode || w.label, label: w.label, x: w.x, y: w.y,
-      orientation: w.orientation, length: w.length, thickness: w.thickness,
-      face: w.face, rotation: w.rotation, flipped: w.flipped || false, elevationImage: w.elevationImage || null,
-      mpCode: w.mpCode, description: w.description, variants: w.variants,
-    }));
+    const wallsToSave = walls.map(w => {
+      const wallType = w.type || w.mpCode || w.label || w.code || w.wallType || null;
+      return {
+        id: w.id,
+        type: wallType,
+        label: w.label || wallType,
+        x: w.x,
+        y: w.y,
+        orientation: w.orientation,
+        length: w.length,
+        thickness: w.thickness,
+        face: w.face,
+        rotation: w.rotation,
+        flipped: w.flipped || false,
+        elevationImage: w.elevationImage || null,
+        mpCode: w.mpCode || wallType,
+        description: w.description,
+        variants: w.variants,
+      };
+    });
     saveMutation.mutate({
       name,
       grid: gridToSave,
