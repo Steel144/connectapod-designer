@@ -883,10 +883,18 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
         const maxY = Math.max(...placedModules.map(m => m.y + m.h));
         const widthM = (maxX - minX) * 0.6;
         const depthM = (maxY - minY) * 0.6;
+
         return (
-          <p className="text-xs text-slate-700 mt-2 text-center font-semibold">
-            Overall: {widthM.toFixed(1)}m × {depthM.toFixed(1)}m
-          </p>
+          <>
+            {/* Width dimension overlay */}
+            <div className="absolute pointer-events-none" style={{ left: minX * CELL_W, top: (minY - 2) * CELL_H, width: (maxX - minX) * CELL_W, height: 2 * CELL_H, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <span className="text-sm font-bold text-slate-700 bg-white/80 px-2 py-1 rounded">{widthM.toFixed(1)}m</span>
+            </div>
+            {/* Depth dimension overlay */}
+            <div className="absolute pointer-events-none" style={{ left: (minX - 3) * CELL_W, top: minY * CELL_H, width: 3 * CELL_W, height: (maxY - minY) * CELL_H, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <span className="text-sm font-bold text-slate-700 bg-white/80 px-2 py-1 rounded" style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}>{depthM.toFixed(1)}m</span>
+            </div>
+          </>
         );
       })()}
       <p className="text-xs text-slate-400 mt-1 text-center">
