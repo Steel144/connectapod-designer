@@ -489,7 +489,7 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
                     onDragStart(e, wall);
                   }}
                   onDragEnd={onDragEnd}
-                  onMouseEnter={() => setHoveredWall({ ...wall, elevationImage: wallImages[wall.type] })}
+                  onMouseEnter={() => setHoveredWall({ ...wall, elevationImage: localWallImages[wall.type] })}
                   onMouseLeave={() => setHoveredWall(null)}
                   className="flex items-center gap-3 px-3 py-2 cursor-grab active:cursor-grabbing hover:bg-orange-50 border-b border-gray-50 last:border-0 transition-colors"
                 >
