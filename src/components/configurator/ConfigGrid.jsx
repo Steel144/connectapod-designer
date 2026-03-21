@@ -892,7 +892,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
               {/* Depth dimension line with label */}
               <div className="absolute pointer-events-none flex items-center justify-center" style={{ left: (minX - 1.5) * CELL_W, top: minY * CELL_H, width: 1, height: (maxY - minY) * CELL_H }}>
                 <div className="absolute" style={{ width: 1, height: '100%', backgroundColor: '#CBD5E1' }} />
-                <span className="relative text-xs font-semibold text-slate-400 bg-F5F5F3 px-1" style={{ backgroundColor: '#F5F5F3', writingMode: 'vertical-rl', textOrientation: 'mixed' }}>{depthM.toFixed(1)}m</span>
+                <span className="relative text-xs font-semibold text-slate-400 bg-F5F5F3 px-1" style={{ backgroundColor: '#F5F5F3', writingMode: 'vertical-rl', textOrientation: 'mixed' }}>Approx. {depthM.toFixed(1)}m</span>
               </div>
             </>
           );
