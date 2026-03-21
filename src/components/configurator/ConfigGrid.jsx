@@ -884,7 +884,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
           return (
             <>
               {/* Width dimension line with label */}
-              <div className="absolute pointer-events-none flex items-center justify-center" style={{ left: minX * CELL_W, top: (minY - 1.5) * CELL_H, width: (maxX - minX) * CELL_W, height: 1 }}>
+              <div className="absolute pointer-events-none flex items-center justify-center" style={{ left: (minX - 0.35) * CELL_W, top: (minY - 1.5) * CELL_H, width: (maxX - minX + 0.7) * CELL_W, height: 1 }}>
                 <div className="absolute" style={{ height: 2, width: '100%', backgroundColor: '#CBD5E1' }} />
                 {/* Left tick */}
                 <div className="absolute pointer-events-none" style={{ left: 0, top: '-4px', width: 2, height: 10, backgroundColor: '#CBD5E1' }} />
@@ -894,7 +894,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
               </div>
 
               {/* Depth dimension line with label */}
-              <div className="absolute pointer-events-none flex items-center justify-center" style={{ left: (minX - 1.5) * CELL_W, top: minY * CELL_H, width: 1, height: (maxY - minY) * CELL_H }}>
+              <div className="absolute pointer-events-none flex items-center justify-center" style={{ left: (minX - 1.5) * CELL_W, top: (minY - 0.35) * CELL_H, width: 1, height: (maxY - minY + 0.7) * CELL_H }}>
                 <div className="absolute" style={{ width: 2, height: '100%', backgroundColor: '#CBD5E1' }} />
                 {/* Top tick */}
                 <div className="absolute pointer-events-none" style={{ top: 0, left: '-4px', width: 10, height: 2, backgroundColor: '#CBD5E1' }} />
