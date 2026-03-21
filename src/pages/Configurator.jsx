@@ -540,9 +540,13 @@ export default function Configurator() {
     const loadedWalls = (design.walls || []).map(w => {
       const wallType = w.type || w.mpCode || w.label || w.code || w.wallType || null;
       const img = wallType ? (w.elevationImage || currentWallImages[wallType]) : null;
-      const result = { ...w, elevationImage: img || null };
-      if (wallType) result.type = wallType;
-      return result;
+      return {
+        ...w,
+        type: wallType,
+        mpCode: w.mpCode || wallType,
+        label: w.label || wallType,
+        elevationImage: img || null,
+      };
     });
     setPlacedModules(grid);
     setWalls(loadedWalls);
