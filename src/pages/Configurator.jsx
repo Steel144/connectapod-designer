@@ -241,12 +241,15 @@ export default function Configurator() {
   // When wallImages loads/updates, enrich all placed walls with elevation images
   useEffect(() => {
     if (Object.keys(wallImages).length === 0) return;
-    setWalls(prev => prev.map(w => {
-      const wallType = w.type || w.mpCode || w.label || w.code || w.wallType;
-      const img = wallImages[wallType];
-      return { ...w, type: wallType, elevationImage: img || w.elevationImage || null };
-    }));
-  }, [wallImages]);
+    setWalls(prev => {
+      if (prev.length === 0) return prev;
+      return prev.map(w => {
+        const wallType = w.type || w.mpCode || w.label || w.code || w.wallType;
+        const img = wallImages[wallType];
+        return { ...w, type: wallType, elevationImage: img || w.elevationImage || null };
+      });
+    });
+  }, [wallImages, walls.length]);
 
   // Fix walls that were placed outside a connection module — nudge them inside
   useEffect(() => {
