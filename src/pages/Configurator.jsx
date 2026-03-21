@@ -161,8 +161,9 @@ export default function Configurator() {
         return {}; 
       }
     },
-    staleTime: Infinity,
+    staleTime: 0,
     refetchOnMount: "always",
+    gcTime: Infinity,
   });
 
   const { data: customModules = [] } = useQuery({
