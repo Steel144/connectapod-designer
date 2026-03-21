@@ -175,8 +175,6 @@ export default function Configurator() {
       queryClient.invalidateQueries({ queryKey: ["homeDesigns"] });
       toast.success("Design saved!");
       setSaveModalOpen(false);
-      // Re-save walls to localStorage to ensure they're not lost on re-render
-      localStorage.setItem("configurator_walls", JSON.stringify(walls));
     },
   });
 
