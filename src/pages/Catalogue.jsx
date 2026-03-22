@@ -1,14 +1,13 @@
 import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { ChevronLeft, Pencil, Upload, X, Loader2, Plus, Trash2, Copy, Printer, Database } from "lucide-react";
+import { ChevronLeft, Pencil, Upload, X, Loader2, Plus, Trash2, Copy, Printer } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { base44 } from "@/api/base44Client";
+import { ModuleEntry } from "@/lib/supabase";
 import { toast } from "sonner";
 import AddModuleModal from "@/components/catalogue/AddModuleModal";
 import EditModuleModal from "@/components/catalogue/EditModuleModal";
 import PrintableCatalogue from "@/components/catalogue/PrintableCatalogue";
 import BulkUploadModal from "@/components/catalogue/BulkUploadModal";
-import { SEED_MODULES } from "@/data/modules";
 
 // Category structure for organizing custom modules — all built-in modules hidden
 const CATALOGUE = [
@@ -42,14 +41,13 @@ export default function Catalogue() {
   const [editingModule, setEditingModule] = useState(null);
   const [printMode, setPrintMode] = useState(false);
   const [bulkUploadOpen, setBulkUploadOpen] = useState(false);
-  const [seeding, setSeeding] = useState(false);
   const queryClient = useQueryClient();
   const fileInputRef = useRef(null);
   const [pendingUploadCode, setPendingUploadCode] = useState(null);
 
   const { data: customModules = [] } = useQuery({
     queryKey: ["moduleEntries"],
-    queryFn: () => base44.entities.ModuleEntry.list(),
+    queryFn: () => ModuleEntry.list(),
   });
 
   const { data: deletedModules = [] } = useQuery({
@@ -59,42 +57,15 @@ export default function Catalogue() {
   const deletedCodes = new Set(deletedModules.map(d => d.moduleCode));
 
   const handleAddModule = async (data) => {
-    await base44.entities.ModuleEntry.create(data);
+    await ModuleEntry.create(data);
     queryClient.invalidateQueries({ queryKey: ["moduleEntries"] });
     setAddingToCategory(null);
     toast.success("Module added");
   };
 
-  const handleSeedModules = async () => {
-    setSeeding(true);
-    try {
-      const existingCodes = new Set(customModules.map(m => m.code));
-      const modulesToAdd = SEED_MODULES.filter(m => !existingCodes.has(m.code));
-      
-      if (modulesToAdd.length === 0) {
-        toast.info("All modules already exist in the catalogue");
-        setSeeding(false);
-        return;
-      }
-      
-      let added = 0;
-      for (const mod of modulesToAdd) {
-        await base44.entities.ModuleEntry.create(mod);
-        added++;
-      }
-      
-      queryClient.invalidateQueries({ queryKey: ["moduleEntries"] });
-      toast.success(`Added ${added} modules to the catalogue`);
-    } catch (error) {
-      toast.error("Failed to seed modules: " + (error.message || "Unknown error"));
-    } finally {
-      setSeeding(false);
-    }
-  };
-
   const handleDeleteModule = async (entryId) => {
     try {
-      await base44.entities.ModuleEntry.delete(entryId);
+      await ModuleEntry.delete(entryId);
       queryClient.invalidateQueries({ queryKey: ["moduleEntries"] });
       toast.success("Module removed");
     } catch (error) {
@@ -122,7 +93,7 @@ export default function Catalogue() {
       // If it's a custom module, delete the ModuleEntry entirely
       const customModule = customModules.find(m => m.code === code);
       if (customModule) {
-        await base44.entities.ModuleEntry.delete(customModule.id);
+        await ModuleEntry.delete(customModule.id);
       }
       
       // Remove associated DeletedModule record if it exists
@@ -172,7 +143,7 @@ export default function Catalogue() {
 
     if (editingModule._custom && fullModule) {
       // For custom modules, update directly
-      await base44.entities.ModuleEntry.update(editingModule._id, {
+      await ModuleEntry.update(editingModule._id, {
         ...finalData,
         originalCode: editingModule.originalCode || undefined,
       });
@@ -181,7 +152,7 @@ export default function Catalogue() {
       const existingOverride = customModules.find(c => c.originalCode === editingModule.code);
       if (existingOverride) {
         // Update existing override
-        await base44.entities.ModuleEntry.update(existingOverride.id, {
+        await ModuleEntry.update(existingOverride.id, {
           ...finalData,
           categories: existingOverride.categories || [],
           originalCode: editingModule.code,
@@ -190,7 +161,7 @@ export default function Catalogue() {
         // Create new override and hide the builtin
         await Promise.all([
           base44.entities.DeletedModule.create({ moduleCode: editingModule.code }),
-          base44.entities.ModuleEntry.create({
+          ModuleEntry.create({
             ...finalData,
             categories: [],
             originalCode: editingModule.code,
@@ -267,7 +238,7 @@ export default function Catalogue() {
       categories: fullMod?.categories || [],
     };
 
-    await base44.entities.ModuleEntry.create(newModule);
+    await ModuleEntry.create(newModule);
     queryClient.invalidateQueries({ queryKey: ["moduleEntries"] });
     toast.success(`Duplicated as ${newCode}`);
   };
@@ -410,15 +381,6 @@ export default function Catalogue() {
             <span className="text-xs text-gray-400">Module Catalogue</span>
           </div>
           <div className="flex items-center gap-2 ml-auto">
-            <button
-              onClick={handleSeedModules}
-              disabled={seeding}
-              className="flex items-center gap-2 px-3 py-1.5 text-xs text-gray-600 border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22] transition-all disabled:opacity-50"
-              title="Add all standard modules to catalogue"
-            >
-              {seeding ? <Loader2 size={14} className="animate-spin" /> : <Database size={14} />}
-              {seeding ? "Seeding..." : "Seed Modules"}
-            </button>
             <button
               onClick={() => setBulkUploadOpen(true)}
               className="flex items-center gap-2 px-3 py-1.5 text-xs text-gray-600 border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22] transition-all"

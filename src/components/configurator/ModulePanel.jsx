@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { ChevronDown, ChevronRight, Image as ImageIcon } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { base44 } from "@/api/base44Client";
+import { ModuleEntry } from "@/lib/supabase";
 import FloorPlanSVG from "./FloorPlanSVG.jsx";
 import WallSuggestions from "./WallSuggestions.jsx";
 import WallImageUpload from "./WallImageUpload.jsx";
@@ -146,7 +146,7 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
 
   const { data: customModules = [] } = useQuery({
     queryKey: ["moduleEntries"],
-    queryFn: async () => { try { const r = await base44.entities.ModuleEntry.list(); return Array.isArray(r) ? r : []; } catch { return []; } },
+    queryFn: async () => { try { const r = await ModuleEntry.list(); return Array.isArray(r) ? r : []; } catch { return []; } },
   });
 
   const { data: deletedModules = [] } = useQuery({

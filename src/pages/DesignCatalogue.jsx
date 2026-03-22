@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { base44 } from "@/api/base44Client";
+import { ModuleEntry } from "@/lib/supabase";
 import { useQuery } from "@tanstack/react-query";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, Maximize2, Layers, Tag, Play } from "lucide-react";
@@ -18,7 +19,7 @@ export default function DesignCatalogue() {
 
   const { data: moduleEntries = [] } = useQuery({
     queryKey: ["moduleEntries"],
-    queryFn: async () => { try { const r = await base44.entities.ModuleEntry.list(); return Array.isArray(r) ? r : []; } catch { return []; } },
+    queryFn: async () => { try { const r = await ModuleEntry.list(); return Array.isArray(r) ? r : []; } catch { return []; } },
     staleTime: 0,
     refetchOnMount: true,
   });

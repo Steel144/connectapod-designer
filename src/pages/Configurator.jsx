@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { base44 } from "@/api/base44Client";
+import { ModuleEntry } from "@/lib/supabase";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import ModulePanel, { MODULE_TYPES } from "@/components/configurator/ModulePanel";
 import ConfigGrid from "@/components/configurator/ConfigGrid";
@@ -176,7 +177,7 @@ export default function Configurator() {
 
   const { data: customModules = [] } = useQuery({
     queryKey: ["moduleEntries"],
-    queryFn: async () => { try { const r = await base44.entities.ModuleEntry.list(); return Array.isArray(r) ? r : []; } catch { return []; } },
+    queryFn: async () => { try { const r = await ModuleEntry.list(); return Array.isArray(r) ? r : []; } catch { return []; } },
   });
 
   const saveMutation = useMutation({

@@ -1,6 +1,7 @@
 import React, { useRef, useState } from "react";
 import { X, Upload, CheckCircle, AlertCircle, Plus, Loader2 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
+import { ModuleEntry } from "@/lib/supabase";
 
 // Strip extension from filename to get the code
 const getCodeFromFilename = (filename) => filename.replace(/\.[^.]+$/, "").trim();
@@ -34,7 +35,7 @@ export default function BulkUploadModal({ onClose, existingModules, onDone }) {
 
         // If new module, create a ModuleEntry
         if (item.isNew) {
-          await base44.entities.ModuleEntry.create({
+          await ModuleEntry.create({
             category: "Living",
             code: item.code,
             name: item.code,
