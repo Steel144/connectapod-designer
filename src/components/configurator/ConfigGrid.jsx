@@ -932,6 +932,20 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                  );
                })}
 
+               {/* Pavilion 2 bottom length dimension */}
+               {pavilionDimensions.length >= 2 && (() => {
+                 const pav2 = pavilionDimensions[pavilionDimensions.length - 1];
+                 const pav2WidthM = (pav2.maxX - pav2.minX) * 0.6;
+                 return (
+                   <div key="pav2-bottom-dim" className="absolute pointer-events-none flex items-center justify-center" style={{ left: pav2.minX * CELL_W, top: (pav2.pavMaxY + 3) * CELL_H, width: (pav2.maxX - pav2.minX) * CELL_W, height: 1 }}>
+                     <div className="absolute" style={{ height: 2, width: '100%', backgroundColor: '#CBD5E1' }} />
+                     <div className="absolute pointer-events-none" style={{ left: 0, top: '-4px', width: 2, height: 10, backgroundColor: '#CBD5E1' }} />
+                     <div className="absolute pointer-events-none" style={{ right: 0, top: '-4px', width: 2, height: 10, backgroundColor: '#CBD5E1' }} />
+                     <span className="relative text-xs font-semibold text-slate-400 px-1" style={{ backgroundColor: '#F5F5F3' }}>{pav2WidthM.toFixed(1)}m</span>
+                   </div>
+                 );
+               })()}
+
                {/* Connection module depth dimensions (vertical, actual size) */}
                {connectionDimensions.map(conn => {
                  const actualHeightCells = conn.pavMaxY - conn.pavMinY;
