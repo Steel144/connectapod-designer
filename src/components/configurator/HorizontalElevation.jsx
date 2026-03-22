@@ -21,7 +21,7 @@ const HorizontalElevation = memo(function HorizontalElevation({
         </span>
         <div style={{ flex: 1, height: 1, backgroundColor: "#e5e7eb" }} />
       </div>
-      <div style={{ position: "relative", width: totalWidthPx, height: wallHPx, border: "1px solid #e5e7eb", backgroundColor: "#f9fafb", overflow: "hidden" }}>
+      <div style={{ position: "relative", width: totalWidthPx, height: wallHPx, backgroundColor: "#f9fafb", overflow: "hidden" }}>
          {layers.map((layer, li) => {
            let moduleNum = 0;
            return layer.slots.map((slot, si) => {

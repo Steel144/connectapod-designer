@@ -40,7 +40,7 @@ const VerticalElevation = memo(function VerticalElevation({
       <div style={{ display: "flex", gap: 0, alignItems: "flex-start" }}>
 
 
-        <div style={{ position: "relative", flex: 1, width: maxContentWidth, height: endElevationHPx, border: "1px solid #e5e7eb", backgroundColor: "transparent", overflowY: "hidden", overflowX: "auto" }}>
+        <div style={{ position: "relative", flex: 1, width: maxContentWidth, height: endElevationHPx, backgroundColor: "transparent", overflowY: "hidden", overflowX: "auto" }}>
 
           <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 2, backgroundColor: "#374151", zIndex: 2 }} />
 
