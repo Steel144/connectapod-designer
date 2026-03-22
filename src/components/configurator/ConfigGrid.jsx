@@ -867,19 +867,31 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
           const maxY = Math.max(...placedModules.map(m => m.y + m.h));
           const widthM = (maxX - minX) * 0.6;
 
-          // Pavilion dimensions
-          const pavilions = [
-            { name: 'P1', yRange: [9, 13], color: '#22c55e' },
-            { name: 'P2', yRange: [26, 30], color: '#3b82f6' }
-          ];
+          // Detect pavilions dynamically by clustering modules by Y position
+          const colors = ['#22c55e', '#3b82f6', '#f59e0b', '#ef4444'];
+          const sortedYs = [...new Set(placedModules.map(m => m.y))].sort((a, b) => a - b);
+          const groups = [];
+          let currentGroup = [];
+          for (const y of sortedYs) {
+            if (currentGroup.length === 0 || y - currentGroup[currentGroup.length - 1] <= 3) {
+              currentGroup.push(y);
+            } else {
+              groups.push(currentGroup);
+              currentGroup = [y];
+            }
+          }
+          if (currentGroup.length > 0) groups.push(currentGroup);
 
-          const pavilionDimensions = pavilions.map(pav => {
-            const modsInPav = placedModules.filter(m => m.y >= pav.yRange[0] && m.y < pav.yRange[1]);
+          const pavilionDimensions = groups.map((group, i) => {
+            const yMin = group[0];
+            const yMax = group[group.length - 1];
+            const modsInPav = placedModules.filter(m => m.y >= yMin && m.y <= yMax + 2);
             if (modsInPav.length === 0) return null;
             const pavMinX = Math.min(...modsInPav.map(m => m.x));
             const pavMaxX = Math.max(...modsInPav.map(m => m.x + m.w));
-            const pavWidth = (pavMaxX - pavMinX) * 0.6;
-            return { ...pav, minX: pavMinX, maxX: pavMaxX, width: pavWidth };
+            const pavMinY = Math.min(...modsInPav.map(m => m.y));
+            const pavMaxY = Math.max(...modsInPav.map(m => m.y + m.h));
+            return { name: `P${i+1}`, color: colors[i % colors.length], minX: pavMinX, maxX: pavMaxX, pavMinY, pavMaxY };
           }).filter(Boolean);
 
           const depthM = (maxY - minY) * 0.6;
