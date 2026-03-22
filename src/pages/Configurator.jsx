@@ -13,6 +13,8 @@ import { BookOpen, FolderOpen, Save, Trash2, ChevronLeft, ChevronRight, Undo2, B
 
 import PrintablePlansSheet from "@/components/configurator/PrintablePlansSheet";
 import PrintableElevationsSheet from "@/components/configurator/PrintableElevationsSheet";
+import PrintableBuildingElevations from "@/components/configurator/PrintableBuildingElevations";
+import PrintableElevationGallery from "@/components/configurator/PrintableElevationGallery";
 import ElevationGallery from "@/components/configurator/ElevationGallery";
 import BuildingElevation from "@/components/configurator/BuildingElevation";
 import QuoteGenerator from "@/components/configurator/QuoteGenerator";
@@ -677,6 +679,12 @@ export default function Configurator() {
   if (printMode === "elevations") {
     return <PrintableElevationsSheet walls={walls} onClose={() => setPrintMode(null)} />;
   }
+  if (printMode === "building-elevations") {
+    return <PrintableBuildingElevations walls={walls} placedModules={placedModules} onClose={() => setPrintMode(null)} />;
+  }
+  if (printMode === "elevation-gallery") {
+    return <PrintableElevationGallery walls={walls} placedModules={placedModules} onClose={() => setPrintMode(null)} />;
+  }
 
   return (
     <div 
@@ -773,6 +781,26 @@ export default function Configurator() {
             >
               <Save size={13} />
               Print Plans
+            </button>
+          )}
+          {placedModules.length > 0 && (
+            <button
+              onClick={() => setPrintMode("building-elevations")}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-gray-600 bg-white border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22] transition-all"
+              title="Print building elevations"
+            >
+              <Save size={13} />
+              Print Building
+            </button>
+          )}
+          {placedModules.length > 0 && (
+            <button
+              onClick={() => setPrintMode("elevation-gallery")}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-gray-600 bg-white border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22] transition-all"
+              title="Print elevation gallery"
+            >
+              <Save size={13} />
+              Print Gallery
             </button>
           )}
           {walls.some(w => w.elevationImage) && (
