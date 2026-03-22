@@ -453,7 +453,7 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
                           <span style={{ fontSize: 9, color: "#9ca3af" }}>{slot.face}</span>
                         </div>
                       )}
-                      <div style={{ position: "absolute", top: 6, left: 6, backgroundColor: "rgba(0,0,0,0.6)", color: "#fff", width: 24, height: 24, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 700, zIndex: 10 }}>
+                      <div style={{ position: "absolute", top: 8, left: 8, backgroundColor: "#000", color: "#fff", width: 28, height: 28, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 700, zIndex: 50, boxShadow: "0 2px 4px rgba(0,0,0,0.4)" }}>
                         {elevationNum}
                       </div>
                     </div>
