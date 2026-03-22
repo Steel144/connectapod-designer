@@ -131,6 +131,7 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
                 CELL_M={CELL_M}
                 PX_PER_M={PX_PER_M}
                 WALL_H_M={WALL_H_M}
+                slotOffsets={{ 2: slotOffset2 }}
               />
             </div>
             <div style={{ maxHeight: "600px", overflow: "visible", flex: "0 0 auto", marginLeft: -1 }}>
@@ -144,6 +145,7 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
                 CELL_M={CELL_M}
                 PX_PER_M={PX_PER_M}
                 WALL_H_M={WALL_H_M}
+                slotOffsets={{ 2: slotOffset2 }}
               />
             </div>
           </div>
