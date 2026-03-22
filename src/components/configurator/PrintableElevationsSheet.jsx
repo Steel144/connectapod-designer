@@ -1,8 +1,25 @@
-import React from "react";
+import React, { useMemo } from "react";
 
-export default function PrintableElevationsSheet({ walls, onClose }) {
-  const elevations = walls;
-  
+const GRID_ROWS = 40;
+
+const getPavilion = (wallY) => {
+  if (wallY >= 9 && wallY < 13) return 3;
+  if (wallY >= 19 && wallY < 20) return 2;
+  if (wallY >= 26 && wallY < 30) return 1;
+  return null;
+};
+
+const modTouchesBand = (mod, bandStart, bandEnd) =>
+  mod.y < bandEnd && mod.y + mod.h > bandStart;
+
+const getModulePavilion = (mod) => {
+  if (modTouchesBand(mod, 9, 13)) return 3;
+  if (modTouchesBand(mod, 19, 20)) return 2;
+  if (modTouchesBand(mod, 26, 30)) return 1;
+  return null;
+};
+
+export default function PrintableElevationsSheet({ walls = [], placedModules = [], customWalls = [], onClose }) {
   React.useEffect(() => {
     const timer = setTimeout(() => {
       window.print();
@@ -16,60 +33,91 @@ export default function PrintableElevationsSheet({ walls, onClose }) {
     return () => clearTimeout(timer);
   }, [onClose]);
 
-  // Group walls by pavilion based on x-position clusters
-  const clusterWallsByPavilion = () => {
-    const sorted = [...elevations].sort((a, b) => a.x - b.x);
-    const clusters = [];
-    const threshold = 0.5; // x-distance to consider walls in same pavilion
-
-    for (const wall of sorted) {
-      let foundCluster = false;
-      for (const cluster of clusters) {
-        if (Math.abs(cluster[0].x - wall.x) < threshold) {
-          cluster.push(wall);
-          foundCluster = true;
-          break;
-        }
-      }
-      if (!foundCluster) {
-        clusters.push([wall]);
-      }
+  const getWallPavilion = (wall) => {
+    if (wall.pavilionNum !== null && wall.pavilionNum !== undefined) {
+      return wall.pavilionNum;
     }
-    return clusters;
+    const THRESHOLD = 1.0;
+    const snappedMod = placedModules.find(mod => {
+      if (wall.face === "Y") return Math.abs(wall.y - (mod.y + mod.h)) < THRESHOLD && Math.abs(wall.x - mod.x) < THRESHOLD;
+      if (wall.face === "W") return Math.abs(wall.y - (mod.y - 0.31)) < THRESHOLD && Math.abs(wall.x - mod.x) < THRESHOLD;
+      if (wall.face === "Z") return Math.abs(wall.y - mod.y) < THRESHOLD && Math.abs(wall.x - mod.x) < THRESHOLD;
+      if (wall.face === "X") return Math.abs(wall.y - mod.y) < THRESHOLD && Math.abs(wall.x - (mod.x + mod.w - 0.31)) < THRESHOLD;
+      return false;
+    });
+    if (snappedMod) return getPavilion(snappedMod.y);
+    return getPavilion(wall.y);
   };
 
-  const pavilionClusters = clusterWallsByPavilion();
+  const { pavilions, hasAny } = useMemo(() => {
+    const modsByPavilion = { 1: [], 2: [], 3: [] };
+    placedModules.forEach(mod => {
+      const pav = getModulePavilion(mod);
+      if (pav && modsByPavilion[pav]) modsByPavilion[pav].push(mod);
+    });
 
-  // Group walls by face within each pavilion
-  const groupWallsByFace = (pavilionWalls) => {
-    const horizontal = pavilionWalls.filter(w => w.orientation === "horizontal" || w.face === "W" || w.face === "Y");
-    const vertical = pavilionWalls.filter(w => w.orientation === "vertical" || w.face === "Z" || w.face === "X");
+    if (!Object.values(modsByPavilion).some(a => a.length > 0)) return { pavilions: [], hasAny: false };
 
-    const ys = horizontal.map(w => w.y).filter(y => y !== undefined);
-    const midY = ys.length > 0 ? (Math.min(...ys) + Math.max(...ys)) / 2 : 0;
-
-    const xs = vertical.map(w => w.x).filter(x => x !== undefined);
-    const midX = xs.length > 0 ? (Math.min(...xs) + Math.max(...xs)) / 2 : 0;
-
-    const getFace = (w) => {
-      if (w.face) return w.face;
-      if (w.orientation === "vertical") return w.x <= midX ? "Z" : "X";
-      return w.y <= midY ? "W" : "Y";
+    const findWall = (mod, face) => {
+      const WALL_OFFSET = 0.31;
+      return walls.find(w => {
+        if (w.face !== face) return false;
+        if (face === "Y") return Math.abs(w.x - mod.x) < 0.5 && Math.abs(w.y - (mod.y + mod.h)) < 0.5;
+        if (face === "W") return Math.abs(w.x - mod.x) < 0.5 && Math.abs(w.y - (mod.y - WALL_OFFSET)) < 0.5;
+        if (face === "Z") return Math.abs(w.y - mod.y) < 0.5 && Math.abs(w.x - mod.x) < 0.5;
+        if (face === "X") return Math.abs(w.y - mod.y) < 0.5 && Math.abs(w.x - (mod.x + mod.w - WALL_OFFSET)) < 0.5;
+        return false;
+      }) || null;
     };
 
-    return {
-      W: horizontal.filter(w => getFace(w) === "W").sort((a, b) => a.x - b.x),
-      Y: horizontal.filter(w => getFace(w) === "Y").sort((a, b) => a.x - b.x),
-      Z: vertical.filter(w => getFace(w) === "Z"),
-      X: vertical.filter(w => getFace(w) === "X"),
-    };
-  };
+    const makePlaceholder = (mod, face) => ({
+      id: `placeholder-${mod.id}-${face}`,
+      type: null,
+      face,
+      elevationImage: null,
+      width: mod.w * 0.6,
+      length: mod.w,
+      x: mod.x,
+      y: mod.y,
+    });
 
-  const faceLabels = {
-    W: "Front Elevation (Face W)",
-    Y: "Rear Elevation (Face Y)",
-    Z: "Left End Elevation (Face Z)",
-    X: "Right End Elevation (Face X)",
+    const pavilions = [3, 2, 1].map((pavNum) => {
+      const modsInPav = modsByPavilion[pavNum];
+      if (modsInPav.length === 0) return null;
+
+      const yRows = {};
+      modsInPav.forEach(mod => {
+        const yKey = mod.y;
+        if (!yRows[yKey]) yRows[yKey] = [];
+        yRows[yKey].push(mod);
+      });
+
+      const rows = [];
+      Object.keys(yRows)
+        .map(Number)
+        .sort((a, b) => a - b)
+        .forEach(yPos => {
+          const modsAtY = yRows[yPos].sort((a, b) => a.x - b.x);
+
+          const yFaceWalls = modsAtY.map(mod => findWall(mod, "Y") || makePlaceholder(mod, "Y"));
+          const wFaceWalls = modsAtY.map(mod => findWall(mod, "W") || makePlaceholder(mod, "W"));
+
+          const zWall = walls.find(w => w.face === "Z" && modsAtY.some(mod => Math.abs(w.y - mod.y) < 0.5 && Math.abs(w.x - mod.x) < 0.5)) || null;
+          const xWall = walls.find(w => w.face === "X" && modsAtY.some(mod => Math.abs(w.y - mod.y) < 0.5 && Math.abs(w.x - (mod.x + mod.w - 0.31)) < 0.5)) || null;
+
+          rows.push({ type: "Y", yPos, zWall, midWalls: yFaceWalls, xWall });
+          rows.push({ type: "W", yPos, zWall, midWalls: wFaceWalls, xWall });
+        });
+
+      return { pavilionNum: pavNum, rows };
+    });
+
+    return { pavilions: pavilions.filter(Boolean), hasAny: true };
+  }, [walls, placedModules]);
+
+  const getPavilionLabel = (pavNum) => {
+    const labels = { 3: "Pavilion 1", 2: "Connection Module", 1: "Pavilion 2" };
+    return labels[pavNum] || `Pavilion ${pavNum}`;
   };
 
   return (
