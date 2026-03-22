@@ -297,10 +297,8 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
       <div
         className="flex-1 overflow-auto relative select-none bg-gray-50"
         style={{ cursor: "grab" }}
-        ref={containerRef}
-        onLoad={fitToPage}
-        onLoadCapture={fitToPage}
-        onLoadedCapture={fitToPage}
+        ref={(el) => {
+          containerRef.current = el;
           if (el && !el._wheelListenerAdded) {
             el._wheelListenerAdded = true;
             el.addEventListener('wheel', (e) => {
