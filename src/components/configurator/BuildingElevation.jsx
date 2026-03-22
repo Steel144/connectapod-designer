@@ -239,82 +239,8 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
     );
   };
 
-  // ── Render a vertical (Z/X) composite elevation ─────────────────────────────
-  // Canvas X axis = building depth (total Y span on plan).
-  // Each slot is positioned at its Y offset on plan; width = module depth (h cells).
-  // The wall image is shown at natural aspect ratio centred in its slot.
+  // Z/X elevations now use same canvas width as W/Y (total building width)
   const allMinY = placedModules.length > 0 ? Math.min(...placedModules.map(m => m.y)) : 0;
-  const allMaxY = placedModules.length > 0 ? Math.max(...placedModules.map(m => m.y + m.h)) : 0;
-  const totalDepthCells = allMaxY - allMinY;
-  const totalDepthPx = Math.round(scale * totalDepthCells * CELL_M * PX_PER_M);
-
-  const VertElevation = ({ layers, label, color }) => {
-    if (layers.length === 0) return null;
-    return (
-      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <span style={{ fontSize: 10, fontWeight: 700, color: "#fff", backgroundColor: color, padding: "2px 10px", borderRadius: 2, letterSpacing: "0.08em", textTransform: "uppercase" }}>
-            {label}
-          </span>
-          <div style={{ flex: 1, height: 1, backgroundColor: "#e5e7eb" }} />
-        </div>
-        {/* Composite canvas: width = total building depth */}
-        <div style={{ position: "relative", width: totalDepthPx, height: wallHPx, border: "1px solid #e5e7eb", backgroundColor: "#f9fafb", overflow: "hidden" }}>
-          {layers.map((layer, li) =>
-            layer.slots.map((slot, si) => {
-              const leftPx = Math.round(scale * slot.yOffsetCells * CELL_M * PX_PER_M);
-              const slotWidthPx = Math.round(scale * slot.depthCells * CELL_M * PX_PER_M);
-              const wall = slot.wall;
-              // Wall panel width: use wall's actual width if available, else fill slot
-              const wallPanelPx = wall?.width
-                ? Math.round(scale * wall.width * PX_PER_M)
-                : slotWidthPx;
-              return (
-                <div
-                  key={`${li}-${si}`}
-                  style={{
-                    position: "absolute",
-                    left: leftPx,
-                    top: 0,
-                    width: slotWidthPx,
-                    height: wallHPx,
-                    overflow: "hidden",
-                    borderRight: "1px solid rgba(0,0,0,0.12)",
-                  }}
-                >
-                  {wall?.elevationImage ? (
-                    <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "stretch", justifyContent: "center" }}>
-                      <img
-                        src={wall.elevationImage}
-                        alt={wall.type}
-                        style={{
-                          height: "100%",
-                          width: wallPanelPx,
-                          objectFit: "fill",
-                          display: "block",
-                          transform: wall.flipped ? "scaleX(-1)" : undefined,
-                          flexShrink: 0,
-                        }}
-                      />
-                    </div>
-                  ) : (
-                    <div style={{
-                      width: "100%", height: "100%",
-                      background: "repeating-linear-gradient(45deg, #f3f4f6, #f3f4f6 6px, #e5e7eb 6px, #e5e7eb 12px)",
-                      display: "flex", alignItems: "center", justifyContent: "center",
-                    }}>
-                      <span style={{ fontSize: 9, color: "#9ca3af" }}>{slot.face}</span>
-                    </div>
-                  )}
-                </div>
-              );
-            })
-          )}
-          <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 2, backgroundColor: "#374151" }} />
-        </div>
-      </div>
-    );
-  };
 
   return (
     <div className="w-full h-full bg-white flex flex-col">
