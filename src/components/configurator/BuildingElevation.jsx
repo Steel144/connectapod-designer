@@ -375,7 +375,7 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseUp}
       >
-        <div style={{ transform: `translate(${pan.x}px, ${pan.y}px)`, padding: "40px", display: "inline-flex", flexDirection: "column", gap: 48, minWidth: "max-content" }}>
+        <div style={{ transform: `translate(${pan.x}px, ${pan.y}px)`, padding: "40px", display: "flex", flexDirection: "column", gap: 48, minWidth: "max-content" }}>
           <div style={{ maxHeight: "600px", overflow: "auto", overflowX: "hidden" }}>
             <HorizElevation layers={wElevation} label="W — North Elevation" color="#22c55e" />
           </div>
