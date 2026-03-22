@@ -289,8 +289,8 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
           </span>
           <div style={{ flex: 1, height: 1, backgroundColor: "#e5e7eb" }} />
         </div>
-        {/* Composite canvas: width = total building depth, scaled to match pavilion width */}
-        <div style={{ position: "relative", width: Math.max(totalDepthPx, Math.round(scale * PAV_END_WIDTH_M * PX_PER_M)), height: wallHPx, border: "1px solid #e5e7eb", backgroundColor: "#f9fafb", overflowY: "hidden", overflowX: "auto" }}>
+        {/* Composite canvas: width = total building depth */}
+        <div style={{ position: "relative", width: totalDepthPx, height: wallHPx, border: "1px solid #e5e7eb", backgroundColor: "#f9fafb", overflowY: "hidden", overflowX: "auto" }}>
           {layers.map((layer) =>
             layer.slots.map((slot, si) => {
               const leftPx = Math.round(scale * slot.yOffsetCells * CELL_M * PX_PER_M);
