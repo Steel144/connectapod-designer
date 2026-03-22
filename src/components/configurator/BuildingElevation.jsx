@@ -124,45 +124,51 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
     }));
 
     // ── Z (West) elevation ────────────────────────────────────────────────────
-    // Looking east: canvas X axis = total building WIDTH (X span on plan).
-    // Each Z-face end wall is positioned at its module's X offset.
-    // Width of each panel = module width (w cells).
-    // Multiple Y-row groups (pavilions) are layers painted back→front.
+    // Show all modules that have a Z face wall, positioned by their Y (depth) offset.
+    // For looking west→east: the canvas X axis = building depth (Y on plan).
+    // Each Z-face wall is rendered as a fixed-width panel at its Y position.
+    // Layers: modules further right (higher X) drawn first, leftmost (front) drawn last.
     const allMinY = Math.min(...placedModules.map(m => m.y));
-    // Get all modules that are exterior on their Z (left) face
+    const hasZWall = placedModules.filter(m => findWall("Z", m) !== null);
+    // Also include exterior-Z modules that have no wall yet (show placeholder)
     const exteriorZ = placedModules.filter(m =>
       !placedModules.some(o => o.y < m.y + m.h && o.y + o.h > m.y && o.x + o.w === m.x)
     );
-    // Group by Y row, sort descending (back rows first, front rows on top)
-    const zByY = {};
-    exteriorZ.forEach(m => { if (!zByY[m.y]) zByY[m.y] = []; zByY[m.y].push(m); });
-    const zRowsSorted = Object.keys(zByY).map(Number).sort((a, b) => b - a);
-    const zElevation = zRowsSorted.map(rowY => ({
-      rowY,
-      slots: [...zByY[rowY]].sort((a, b) => a.x - b.x).map(mod => ({
+    // Union: modules with a Z wall OR exterior-Z modules
+    const zModules = [...new Set([...hasZWall, ...exteriorZ])];
+    // Group by X (leftmost X of module), sort descending (back→front)
+    const zByX = {};
+    zModules.forEach(m => { if (!zByX[m.x]) zByX[m.x] = []; zByX[m.x].push(m); });
+    const zColsSorted = Object.keys(zByX).map(Number).sort((a, b) => b - a);
+    const zElevation = zColsSorted.map(colX => ({
+      colX,
+      slots: [...zByX[colX]].sort((a, b) => a.y - b.y).map(mod => ({
         mod, face: "Z",
         wall: findWall("Z", mod),
-        xOffsetCells: mod.x - allMinX,
-        widthCells: mod.w,
+        // Position along canvas = Y offset (depth on plan)
+        yOffsetCells: mod.y - allMinY,
+        // Width in elevation = module depth (h cells) — how wide this panel appears looking west
+        depthCells: mod.h,
       })),
     }));
 
     // ── X (East) elevation ────────────────────────────────────────────────────
-    // Looking west: canvas X axis = total building WIDTH (X span on plan).
-    // Each X-face end wall is positioned at its module's X offset.
+    const hasXWall = placedModules.filter(m => findWall("X", m) !== null);
     const exteriorX = placedModules.filter(m =>
       !placedModules.some(o => o.y < m.y + m.h && o.y + o.h > m.y && o.x === m.x + m.w)
     );
-    const xByY = {};
-    exteriorX.forEach(m => { if (!xByY[m.y]) xByY[m.y] = []; xByY[m.y].push(m); });
-    const xRowsSorted = Object.keys(xByY).map(Number).sort((a, b) => b - a);
-    const xElevation = xRowsSorted.map(rowY => ({
-      rowY,
-      slots: [...xByY[rowY]].sort((a, b) => a.x - b.x).map(mod => ({
+    const xModules = [...new Set([...hasXWall, ...exteriorX])];
+    const xByX = {};
+    xModules.forEach(m => { const key = m.x + m.w; if (!xByX[key]) xByX[key] = []; xByX[key].push(m); });
+    // For east elevation looking west: modules further left (lower right-edge X) drawn first
+    const xColsSorted = Object.keys(xByX).map(Number).sort((a, b) => a - b);
+    const xElevation = xColsSorted.map(colX => ({
+      colX,
+      slots: [...xByX[colX]].sort((a, b) => a.y - b.y).map(mod => ({
         mod, face: "X",
         wall: findWall("X", mod),
-        xOffsetCells: mod.x - allMinX,
-        widthCells: mod.w,
+        yOffsetCells: mod.y - allMinY,
+        depthCells: mod.h,
       })),
     }));
 
@@ -239,8 +245,82 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
     );
   };
 
-  // Z/X elevations now use same canvas width as W/Y (total building width)
+  // ── Render a vertical (Z/X) composite elevation ─────────────────────────────
+  // Canvas X axis = building depth (total Y span on plan).
+  // Each slot is positioned at its Y offset on plan; width = module depth (h cells).
+  // The wall image is shown at natural aspect ratio centred in its slot.
   const allMinY = placedModules.length > 0 ? Math.min(...placedModules.map(m => m.y)) : 0;
+  const allMaxY = placedModules.length > 0 ? Math.max(...placedModules.map(m => m.y + m.h)) : 0;
+  const totalDepthCells = allMaxY - allMinY;
+  const totalDepthPx = Math.round(scale * totalDepthCells * CELL_M * PX_PER_M);
+
+  const VertElevation = ({ layers, label, color }) => {
+    if (layers.length === 0) return null;
+    return (
+      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <span style={{ fontSize: 10, fontWeight: 700, color: "#fff", backgroundColor: color, padding: "2px 10px", borderRadius: 2, letterSpacing: "0.08em", textTransform: "uppercase" }}>
+            {label}
+          </span>
+          <div style={{ flex: 1, height: 1, backgroundColor: "#e5e7eb" }} />
+        </div>
+        {/* Composite canvas: width = total building depth */}
+        <div style={{ position: "relative", width: totalDepthPx, height: wallHPx, border: "1px solid #e5e7eb", backgroundColor: "#f9fafb", overflow: "hidden" }}>
+          {layers.map((layer, li) =>
+            layer.slots.map((slot, si) => {
+              const leftPx = Math.round(scale * slot.yOffsetCells * CELL_M * PX_PER_M);
+              const slotWidthPx = Math.round(scale * slot.depthCells * CELL_M * PX_PER_M);
+              const wall = slot.wall;
+              // Wall panel width: use wall's actual width if available, else fill slot
+              const wallPanelPx = wall?.width
+                ? Math.round(scale * wall.width * PX_PER_M)
+                : slotWidthPx;
+              return (
+                <div
+                  key={`${li}-${si}`}
+                  style={{
+                    position: "absolute",
+                    left: leftPx,
+                    top: 0,
+                    width: slotWidthPx,
+                    height: wallHPx,
+                    overflow: "hidden",
+                    borderRight: "1px solid rgba(0,0,0,0.12)",
+                  }}
+                >
+                  {wall?.elevationImage ? (
+                    <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "stretch", justifyContent: "center" }}>
+                      <img
+                        src={wall.elevationImage}
+                        alt={wall.type}
+                        style={{
+                          height: "100%",
+                          width: wallPanelPx,
+                          objectFit: "fill",
+                          display: "block",
+                          transform: wall.flipped ? "scaleX(-1)" : undefined,
+                          flexShrink: 0,
+                        }}
+                      />
+                    </div>
+                  ) : (
+                    <div style={{
+                      width: "100%", height: "100%",
+                      background: "repeating-linear-gradient(45deg, #f3f4f6, #f3f4f6 6px, #e5e7eb 6px, #e5e7eb 12px)",
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                    }}>
+                      <span style={{ fontSize: 9, color: "#9ca3af" }}>{slot.face}</span>
+                    </div>
+                  )}
+                </div>
+              );
+            })
+          )}
+          <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 2, backgroundColor: "#374151" }} />
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className="w-full h-full bg-white flex flex-col">
@@ -272,8 +352,8 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
         <div style={{ transform: `translate(${pan.x}px, ${pan.y}px)`, padding: "40px", display: "inline-flex", flexDirection: "column", gap: 48 }}>
           <HorizElevation layers={wElevation} label="W — North Elevation" color="#22c55e" />
           <HorizElevation layers={yElevation} label="Y — South Elevation" color="#3b82f6" />
-          <HorizElevation layers={zElevation} label="Z — West Elevation"  color="#f59e0b" />
-          <HorizElevation layers={xElevation} label="X — East Elevation"  color="#ef4444" />
+          <VertElevation  layers={zElevation} label="Z — West Elevation"  color="#f59e0b" />
+          <VertElevation  layers={xElevation} label="X — East Elevation"  color="#ef4444" />
         </div>
       </div>
     </div>
