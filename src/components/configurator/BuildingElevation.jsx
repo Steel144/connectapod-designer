@@ -57,6 +57,7 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
   
   const slotOffset2 = Math.round(0.21 * PX_PER_M);
   const slotOffset3 = Math.round(0.145 * PX_PER_M);
+  const slotOffset3X = Math.round(0.165 * PX_PER_M);
   const labelMapZ = { 1: "P1", 2: "C", 3: "P2" };
   const labelMapX = { 1: "P2", 2: "C", 3: "P1" };
 
