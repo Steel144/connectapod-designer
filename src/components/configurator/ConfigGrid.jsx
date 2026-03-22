@@ -909,11 +909,11 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
 
 
               {/* Pavilion width dimensions (vertical, 5.2m) */}
-              {pavilionDimensions.map(pav => {
-                const actualHeightCells = 5.2 / 0.6;
-                const pavCenterY = (pav.yRange[0] + pav.yRange[1]) / 2;
-                const dimTop = pavCenterY - actualHeightCells / 2;
-                const dimLeft = (pav.minX - 1.5) * CELL_W;
+               {pavilionDimensions.map(pav => {
+                 const actualHeightCells = 5.2 / 0.6;
+                 const pavCenterY = (pav.pavMinY + pav.pavMaxY) / 2;
+                 const dimTop = pavCenterY - actualHeightCells / 2;
+                 const dimLeft = (pav.minX - 1.5) * CELL_W;
                 return (
                   <div key={pav.name} className="absolute pointer-events-none" style={{ left: dimLeft, top: dimTop * CELL_H, width: 12, height: actualHeightCells * CELL_H }}>
                     <div className="absolute" style={{ left: 4, width: 1.5, top: 0, bottom: 0, backgroundColor: pav.color, opacity: 0.6 }} />
