@@ -147,35 +147,30 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
     }));
 
     // ── Z (West) elevation ────────────────────────────────────────────────────
-    // For each Z-face wall, find its module by matching wall coords to module coords.
-    // Then group by module X column. Each slot's canvas position = Y offset (depth on plan).
     const allMinY = Math.min(...placedModules.map(m => m.y));
 
-    // Collect all Z walls, map each to its module
-    const zWallSlots = walls
-      .filter(w => w.face === "Z")
-      .map(wall => {
-        const mod = placedModules.find(m =>
-          Math.abs(wall.x - m.x) < THRESH && Math.abs(wall.y - m.y) < THRESH
-        );
-        return mod ? { mod, wall } : null;
-      })
-      .filter(Boolean);
+    // For Z/X: match wall → module by checking if the wall's position falls within
+    // the module's bounding box (with tolerance). This is robust to fractional coords.
+    const wallForModZ = (mod) => walls.find(w =>
+      w.face === "Z" &&
+      w.x >= mod.x - 1 && w.x <= mod.x + 1 &&
+      w.y >= mod.y - 1 && w.y <= mod.y + mod.h
+    ) || null;
 
-    // Also add exterior-Z modules with no wall (placeholders)
+    const wallForModX = (mod) => walls.find(w =>
+      w.face === "X" &&
+      w.x >= mod.x + mod.w - 2 && w.x <= mod.x + mod.w + 1 &&
+      w.y >= mod.y - 1 && w.y <= mod.y + mod.h
+    ) || null;
+
+    // Exterior-Z: no module directly to the left
     const exteriorZ = placedModules.filter(m =>
       !placedModules.some(o => o.y < m.y + m.h && o.y + o.h > m.y && o.x + o.w === m.x)
     );
-    const zWallModIds = new Set(zWallSlots.map(s => s.mod.id));
-    const zPlaceholderSlots = exteriorZ
-      .filter(m => !zWallModIds.has(m.id))
-      .map(m => ({ mod: m, wall: null }));
-
-    const allZSlots = [...zWallSlots, ...zPlaceholderSlots];
     const zByX = {};
-    allZSlots.forEach(({ mod, wall }) => {
-      if (!zByX[mod.x]) zByX[mod.x] = [];
-      zByX[mod.x].push({ mod, wall, yOffsetCells: mod.y - allMinY, depthCells: mod.h, face: "Z" });
+    exteriorZ.forEach(m => {
+      if (!zByX[m.x]) zByX[m.x] = [];
+      zByX[m.x].push({ mod: m, wall: wallForModZ(m), yOffsetCells: m.y - allMinY, depthCells: m.h, face: "Z" });
     });
     const zColsSorted = Object.keys(zByX).map(Number).sort((a, b) => b - a); // back→front
     const zElevation = zColsSorted.map(colX => ({
@@ -184,31 +179,15 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
     }));
 
     // ── X (East) elevation ────────────────────────────────────────────────────
-    const xWallSlots = walls
-      .filter(w => w.face === "X")
-      .map(wall => {
-        const mod = placedModules.find(m =>
-          Math.abs(wall.y - m.y) < THRESH &&
-          wall.x >= m.x + m.w - 1 && wall.x <= m.x + m.w + THRESH
-        );
-        return mod ? { mod, wall } : null;
-      })
-      .filter(Boolean);
-
+    // Exterior-X: no module directly to the right
     const exteriorX = placedModules.filter(m =>
       !placedModules.some(o => o.y < m.y + m.h && o.y + o.h > m.y && o.x === m.x + m.w)
     );
-    const xWallModIds = new Set(xWallSlots.map(s => s.mod.id));
-    const xPlaceholderSlots = exteriorX
-      .filter(m => !xWallModIds.has(m.id))
-      .map(m => ({ mod: m, wall: null }));
-
-    const allXSlots = [...xWallSlots, ...xPlaceholderSlots];
     const xByX = {};
-    allXSlots.forEach(({ mod, wall }) => {
-      const key = mod.x + mod.w;
+    exteriorX.forEach(m => {
+      const key = m.x + m.w;
       if (!xByX[key]) xByX[key] = [];
-      xByX[key].push({ mod, wall, yOffsetCells: mod.y - allMinY, depthCells: mod.h, face: "X" });
+      xByX[key].push({ mod: m, wall: wallForModX(m), yOffsetCells: m.y - allMinY, depthCells: m.h, face: "X" });
     });
     const xColsSorted = Object.keys(xByX).map(Number).sort((a, b) => a - b); // back→front
     const xElevation = xColsSorted.map(colX => ({
