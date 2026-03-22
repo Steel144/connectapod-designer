@@ -75,34 +75,20 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
     const allMinX = Math.min(...placedModules.map(m => m.x));
     const allMaxX = Math.max(...placedModules.map(m => m.x + m.w));
 
-    // Helper: find wall on a given face attached to a module
-    // Walls store exact grid coords; use a generous threshold to match
+    // Helper: find W/Y face wall attached to a module
     const findWall = (face, mod) => {
-      const candidates = walls.filter(w => w.face === face);
       if (face === "W") {
-        return candidates.find(w =>
+        return walls.find(w =>
+          w.face === "W" &&
           Math.abs(w.x - mod.x) < THRESH &&
           w.y < mod.y && w.y > mod.y - 2
         ) || null;
       }
       if (face === "Y") {
-        return candidates.find(w =>
+        return walls.find(w =>
+          w.face === "Y" &&
           Math.abs(w.x - mod.x) < THRESH &&
           Math.abs(w.y - (mod.y + mod.h)) < THRESH
-        ) || null;
-      }
-      if (face === "Z") {
-        // Z wall: x ≈ mod.x, y ≈ mod.y
-        return candidates.find(w =>
-          Math.abs(w.x - mod.x) < THRESH &&
-          Math.abs(w.y - mod.y) < THRESH
-        ) || null;
-      }
-      if (face === "X") {
-        // X wall snaps to mod.x + mod.w - thickness (thickness ~0.1–0.5 cells)
-        return candidates.find(w =>
-          w.x >= mod.x + mod.w - 1 && w.x <= mod.x + mod.w + THRESH &&
-          Math.abs(w.y - mod.y) < THRESH
         ) || null;
       }
       return null;
