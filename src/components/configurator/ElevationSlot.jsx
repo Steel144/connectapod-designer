@@ -20,7 +20,6 @@ const ElevationSlot = memo(function ElevationSlot({
         width: widthPx,
         height: heightPx,
         overflow: "hidden",
-        borderRight: "1px solid rgba(0,0,0,0.08)",
       }}
     >
       {wall?.elevationImage ? (
