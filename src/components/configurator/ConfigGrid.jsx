@@ -656,9 +656,10 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
         </>
 
          {/* Placed modules */}
-         {placedModules.map((mod) => {
+         {placedModules.map((mod, moduleIndex) => {
           const isDragging = dragging?.isPlaced && dragging.selectedIds?.has(mod.id);
           const isSelected = selected.has(mod.id);
+          const moduleNumber = moduleIndex + 1;
 
           // Check if sides are on exterior (no adjacent modules)
           const hasModAbove = placedModules.some(m => m.x < mod.x + mod.w && m.x + m.w > mod.x && m.y + m.h === mod.y);
