@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect, useCallback, useMemo } from "react";
-import { base44 } from "@/api/base44Client";
 import { ModuleEntry } from "@/lib/supabase";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import ModulePanel, { MODULE_TYPES } from "@/components/configurator/ModulePanel";

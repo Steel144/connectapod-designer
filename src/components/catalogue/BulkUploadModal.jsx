@@ -1,6 +1,5 @@
 import React, { useRef, useState } from "react";
 import { X, Upload, CheckCircle, AlertCircle, Plus, Loader2 } from "lucide-react";
-import { base44 } from "@/api/base44Client";
 import { ModuleEntry } from "@/lib/supabase";
 
 // Strip extension from filename to get the code
