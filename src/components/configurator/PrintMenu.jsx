@@ -1,5 +1,6 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Save, ChevronDown } from "lucide-react";
+import { createPortal } from "react-dom";
 
 export default function PrintMenu({ placedModules, walls, onPrint }) {
   const [open, setOpen] = useState(false);
@@ -17,6 +18,19 @@ export default function PrintMenu({ placedModules, walls, onPrint }) {
     setOpen(!open);
   };
 
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (buttonRef.current && !buttonRef.current.contains(e.target)) {
+        setOpen(false);
+      }
+    };
+    if (open) {
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => document.removeEventListener("mousedown", handleClickOutside);
+    }
+  }, [open]);
+
   const options = [];
 
   if (placedModules.length > 0) {
@@ -32,7 +46,7 @@ export default function PrintMenu({ placedModules, walls, onPrint }) {
   if (options.length === 0) return null;
 
   return (
-    <div>
+    <>
       <button
         ref={buttonRef}
         onClick={handleClick}
@@ -44,7 +58,7 @@ export default function PrintMenu({ placedModules, walls, onPrint }) {
         <ChevronDown size={12} />
       </button>
 
-      {open && (
+      {open && createPortal(
         <div
           className="fixed w-40 bg-white border border-gray-200 shadow-lg rounded z-[9999]"
           style={{ top: `${pos.top}px`, left: `${pos.left}px` }}
@@ -61,8 +75,9 @@ export default function PrintMenu({ placedModules, walls, onPrint }) {
               {opt.label}
             </button>
           ))}
-        </div>
+        </div>,
+        document.body
       )}
-    </div>
+    </>
   );
 }
