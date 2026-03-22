@@ -414,7 +414,7 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
             
             {layers.map((layer) =>
               layer.slots.map((slot, si) => {
-                const leftPx = Math.round(scale * slot.yOffsetCells * CELL_M * PX_PER_M) + (si > 0 ? -10 : 0);
+                const leftPx = Math.round(scale * slot.yOffsetCells * CELL_M * PX_PER_M);
                 const slotWidthPx = Math.round(scale * slot.depthCells * CELL_M * PX_PER_M);
                 const wall = slot.wall;
                 return (
@@ -428,7 +428,6 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
                       height: endElevationHPx,
                       overflow: "hidden",
                       borderRight: "1px solid rgba(0,0,0,0.12)",
-                      zIndex: si,
                     }}
                   >
                     {wall?.elevationImage ? (
