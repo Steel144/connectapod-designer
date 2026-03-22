@@ -314,7 +314,6 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
                     width: slotWidthPx,
                     height: endElevationHPx,
                     overflow: "visible",
-                    borderRight: "1px solid rgba(0,0,0,0.12)",
                   }}
                 >
                   {wall?.elevationImage ? (
