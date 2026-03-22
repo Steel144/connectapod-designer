@@ -48,7 +48,7 @@ const ElevationSlot = memo(function ElevationSlot({
           position: "absolute",
           top: 8,
           left: 8,
-          backgroundColor: "#000",
+          backgroundColor: "#9ca3af",
           color: "#fff",
           width: 28,
           height: 28,
