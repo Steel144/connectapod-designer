@@ -14,6 +14,14 @@ export const AuthProvider = ({ children }) => {
   const [appPublicSettings, setAppPublicSettings] = useState(null); // Contains only { id, public_settings }
 
   useEffect(() => {
+    // Skip Base44 auth checks if not configured or in development
+    const skipAuth = !appParams.appId || import.meta.env.DEV;
+    if (skipAuth) {
+      setIsLoadingPublicSettings(false);
+      setIsLoadingAuth(false);
+      setIsAuthenticated(false);
+      return;
+    }
     checkAppState();
   }, []);
 
