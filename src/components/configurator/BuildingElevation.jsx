@@ -281,6 +281,14 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
   // The wall image is shown at natural aspect ratio centred in its slot.
   const VertElevation = ({ layers, label, color }) => {
     if (layers.length === 0) return null;
+    // Calculate canvas width: extent of all slots
+    let maxContentWidth = totalDepthPx;
+    layers.forEach(layer => {
+      layer.slots.forEach(slot => {
+        const slotRight = Math.round(scale * slot.yOffsetCells * CELL_M * PX_PER_M) + Math.round(scale * slot.depthCells * CELL_M * PX_PER_M);
+        maxContentWidth = Math.max(maxContentWidth, slotRight);
+      });
+    });
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -289,8 +297,8 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
           </span>
           <div style={{ flex: 1, height: 1, backgroundColor: "#e5e7eb" }} />
         </div>
-        {/* Composite canvas: width = total building depth */}
-        <div style={{ position: "relative", width: totalDepthPx, height: wallHPx, border: "1px solid #e5e7eb", backgroundColor: "#f9fafb", overflowY: "hidden", overflowX: "auto" }}>
+        {/* Composite canvas: width = total extent of all slots */}
+        <div style={{ position: "relative", width: maxContentWidth, height: wallHPx, border: "1px solid #e5e7eb", backgroundColor: "#f9fafb", overflowY: "hidden", overflowX: "auto" }}>
           {layers.map((layer) =>
             layer.slots.map((slot, si) => {
               const leftPx = Math.round(scale * slot.yOffsetCells * CELL_M * PX_PER_M);
