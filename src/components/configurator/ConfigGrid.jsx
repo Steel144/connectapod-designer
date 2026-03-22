@@ -921,7 +921,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                  const actualHeightCells = 5.2 / 0.6;
                  const pavCenterY = (pav.pavMinY + pav.pavMaxY) / 2;
                  const dimTop = pavCenterY - actualHeightCells / 2;
-                 const dimLeft = (pav.minX - 1.5) * CELL_W;
+                 const dimLeft = (pav.minX - 2.5) * CELL_W;
                  return (
                    <div key={pav.name} className="absolute pointer-events-none" style={{ left: dimLeft, top: dimTop * CELL_H, width: 12, height: actualHeightCells * CELL_H }}>
                      <div className="absolute" style={{ left: 4, width: 1.5, top: 0, bottom: 0, backgroundColor: pav.color, opacity: 0.6 }} />
@@ -937,7 +937,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                  const actualHeightCells = conn.pavMaxY - conn.pavMinY;
                  const actualHeightM = (actualHeightCells * 0.6).toFixed(1);
                  const dimTop = conn.pavMinY;
-                 const dimLeft = (conn.minX - 1.5) * CELL_W;
+                 const dimLeft = (conn.minX - 2.5) * CELL_W;
                  return (
                    <div key={conn.name} className="absolute pointer-events-none" style={{ left: dimLeft, top: dimTop * CELL_H, width: 12, height: actualHeightCells * CELL_H }}>
                      <div className="absolute" style={{ left: 4, width: 1.5, top: 0, bottom: 0, backgroundColor: conn.color, opacity: 0.6 }} />
