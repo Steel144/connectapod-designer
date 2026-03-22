@@ -278,9 +278,6 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
   // Canvas X axis = building depth (total Y span on plan).
   // Each slot is positioned at its Y offset on plan; width = module depth (h cells).
   // The wall image is shown at natural aspect ratio centred in its slot.
-  const totalDepthCells = placedModules.length > 0 ? allMaxY - allMinY : 0;
-  const totalDepthPx = Math.round(scale * totalDepthCells * CELL_M * PX_PER_M);
-
   const VertElevation = ({ layers, label, color }) => {
     if (layers.length === 0) return null;
     return (
