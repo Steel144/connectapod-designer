@@ -35,9 +35,8 @@ const HorizontalElevation = memo(function HorizontalElevation({
                  leftPx={leftPx}
                  widthPx={widthPx}
                  heightPx={wallHPx}
-                 labelNum={moduleNum}
                  objectFit="cover"
-                 showLabel={true}
+                 showLabel={false}
                />
              );
            });
