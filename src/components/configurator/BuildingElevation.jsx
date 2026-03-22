@@ -276,18 +276,9 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
   };
 
   // ── Render Z/X elevations stacked vertically (one slot per row) ─────────────
-  // Each slot positioned at its Y offset, width = module depth (h cells).
+  // Uses same width principle as HorizElevation (totalDepthPx) but stacks slots vertically.
   const VerticalStackElevation = ({ layers, label, color }) => {
     if (layers.length === 0) return null;
-    let maxContentWidth = totalDepthPx;
-    layers.forEach(layer => {
-      layer.slots.forEach(slot => {
-        const slotRight = Math.round(scale * slot.yOffsetCells * CELL_M * PX_PER_M) + Math.round(scale * slot.depthCells * CELL_M * PX_PER_M);
-        maxContentWidth = Math.max(maxContentWidth, slotRight);
-      });
-    });
-    const totalSlots = layers.reduce((sum, layer) => sum + layer.slots.length, 0);
-    const totalHeightPx = totalSlots * wallHPx + (totalSlots - 1) * 8; // 8px gap between rows
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -296,18 +287,16 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
           </span>
           <div style={{ flex: 1, height: 1, backgroundColor: "#e5e7eb" }} />
         </div>
-        <div style={{ display: "flex", flexDirection: "column", gap: 2, border: "1px solid #e5e7eb", backgroundColor: "#f9fafb", padding: 0, overflow: "auto", width: "100%" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 0, border: "1px solid #e5e7eb", backgroundColor: "#f9fafb", overflow: "auto" }}>
           {layers.map((layer) =>
             layer.slots.map((slot, si) => {
-              const slotWidthPx = Math.round(scale * slot.depthCells * CELL_M * PX_PER_M);
               const wall = slot.wall;
               return (
                 <div
                   key={`${layer.colX}-${si}`}
                   style={{
                     position: "relative",
-                    width: slotWidthPx,
-                    minWidth: slotWidthPx,
+                    width: totalDepthPx,
                     height: wallHPx,
                     overflow: "hidden",
                     borderBottom: "1px solid rgba(0,0,0,0.08)",
