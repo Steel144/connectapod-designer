@@ -316,7 +316,7 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
                       style={{
                         width: "100%",
                         height: "100%",
-                        objectFit: "fill",
+                        objectFit: "cover",
                         display: "block",
                         transform: wall.flipped ? "scaleX(-1)" : undefined,
                       }}
