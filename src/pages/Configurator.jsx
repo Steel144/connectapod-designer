@@ -11,13 +11,11 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { BookOpen, FolderOpen, Save, Trash2, ChevronLeft, ChevronRight, Undo2, Box, Grid2X2, Image, LayoutTemplate } from "lucide-react";
 
-import PrintablePlansSheet from "@/components/configurator/PrintablePlansSheet";
-import PrintableElevationsSheet from "@/components/configurator/PrintableElevationsSheet";
-import PrintableBuildingElevations from "@/components/configurator/PrintableBuildingElevations";
-import PrintableElevationGallery from "@/components/configurator/PrintableElevationGallery";
 import ElevationGallery from "@/components/configurator/ElevationGallery";
 import BuildingElevation from "@/components/configurator/BuildingElevation";
 import QuoteGenerator from "@/components/configurator/QuoteGenerator";
+import PrintRouter from "@/components/configurator/PrintRouter";
+import PrintMenu from "@/components/configurator/PrintMenu";
 
 const generateId = () => `mod-${Math.random().toString(36).substr(2, 9)}`;
 const generateWallId = () => `wall-${Math.random().toString(36).substr(2, 9)}`;
@@ -673,17 +671,8 @@ export default function Configurator() {
     setDraggingSummary({ startX: e.clientX, startY: e.clientY, summaryX: summaryPos.x, summaryY: summaryPos.y });
   };
 
-  if (printMode === "plans") {
-    return <PrintablePlansSheet placedModules={placedModules} onClose={() => setPrintMode(null)} />;
-  }
-  if (printMode === "elevations") {
-    return <PrintableElevationsSheet walls={walls} onClose={() => setPrintMode(null)} />;
-  }
-  if (printMode === "building-elevations") {
-    return <PrintableBuildingElevations walls={walls} placedModules={placedModules} onClose={() => setPrintMode(null)} />;
-  }
-  if (printMode === "elevation-gallery") {
-    return <PrintableElevationGallery walls={walls} placedModules={placedModules} onClose={() => setPrintMode(null)} />;
+  if (printMode) {
+    return <PrintRouter mode={printMode} walls={walls} placedModules={placedModules} onClose={() => setPrintMode(null)} />;
   }
 
   return (
@@ -773,46 +762,11 @@ export default function Configurator() {
             <Save size={13} />
             {saveMutation.isPending ? "Saving…" : "Save Design"}
           </button>
-          {placedModules.length > 0 && (
-            <button
-              onClick={() => setPrintMode("plans")}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-gray-600 bg-white border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22] transition-all"
-              title="Print floor plans sheet"
-            >
-              <Save size={13} />
-              Print Plans
-            </button>
-          )}
-          {placedModules.length > 0 && (
-            <button
-              onClick={() => setPrintMode("building-elevations")}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-gray-600 bg-white border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22] transition-all"
-              title="Print building elevations"
-            >
-              <Save size={13} />
-              Print Building
-            </button>
-          )}
-          {placedModules.length > 0 && (
-            <button
-              onClick={() => setPrintMode("elevation-gallery")}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-gray-600 bg-white border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22] transition-all"
-              title="Print elevation gallery"
-            >
-              <Save size={13} />
-              Print Gallery
-            </button>
-          )}
-          {walls.some(w => w.elevationImage) && (
-            <button
-              onClick={() => setPrintMode("elevations")}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-gray-600 bg-white border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22] transition-all"
-              title="Print elevations sheet"
-            >
-              <Save size={13} />
-              Print Elevations
-            </button>
-          )}
+          <PrintMenu
+            placedModules={placedModules}
+            walls={walls}
+            onPrint={setPrintMode}
+          />
           {placedModules.length > 0 && (
             <button
               onClick={handleClear}
