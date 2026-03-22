@@ -153,21 +153,14 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
       return candidates.sort((a, b) => Math.abs(a.y - mod.y) - Math.abs(b.y - mod.y))[0];
     };
 
-    // Debug: log wall and module Z data
-    const zWalls = walls.filter(w => w.face === "Z");
-    console.log("Z walls:", zWalls.map(w => ({ id: w.id, x: w.x, y: w.y, face: w.face, hasImg: !!w.elevationImage })));
-
     // Exterior-Z: no module directly to the left
     const exteriorZ = placedModules.filter(m =>
       !placedModules.some(o => o.y < m.y + m.h && o.y + o.h > m.y && o.x + o.w === m.x)
     );
-    console.log("exteriorZ mods:", exteriorZ.map(m => ({ id: m.id, x: m.x, y: m.y, w: m.w, h: m.h })));
     const zByX = {};
     exteriorZ.forEach(m => {
-      const matched = bestWallForMod(m, "Z");
-      console.log(`mod(${m.x},${m.y}) Z wall match:`, matched ? { wx: matched.x, wy: matched.y, hasImg: !!matched.elevationImage } : null);
       if (!zByX[m.x]) zByX[m.x] = [];
-      zByX[m.x].push({ mod: m, wall: matched, yOffsetCells: m.y - allMinY, depthCells: m.h, face: "Z" });
+      zByX[m.x].push({ mod: m, wall: bestWallForMod(m, "Z"), yOffsetCells: m.y - allMinY, depthCells: m.h, face: "Z" });
     });
     const zColsSorted = Object.keys(zByX).map(Number).sort((a, b) => b - a); // back→front
     const zElevation = zColsSorted.map(colX => ({
