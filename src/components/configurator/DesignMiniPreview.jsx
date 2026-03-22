@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { base44 } from "@/api/base44Client";
+import { FloorPlanImage, WallImage } from "@/lib/supabase";
 
 export default function DesignMiniPreview({ grid = [], walls = [], floorPlanImages: propFloorPlanImages, wallImages: propWallImages }) {
   const CELL = 6; // pixels per grid cell
@@ -8,8 +8,8 @@ export default function DesignMiniPreview({ grid = [], walls = [], floorPlanImag
   const { data: queryFloorPlanImages = {} } = useQuery({
     queryKey: ["floorPlanImages", "miniPreview"],
     queryFn: async () => {
-      const images = await base44.entities.FloorPlanImage.list();
-      return Object.fromEntries(images.map(img => [img.moduleType, img.imageUrl]));
+      const images = await FloorPlanImage.list();
+      return Object.fromEntries(images.map(img => [img.module_type, img.image_url]));
     },
     staleTime: 0,
     refetchOnMount: true,
@@ -18,8 +18,8 @@ export default function DesignMiniPreview({ grid = [], walls = [], floorPlanImag
   const { data: queryWallImages = {} } = useQuery({
     queryKey: ["wallImages", "miniPreview"],
     queryFn: async () => {
-      const images = await base44.entities.WallImage.list();
-      return Object.fromEntries(images.map(img => [img.wallType, img.imageUrl]));
+      const images = await WallImage.list();
+      return Object.fromEntries(images.map(img => [img.wall_type, img.image_url]));
     },
     staleTime: 0,
     refetchOnMount: true,

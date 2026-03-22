@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import { X, Upload, CheckCircle, AlertCircle, Plus, Loader2 } from "lucide-react";
-import { base44 } from "@/api/base44Client";
+import { ModuleEntry, FloorPlanImage, Storage } from "@/lib/supabase";
 
 // Strip extension from filename to get the code
 const getCodeFromFilename = (filename) => filename.replace(/\.[^.]+$/, "").trim();
@@ -30,11 +30,11 @@ export default function BulkUploadModal({ onClose, existingModules, onDone }) {
 
       try {
         // Upload image
-        const { file_url } = await base44.integrations.Core.UploadFile({ file: item.file });
+        const file_url = await Storage.uploadFile('floor-plans', `modules/${item.code}-${Date.now()}`, item.file);
 
         // If new module, create a ModuleEntry
         if (item.isNew) {
-          await base44.entities.ModuleEntry.create({
+          await ModuleEntry.create({
             category: "Living",
             code: item.code,
             name: item.code,
@@ -45,11 +45,11 @@ export default function BulkUploadModal({ onClose, existingModules, onDone }) {
         }
 
         // Save or update the floor plan image
-        const existing = await base44.entities.FloorPlanImage.filter({ moduleType: item.code });
+        const existing = await FloorPlanImage.filter({ module_type: item.code });
         if (existing.length > 0) {
-          await base44.entities.FloorPlanImage.update(existing[0].id, { imageUrl: file_url });
+          await FloorPlanImage.update(existing[0].id, { image_url: file_url });
         } else {
-          await base44.entities.FloorPlanImage.create({ moduleType: item.code, imageUrl: file_url });
+          await FloorPlanImage.create({ module_type: item.code, image_url: file_url });
         }
 
         setFiles(prev => prev.map((f, idx) => idx === i ? { ...f, status: "done", message: item.isNew ? "Created + image saved" : "Image updated" } : f));

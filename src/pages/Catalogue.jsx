@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { ChevronLeft, Pencil, Upload, X, Loader2, Plus, Trash2, Copy, Printer } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { base44 } from "@/api/base44Client";
+import { ModuleEntry, DeletedModule, FloorPlanImage, Storage } from "@/lib/supabase";
 import { toast } from "sonner";
 import AddModuleModal from "@/components/catalogue/AddModuleModal";
 import EditModuleModal from "@/components/catalogue/EditModuleModal";
@@ -47,17 +47,17 @@ export default function Catalogue() {
 
   const { data: customModules = [] } = useQuery({
     queryKey: ["moduleEntries"],
-    queryFn: () => base44.entities.ModuleEntry.list(),
+    queryFn: () => ModuleEntry.list(),
   });
 
   const { data: deletedModules = [] } = useQuery({
     queryKey: ["deletedModules"],
-    queryFn: () => base44.entities.DeletedModule.list(),
+    queryFn: () => DeletedModule.list(),
   });
   const deletedCodes = new Set(deletedModules.map(d => d.moduleCode));
 
   const handleAddModule = async (data) => {
-    await base44.entities.ModuleEntry.create(data);
+    await ModuleEntry.create(data);
     queryClient.invalidateQueries({ queryKey: ["moduleEntries"] });
     setAddingToCategory(null);
     toast.success("Module added");
@@ -65,7 +65,7 @@ export default function Catalogue() {
 
   const handleDeleteModule = async (entryId) => {
     try {
-      await base44.entities.ModuleEntry.delete(entryId);
+      await ModuleEntry.delete(entryId);
       queryClient.invalidateQueries({ queryKey: ["moduleEntries"] });
       toast.success("Module removed");
     } catch (error) {
@@ -74,7 +74,7 @@ export default function Catalogue() {
   };
 
   const handleDeleteBuiltinModule = async (code) => {
-    await base44.entities.DeletedModule.create({ moduleCode: code });
+    await DeletedModule.create({ moduleCode: code });
     queryClient.invalidateQueries({ queryKey: ["deletedModules"] });
     toast.success("Module hidden");
   };
@@ -82,7 +82,7 @@ export default function Catalogue() {
   const handleRestoreModule = async (code) => {
     const entry = deletedModules.find(d => d.moduleCode === code);
     if (entry) {
-      await base44.entities.DeletedModule.delete(entry.id);
+      await DeletedModule.delete(entry.id);
       queryClient.invalidateQueries({ queryKey: ["deletedModules"] });
       toast.success("Module restored");
     }
@@ -93,19 +93,19 @@ export default function Catalogue() {
       // If it's a custom module, delete the ModuleEntry entirely
       const customModule = customModules.find(m => m.code === code);
       if (customModule) {
-        await base44.entities.ModuleEntry.delete(customModule.id);
+        await ModuleEntry.delete(customModule.id);
       }
       
       // Remove associated DeletedModule record if it exists
-      const deleted = await base44.entities.DeletedModule.filter({ moduleCode: code });
+      const deleted = await DeletedModule.filter({ moduleCode: code });
       if (deleted.length > 0) {
-        await base44.entities.DeletedModule.delete(deleted[0].id);
+        await DeletedModule.delete(deleted[0].id);
       }
       
       // Always remove images
-      const images = await base44.entities.FloorPlanImage.filter({ moduleType: code });
+      const images = await FloorPlanImage.filter({ moduleType: code });
       for (const img of images) {
-        await base44.entities.FloorPlanImage.delete(img.id);
+        await FloorPlanImage.delete(img.id);
       }
       
       await Promise.all([
@@ -123,9 +123,9 @@ export default function Catalogue() {
   const handleEditModule = async (data) => {
     // If code changed, migrate any associated image to the new code
     if (editingModule.code !== data.code) {
-      const oldImage = await base44.entities.FloorPlanImage.filter({ moduleType: editingModule.code });
+      const oldImage = await FloorPlanImage.filter({ moduleType: editingModule.code });
       if (oldImage.length > 0) {
-        await base44.entities.FloorPlanImage.update(oldImage[0].id, { moduleType: data.code });
+        await FloorPlanImage.update(oldImage[0].id, { moduleType: data.code });
       }
     }
 
@@ -143,7 +143,7 @@ export default function Catalogue() {
 
     if (editingModule._custom && fullModule) {
       // For custom modules, update directly
-      await base44.entities.ModuleEntry.update(editingModule._id, {
+      await ModuleEntry.update(editingModule._id, {
         ...finalData,
         originalCode: editingModule.originalCode || undefined,
       });
@@ -152,7 +152,7 @@ export default function Catalogue() {
       const existingOverride = customModules.find(c => c.originalCode === editingModule.code);
       if (existingOverride) {
         // Update existing override
-        await base44.entities.ModuleEntry.update(existingOverride.id, {
+        await ModuleEntry.update(existingOverride.id, {
           ...finalData,
           categories: existingOverride.categories || [],
           originalCode: editingModule.code,
@@ -160,8 +160,8 @@ export default function Catalogue() {
       } else {
         // Create new override and hide the builtin
         await Promise.all([
-          base44.entities.DeletedModule.create({ moduleCode: editingModule.code }),
-          base44.entities.ModuleEntry.create({
+          DeletedModule.create({ moduleCode: editingModule.code }),
+          ModuleEntry.create({
             ...finalData,
             categories: [],
             originalCode: editingModule.code,
@@ -181,7 +181,7 @@ export default function Catalogue() {
   const { data: floorPlanImages = {} } = useQuery({
     queryKey: ["floorPlanImages"],
     queryFn: async () => {
-      const images = await base44.entities.FloorPlanImage.list();
+      const images = await FloorPlanImage.list();
       return Object.fromEntries(images.map(img => [img.moduleType, img.imageUrl]));
     },
   });
@@ -196,22 +196,27 @@ export default function Catalogue() {
     if (!file || !pendingUploadCode) return;
     e.target.value = "";
     setUploading(pendingUploadCode);
-    const { file_url } = await base44.integrations.Core.UploadFile({ file });
-    const existing = await base44.entities.FloorPlanImage.filter({ moduleType: pendingUploadCode });
-    if (existing.length > 0) {
-      await base44.entities.FloorPlanImage.update(existing[0].id, { imageUrl: file_url });
-    } else {
-      await base44.entities.FloorPlanImage.create({ moduleType: pendingUploadCode, imageUrl: file_url });
+    try {
+      const file_url = await Storage.uploadFile('floor-plans', `modules/${pendingUploadCode}-${Date.now()}`, file);
+      const existing = await FloorPlanImage.filter({ module_type: pendingUploadCode });
+      if (existing.length > 0) {
+        await FloorPlanImage.update(existing[0].id, { image_url: file_url });
+      } else {
+        await FloorPlanImage.create({ module_type: pendingUploadCode, image_url: file_url });
+      }
+      queryClient.invalidateQueries({ queryKey: ["floorPlanImages"] });
+      toast.success("Image updated");
+    } catch (error) {
+      console.error("Upload failed:", error);
+      toast.error("Failed to upload image");
     }
-    queryClient.invalidateQueries({ queryKey: ["floorPlanImages"] });
     setUploading(null);
-    toast.success("Image updated");
   };
 
   const handleRemoveImage = async (code) => {
-    const existing = await base44.entities.FloorPlanImage.filter({ moduleType: code });
+    const existing = await FloorPlanImage.filter({ moduleType: code });
     if (existing.length > 0) {
-      await base44.entities.FloorPlanImage.delete(existing[0].id);
+      await FloorPlanImage.delete(existing[0].id);
       queryClient.invalidateQueries({ queryKey: ["floorPlanImages"] });
       toast.success("Image removed");
     }
@@ -238,7 +243,7 @@ export default function Catalogue() {
       categories: fullMod?.categories || [],
     };
 
-    await base44.entities.ModuleEntry.create(newModule);
+    await ModuleEntry.create(newModule);
     queryClient.invalidateQueries({ queryKey: ["moduleEntries"] });
     toast.success(`Duplicated as ${newCode}`);
   };
