@@ -896,15 +896,21 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
 
 
 
-              {/* Pavilion width dimensions (vertical) */}
-              {pavilionDimensions.map(pav => (
-                <div key={pav.name} className="absolute pointer-events-none flex items-center justify-center" style={{ left: (pav.minX - 1.2) * CELL_W, top: pav.yRange[0] * CELL_H, width: 1, height: (pav.yRange[1] - pav.yRange[0]) * CELL_H }}>
-                  <div className="absolute" style={{ width: 1.5, height: '100%', backgroundColor: pav.color, opacity: 0.5 }} />
-                  <div className="absolute pointer-events-none" style={{ top: 0, left: '-3px', width: 8, height: 1.5, backgroundColor: pav.color, opacity: 0.5 }} />
-                  <div className="absolute pointer-events-none" style={{ bottom: 0, left: '-3px', width: 8, height: 1.5, backgroundColor: pav.color, opacity: 0.5 }} />
-                  <span className="relative text-xs font-semibold px-1" style={{ backgroundColor: '#F5F5F3', color: pav.color, writingMode: 'vertical-rl', textOrientation: 'mixed' }}>≈5.2m</span>
-                </div>
-              ))}
+              {/* Pavilion width dimensions (vertical, 5.2m) */}
+              {pavilionDimensions.map(pav => {
+                const actualHeightM = 5.2;
+                const actualHeightCells = actualHeightM / 0.6; // ~8.667 cells
+                const pavCenterY = (pav.yRange[0] + pav.yRange[1]) / 2;
+                const dimTop = pavCenterY - actualHeightCells / 2;
+                return (
+                  <div key={pav.name} className="absolute pointer-events-none flex items-center justify-center" style={{ left: (pav.minX - 1.2) * CELL_W, top: dimTop * CELL_H, width: 1, height: actualHeightCells * CELL_H }}>
+                    <div className="absolute" style={{ width: 1.5, height: '100%', backgroundColor: pav.color, opacity: 0.5 }} />
+                    <div className="absolute pointer-events-none" style={{ top: 0, left: '-3px', width: 8, height: 1.5, backgroundColor: pav.color, opacity: 0.5 }} />
+                    <div className="absolute pointer-events-none" style={{ bottom: 0, left: '-3px', width: 8, height: 1.5, backgroundColor: pav.color, opacity: 0.5 }} />
+                    <span className="relative text-xs font-semibold px-1" style={{ backgroundColor: '#F5F5F3', color: pav.color, writingMode: 'vertical-rl', textOrientation: 'mixed' }}>5.2m</span>
+                  </div>
+                );
+              })}
 
             </>
           );
