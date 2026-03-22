@@ -374,30 +374,39 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
           <div style={{ flex: 1, height: 1, backgroundColor: "#e5e7eb" }} />
         </div>
         {/* Composite canvas with dimension guides */}
-        <div style={{ display: "flex", gap: 8 }}>
+        <div style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
           {/* Height dimension ruler */}
-          <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", alignItems: "flex-end", width: 40, paddingRight: 4 }}>
-            <div style={{ fontSize: 8, color: "#9ca3af", textAlign: "right" }}>{WALL_H_M}m</div>
-            <div style={{ fontSize: 8, color: "#9ca3af", textAlign: "right" }}>{windowHeightM}m</div>
-            <div style={{ fontSize: 8, color: "#9ca3af", textAlign: "right" }}>0m</div>
+          <div style={{ display: "flex", flexDirection: "column", position: "relative", height: wallHPx, justifyContent: "space-between", alignItems: "flex-end", minWidth: 50, paddingRight: 8, borderRight: "1px solid #d1d5db" }}>
+            <div style={{ fontSize: 9, fontWeight: 600, color: "#4b5563", textAlign: "right", lineHeight: "1.2" }}>
+              <div>{WALL_H_M}m</div>
+              <div style={{ fontSize: 7, color: "#9ca3af" }}>Top</div>
+            </div>
+            <div style={{ fontSize: 9, fontWeight: 600, color: "#3b82f6", textAlign: "right", lineHeight: "1.2" }}>
+              <div>{windowHeightM}m</div>
+              <div style={{ fontSize: 7, color: "#9ca3af" }}>Window</div>
+            </div>
+            <div style={{ fontSize: 9, fontWeight: 600, color: "#4b5563", textAlign: "right", lineHeight: "1.2" }}>
+              <div>0m</div>
+              <div style={{ fontSize: 7, color: "#9ca3af" }}>Ground</div>
+            </div>
           </div>
           
           {/* Canvas with alignment guides */}
-          <div style={{ position: "relative", width: maxContentWidth, height: wallHPx, border: "1px solid #e5e7eb", backgroundColor: "#f9fafb", overflowY: "hidden", overflowX: "auto" }}>
-            {/* Window height guide line */}
+          <div style={{ position: "relative", flex: 1, width: maxContentWidth, height: wallHPx, border: "1px solid #e5e7eb", backgroundColor: "#f9fafb", overflowY: "hidden", overflowX: "auto" }}>
+            {/* Window top guide line */}
             <div style={{
               position: "absolute",
               top: foundationHeightPx,
               left: 0,
               right: 0,
               height: 1,
-              backgroundColor: "rgba(59, 130, 246, 0.2)",
-              borderTop: "1px dashed rgba(59, 130, 246, 0.4)",
-              zIndex: 1,
+              backgroundColor: "transparent",
+              borderTop: "2px dashed rgba(59, 130, 246, 0.6)",
+              zIndex: 2,
             }} />
             
             {/* Foundation line */}
-            <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 2, backgroundColor: "#374151" }} />
+            <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 2, backgroundColor: "#374151", zIndex: 2 }} />
             
             {layers.map((layer) =>
               layer.slots.map((slot, si) => {
