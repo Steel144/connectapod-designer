@@ -76,14 +76,37 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
     const allMaxX = Math.max(...placedModules.map(m => m.x + m.w));
 
     // Helper: find wall on a given face attached to a module
-    const findWall = (face, mod) => walls.find(w => {
-      if (w.face !== face) return false;
-      if (face === "W") return Math.abs(w.x - mod.x) < THRESH && Math.abs(w.y - (mod.y - 0.31)) < THRESH;
-      if (face === "Y") return Math.abs(w.x - mod.x) < THRESH && Math.abs(w.y - (mod.y + mod.h)) < THRESH;
-      if (face === "Z") return Math.abs(w.y - mod.y) < THRESH && Math.abs(w.x - mod.x) < THRESH;
-      if (face === "X") return Math.abs(w.y - mod.y) < THRESH && Math.abs(w.x - (mod.x + mod.w - 0.31)) < THRESH;
-      return false;
-    }) || null;
+    // Walls store exact grid coords; use a generous threshold to match
+    const findWall = (face, mod) => {
+      const candidates = walls.filter(w => w.face === face);
+      if (face === "W") {
+        return candidates.find(w =>
+          Math.abs(w.x - mod.x) < THRESH &&
+          w.y < mod.y && w.y > mod.y - 2
+        ) || null;
+      }
+      if (face === "Y") {
+        return candidates.find(w =>
+          Math.abs(w.x - mod.x) < THRESH &&
+          Math.abs(w.y - (mod.y + mod.h)) < THRESH
+        ) || null;
+      }
+      if (face === "Z") {
+        // Z wall: x ≈ mod.x, y ≈ mod.y
+        return candidates.find(w =>
+          Math.abs(w.x - mod.x) < THRESH &&
+          Math.abs(w.y - mod.y) < THRESH
+        ) || null;
+      }
+      if (face === "X") {
+        // X wall: x ≈ mod.x + mod.w (thickness is small, ignore it)
+        return candidates.find(w =>
+          Math.abs(w.x - (mod.x + mod.w)) < THRESH &&
+          Math.abs(w.y - mod.y) < THRESH
+        ) || null;
+      }
+      return null;
+    };
 
     // ── W (North) elevation ───────────────────────────────────────────────────
     // Exterior-W modules = no module directly above (lower Y) touching them
