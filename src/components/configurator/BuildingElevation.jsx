@@ -310,18 +310,14 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
         </div>
         {/* Composite canvas: width = total building depth */}
         <div style={{ position: "relative", width: totalDepthPx, height: wallHPx, border: "1px solid #e5e7eb", backgroundColor: "#f9fafb", overflow: "hidden" }}>
-          {layers.map((layer, li) =>
+          {layers.map((layer) =>
             layer.slots.map((slot, si) => {
               const leftPx = Math.round(scale * slot.yOffsetCells * CELL_M * PX_PER_M);
               const slotWidthPx = Math.round(scale * slot.depthCells * CELL_M * PX_PER_M);
               const wall = slot.wall;
-              // Wall panel width: use wall's actual width if available, else fill slot
-              const wallPanelPx = wall?.width
-                ? Math.round(scale * wall.width * PX_PER_M)
-                : slotWidthPx;
               return (
                 <div
-                  key={`${li}-${si}`}
+                  key={`${layer.colX}-${si}`}
                   style={{
                     position: "absolute",
                     left: leftPx,
@@ -333,20 +329,17 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
                   }}
                 >
                   {wall?.elevationImage ? (
-                    <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "stretch", justifyContent: "center" }}>
-                      <img
-                        src={wall.elevationImage}
-                        alt={wall.type}
-                        style={{
-                          height: "100%",
-                          width: wallPanelPx,
-                          objectFit: "fill",
-                          display: "block",
-                          transform: wall.flipped ? "scaleX(-1)" : undefined,
-                          flexShrink: 0,
-                        }}
-                      />
-                    </div>
+                    <img
+                      src={wall.elevationImage}
+                      alt={wall.label || wall.type || slot.face}
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "fill",
+                        display: "block",
+                        transform: wall.flipped ? "scaleX(-1)" : undefined,
+                      }}
+                    />
                   ) : (
                     <div style={{
                       width: "100%", height: "100%",
