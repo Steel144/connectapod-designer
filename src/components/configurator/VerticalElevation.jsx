@@ -70,6 +70,7 @@ const VerticalElevation = memo(function VerticalElevation({
               const leftPx = Math.round(scale * slot.yOffsetCells * CELL_M * PX_PER_M) - (si > 0 ? compressionPx : 0);
               const slotWidthPx = Math.round(scale * slot.depthCells * CELL_M * PX_PER_M);
               const elevationNum = si + 1;
+              const labelOffsetPx = elevationNum === 2 ? Math.round(scale * 0.6 * PX_PER_M) : 0;
 
               return (
                 <ElevationSlot
@@ -81,6 +82,7 @@ const VerticalElevation = memo(function VerticalElevation({
                   labelNum={elevationNum}
                   objectFit="fill"
                   showLabel={true}
+                  labelOffsetPx={labelOffsetPx}
                 />
               );
             })
