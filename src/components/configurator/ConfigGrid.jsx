@@ -917,21 +917,37 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
 
 
 
-              {/* Pavilion width dimensions (vertical, 5.2m) */}
+              {/* Pavilion depth dimensions (vertical, fixed 5.2m) */}
                {pavilionDimensions.map(pav => {
                  const actualHeightCells = 5.2 / 0.6;
                  const pavCenterY = (pav.pavMinY + pav.pavMaxY) / 2;
                  const dimTop = pavCenterY - actualHeightCells / 2;
                  const dimLeft = (pav.minX - 1.5) * CELL_W;
-                return (
-                  <div key={pav.name} className="absolute pointer-events-none" style={{ left: dimLeft, top: dimTop * CELL_H, width: 12, height: actualHeightCells * CELL_H }}>
-                    <div className="absolute" style={{ left: 4, width: 1.5, top: 0, bottom: 0, backgroundColor: pav.color, opacity: 0.6 }} />
-                    <div className="absolute" style={{ left: 0, top: 0, width: 10, height: 1.5, backgroundColor: pav.color, opacity: 0.6 }} />
-                    <div className="absolute" style={{ left: 0, bottom: 0, width: 10, height: 1.5, backgroundColor: pav.color, opacity: 0.6 }} />
-                    <span className="absolute text-xs font-semibold" style={{ top: '50%', left: 10, transform: 'translateY(-50%) rotate(90deg)', transformOrigin: 'left center', color: pav.color, backgroundColor: '#F5F5F3', padding: '0 2px', whiteSpace: 'nowrap' }}>5.2m</span>
-                  </div>
-                );
-              })}
+                 return (
+                   <div key={pav.name} className="absolute pointer-events-none" style={{ left: dimLeft, top: dimTop * CELL_H, width: 12, height: actualHeightCells * CELL_H }}>
+                     <div className="absolute" style={{ left: 4, width: 1.5, top: 0, bottom: 0, backgroundColor: pav.color, opacity: 0.6 }} />
+                     <div className="absolute" style={{ left: 0, top: 0, width: 10, height: 1.5, backgroundColor: pav.color, opacity: 0.6 }} />
+                     <div className="absolute" style={{ left: 0, bottom: 0, width: 10, height: 1.5, backgroundColor: pav.color, opacity: 0.6 }} />
+                     <span className="absolute text-xs font-semibold" style={{ top: '50%', left: 10, transform: 'translateY(-50%) rotate(90deg)', transformOrigin: 'left center', color: pav.color, backgroundColor: '#F5F5F3', padding: '0 2px', whiteSpace: 'nowrap' }}>5.2m</span>
+                   </div>
+                 );
+               })}
+
+               {/* Connection module depth dimensions (vertical, actual size) */}
+               {connectionDimensions.map(conn => {
+                 const actualHeightCells = conn.pavMaxY - conn.pavMinY;
+                 const actualHeightM = (actualHeightCells * 0.6).toFixed(1);
+                 const dimTop = conn.pavMinY;
+                 const dimLeft = (conn.minX - 1.5) * CELL_W;
+                 return (
+                   <div key={conn.name} className="absolute pointer-events-none" style={{ left: dimLeft, top: dimTop * CELL_H, width: 12, height: actualHeightCells * CELL_H }}>
+                     <div className="absolute" style={{ left: 4, width: 1.5, top: 0, bottom: 0, backgroundColor: conn.color, opacity: 0.6 }} />
+                     <div className="absolute" style={{ left: 0, top: 0, width: 10, height: 1.5, backgroundColor: conn.color, opacity: 0.6 }} />
+                     <div className="absolute" style={{ left: 0, bottom: 0, width: 10, height: 1.5, backgroundColor: conn.color, opacity: 0.6 }} />
+                     <span className="absolute text-xs font-semibold" style={{ top: '50%', left: 10, transform: 'translateY(-50%) rotate(90deg)', transformOrigin: 'left center', color: conn.color, backgroundColor: '#F5F5F3', padding: '0 2px', whiteSpace: 'nowrap' }}>{actualHeightM}m</span>
+                   </div>
+                 );
+               })}
 
             </>
           );
