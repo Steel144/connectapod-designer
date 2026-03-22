@@ -55,7 +55,7 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
 
   const { minX, maxX, allMinY, allMaxY, wElevation, yElevation, zElevation, xElevation } = useElevationGeometry(placedModules, walls);
   
-  const slotOffset2 = Math.round(0.2 * PX_PER_M);
+  const slotOffset2 = Math.round(0.25 * PX_PER_M);
   const slotOffset3 = Math.round(0.1 * PX_PER_M);
   const labelMap = { 1: "P1", 2: "C", 3: "P2" };
 
