@@ -246,8 +246,9 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
   };
 
   // ── Render a vertical (Z/X) composite elevation ─────────────────────────────
-  // All layers share the same canvas height = total Y span.
-  // Each layer is absolutely positioned by its Y offset.
+  // Canvas X axis = building depth (total Y span on plan).
+  // Each slot is positioned at its Y offset on plan; width = module depth (h cells).
+  // The wall image is shown at natural aspect ratio centred in its slot.
   const allMinY = placedModules.length > 0 ? Math.min(...placedModules.map(m => m.y)) : 0;
   const allMaxY = placedModules.length > 0 ? Math.max(...placedModules.map(m => m.y + m.h)) : 0;
   const totalDepthCells = allMaxY - allMinY;
@@ -263,13 +264,17 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
           </span>
           <div style={{ flex: 1, height: 1, backgroundColor: "#e5e7eb" }} />
         </div>
-        {/* Composite canvas */}
+        {/* Composite canvas: width = total building depth */}
         <div style={{ position: "relative", width: totalDepthPx, height: wallHPx, border: "1px solid #e5e7eb", backgroundColor: "#f9fafb", overflow: "hidden" }}>
           {layers.map((layer, li) =>
             layer.slots.map((slot, si) => {
               const leftPx = Math.round(scale * slot.yOffsetCells * CELL_M * PX_PER_M);
-              const widthPx = Math.round(scale * slot.depthCells * CELL_M * PX_PER_M);
+              const slotWidthPx = Math.round(scale * slot.depthCells * CELL_M * PX_PER_M);
               const wall = slot.wall;
+              // Wall panel width: use wall's actual width if available, else fill slot
+              const wallPanelPx = wall?.width
+                ? Math.round(scale * wall.width * PX_PER_M)
+                : slotWidthPx;
               return (
                 <div
                   key={`${li}-${si}`}
@@ -277,18 +282,27 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
                     position: "absolute",
                     left: leftPx,
                     top: 0,
-                    width: widthPx,
+                    width: slotWidthPx,
                     height: wallHPx,
                     overflow: "hidden",
-                    borderRight: "1px solid rgba(0,0,0,0.08)",
+                    borderRight: "1px solid rgba(0,0,0,0.12)",
                   }}
                 >
                   {wall?.elevationImage ? (
-                    <img
-                      src={wall.elevationImage}
-                      alt={wall.type}
-                      style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", transform: wall.flipped ? "scaleX(-1)" : undefined }}
-                    />
+                    <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "stretch", justifyContent: "center" }}>
+                      <img
+                        src={wall.elevationImage}
+                        alt={wall.type}
+                        style={{
+                          height: "100%",
+                          width: wallPanelPx,
+                          objectFit: "fill",
+                          display: "block",
+                          transform: wall.flipped ? "scaleX(-1)" : undefined,
+                          flexShrink: 0,
+                        }}
+                      />
+                    </div>
                   ) : (
                     <div style={{
                       width: "100%", height: "100%",
