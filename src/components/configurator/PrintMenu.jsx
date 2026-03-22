@@ -66,7 +66,8 @@ export default function PrintMenu({ placedModules, walls, onPrint }) {
           {options.map((opt) => (
             <button
               key={opt.value}
-              onClick={() => {
+              onMouseDown={(e) => {
+                e.preventDefault();
                 onPrint(opt.value);
                 setOpen(false);
               }}
