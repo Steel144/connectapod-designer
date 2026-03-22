@@ -65,6 +65,7 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
 
   const {
     minX, maxX,          // overall grid X span (cells)
+    allMinY, allMaxY,    // overall grid Y span (cells)
     wElevation,          // W face: layers back→front
     yElevation,          // Y face: layers front→back
     zElevation,          // Z face: layers right→left (back-to-front)
