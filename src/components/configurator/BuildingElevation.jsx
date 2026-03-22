@@ -229,13 +229,12 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
           </span>
           <div style={{ flex: 1, height: 1, backgroundColor: "#e5e7eb" }} />
         </div>
-        {/* Composite canvas: layers spread vertically */}
-        <div style={{ position: "relative", width: totalWidthPx, height: wallHPx * layers.length, border: "1px solid #e5e7eb", backgroundColor: "#f9fafb", overflow: "hidden" }}>
+        {/* Composite canvas: layers stacked, each absolutely positioned */}
+        <div style={{ position: "relative", width: totalWidthPx, height: wallHPx, border: "1px solid #e5e7eb", backgroundColor: "#f9fafb", overflow: "hidden" }}>
           {layers.map((layer, li) =>
             layer.slots.map((slot, si) => {
               const leftPx = Math.round(scale * slot.xOffsetCells * CELL_M * PX_PER_M);
               const widthPx = Math.round(scale * slot.widthCells * CELL_M * PX_PER_M);
-              const topPx = wallHPx * li;
               const wall = slot.wall;
               return (
                 <div
@@ -243,7 +242,7 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
                   style={{
                     position: "absolute",
                     left: leftPx,
-                    top: topPx,
+                    top: 0,
                     width: widthPx,
                     height: wallHPx,
                     overflow: "hidden",
