@@ -1,8 +1,21 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Save, ChevronDown } from "lucide-react";
 
 export default function PrintMenu({ placedModules, walls, onPrint }) {
   const [open, setOpen] = useState(false);
+  const [pos, setPos] = useState({ top: 0, left: 0 });
+  const buttonRef = useRef(null);
+
+  const handleClick = () => {
+    if (!open && buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      setPos({
+        top: rect.bottom + 4,
+        left: rect.right - 160,
+      });
+    }
+    setOpen(!open);
+  };
 
   const options = [];
 
@@ -19,9 +32,10 @@ export default function PrintMenu({ placedModules, walls, onPrint }) {
   if (options.length === 0) return null;
 
   return (
-    <div className="relative inline-block">
+    <div>
       <button
-        onClick={() => setOpen(!open)}
+        ref={buttonRef}
+        onClick={handleClick}
         className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-gray-600 bg-white border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22] transition-all"
         title="Print options"
       >
@@ -31,7 +45,10 @@ export default function PrintMenu({ placedModules, walls, onPrint }) {
       </button>
 
       {open && (
-        <div className="absolute right-0 mt-1 w-40 bg-white border border-gray-200 shadow-lg rounded z-[9999]">
+        <div
+          className="fixed w-40 bg-white border border-gray-200 shadow-lg rounded z-[9999]"
+          style={{ top: `${pos.top}px`, left: `${pos.left}px` }}
+        >
           {options.map((opt) => (
             <button
               key={opt.value}
