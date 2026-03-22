@@ -142,6 +142,11 @@ export default function PrintableElevationsSheet({ walls = [], placedModules = [
             {pav.rows.map((row, idx) => {
               const hasContent = row.midWalls.some(w => w.elevationImage) || row.zWall?.elevationImage || row.xWall?.elevationImage;
               if (!hasContent) return null;
+
+              // Calculate scale: find the module(s) for this row and get total width
+              const modsInRow = placedModules.filter(m => Math.abs(m.y - row.yPos) < 0.1 && getModulePavilion(m) === pav.pavilionNum).sort((a, b) => a.x - b.x);
+              const totalModWidth = modsInRow.reduce((sum, m) => sum + m.w, 0);
+              const pxPerMeter = totalModWidth > 0 ? 600 / totalModWidth : 100; // 600px for total row width
               
               return (
                 <div key={`${pav.pavilionNum}-${row.yPos}-${row.type}`}>
@@ -150,32 +155,34 @@ export default function PrintableElevationsSheet({ walls = [], placedModules = [
                     <div className="flex-1 h-px bg-gray-200" />
                   </div>
 
-                  <div className="flex items-center gap-2 overflow-x-auto pb-2">
+                  <div className="flex items-end pb-2" style={{ gap: "0px" }}>
                     {row.zWall?.elevationImage && (
-                      <div className="flex flex-col items-center gap-0 shrink-0">
-                        <div className="bg-white border border-gray-200 flex items-center justify-center" style={{ height: "240px", width: "120px" }}>
-                          <img src={row.zWall.elevationImage} alt="Z" style={{ height: "100%", width: "auto", pointerEvents: "none" }} />
+                      <div className="flex flex-col items-center gap-0">
+                        <div className="bg-white border border-gray-300 flex items-center justify-center" style={{ height: "220px", width: `${Math.max(60, 0.31 * pxPerMeter)}px` }}>
+                          <img src={row.zWall.elevationImage} alt="Z" style={{ height: "100%", width: "100%", objectFit: "contain", pointerEvents: "none" }} />
                         </div>
-                        <span className="text-[8px] text-gray-400 mt-0.5">Left</span>
                       </div>
                     )}
 
-                    {row.midWalls.map((wall) => (
-                      wall.elevationImage && (
-                        <div key={wall.id} className="flex items-center shrink-0" style={{ marginRight: "-1px" }}>
-                          <div className="bg-white border border-gray-200 flex items-center justify-center" style={{ height: "240px", width: "120px", marginRight: "-1px" }}>
-                            <img src={wall.elevationImage} alt={wall.type} style={{ height: "100%", width: "auto", pointerEvents: "none" }} />
+                    {row.midWalls.map((wall, widx) => {
+                      const modForWall = modsInRow[widx];
+                      const wallWidth = modForWall ? modForWall.w * pxPerMeter : 100;
+                      return (
+                        wall.elevationImage && (
+                          <div key={wall.id} className="flex items-center" style={{ marginRight: "0px" }}>
+                            <div className="bg-white border border-gray-300 flex items-center justify-center" style={{ height: "220px", width: `${wallWidth}px`, marginRight: "0px" }}>
+                              <img src={wall.elevationImage} alt={wall.type} style={{ height: "100%", width: "100%", objectFit: "contain", pointerEvents: "none" }} />
+                            </div>
                           </div>
-                        </div>
-                      )
-                    ))}
+                        )
+                      );
+                    })}
 
                     {row.xWall?.elevationImage && (
-                      <div className="flex flex-col items-center gap-0 shrink-0">
-                        <div className="bg-white border border-gray-200 flex items-center justify-center" style={{ height: "240px", width: "120px" }}>
-                          <img src={row.xWall.elevationImage} alt="X" style={{ height: "100%", width: "auto", pointerEvents: "none" }} />
+                      <div className="flex flex-col items-center gap-0">
+                        <div className="bg-white border border-gray-300 flex items-center justify-center" style={{ height: "220px", width: `${Math.max(60, 0.31 * pxPerMeter)}px` }}>
+                          <img src={row.xWall.elevationImage} alt="X" style={{ height: "100%", width: "100%", objectFit: "contain", pointerEvents: "none" }} />
                         </div>
-                        <span className="text-[8px] text-gray-400 mt-0.5">Right</span>
                       </div>
                     )}
                   </div>
