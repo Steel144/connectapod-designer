@@ -413,7 +413,8 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
             
             {layers.map((layer) =>
               layer.slots.map((slot, si) => {
-                const leftPx = Math.round(scale * slot.yOffsetCells * CELL_M * PX_PER_M);
+                const compressionPx = Math.round(scale * 0.6 * PX_PER_M); // 600mm compression
+                const leftPx = Math.round(scale * slot.yOffsetCells * CELL_M * PX_PER_M) - (si > 0 ? compressionPx : 0);
                 const slotWidthPx = Math.round(scale * slot.depthCells * CELL_M * PX_PER_M);
                 const wall = slot.wall;
                 return (
