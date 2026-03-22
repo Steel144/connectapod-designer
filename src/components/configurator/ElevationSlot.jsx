@@ -7,8 +7,7 @@ const ElevationSlot = memo(function ElevationSlot({
   heightPx, 
   labelNum,
   objectFit = "cover",
-  showLabel = true,
-  labelOffsetPx = 0
+  showLabel = true 
 }) {
   const wall = slot.wall;
 
@@ -49,7 +48,7 @@ const ElevationSlot = memo(function ElevationSlot({
         <div style={{
           position: "absolute",
           top: 8,
-          left: 8 + labelOffsetPx,
+          left: 8,
           backgroundColor: "#000",
           color: "#fff",
           width: 28,
