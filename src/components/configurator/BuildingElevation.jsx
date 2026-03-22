@@ -417,6 +417,7 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
                 const leftPx = Math.round(scale * slot.yOffsetCells * CELL_M * PX_PER_M) - (si > 0 ? compressionPx : 0);
                 const slotWidthPx = Math.round(scale * slot.depthCells * CELL_M * PX_PER_M);
                 const wall = slot.wall;
+                const elevationNum = si + 1;
                 return (
                   <div
                     key={`${layer.colX}-${si}`}
@@ -430,27 +431,32 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
                       borderRight: "1px solid rgba(0,0,0,0.12)",
                     }}
                   >
-                    {wall?.elevationImage ? (
-                      <img
-                        src={wall.elevationImage}
-                        alt={wall.label || wall.type || slot.face}
-                        style={{
-                          width: "100%",
-                          height: "100%",
-                          objectFit: "fill",
-                          display: "block",
-                          transform: wall.flipped ? "scaleX(-1)" : undefined,
-                        }}
-                      />
-                    ) : (
-                      <div style={{
-                        width: "100%", height: "100%",
-                        background: "repeating-linear-gradient(45deg, #f3f4f6, #f3f4f6 6px, #e5e7eb 6px, #e5e7eb 12px)",
-                        display: "flex", alignItems: "center", justifyContent: "center",
-                      }}>
-                        <span style={{ fontSize: 9, color: "#9ca3af" }}>{slot.face}</span>
+                    <div style={{ position: "relative", width: "100%", height: "100%" }}>
+                      {wall?.elevationImage ? (
+                        <img
+                          src={wall.elevationImage}
+                          alt={wall.label || wall.type || slot.face}
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            objectFit: "fill",
+                            display: "block",
+                            transform: wall.flipped ? "scaleX(-1)" : undefined,
+                          }}
+                        />
+                      ) : (
+                        <div style={{
+                          width: "100%", height: "100%",
+                          background: "repeating-linear-gradient(45deg, #f3f4f6, #f3f4f6 6px, #e5e7eb 6px, #e5e7eb 12px)",
+                          display: "flex", alignItems: "center", justifyContent: "center",
+                        }}>
+                          <span style={{ fontSize: 9, color: "#9ca3af" }}>{slot.face}</span>
+                        </div>
+                      )}
+                      <div style={{ position: "absolute", top: 6, left: 6, backgroundColor: "rgba(0,0,0,0.6)", color: "#fff", width: 24, height: 24, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 700, zIndex: 10 }}>
+                        {elevationNum}
                       </div>
-                    )}
+                    </div>
                   </div>
                 );
               })
