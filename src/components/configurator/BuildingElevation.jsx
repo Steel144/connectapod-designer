@@ -296,7 +296,7 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
           </span>
           <div style={{ flex: 1, height: 1, backgroundColor: "#e5e7eb" }} />
         </div>
-        <div style={{ display: "flex", flexDirection: "column", gap: 2, border: "1px solid #e5e7eb", backgroundColor: "#f9fafb", padding: 0, overflow: "auto" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 2, border: "1px solid #e5e7eb", backgroundColor: "#f9fafb", padding: 0, overflow: "auto", width: "100%" }}>
           {layers.map((layer) =>
             layer.slots.map((slot, si) => {
               const slotWidthPx = Math.round(scale * slot.depthCells * CELL_M * PX_PER_M);
@@ -306,10 +306,12 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
                   key={`${layer.colX}-${si}`}
                   style={{
                     position: "relative",
-                    width: Math.max(slotWidthPx, 200),
+                    width: slotWidthPx,
+                    minWidth: slotWidthPx,
                     height: wallHPx,
                     overflow: "hidden",
                     borderBottom: "1px solid rgba(0,0,0,0.08)",
+                    flex: "0 0 auto",
                   }}
                 >
                   {wall?.elevationImage ? (
