@@ -367,16 +367,16 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
         onMouseLeave={handleMouseUp}
       >
         <div style={{ transform: `translate(${pan.x}px, ${pan.y}px)`, padding: "40px", display: "inline-flex", flexDirection: "column", gap: 48, minWidth: "max-content" }}>
-          <div style={{ maxWidth: "calc(100vw - 160px)", maxHeight: "600px", overflow: "auto" }}>
+          <div style={{ maxHeight: "600px", overflow: "auto" }}>
             <HorizElevation layers={wElevation} label="W — North Elevation" color="#22c55e" />
           </div>
-          <div style={{ maxWidth: "calc(100vw - 160px)", maxHeight: "600px", overflow: "auto" }}>
+          <div style={{ maxHeight: "600px", overflow: "auto" }}>
             <HorizElevation layers={yElevation} label="Y — South Elevation" color="#3b82f6" />
           </div>
-          <div style={{ maxWidth: "calc(100vw - 160px)", maxHeight: "600px", overflow: "auto" }}>
+          <div style={{ maxHeight: "600px", overflow: "auto" }}>
             <VertElevation  layers={zElevation} label="Z — West Elevation"  color="#f59e0b" />
           </div>
-          <div style={{ maxWidth: "calc(100vw - 160px)", maxHeight: "600px", overflow: "auto" }}>
+          <div style={{ maxHeight: "600px", overflow: "auto" }}>
             <VertElevation  layers={xElevation} label="X — East Elevation"  color="#ef4444" />
           </div>
         </div>
