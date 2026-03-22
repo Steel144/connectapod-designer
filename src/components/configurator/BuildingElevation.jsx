@@ -164,8 +164,6 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
     const exteriorZ = placedModules.filter(m =>
       !placedModules.some(o => o.y < m.y + m.h && o.y + o.h > m.y && o.x + o.w === m.x)
     );
-    console.log("[BuildingElevation] Z walls:", walls.filter(w => w.face === "Z").map(w => `(x=${w.x.toFixed(2)},y=${w.y.toFixed(2)},img=${!!w.elevationImage})`));
-    console.log("[BuildingElevation] exteriorZ mods:", exteriorZ.map(m => `(x=${m.x},y=${m.y},w=${m.w},h=${m.h})`));
     // Z (West) elevation: for each Y-row segment, pick the westernmost (lowest X) exterior module
     // All slots share one composite canvas positioned by their Y offset
     const zSlots = [];
