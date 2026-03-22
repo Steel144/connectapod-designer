@@ -25,11 +25,17 @@ CREATE INDEX IF NOT EXISTS idx_modules_code ON modules(code);
 -- Enable Row Level Security (but allow public read for this catalogue)
 ALTER TABLE modules ENABLE ROW LEVEL SECURITY;
 
+-- Drop existing policies if they exist
+DROP POLICY IF EXISTS "Allow public read access" ON modules;
+DROP POLICY IF EXISTS "Allow authenticated insert" ON modules;
+DROP POLICY IF EXISTS "Allow authenticated update" ON modules;
+DROP POLICY IF EXISTS "Allow authenticated delete" ON modules;
+
 -- Allow anyone to read modules (public catalogue)
 CREATE POLICY "Allow public read access" ON modules
   FOR SELECT USING (true);
 
--- Allow authenticated users to insert/update/delete (admin operations)
+-- Allow anyone to insert/update/delete for now (admin operations)
 CREATE POLICY "Allow authenticated insert" ON modules
   FOR INSERT WITH CHECK (true);
 
