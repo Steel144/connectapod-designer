@@ -136,7 +136,7 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
                 CELL_M={CELL_M}
                 PX_PER_M={PX_PER_M}
                 WALL_H_M={WALL_H_M}
-                slotOffsets={{ 2: slotOffset2, 3: slotOffset3 }}
+                slotOffsets={{ 2: slotOffset2Z, 3: slotOffset3Z }}
                 labelMap={labelMapZ}
               />
             </div>
