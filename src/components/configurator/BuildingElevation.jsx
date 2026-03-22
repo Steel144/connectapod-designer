@@ -99,9 +99,9 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
         ) || null;
       }
       if (face === "X") {
-        // X wall: x ≈ mod.x + mod.w (thickness is small, ignore it)
+        // X wall snaps to mod.x + mod.w - thickness (thickness ~0.1–0.5 cells)
         return candidates.find(w =>
-          Math.abs(w.x - (mod.x + mod.w)) < THRESH &&
+          w.x >= mod.x + mod.w - 1 && w.x <= mod.x + mod.w + THRESH &&
           Math.abs(w.y - mod.y) < THRESH
         ) || null;
       }
