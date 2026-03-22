@@ -46,7 +46,7 @@ const ElevationSlot = memo(function ElevationSlot({
       {showLabel && labelNum && (
         <div style={{
           position: "absolute",
-          top: 8,
+          top: 16,
           left: 8,
           backgroundColor: "#9ca3af",
           color: "#fff",
