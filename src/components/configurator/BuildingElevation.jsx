@@ -124,51 +124,45 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
     }));
 
     // ── Z (West) elevation ────────────────────────────────────────────────────
-    // Show all modules that have a Z face wall, positioned by their Y (depth) offset.
-    // For looking west→east: the canvas X axis = building depth (Y on plan).
-    // Each Z-face wall is rendered as a fixed-width panel at its Y position.
-    // Layers: modules further right (higher X) drawn first, leftmost (front) drawn last.
+    // Looking east: canvas X axis = total building WIDTH (X span on plan).
+    // Each Z-face end wall is positioned at its module's X offset.
+    // Width of each panel = module width (w cells).
+    // Multiple Y-row groups (pavilions) are layers painted back→front.
     const allMinY = Math.min(...placedModules.map(m => m.y));
-    const hasZWall = placedModules.filter(m => findWall("Z", m) !== null);
-    // Also include exterior-Z modules that have no wall yet (show placeholder)
+    // Get all modules that are exterior on their Z (left) face
     const exteriorZ = placedModules.filter(m =>
       !placedModules.some(o => o.y < m.y + m.h && o.y + o.h > m.y && o.x + o.w === m.x)
     );
-    // Union: modules with a Z wall OR exterior-Z modules
-    const zModules = [...new Set([...hasZWall, ...exteriorZ])];
-    // Group by X (leftmost X of module), sort descending (back→front)
-    const zByX = {};
-    zModules.forEach(m => { if (!zByX[m.x]) zByX[m.x] = []; zByX[m.x].push(m); });
-    const zColsSorted = Object.keys(zByX).map(Number).sort((a, b) => b - a);
-    const zElevation = zColsSorted.map(colX => ({
-      colX,
-      slots: [...zByX[colX]].sort((a, b) => a.y - b.y).map(mod => ({
+    // Group by Y row, sort descending (back rows first, front rows on top)
+    const zByY = {};
+    exteriorZ.forEach(m => { if (!zByY[m.y]) zByY[m.y] = []; zByY[m.y].push(m); });
+    const zRowsSorted = Object.keys(zByY).map(Number).sort((a, b) => b - a);
+    const zElevation = zRowsSorted.map(rowY => ({
+      rowY,
+      slots: [...zByY[rowY]].sort((a, b) => a.x - b.x).map(mod => ({
         mod, face: "Z",
         wall: findWall("Z", mod),
-        // Position along canvas = Y offset (depth on plan)
-        yOffsetCells: mod.y - allMinY,
-        // Width in elevation = module depth (h cells) — how wide this panel appears looking west
-        depthCells: mod.h,
+        xOffsetCells: mod.x - allMinX,
+        widthCells: mod.w,
       })),
     }));
 
     // ── X (East) elevation ────────────────────────────────────────────────────
-    const hasXWall = placedModules.filter(m => findWall("X", m) !== null);
+    // Looking west: canvas X axis = total building WIDTH (X span on plan).
+    // Each X-face end wall is positioned at its module's X offset.
     const exteriorX = placedModules.filter(m =>
       !placedModules.some(o => o.y < m.y + m.h && o.y + o.h > m.y && o.x === m.x + m.w)
     );
-    const xModules = [...new Set([...hasXWall, ...exteriorX])];
-    const xByX = {};
-    xModules.forEach(m => { const key = m.x + m.w; if (!xByX[key]) xByX[key] = []; xByX[key].push(m); });
-    // For east elevation looking west: modules further left (lower right-edge X) drawn first
-    const xColsSorted = Object.keys(xByX).map(Number).sort((a, b) => a - b);
-    const xElevation = xColsSorted.map(colX => ({
-      colX,
-      slots: [...xByX[colX]].sort((a, b) => a.y - b.y).map(mod => ({
+    const xByY = {};
+    exteriorX.forEach(m => { if (!xByY[m.y]) xByY[m.y] = []; xByY[m.y].push(m); });
+    const xRowsSorted = Object.keys(xByY).map(Number).sort((a, b) => b - a);
+    const xElevation = xRowsSorted.map(rowY => ({
+      rowY,
+      slots: [...xByY[rowY]].sort((a, b) => a.x - b.x).map(mod => ({
         mod, face: "X",
         wall: findWall("X", mod),
-        yOffsetCells: mod.y - allMinY,
-        depthCells: mod.h,
+        xOffsetCells: mod.x - allMinX,
+        widthCells: mod.w,
       })),
     }));
 
