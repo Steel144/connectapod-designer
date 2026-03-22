@@ -396,7 +396,7 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
           </div>
           
           {/* Canvas with alignment guides */}
-          <div style={{ position: "relative", flex: 1, width: maxContentWidth, height: wallHPx, border: "1px solid #e5e7eb", backgroundColor: "#f9fafb", overflowY: "hidden", overflowX: "auto" }}>
+          <div style={{ position: "relative", flex: 1, width: maxContentWidth, height: endElevationHPx, border: "1px solid #e5e7eb", backgroundColor: "#f9fafb", overflowY: "hidden", overflowX: "auto" }}>
             {/* Window top guide line */}
             <div style={{
               position: "absolute",
