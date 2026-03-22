@@ -75,6 +75,8 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
 
     const allMinX = Math.min(...placedModules.map(m => m.x));
     const allMaxX = Math.max(...placedModules.map(m => m.x + m.w));
+    const allMinY = Math.min(...placedModules.map(m => m.y));
+    const allMaxY = Math.max(...placedModules.map(m => m.y + m.h));
 
     // Helper: find W/Y face wall attached to a module
     const findWall = (face, mod) => {
