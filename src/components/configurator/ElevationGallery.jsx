@@ -27,6 +27,7 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
   const isPanning = useRef(false);
   const panStart = useRef({ x: 0, y: 0 });
   const panOrigin = useRef({ x: 0, y: 0 });
+  const scrollContainerRef = useRef(null);
 
   const handleCanvasMouseDown = useCallback((e) => {
     if (e.button !== 0) return;
@@ -49,7 +50,7 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
     e.currentTarget.style.cursor = "grab";
   }, []);
 
-  const zoomLevels = [20, 25, 37, 50, 62, 75, 100, 125, 150, 200, 300];
+  const zoomLevels = [20, 25, 37, 50, 62, 75, 100, 125, 150, 200];
 
   const adjustZoom = (delta) => {
     if (delta > 0) {
@@ -59,6 +60,23 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
       const prev = [...zoomLevels].reverse().find(z => z < zoom);
       if (prev) setZoom(prev);
     }
+  };
+
+  const handleFitToWindow = () => {
+    if (!scrollContainerRef.current) return;
+    
+    const containerWidth = scrollContainerRef.current.clientWidth - 80;
+    const containerHeight = scrollContainerRef.current.clientHeight - 80;
+    
+    const estimatedContentWidth = 400;
+    const estimatedContentHeight = 600;
+    
+    const horizontalZoom = Math.max(20, Math.min(100, Math.floor((containerWidth / estimatedContentWidth) * 100)));
+    const verticalZoom = Math.max(20, Math.min(100, Math.floor((containerHeight / estimatedContentHeight) * 100)));
+    
+    const fitZoom = Math.min(horizontalZoom, verticalZoom);
+    setZoom(fitZoom);
+    setPan({ x: 0, y: 0 });
   };
 
   const getWallPavilion = (wall) => {
@@ -260,29 +278,23 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
           <button onClick={() => adjustZoom(-1)} disabled={zoom <= zoomLevels[0]} className="p-1.5 rounded hover:bg-white hover:shadow-sm transition-all text-gray-500 hover:text-gray-800 disabled:opacity-30 disabled:cursor-not-allowed" title="Zoom out">
             <ZoomOut size={15} />
           </button>
-          <button onClick={() => { setZoom(100); setPan({ x: 0, y: 0 }); }} className="min-w-[52px] text-center text-xs font-semibold text-gray-600 hover:text-[#F15A22] py-1 px-2 rounded hover:bg-white transition-all" title="Reset zoom & position">
+          <button onClick={() => { setZoom(50); setPan({ x: 0, y: 0 }); }} className="min-w-[52px] text-center text-xs font-semibold text-gray-600 hover:text-[#F15A22] py-1 px-2 rounded hover:bg-white transition-all" title="Reset zoom & position">
             {zoom}%
           </button>
           <button onClick={() => adjustZoom(1)} disabled={zoom >= zoomLevels[zoomLevels.length - 1]} className="p-1.5 rounded hover:bg-white hover:shadow-sm transition-all text-gray-500 hover:text-gray-800 disabled:opacity-30 disabled:cursor-not-allowed" title="Zoom in">
             <ZoomIn size={15} />
           </button>
+          <div className="w-px h-6 bg-gray-300 mx-1"></div>
+          <button onClick={handleFitToWindow} className="px-3 py-1.5 text-xs font-semibold text-gray-600 hover:text-[#F15A22] rounded hover:bg-white transition-all">
+            Fit
+          </button>
         </div>
       </div>
 
       <div
+        ref={scrollContainerRef}
         className="flex-1 overflow-auto relative select-none bg-gray-50"
         style={{ cursor: "grab" }}
-        ref={(el) => {
-          if (el && !el._wheelListenerAdded) {
-            el._wheelListenerAdded = true;
-            el.addEventListener('wheel', (e) => {
-              if (e.ctrlKey || e.metaKey) {
-                e.preventDefault();
-                adjustZoom(e.deltaY < 0 ? 1 : -1);
-              }
-            }, { passive: false });
-          }
-        }}
         onMouseDown={handleCanvasMouseDown}
         onMouseMove={handleCanvasMouseMove}
         onMouseUp={handleCanvasMouseUp}
