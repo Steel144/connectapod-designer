@@ -134,6 +134,7 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
 
     // ── Z (West) elevation ────────────────────────────────────────────────────
     const allMinY = Math.min(...placedModules.map(m => m.y));
+    const allMaxY = Math.max(...placedModules.map(m => m.y + m.h));
 
     // For each exterior module, find the best matching wall by face.
     // Match on: correct face, X proximity, and wall Y overlaps module Y range.
@@ -197,7 +198,7 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
     xSlots.sort((a, b) => a.yOffsetCells - b.yOffsetCells);
     const xElevation = xSlots.length > 0 ? [{ colX: 0, slots: xSlots }] : [];
 
-    return { minX: allMinX, maxX: allMaxX, wElevation, yElevation, zElevation, xElevation };
+    return { minX: allMinX, maxX: allMaxX, allMinY, allMaxY, wElevation, yElevation, zElevation, xElevation };
   }, [placedModules, walls]);
 
   if (placedModules.length === 0) {
