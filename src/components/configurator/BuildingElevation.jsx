@@ -359,11 +359,17 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseUp}
       >
-        <div style={{ transform: `translate(${pan.x}px, ${pan.y}px)`, padding: "40px", display: "inline-flex", flexDirection: "column", gap: 48 }}>
-          <HorizElevation layers={wElevation} label="W — North Elevation" color="#22c55e" />
-          <HorizElevation layers={yElevation} label="Y — South Elevation" color="#3b82f6" />
-          <VertElevation  layers={zElevation} label="Z — West Elevation"  color="#f59e0b" />
-          <VertElevation  layers={xElevation} label="X — East Elevation"  color="#ef4444" />
+        <div style={{ transform: `translate(${pan.x}px, ${pan.y}px)`, padding: "40px", display: "inline-flex", flexDirection: "row", gap: 64, alignItems: "flex-start" }}>
+          {/* Left column: Z (West) elevation */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 48 }}>
+            <VertElevation layers={zElevation} label="Z — West Elevation" color="#f59e0b" />
+          </div>
+          {/* Right column: W, Y, X elevations */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 48 }}>
+            <HorizElevation layers={wElevation} label="W — North Elevation" color="#22c55e" />
+            <HorizElevation layers={yElevation} label="Y — South Elevation" color="#3b82f6" />
+            <VertElevation  layers={xElevation} label="X — East Elevation"  color="#ef4444" />
+          </div>
         </div>
       </div>
     </div>
