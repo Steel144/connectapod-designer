@@ -4,12 +4,12 @@ import PrintableElevationsSheet from "./PrintableElevationsSheet";
 import PrintableBuildingElevations from "./PrintableBuildingElevations";
 import PrintableElevationGallery from "./PrintableElevationGallery";
 
-export default function PrintRouter({ mode, walls, placedModules, onClose }) {
+export default function PrintRouter({ mode, walls, placedModules, onClose, customWalls = [] }) {
   if (mode === "plans") {
     return <PrintablePlansSheet placedModules={placedModules} onClose={onClose} />;
   }
   if (mode === "elevations") {
-    return <PrintableElevationsSheet walls={walls} onClose={onClose} />;
+    return <PrintableElevationsSheet walls={walls} placedModules={placedModules} customWalls={customWalls} onClose={onClose} />;
   }
   if (mode === "building-elevations") {
     return <PrintableBuildingElevations walls={walls} placedModules={placedModules} onClose={onClose} />;
