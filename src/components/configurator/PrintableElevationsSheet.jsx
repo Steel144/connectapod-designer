@@ -122,64 +122,71 @@ export default function PrintableElevationsSheet({ walls = [], placedModules = [
       </button>
 
       <style>{`
-        @page { margin: 0; size: A4; }
+        @page { margin: 0; size: A4 landscape; }
         @media print {
           body { margin: 0; padding: 0; }
           img { max-width: 100%; height: auto; }
-          .page-break { page-break-after: always; }
+          .pavilion-page { page-break-after: always; }
         }
       `}</style>
 
       {pavilions.map((pav) => (
-        <div key={pav.pavilionNum} className="page-break p-8">
-          <h2 className="text-2xl font-bold text-gray-800 mb-6">{getPavilionLabel(pav.pavilionNum)}</h2>
+        <div key={pav.pavilionNum} className="pavilion-page p-8 min-h-screen flex flex-col">
+          <div className="flex items-center justify-between px-6 pt-4 pb-4 border-b border-[#F15A22] mb-6">
+            <img src="https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/1a43e85d2_Connectapod-01.png" alt="connectapod" style={{ height: "25px", width: "auto" }} />
+            <h2 className="text-lg font-bold text-gray-800">{getPavilionLabel(pav.pavilionNum)}</h2>
+            <span className="text-xs text-gray-500 uppercase tracking-widest">Elevations</span>
+          </div>
 
-          {pav.rows.map((row, idx) => (
-            <div key={`${pav.pavilionNum}-${row.yPos}-${row.type}`} className="mb-8">
-              <h3 className="text-sm font-semibold text-gray-600 uppercase tracking-widest mb-4">
-                {row.type === "Y" ? "Face Y (Outside/Top)" : "Face W (Outside/Bottom)"}
-              </h3>
-
-              <div className="flex items-start gap-4 overflow-x-auto pb-4">
-                {row.zWall && (
-                  <div className="flex flex-col items-center gap-2 shrink-0">
-                    <div className="bg-gray-50 border border-gray-200 flex items-center justify-center" style={{ height: "200px", width: "150px" }}>
-                      {row.zWall.elevationImage ? (
-                        <img src={row.zWall.elevationImage} alt="Z" className="h-full w-full object-contain" />
-                      ) : (
-                        <span className="text-gray-400 text-xs">No image</span>
-                      )}
-                    </div>
-                    <span className="text-xs font-semibold text-gray-700">Left (Z)</span>
+          <div className="flex-1 flex flex-col gap-6">
+            {pav.rows.map((row, idx) => {
+              const hasContent = row.midWalls.some(w => w.elevationImage) || row.zWall?.elevationImage || row.xWall?.elevationImage;
+              if (!hasContent) return null;
+              
+              return (
+                <div key={`${pav.pavilionNum}-${row.yPos}-${row.type}`}>
+                  <div className="flex items-center gap-3 mb-3">
+                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{getPavilionLabel(pav.pavilionNum)} - {row.type === "Y" ? "Y face (outside/top)" : "W face (outside/bottom)"}</span>
+                    <div className="flex-1 h-px bg-gray-200" />
                   </div>
-                )}
 
-                {row.midWalls.map((wall) => (
-                  wall.elevationImage && (
-                    <div key={wall.id} className="flex flex-col items-center gap-2 shrink-0">
-                      <div className="bg-gray-50 border border-gray-200 flex items-center justify-center" style={{ height: "200px", width: "150px" }}>
-                        <img src={wall.elevationImage} alt={wall.type} className="h-full w-full object-contain" />
+                  <div className="flex items-center gap-2 overflow-x-auto pb-2">
+                    {row.zWall?.elevationImage && (
+                      <div className="flex flex-col items-center gap-0 shrink-0">
+                        <div className="bg-white border border-gray-200 flex items-center justify-center" style={{ height: "240px", width: "120px" }}>
+                          <img src={row.zWall.elevationImage} alt="Z" style={{ height: "100%", width: "auto", pointerEvents: "none" }} />
+                        </div>
+                        <span className="text-[8px] text-gray-400 mt-0.5">Left</span>
                       </div>
-                      <span className="text-xs font-semibold text-gray-700">{wall.type || "Wall"}</span>
-                    </div>
-                  )
-                ))}
+                    )}
 
-                {row.xWall && (
-                  <div className="flex flex-col items-center gap-2 shrink-0">
-                    <div className="bg-gray-50 border border-gray-200 flex items-center justify-center" style={{ height: "200px", width: "150px" }}>
-                      {row.xWall.elevationImage ? (
-                        <img src={row.xWall.elevationImage} alt="X" className="h-full w-full object-contain" />
-                      ) : (
-                        <span className="text-gray-400 text-xs">No image</span>
-                      )}
-                    </div>
-                    <span className="text-xs font-semibold text-gray-700">Right (X)</span>
+                    {row.midWalls.map((wall) => (
+                      wall.elevationImage && (
+                        <div key={wall.id} className="flex items-center shrink-0" style={{ marginRight: "-1px" }}>
+                          <div className="bg-white border border-gray-200 flex items-center justify-center" style={{ height: "240px", width: "120px", marginRight: "-1px" }}>
+                            <img src={wall.elevationImage} alt={wall.type} style={{ height: "100%", width: "auto", pointerEvents: "none" }} />
+                          </div>
+                        </div>
+                      )
+                    ))}
+
+                    {row.xWall?.elevationImage && (
+                      <div className="flex flex-col items-center gap-0 shrink-0">
+                        <div className="bg-white border border-gray-200 flex items-center justify-center" style={{ height: "240px", width: "120px" }}>
+                          <img src={row.xWall.elevationImage} alt="X" style={{ height: "100%", width: "auto", pointerEvents: "none" }} />
+                        </div>
+                        <span className="text-[8px] text-gray-400 mt-0.5">Right</span>
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-            </div>
-          ))}
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="mt-auto pt-6 border-t border-gray-200 text-[9px] text-gray-500 text-right">
+            <p>{new Date().toLocaleDateString()}</p>
+          </div>
         </div>
       ))}
     </div>
