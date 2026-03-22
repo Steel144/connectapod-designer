@@ -734,7 +734,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
               </div>
 
               {/* WXYZ corner labels - larger, bold, 30% black */}
-              {!hasModAbove && <span className="absolute text-2xl font-bold" style={{ left: '50%', top: '-96px', transform: 'translateX(-50%)', color: 'rgba(0, 0, 0, 0.3)' }}>W</span>}
+              {!hasModAbove && <span className="absolute text-2xl font-bold" style={{ left: '50%', top: '-52px', transform: 'translateX(-50%)', color: 'rgba(0, 0, 0, 0.3)' }}>W</span>}
               {!hasModRight && <span className="absolute text-2xl font-bold" style={{ right: '-48px', top: '50%', transform: 'translateY(-50%)', color: 'rgba(0, 0, 0, 0.3)' }}>X</span>}
               {!hasModBelow && <span className="absolute text-2xl font-bold" style={{ left: '50%', bottom: '-96px', transform: 'translateX(-50%)', color: 'rgba(0, 0, 0, 0.3)' }}>Y</span>}
               {!hasModLeft && <span className="absolute text-2xl font-bold" style={{ left: '-48px', top: '50%', transform: 'translateY(-50%)', color: 'rgba(0, 0, 0, 0.3)' }}>Z</span>}
@@ -921,7 +921,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                  const actualHeightCells = 5.2 / 0.6;
                  const pavCenterY = (pav.pavMinY + pav.pavMaxY) / 2;
                  const dimTop = pavCenterY - actualHeightCells / 2;
-                 const dimLeft = (pav.minX - 2.5) * CELL_W;
+                 const dimLeft = (pav.minX - 3) * CELL_W;
                  return (
                    <div key={pav.name} className="absolute pointer-events-none" style={{ left: dimLeft, top: dimTop * CELL_H, width: 12, height: actualHeightCells * CELL_H }}>
                      <div className="absolute" style={{ left: 4, width: 1.5, top: 0, bottom: 0, backgroundColor: pav.color, opacity: 0.6 }} />
@@ -937,7 +937,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                  const actualHeightCells = conn.pavMaxY - conn.pavMinY;
                  const actualHeightM = (actualHeightCells * 0.6).toFixed(1);
                  const dimTop = conn.pavMinY;
-                 const dimLeft = (conn.minX - 2.5) * CELL_W;
+                 const dimLeft = (conn.minX - 3) * CELL_W;
                  return (
                    <div key={conn.name} className="absolute pointer-events-none" style={{ left: dimLeft, top: dimTop * CELL_H, width: 12, height: actualHeightCells * CELL_H }}>
                      <div className="absolute" style={{ left: 4, width: 1.5, top: 0, bottom: 0, backgroundColor: conn.color, opacity: 0.6 }} />
