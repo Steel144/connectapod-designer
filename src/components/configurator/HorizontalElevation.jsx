@@ -42,7 +42,7 @@ const HorizontalElevation = memo(function HorizontalElevation({
              );
            });
          })}
-        <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 2, backgroundColor: "#374151" }} />
+        {/* <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 2, backgroundColor: "#374151" }} /> */}
       </div>
     </div>
   );
