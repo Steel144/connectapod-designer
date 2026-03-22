@@ -99,7 +99,7 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseUp}
       >
-        <div style={{ transform: `translate(${pan.x}px, ${pan.y}px)`, padding: "40px", display: "flex", flexDirection: "column", gap: 12, width: "max-content", minWidth: "max-content" }}>
+        <div style={{ transform: `translate(${pan.x}px, ${pan.y}px)`, padding: "40px", display: "flex", flexDirection: "column", gap: 48, width: "max-content", minWidth: "max-content" }}>
           <div style={{ maxHeight: "600px", overflow: "auto", overflowX: "hidden" }}>
             <HorizontalElevation 
               layers={wElevation} 
@@ -124,7 +124,7 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
               PX_PER_M={PX_PER_M}
             />
           </div>
-          <div style={{ display: "flex", gap: 0, flexDirection: "row", width: "max-content", flexWrap: "nowrap" }}>
+          <div style={{ display: "flex", gap: 48, flexDirection: "row", width: "max-content", flexWrap: "nowrap" }}>
             <div style={{ maxHeight: "600px", overflow: "visible", flex: "0 0 auto" }}>
               <VerticalElevation 
                 layers={zElevation} 
