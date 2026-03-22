@@ -736,7 +736,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
               {/* WXYZ corner labels - larger, bold, 30% black */}
               {!hasModAbove && <span className="absolute text-2xl font-bold" style={{ left: '50%', top: '-52px', transform: 'translateX(-50%)', color: 'rgba(0, 0, 0, 0.3)' }}>W</span>}
               {!hasModRight && <span className="absolute text-2xl font-bold" style={{ right: '-48px', top: '50%', transform: 'translateY(-50%)', color: 'rgba(0, 0, 0, 0.3)' }}>X</span>}
-              {!hasModBelow && <span className="absolute text-2xl font-bold" style={{ left: '50%', bottom: '-96px', transform: 'translateX(-50%)', color: 'rgba(0, 0, 0, 0.3)' }}>Y</span>}
+              {!hasModBelow && <span className="absolute text-2xl font-bold" style={{ left: '50%', bottom: '-52px', transform: 'translateX(-50%)', color: 'rgba(0, 0, 0, 0.3)' }}>Y</span>}
               {!hasModLeft && <span className="absolute text-2xl font-bold" style={{ left: '-48px', top: '50%', transform: 'translateY(-50%)', color: 'rgba(0, 0, 0, 0.3)' }}>Z</span>}
               </div>
               );
@@ -907,7 +907,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
           return (
             <>
               {/* Overall length dimension (horizontal) */}
-              <div className="absolute pointer-events-none flex items-center justify-center" style={{ left: minX * CELL_W, top: (minY - 2.166) * CELL_H, width: (maxX - minX) * CELL_W, height: 1 }}>
+              <div className="absolute pointer-events-none flex items-center justify-center" style={{ left: minX * CELL_W, top: (minY - 3) * CELL_H, width: (maxX - minX) * CELL_W, height: 1 }}>
                 <div className="absolute" style={{ height: 2, width: '100%', backgroundColor: '#CBD5E1' }} />
                 <div className="absolute pointer-events-none" style={{ left: 0, top: '-4px', width: 2, height: 10, backgroundColor: '#CBD5E1' }} />
                 <div className="absolute pointer-events-none" style={{ right: 0, top: '-4px', width: 2, height: 10, backgroundColor: '#CBD5E1' }} />
