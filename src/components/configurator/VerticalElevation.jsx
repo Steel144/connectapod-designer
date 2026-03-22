@@ -41,16 +41,7 @@ const VerticalElevation = memo(function VerticalElevation({
 
 
         <div style={{ position: "relative", flex: 1, width: maxContentWidth, height: endElevationHPx, border: "1px solid #e5e7eb", backgroundColor: "transparent", overflowY: "hidden", overflowX: "auto" }}>
-          <div style={{
-            position: "absolute",
-            top: foundationHeightPx,
-            left: 0,
-            right: 0,
-            height: 1,
-            backgroundColor: "transparent",
-            borderTop: "2px dashed rgba(59, 130, 246, 0.6)",
-            zIndex: 2,
-          }} />
+
           <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 2, backgroundColor: "#374151", zIndex: 2 }} />
 
           {layers.map((layer) =>
