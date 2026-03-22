@@ -704,6 +704,9 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
               <span className="absolute text-[9px] font-semibold text-slate-700 text-center leading-tight px-0.5 py-0.5 pointer-events-none" style={{ top: '50%', left: '50%', transform: 'translate(-50%, -50%) rotate(-90deg)', whiteSpace: 'nowrap', opacity: 0.4 }}>
                 {mod.label}
               </span>
+              <span className="absolute text-[11px] font-bold text-slate-800 pointer-events-none" style={{ top: '4px', left: '4px', backgroundColor: 'rgba(255, 255, 255, 0.8)', padding: '1px 4px', borderRadius: '2px' }}>
+                {moduleNumber}
+              </span>
               {getPavilion(mod.y) && (
                 <span className="absolute text-[8px] font-bold text-slate-500 pointer-events-none" style={{ bottom: '2px', right: '2px', opacity: 0.6 }}>
                   {(() => { const p = getPavilion(mod.y); const labels = { 3: "P1", 2: "CM", 1: "P2" }; return labels[p] || `P${p}`; })()}
