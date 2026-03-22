@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { ChevronDown, ChevronRight, Image as ImageIcon } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { ModuleEntry } from "@/lib/supabase";
+import { ModuleEntry, DeletedModule, WallEntry, DeletedWall, WallImage } from "@/lib/supabase";
 import FloorPlanSVG from "./FloorPlanSVG.jsx";
 import WallSuggestions from "./WallSuggestions.jsx";
 import WallImageUpload from "./WallImageUpload.jsx";
@@ -151,24 +151,24 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
 
   const { data: deletedModules = [] } = useQuery({
     queryKey: ["deletedModules"],
-    queryFn: async () => { try { const r = await base44.entities.DeletedModule.list(); return Array.isArray(r) ? r : []; } catch { return []; } },
+    queryFn: async () => { try { const r = await DeletedModule.list(); return Array.isArray(r) ? r : []; } catch { return []; } },
   });
 
   const { data: customWalls = [] } = useQuery({
     queryKey: ["wallEntries"],
-    queryFn: async () => { try { const r = await base44.entities.WallEntry.list(); return Array.isArray(r) ? r : []; } catch { return []; } },
+    queryFn: async () => { try { const r = await WallEntry.list(); return Array.isArray(r) ? r : []; } catch { return []; } },
   });
 
   const { data: deletedWalls = [] } = useQuery({
     queryKey: ["deletedWalls"],
-    queryFn: async () => { try { const r = await base44.entities.DeletedWall.list(); return Array.isArray(r) ? r : []; } catch { return []; } },
+    queryFn: async () => { try { const r = await DeletedWall.list(); return Array.isArray(r) ? r : []; } catch { return []; } },
   });
 
   const { data: localWallImages = {} } = useQuery({
     queryKey: ["wallImages"],
     queryFn: async () => {
       try {
-        const list = await base44.entities.WallImage.list();
+        const list = await WallImage.list();
         if (!Array.isArray(list)) return {};
         const entries = {};
         list.forEach(img => { if (img.wallType && img.imageUrl) entries[img.wallType] = img.imageUrl; });

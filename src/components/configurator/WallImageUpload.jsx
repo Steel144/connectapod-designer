@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { WallImage, Storage } from "@/lib/supabase";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Upload, Loader2, X, Eye } from "lucide-react";
 import { toast } from "sonner";
@@ -15,8 +15,8 @@ export default function WallImageUpload({ wall, onImageAssigned }) {
   const { data: savedImage } = useQuery({
     queryKey: ["wallImage", wall?.type],
     queryFn: async () => {
-      const images = await base44.entities.WallImage.filter({ wallType: wall.type });
-      return images[0]?.imageUrl || null;
+      const images = await WallImage.filter({ wall_type: wall.type });
+      return images[0]?.image_url || null;
     },
     enabled: !!wall?.type,
   });
@@ -39,20 +39,20 @@ export default function WallImageUpload({ wall, onImageAssigned }) {
 
     setIsLoading(true);
     try {
-      const response = await base44.integrations.Core.UploadFile({ file });
-      const fileUrl = response?.data?.file_url || response?.file_url;
-      if (!fileUrl) throw new Error("No file URL returned");
+      // Upload to Supabase Storage
+      const fileName = `walls/${wall.type}-${Date.now()}.${file.name.split('.').pop()}`;
+      const fileUrl = await Storage.uploadFile('images', fileName, file);
       
       setImageUrl(fileUrl);
       onImageAssigned(fileUrl);
 
       // Save to database for this wall type
       if (wall?.type) {
-        const existing = await base44.entities.WallImage.filter({ wallType: wall.type });
+        const existing = await WallImage.filter({ wall_type: wall.type });
         if (existing.length > 0) {
-          await base44.entities.WallImage.update(existing[0].id, { imageUrl: fileUrl });
+          await WallImage.update(existing[0].id, { image_url: fileUrl });
         } else {
-          await base44.entities.WallImage.create({ wallType: wall.type, imageUrl: fileUrl });
+          await WallImage.create({ wall_type: wall.type, image_url: fileUrl });
         }
         queryClient.invalidateQueries({ queryKey: ["wallImage", wall.type] });
         queryClient.invalidateQueries({ queryKey: ["wallImages"] });
@@ -73,9 +73,9 @@ export default function WallImageUpload({ wall, onImageAssigned }) {
 
     // Remove from database
     if (wall?.type) {
-      const existing = await base44.entities.WallImage.filter({ wallType: wall.type });
+      const existing = await WallImage.filter({ wall_type: wall.type });
       if (existing.length > 0) {
-        await base44.entities.WallImage.delete(existing[0].id);
+        await WallImage.delete(existing[0].id);
         queryClient.invalidateQueries({ queryKey: ["wallImage", wall.type] });
         queryClient.invalidateQueries({ queryKey: ["wallImages"] });
       }

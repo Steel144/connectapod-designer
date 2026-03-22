@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { ChevronLeft, Pencil, Upload, X, Loader2, Plus, Trash2, Printer, Copy } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { base44 } from "@/api/base44Client";
+import { WallEntry, WallImage, DeletedWall, Storage } from "@/lib/supabase";
 import { toast } from "sonner";
 import AddWallModal from "@/components/catalogue/AddWallModal";
 import EditWallModal from "@/components/catalogue/EditWallModal";
@@ -171,24 +171,24 @@ export default function WallCatalogue() {
   const { data: wallImages = {} } = useQuery({
     queryKey: ["wallImages"],
     queryFn: async () => {
-      const images = await base44.entities.WallImage.list();
+      const images = await WallImage.list();
       return Object.fromEntries(images.map(img => [img.wallType, img.imageUrl]));
     },
   });
 
   const { data: customWalls = [] } = useQuery({
     queryKey: ["wallEntries"],
-    queryFn: () => base44.entities.WallEntry.list(),
+    queryFn: () => WallEntry.list(),
   });
 
   const { data: deletedWalls = [] } = useQuery({
     queryKey: ["deletedWalls"],
-    queryFn: () => base44.entities.DeletedWall.list(),
+    queryFn: () => DeletedWall.list(),
   });
   const deletedCodes = new Set(deletedWalls.map(d => d.wallCode));
 
   const handleDeleteBuiltinWall = async (code) => {
-    await base44.entities.DeletedWall.create({ wallCode: code });
+    await DeletedWall.create({ wallCode: code });
     queryClient.invalidateQueries({ queryKey: ["deletedWalls"] });
     toast.success("Wall hidden");
   };
@@ -196,21 +196,21 @@ export default function WallCatalogue() {
   const handlePermanentlyDeleteWall = async (code) => {
     const entry = deletedWalls.find(d => d.wallCode === code);
     if (entry) {
-      await base44.entities.DeletedWall.delete(entry.id);
+      await DeletedWall.delete(entry.id);
       queryClient.invalidateQueries({ queryKey: ["deletedWalls"] });
       toast.success("Wall permanently deleted");
     }
   };
 
   const handleAddWall = async (data) => {
-    await base44.entities.WallEntry.create(data);
+    await WallEntry.create(data);
     queryClient.invalidateQueries({ queryKey: ["wallEntries"] });
     setAddingToGroup(null);
     toast.success("Wall added");
   };
 
   const handleDeleteWall = async (entryId) => {
-    await base44.entities.WallEntry.delete(entryId);
+    await WallEntry.delete(entryId);
     queryClient.invalidateQueries({ queryKey: ["wallEntries"] });
     toast.success("Wall removed");
   };
@@ -219,7 +219,7 @@ export default function WallCatalogue() {
     const baseCodes = customWalls.filter(w => w.code.startsWith(wall.code)).map(w => w.code);
     const nextSuffix = baseCodes.length > 0 ? String.fromCharCode(97 + baseCodes.length) : "a";
     const newCode = `${wall.code}${nextSuffix}`;
-    await base44.entities.WallEntry.create({
+    await WallEntry.create({
       groupKey,
       code: newCode,
       name: wall.name,
@@ -241,7 +241,7 @@ export default function WallCatalogue() {
 
   const handleEditWall = async (data) => {
     if (editingWall._custom) {
-      await base44.entities.WallEntry.update(editingWall._id, {
+      await WallEntry.update(editingWall._id, {
         ...data,
         groupKey: editingWall._groupKey,
         originalCode: editingWall.originalCode || undefined,
@@ -251,7 +251,7 @@ export default function WallCatalogue() {
       const existingOverride = customWalls.find(c => c.originalCode === editingWall.code);
       if (existingOverride) {
         // Update the existing override
-        await base44.entities.WallEntry.update(existingOverride.id, {
+        await WallEntry.update(existingOverride.id, {
           ...data,
           groupKey: editingWall._groupKey,
           originalCode: editingWall.code,
@@ -259,8 +259,8 @@ export default function WallCatalogue() {
       } else {
         // First time editing this built-in: hide it and create override
         await Promise.all([
-          base44.entities.DeletedWall.create({ wallCode: editingWall.code }),
-          base44.entities.WallEntry.create({
+          DeletedWall.create({ wallCode: editingWall.code }),
+          WallEntry.create({
             ...data,
             groupKey: editingWall._groupKey,
             originalCode: editingWall.code,
@@ -286,22 +286,28 @@ export default function WallCatalogue() {
     if (!file || !pendingUploadCode) return;
     e.target.value = "";
     setUploading(pendingUploadCode);
-    const { file_url } = await base44.integrations.Core.UploadFile({ file });
-    const existing = await base44.entities.WallImage.filter({ wallType: pendingUploadCode });
-    if (existing.length > 0) {
-      await base44.entities.WallImage.update(existing[0].id, { imageUrl: file_url });
-    } else {
-      await base44.entities.WallImage.create({ wallType: pendingUploadCode, imageUrl: file_url });
+    try {
+      const fileName = `walls/${pendingUploadCode}-${Date.now()}.${file.name.split('.').pop()}`;
+      const file_url = await Storage.uploadFile('images', fileName, file);
+      const existing = await WallImage.filter({ wall_type: pendingUploadCode });
+      if (existing.length > 0) {
+        await WallImage.update(existing[0].id, { image_url: file_url });
+      } else {
+        await WallImage.create({ wall_type: pendingUploadCode, image_url: file_url });
+      }
+      queryClient.invalidateQueries({ queryKey: ["wallImages"] });
+      toast.success("Image updated");
+    } catch (error) {
+      console.error("Upload failed:", error);
+      toast.error("Failed to upload image");
     }
-    queryClient.invalidateQueries({ queryKey: ["wallImages"] });
     setUploading(null);
-    toast.success("Image updated");
   };
 
   const handleRemoveImage = async (code) => {
-    const existing = await base44.entities.WallImage.filter({ wallType: code });
+    const existing = await WallImage.filter({ wall_type: code });
     if (existing.length > 0) {
-      await base44.entities.WallImage.delete(existing[0].id);
+      await WallImage.delete(existing[0].id);
       queryClient.invalidateQueries({ queryKey: ["wallImages"] });
       toast.success("Image removed");
     }

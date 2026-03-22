@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import { ModuleEntry } from "@/lib/supabase";
+import { ModuleEntry, HomeDesign, WallEntry, FloorPlanImage, WallImage } from "@/lib/supabase";
 import { useQuery } from "@tanstack/react-query";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, Maximize2, Layers, Tag, Play } from "lucide-react";
@@ -11,7 +11,7 @@ export default function DesignCatalogue() {
 
   const { data: templates = [], isLoading } = useQuery({
     queryKey: ["homeDesigns", "templates"],
-    queryFn: async () => { try { const r = await base44.entities.HomeDesign.filter({ is_template: true }); return Array.isArray(r) ? r : []; } catch { return []; } },
+    queryFn: async () => { try { const r = await HomeDesign.filter({ is_template: true }); return Array.isArray(r) ? r : []; } catch { return []; } },
     staleTime: 0,
     refetchOnMount: true,
   });
@@ -25,21 +25,21 @@ export default function DesignCatalogue() {
 
   const { data: wallEntries = [] } = useQuery({
     queryKey: ["wallEntries"],
-    queryFn: async () => { try { const r = await base44.entities.WallEntry.list(); return Array.isArray(r) ? r : []; } catch { return []; } },
+    queryFn: async () => { try { const r = await WallEntry.list(); return Array.isArray(r) ? r : []; } catch { return []; } },
     staleTime: 0,
     refetchOnMount: true,
   });
 
   const { data: floorPlanImageList = [] } = useQuery({
     queryKey: ["floorPlanImages"],
-    queryFn: async () => { try { const r = await base44.entities.FloorPlanImage.list(); return Array.isArray(r) ? r : []; } catch { return []; } },
+    queryFn: async () => { try { const r = await FloorPlanImage.list(); return Array.isArray(r) ? r : []; } catch { return []; } },
     staleTime: 0,
     refetchOnMount: true,
   });
 
   const { data: wallImageList = [] } = useQuery({
     queryKey: ["wallImages"],
-    queryFn: async () => { try { const r = await base44.entities.WallImage.list(); return Array.isArray(r) ? r : []; } catch { return []; } },
+    queryFn: async () => { try { const r = await WallImage.list(); return Array.isArray(r) ? r : []; } catch { return []; } },
     staleTime: 0,
     refetchOnMount: true,
   });

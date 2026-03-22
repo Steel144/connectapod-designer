@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback, useMemo } from "react";
-import { ModuleEntry } from "@/lib/supabase";
+import { ModuleEntry, WallEntry, DeletedWall, HomeDesign, FloorPlanImage, WallImage } from "@/lib/supabase";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import ModulePanel, { MODULE_TYPES } from "@/components/configurator/ModulePanel";
 import ConfigGrid from "@/components/configurator/ConfigGrid";
@@ -69,12 +69,12 @@ export default function Configurator() {
   }, []);
   const { data: customWalls = [] } = useQuery({
     queryKey: ["wallEntries"],
-    queryFn: async () => { try { const r = await base44.entities.WallEntry.list(); return Array.isArray(r) ? r : []; } catch { return []; } },
+    queryFn: async () => { try { const r = await WallEntry.list(); return Array.isArray(r) ? r : []; } catch { return []; } },
   });
 
   const { data: deletedWalls = [] } = useQuery({
     queryKey: ["deletedWalls"],
-    queryFn: async () => { try { const r = await base44.entities.DeletedWall.list(); return Array.isArray(r) ? r : []; } catch { return []; } },
+    queryFn: async () => { try { const r = await DeletedWall.list(); return Array.isArray(r) ? r : []; } catch { return []; } },
   });
 
   const availableWallTypes = React.useMemo(() => {
@@ -113,7 +113,7 @@ export default function Configurator() {
 
   const { data: designs = [] } = useQuery({
     queryKey: ["homeDesigns"],
-    queryFn: async () => { try { const r = await base44.entities.HomeDesign.list("-created_date"); return Array.isArray(r) ? r : []; } catch { return []; } },
+    queryFn: async () => { try { const r = await HomeDesign.list("-created_date"); return Array.isArray(r) ? r : []; } catch { return []; } },
   });
 
   const wallImagesRef = useRef({});
@@ -123,7 +123,7 @@ export default function Configurator() {
     queryKey: ["wallImages"],
     queryFn: async () => {
       try {
-        const wallImages = await base44.entities.WallImage.list();
+        const wallImages = await WallImage.list();
         if (!Array.isArray(wallImages)) return {};
         const entries = {};
         wallImages.forEach(img => {
@@ -150,7 +150,7 @@ export default function Configurator() {
     queryKey: ["floorPlanImages"],
     queryFn: async () => {
       try {
-        const images = await base44.entities.FloorPlanImage.list();
+        const images = await FloorPlanImage.list();
         const entries = {};
         (Array.isArray(images) ? images : []).forEach(img => {
           if (img.moduleType && img.imageUrl) {
@@ -180,7 +180,7 @@ export default function Configurator() {
   });
 
   const saveMutation = useMutation({
-    mutationFn: (data) => base44.entities.HomeDesign.create(data),
+    mutationFn: (data) => HomeDesign.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["homeDesigns"] });
       toast.success("Design saved!");
@@ -189,7 +189,7 @@ export default function Configurator() {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id) => base44.entities.HomeDesign.delete(id),
+    mutationFn: (id) => HomeDesign.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["homeDesigns"] });
       toast.success("Design deleted");
@@ -602,11 +602,11 @@ export default function Configurator() {
       prev.map((m) => (m.id === moduleId ? { ...m, floorPlanImage: imageUrl } : m))
     );
     if (module && module.type) {
-      const existing = await base44.entities.FloorPlanImage.filter({ moduleType: module.type });
+      const existing = await FloorPlanImage.filter({ moduleType: module.type });
       if (existing.length > 0) {
-        await base44.entities.FloorPlanImage.update(existing[0].id, { imageUrl });
+        await FloorPlanImage.update(existing[0].id, { imageUrl });
       } else {
-        await base44.entities.FloorPlanImage.create({ moduleType: module.type, imageUrl });
+        await FloorPlanImage.create({ moduleType: module.type, imageUrl });
       }
       queryClient.invalidateQueries({ queryKey: ["floorPlanImages"] });
     }
@@ -618,11 +618,11 @@ export default function Configurator() {
       prev.map((w) => w.id === wallId ? { ...w, elevationImage: imageUrl } : w)
     );
     if (wall && wall.type) {
-      const existing = await base44.entities.WallImage.filter({ wallType: wall.type });
+      const existing = await WallImage.filter({ wallType: wall.type });
       if (existing.length > 0) {
-        await base44.entities.WallImage.update(existing[0].id, { imageUrl });
+        await WallImage.update(existing[0].id, { imageUrl });
       } else {
-        await base44.entities.WallImage.create({ wallType: wall.type, imageUrl });
+        await WallImage.create({ wallType: wall.type, imageUrl });
       }
       queryClient.invalidateQueries({ queryKey: ["wallImages"] });
     }
