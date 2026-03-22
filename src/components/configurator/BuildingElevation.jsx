@@ -358,6 +358,13 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
         maxContentWidth = Math.max(maxContentWidth, slotRight);
       });
     });
+    
+    // Calculate window height in pixels and foundation height
+    const windowHeightM = 2.14; // 2140mm
+    const windowHeightPx = Math.round(scale * windowHeightM * PX_PER_M);
+    const foundationHeightM = (WALL_H_M - windowHeightM) / 2; // Centre window vertically
+    const foundationHeightPx = Math.round(scale * foundationHeightM * PX_PER_M);
+    
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -366,52 +373,76 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
           </span>
           <div style={{ flex: 1, height: 1, backgroundColor: "#e5e7eb" }} />
         </div>
-        {/* Composite canvas: width = total extent of all slots */}
-        <div style={{ position: "relative", width: maxContentWidth, height: wallHPx, border: "1px solid #e5e7eb", backgroundColor: "#f9fafb", overflowY: "hidden", overflowX: "auto" }}>
-          {layers.map((layer) =>
-            layer.slots.map((slot, si) => {
-              const leftPx = Math.round(scale * slot.yOffsetCells * CELL_M * PX_PER_M);
-              const slotWidthPx = Math.round(scale * slot.depthCells * CELL_M * PX_PER_M);
-              const wall = slot.wall;
-              return (
-                <div
-                  key={`${layer.colX}-${si}`}
-                  style={{
-                    position: "absolute",
-                    left: leftPx,
-                    top: 0,
-                    width: slotWidthPx,
-                    height: wallHPx,
-                    overflow: "hidden",
-                    borderRight: "1px solid rgba(0,0,0,0.12)",
-                  }}
-                >
-                  {wall?.elevationImage ? (
-                    <img
-                      src={wall.elevationImage}
-                      alt={wall.label || wall.type || slot.face}
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "cover",
-                        display: "block",
-                        transform: wall.flipped ? "scaleX(-1)" : undefined,
-                      }}
-                    />
-                  ) : (
-                    <div style={{
-                      width: "100%", height: "100%",
-                      background: "repeating-linear-gradient(45deg, #f3f4f6, #f3f4f6 6px, #e5e7eb 6px, #e5e7eb 12px)",
-                      display: "flex", alignItems: "center", justifyContent: "center",
-                    }}>
-                      <span style={{ fontSize: 9, color: "#9ca3af" }}>{slot.face}</span>
-                    </div>
-                  )}
-                </div>
-              );
-            })
-          )}
-          <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 2, backgroundColor: "#374151" }} />
+        {/* Composite canvas with dimension guides */}
+        <div style={{ display: "flex", gap: 8 }}>
+          {/* Height dimension ruler */}
+          <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", alignItems: "flex-end", width: 40, paddingRight: 4 }}>
+            <div style={{ fontSize: 8, color: "#9ca3af", textAlign: "right" }}>{WALL_H_M}m</div>
+            <div style={{ fontSize: 8, color: "#9ca3af", textAlign: "right" }}>{windowHeightM}m</div>
+            <div style={{ fontSize: 8, color: "#9ca3af", textAlign: "right" }}>0m</div>
+          </div>
+          
+          {/* Canvas with alignment guides */}
+          <div style={{ position: "relative", width: maxContentWidth, height: wallHPx, border: "1px solid #e5e7eb", backgroundColor: "#f9fafb", overflowY: "hidden", overflowX: "auto" }}>
+            {/* Window height guide line */}
+            <div style={{
+              position: "absolute",
+              top: foundationHeightPx,
+              left: 0,
+              right: 0,
+              height: 1,
+              backgroundColor: "rgba(59, 130, 246, 0.2)",
+              borderTop: "1px dashed rgba(59, 130, 246, 0.4)",
+              zIndex: 1,
+            }} />
+            
+            {/* Foundation line */}
+            <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 2, backgroundColor: "#374151" }} />
+            
+            {layers.map((layer) =>
+              layer.slots.map((slot, si) => {
+                const leftPx = Math.round(scale * slot.yOffsetCells * CELL_M * PX_PER_M);
+                const slotWidthPx = Math.round(scale * slot.depthCells * CELL_M * PX_PER_M);
+                const wall = slot.wall;
+                return (
+                  <div
+                    key={`${layer.colX}-${si}`}
+                    style={{
+                      position: "absolute",
+                      left: leftPx,
+                      top: 0,
+                      width: slotWidthPx,
+                      height: wallHPx,
+                      overflow: "hidden",
+                      borderRight: "1px solid rgba(0,0,0,0.12)",
+                    }}
+                  >
+                    {wall?.elevationImage ? (
+                      <img
+                        src={wall.elevationImage}
+                        alt={wall.label || wall.type || slot.face}
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "cover",
+                          display: "block",
+                          transform: wall.flipped ? "scaleX(-1)" : undefined,
+                        }}
+                      />
+                    ) : (
+                      <div style={{
+                        width: "100%", height: "100%",
+                        background: "repeating-linear-gradient(45deg, #f3f4f6, #f3f4f6 6px, #e5e7eb 6px, #e5e7eb 12px)",
+                        display: "flex", alignItems: "center", justifyContent: "center",
+                      }}>
+                        <span style={{ fontSize: 9, color: "#9ca3af" }}>{slot.face}</span>
+                      </div>
+                    )}
+                  </div>
+                );
+              })
+            )}
+          </div>
         </div>
       </div>
     );
