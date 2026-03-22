@@ -380,7 +380,7 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
         {/* Composite canvas with dimension guides */}
         <div style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
           {/* Height dimension ruler */}
-          <div style={{ display: "flex", flexDirection: "column", position: "relative", height: wallHPx, justifyContent: "space-between", alignItems: "flex-end", minWidth: 50, paddingRight: 8, borderRight: "1px solid #d1d5db" }}>
+          <div style={{ display: "flex", flexDirection: "column", position: "relative", height: endElevationHPx, justifyContent: "space-between", alignItems: "flex-end", minWidth: 50, paddingRight: 8, borderRight: "1px solid #d1d5db" }}>
             <div style={{ fontSize: 9, fontWeight: 600, color: "#4b5563", textAlign: "right", lineHeight: "1.2" }}>
               <div>{WALL_H_M}m</div>
               <div style={{ fontSize: 7, color: "#9ca3af" }}>Top</div>
