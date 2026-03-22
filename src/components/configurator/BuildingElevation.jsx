@@ -14,7 +14,7 @@ import { ZoomIn, ZoomOut } from "lucide-react";
 
 const CELL_M = 0.6;      // metres per grid cell
 const PX_PER_M = 100;    // px per metre at 100% zoom
-const WALL_H_M = 3.8;    // assumed wall height in metres for display (includes roof/foundation)
+const WALL_H_M = 4.2;    // assumed wall height in metres for display (includes roof/foundation)
 
 const THRESH = 0.6;
 
