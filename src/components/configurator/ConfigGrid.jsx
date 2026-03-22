@@ -656,10 +656,9 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
         </>
 
          {/* Placed modules */}
-         {placedModules.map((mod, moduleIndex) => {
+         {placedModules.map((mod) => {
           const isDragging = dragging?.isPlaced && dragging.selectedIds?.has(mod.id);
           const isSelected = selected.has(mod.id);
-          const moduleNumber = moduleIndex + 1;
 
           // Check if sides are on exterior (no adjacent modules)
           const hasModAbove = placedModules.some(m => m.x < mod.x + mod.w && m.x + m.w > mod.x && m.y + m.h === mod.y);
@@ -703,9 +702,6 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
               </div>
               <span className="absolute text-[9px] font-semibold text-slate-700 text-center leading-tight px-0.5 py-0.5 pointer-events-none" style={{ top: '50%', left: '50%', transform: 'translate(-50%, -50%) rotate(-90deg)', whiteSpace: 'nowrap', opacity: 0.4 }}>
                 {mod.label}
-              </span>
-              <span className="absolute text-[11px] font-bold text-slate-800 pointer-events-none" style={{ top: '4px', left: '4px', backgroundColor: 'rgba(255, 255, 255, 0.8)', padding: '1px 4px', borderRadius: '2px' }}>
-                {moduleNumber}
               </span>
               {getPavilion(mod.y) && (
                 <span className="absolute text-[8px] font-bold text-slate-500 pointer-events-none" style={{ bottom: '2px', right: '2px', opacity: 0.6 }}>
