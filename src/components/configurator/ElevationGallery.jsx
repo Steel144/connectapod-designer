@@ -288,8 +288,8 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
         onMouseUp={handleCanvasMouseUp}
         onMouseLeave={handleCanvasMouseUp}
       >
-        <div style={{ transform: `translate(${pan.x}px, ${pan.y}px)`, position: "relative", minHeight: "100%", paddingBottom: "100px", paddingTop: "40px", paddingLeft: "40px" }}>
-          <div className="flex flex-col" style={{ gap: `${Math.round((zoom / 100) * 128)}px` }}>
+        <div style={{ transform: `translate(${pan.x}px, ${pan.y}px)`, position: "relative", display: "flex", flexDirection: "column", gap: 0, width: "max-content", minWidth: "max-content", padding: "40px" }}>
+          <div className="flex flex-col" style={{ gap: `${Math.round((zoom / 100) * 48)}px` }}>
             {pavilions.filter(Boolean).map((pav) => (
               <div key={pav.pavilionNum} className="flex flex-col" style={{ gap: `${Math.round((zoom / 100) * 64)}px` }}>
                 <div className="text-sm font-bold text-black uppercase tracking-widest ml-1 px-3 py-2 bg-orange-100 rounded w-fit">
