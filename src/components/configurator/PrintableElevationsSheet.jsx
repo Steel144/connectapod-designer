@@ -33,22 +33,6 @@ export default function PrintableElevationsSheet({ walls = [], placedModules = [
     return () => clearTimeout(timer);
   }, [onClose]);
 
-  const getWallPavilion = (wall) => {
-    if (wall.pavilionNum !== null && wall.pavilionNum !== undefined) {
-      return wall.pavilionNum;
-    }
-    const THRESHOLD = 1.0;
-    const snappedMod = placedModules.find(mod => {
-      if (wall.face === "Y") return Math.abs(wall.y - (mod.y + mod.h)) < THRESHOLD && Math.abs(wall.x - mod.x) < THRESHOLD;
-      if (wall.face === "W") return Math.abs(wall.y - (mod.y - 0.31)) < THRESHOLD && Math.abs(wall.x - mod.x) < THRESHOLD;
-      if (wall.face === "Z") return Math.abs(wall.y - mod.y) < THRESHOLD && Math.abs(wall.x - mod.x) < THRESHOLD;
-      if (wall.face === "X") return Math.abs(wall.y - mod.y) < THRESHOLD && Math.abs(wall.x - (mod.x + mod.w - 0.31)) < THRESHOLD;
-      return false;
-    });
-    if (snappedMod) return getPavilion(snappedMod.y);
-    return getPavilion(wall.y);
-  };
-
   const { pavilions, hasAny } = useMemo(() => {
     const modsByPavilion = { 1: [], 2: [], 3: [] };
     placedModules.forEach(mod => {
