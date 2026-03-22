@@ -704,7 +704,13 @@ export default function Configurator() {
               <Image size={13} />
               Elevations
             </button>
-
+            <button
+              onClick={() => setViewMode("building")}
+              className={`flex items-center gap-1.5 px-3 py-1.5 text-xs transition-all ${viewMode === "building" ? "bg-[#F15A22] text-white" : "bg-white text-gray-600 hover:text-[#F15A22]"}`}
+            >
+              <Box size={13} />
+              Building
+            </button>
           </div>
 
           <Link
