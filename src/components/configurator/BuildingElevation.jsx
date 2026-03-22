@@ -294,7 +294,7 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
           </span>
           <div style={{ flex: 1, height: 1, backgroundColor: "#e5e7eb" }} />
         </div>
-        <div style={{ position: "relative", width: canvasWidthPx, height: wallHPx, border: "1px solid #e5e7eb", backgroundColor: "#f9fafb", overflow: "hidden" }}>
+        <div style={{ position: "relative", width: canvasWidthPx, height: wallHPx, border: "1px solid #e5e7eb", backgroundColor: "#f9fafb", overflow: "visible" }}>
           {layers.map((layer) =>
             layer.slots.map((slot, si) => {
               const leftPx = Math.round(scale * slot.yOffsetCells * CELL_M * PX_PER_M);
