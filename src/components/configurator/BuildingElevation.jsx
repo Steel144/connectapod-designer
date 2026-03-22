@@ -141,16 +141,23 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
       const candidates = walls.filter(w => {
         if (w.face !== face) return false;
         if (face === "Z") {
-          return Math.abs(w.x - mod.x) < 2 && w.y >= mod.y - 1 && w.y < mod.y + mod.h + 1;
+          // Z wall can be snapped at mod.x OR mod.x+mod.w (placed on either end)
+          const nearLeft = Math.abs(w.x - mod.x) < 2;
+          const nearRight = Math.abs(w.x - (mod.x + mod.w)) < 2;
+          return (nearLeft || nearRight) && w.y >= mod.y - 1 && w.y < mod.y + mod.h + 1;
         }
         if (face === "X") {
-          return Math.abs(w.x - (mod.x + mod.w)) < 2 && w.y >= mod.y - 1 && w.y < mod.y + mod.h + 1;
+          // X wall can be snapped at mod.x+mod.w OR mod.x
+          const nearRight = Math.abs(w.x - (mod.x + mod.w)) < 2;
+          const nearLeft = Math.abs(w.x - mod.x) < 2;
+          return (nearRight || nearLeft) && w.y >= mod.y - 1 && w.y < mod.y + mod.h + 1;
         }
         return false;
       });
       if (candidates.length === 0) return null;
-      // Pick the one whose Y is closest to mod.y
-      return candidates.sort((a, b) => Math.abs(a.y - mod.y) - Math.abs(b.y - mod.y))[0];
+      // Pick the one whose X is closest to the expected edge
+      const expectedX = face === "Z" ? mod.x : mod.x + mod.w;
+      return candidates.sort((a, b) => Math.abs(a.x - expectedX) - Math.abs(b.x - expectedX))[0];
     };
 
     // Exterior-Z: no module directly to the left
