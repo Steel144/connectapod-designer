@@ -10,14 +10,13 @@ export default function PrintableBuildingElevations({ walls = [], placedModules 
     return () => window.removeEventListener("afterprint", handleAfterPrint);
   }, [onClose]);
 
-  const CELL_M = 0.6;
-  const PX_PER_M = 100;
-  const WALL_H_M = 4.2;
-  const scale = 0.5; // 50% scale for printing
-  const wallHPx = Math.round(scale * WALL_H_M * PX_PER_M);
-
-  const hasConnectionModules = placedModules.some(m => m.chassis === "C" || (m.y >= 18 && m.y < 21 && m.h <= 2));
-  const endElevationHPx = hasConnectionModules ? Math.round(wallHPx * 0.88) : wallHPx;
+  // Group walls by face
+  const wallsByFace = {
+    W: walls.filter(w => w.face === "W"),
+    Y: walls.filter(w => w.face === "Y"),
+    Z: walls.filter(w => w.face === "Z"),
+    X: walls.filter(w => w.face === "X"),
+  };
 
   return (
     <div className="w-full bg-white p-12">
@@ -43,38 +42,40 @@ export default function PrintableBuildingElevations({ walls = [], placedModules 
         <div className="page-break print-section">
           <div className="mb-8">
             <h2 className="text-sm font-bold uppercase tracking-widest text-gray-600 mb-6">W — North Elevation</h2>
-            <div className="bg-gray-50 p-6 rounded border border-gray-200" style={{ minHeight: "400px", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              {placedModules.length > 0 ? (
-                <svg width="100%" height="400" viewBox={`0 0 800 ${wallHPx + 100}`} className="border border-gray-300">
-                  <defs>
-                    <pattern id="gridPattern" width="20" height="20" patternUnits="userSpaceOnUse">
-                      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#e5e7eb" strokeWidth="0.5"/>
-                    </pattern>
-                  </defs>
-                  <rect width="100%" height="100%" fill="url(#gridPattern)" />
-                  <text x="10" y="20" className="text-xs fill-gray-400">W — North</text>
-                </svg>
+            <div className="bg-gray-50 p-6 rounded border border-gray-200 space-y-4">
+              {wallsByFace.W.length === 0 ? (
+                <p className="text-gray-400">No walls placed on W face</p>
               ) : (
-                <p className="text-gray-400">No modules placed</p>
+                wallsByFace.W.map(wall => (
+                  <div key={wall.id} className="border border-gray-300 rounded overflow-hidden bg-white p-2">
+                    <div className="text-xs font-semibold text-gray-700 mb-2">{wall.label || wall.type}</div>
+                    {wall.elevationImage ? (
+                      <img src={wall.elevationImage} alt={wall.label} className="w-full h-auto max-h-64 object-contain" />
+                    ) : (
+                      <div className="h-40 bg-gray-100 flex items-center justify-center text-gray-400 text-sm">No image</div>
+                    )}
+                  </div>
+                ))
               )}
             </div>
           </div>
 
           <div className="mb-8">
             <h2 className="text-sm font-bold uppercase tracking-widest text-gray-600 mb-6">Y — South Elevation</h2>
-            <div className="bg-gray-50 p-6 rounded border border-gray-200" style={{ minHeight: "400px", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              {placedModules.length > 0 ? (
-                <svg width="100%" height="400" viewBox={`0 0 800 ${wallHPx + 100}`} className="border border-gray-300">
-                  <defs>
-                    <pattern id="gridPattern2" width="20" height="20" patternUnits="userSpaceOnUse">
-                      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#e5e7eb" strokeWidth="0.5"/>
-                    </pattern>
-                  </defs>
-                  <rect width="100%" height="100%" fill="url(#gridPattern2)" />
-                  <text x="10" y="20" className="text-xs fill-gray-400">Y — South</text>
-                </svg>
+            <div className="bg-gray-50 p-6 rounded border border-gray-200 space-y-4">
+              {wallsByFace.Y.length === 0 ? (
+                <p className="text-gray-400">No walls placed on Y face</p>
               ) : (
-                <p className="text-gray-400">No modules placed</p>
+                wallsByFace.Y.map(wall => (
+                  <div key={wall.id} className="border border-gray-300 rounded overflow-hidden bg-white p-2">
+                    <div className="text-xs font-semibold text-gray-700 mb-2">{wall.label || wall.type}</div>
+                    {wall.elevationImage ? (
+                      <img src={wall.elevationImage} alt={wall.label} className="w-full h-auto max-h-64 object-contain" />
+                    ) : (
+                      <div className="h-40 bg-gray-100 flex items-center justify-center text-gray-400 text-sm">No image</div>
+                    )}
+                  </div>
+                ))
               )}
             </div>
           </div>
@@ -85,38 +86,40 @@ export default function PrintableBuildingElevations({ walls = [], placedModules 
           <div className="grid grid-cols-2 gap-8">
             <div>
               <h2 className="text-sm font-bold uppercase tracking-widest text-gray-600 mb-6">Z — West Elevation</h2>
-              <div className="bg-gray-50 p-6 rounded border border-gray-200" style={{ minHeight: "400px", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                {placedModules.length > 0 ? (
-                  <svg width="100%" height="400" viewBox={`0 0 400 ${endElevationHPx + 100}`} className="border border-gray-300">
-                    <defs>
-                      <pattern id="gridPattern3" width="20" height="20" patternUnits="userSpaceOnUse">
-                        <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#e5e7eb" strokeWidth="0.5"/>
-                      </pattern>
-                    </defs>
-                    <rect width="100%" height="100%" fill="url(#gridPattern3)" />
-                    <text x="10" y="20" className="text-xs fill-gray-400">Z — West</text>
-                  </svg>
+              <div className="bg-gray-50 p-6 rounded border border-gray-200 space-y-4">
+                {wallsByFace.Z.length === 0 ? (
+                  <p className="text-gray-400">No walls placed on Z face</p>
                 ) : (
-                  <p className="text-gray-400">No modules placed</p>
+                  wallsByFace.Z.map(wall => (
+                    <div key={wall.id} className="border border-gray-300 rounded overflow-hidden bg-white p-2">
+                      <div className="text-xs font-semibold text-gray-700 mb-2">{wall.label || wall.type}</div>
+                      {wall.elevationImage ? (
+                        <img src={wall.elevationImage} alt={wall.label} className="w-full h-auto max-h-40 object-contain" />
+                      ) : (
+                        <div className="h-32 bg-gray-100 flex items-center justify-center text-gray-400 text-sm">No image</div>
+                      )}
+                    </div>
+                  ))
                 )}
               </div>
             </div>
 
             <div>
               <h2 className="text-sm font-bold uppercase tracking-widest text-gray-600 mb-6">X — East Elevation</h2>
-              <div className="bg-gray-50 p-6 rounded border border-gray-200" style={{ minHeight: "400px", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                {placedModules.length > 0 ? (
-                  <svg width="100%" height="400" viewBox={`0 0 400 ${endElevationHPx + 100}`} className="border border-gray-300">
-                    <defs>
-                      <pattern id="gridPattern4" width="20" height="20" patternUnits="userSpaceOnUse">
-                        <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#e5e7eb" strokeWidth="0.5"/>
-                      </pattern>
-                    </defs>
-                    <rect width="100%" height="100%" fill="url(#gridPattern4)" />
-                    <text x="10" y="20" className="text-xs fill-gray-400">X — East</text>
-                  </svg>
+              <div className="bg-gray-50 p-6 rounded border border-gray-200 space-y-4">
+                {wallsByFace.X.length === 0 ? (
+                  <p className="text-gray-400">No walls placed on X face</p>
                 ) : (
-                  <p className="text-gray-400">No modules placed</p>
+                  wallsByFace.X.map(wall => (
+                    <div key={wall.id} className="border border-gray-300 rounded overflow-hidden bg-white p-2">
+                      <div className="text-xs font-semibold text-gray-700 mb-2">{wall.label || wall.type}</div>
+                      {wall.elevationImage ? (
+                        <img src={wall.elevationImage} alt={wall.label} className="w-full h-auto max-h-40 object-contain" />
+                      ) : (
+                        <div className="h-32 bg-gray-100 flex items-center justify-center text-gray-400 text-sm">No image</div>
+                      )}
+                    </div>
+                  ))
                 )}
               </div>
             </div>
