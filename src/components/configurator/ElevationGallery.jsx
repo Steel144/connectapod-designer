@@ -1,5 +1,5 @@
-import React, { useState, useMemo, useRef, useCallback } from "react";
-import { ZoomIn, ZoomOut, Maximize2 } from "lucide-react";
+import React, { useState, useMemo, useRef, useCallback, useEffect } from "react";
+import { ZoomIn, ZoomOut, Maximize2, Maximize } from "lucide-react";
 
 const GRID_ROWS = 40;
 
@@ -27,6 +27,8 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
   const isPanning = useRef(false);
   const panStart = useRef({ x: 0, y: 0 });
   const panOrigin = useRef({ x: 0, y: 0 });
+  const containerRef = useRef(null);
+  const contentRef = useRef(null);
 
   const handleCanvasMouseDown = useCallback((e) => {
     if (e.button !== 0) return;
@@ -60,6 +62,26 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
       if (prev) setZoom(prev);
     }
   };
+
+  const fitToPage = useCallback(() => {
+    if (!containerRef.current || !contentRef.current) return;
+    
+    const containerRect = containerRef.current.getBoundingClientRect();
+    const contentRect = contentRef.current.getBoundingClientRect();
+    
+    const containerWidth = containerRect.width - 80; // account for padding
+    const containerHeight = containerRect.height - 80;
+    
+    const contentWidth = contentRect.width;
+    const contentHeight = contentRect.height;
+    
+    const zoomX = (containerWidth / contentWidth) * 100;
+    const zoomY = (containerHeight / contentHeight) * 100;
+    const newZoom = Math.min(zoomX, zoomY, 150);
+    
+    setZoom(Math.max(20, newZoom));
+    setPan({ x: 0, y: 0 });
+  }, []);
 
   const getWallPavilion = (wall) => {
     if (wall.pavilionNum !== null && wall.pavilionNum !== undefined) {
@@ -266,13 +288,19 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
           <button onClick={() => adjustZoom(1)} disabled={zoom >= zoomLevels[zoomLevels.length - 1]} className="p-1.5 rounded hover:bg-white hover:shadow-sm transition-all text-gray-500 hover:text-gray-800 disabled:opacity-30 disabled:cursor-not-allowed" title="Zoom in">
             <ZoomIn size={15} />
           </button>
+          <button onClick={fitToPage} className="p-1.5 rounded hover:bg-white hover:shadow-sm transition-all text-gray-500 hover:text-gray-800" title="Fit to page">
+            <Maximize size={15} />
+          </button>
         </div>
       </div>
 
       <div
         className="flex-1 overflow-auto relative select-none bg-gray-50"
         style={{ cursor: "grab" }}
-        ref={(el) => {
+        ref={containerRef}
+        onLoad={fitToPage}
+        onLoadCapture={fitToPage}
+        onLoadedCapture={fitToPage}
           if (el && !el._wheelListenerAdded) {
             el._wheelListenerAdded = true;
             el.addEventListener('wheel', (e) => {
@@ -288,7 +316,7 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
         onMouseUp={handleCanvasMouseUp}
         onMouseLeave={handleCanvasMouseUp}
       >
-        <div style={{ transform: `translate(${pan.x}px, ${pan.y}px)`, position: "relative", display: "flex", flexDirection: "column", gap: 0, width: "max-content", minWidth: "max-content", padding: "40px" }}>
+        <div ref={contentRef} style={{ transform: `translate(${pan.x}px, ${pan.y}px)`, position: "relative", display: "flex", flexDirection: "column", gap: 0, width: "max-content", minWidth: "max-content", padding: "40px" }}>
           <div className="flex flex-col" style={{ gap: `${Math.round((zoom / 100) * 48)}px` }}>
             {pavilions.filter(Boolean).map((pav) => (
               <div key={pav.pavilionNum} className="flex flex-col" style={{ gap: `${Math.round((zoom / 100) * 64)}px` }}>
