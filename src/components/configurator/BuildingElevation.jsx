@@ -61,6 +61,10 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
 
   const scale = zoom / 100;
   const wallHPx = Math.round(scale * WALL_H_M * PX_PER_M);
+  
+  // Check if we have connection modules and apply 88% scale to Z/X elevations
+  const hasConnectionModules = placedModules.some(m => m.chassis === "C" || (m.y >= 18 && m.y < 21 && m.h <= 2));
+  const endElevationHPx = hasConnectionModules ? Math.round(wallHPx * 0.88) : wallHPx;
 
   // ── Derived geometry ──────────────────────────────────────────────────────────
 
