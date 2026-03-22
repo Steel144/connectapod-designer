@@ -898,16 +898,16 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
 
               {/* Pavilion width dimensions (vertical, 5.2m) */}
               {pavilionDimensions.map(pav => {
-                const actualHeightM = 5.2;
-                const actualHeightCells = actualHeightM / 0.6; // ~8.667 cells
+                const actualHeightCells = 5.2 / 0.6;
                 const pavCenterY = (pav.yRange[0] + pav.yRange[1]) / 2;
                 const dimTop = pavCenterY - actualHeightCells / 2;
+                const dimLeft = (pav.minX - 1.5) * CELL_W;
                 return (
-                  <div key={pav.name} className="absolute pointer-events-none flex items-center justify-center" style={{ left: (pav.minX - 1.2) * CELL_W, top: dimTop * CELL_H, width: 1, height: actualHeightCells * CELL_H }}>
-                    <div className="absolute" style={{ width: 1.5, height: '100%', backgroundColor: pav.color, opacity: 0.5 }} />
-                    <div className="absolute pointer-events-none" style={{ top: 0, left: '-3px', width: 8, height: 1.5, backgroundColor: pav.color, opacity: 0.5 }} />
-                    <div className="absolute pointer-events-none" style={{ bottom: 0, left: '-3px', width: 8, height: 1.5, backgroundColor: pav.color, opacity: 0.5 }} />
-                    <span className="relative text-xs font-semibold px-1" style={{ backgroundColor: '#F5F5F3', color: pav.color, writingMode: 'vertical-rl', textOrientation: 'mixed' }}>5.2m</span>
+                  <div key={pav.name} className="absolute pointer-events-none" style={{ left: dimLeft, top: dimTop * CELL_H, width: 12, height: actualHeightCells * CELL_H }}>
+                    <div className="absolute" style={{ left: 4, width: 1.5, top: 0, bottom: 0, backgroundColor: pav.color, opacity: 0.6 }} />
+                    <div className="absolute" style={{ left: 0, top: 0, width: 10, height: 1.5, backgroundColor: pav.color, opacity: 0.6 }} />
+                    <div className="absolute" style={{ left: 0, bottom: 0, width: 10, height: 1.5, backgroundColor: pav.color, opacity: 0.6 }} />
+                    <span className="absolute text-xs font-semibold" style={{ top: '50%', left: 10, transform: 'translateY(-50%) rotate(90deg)', transformOrigin: 'left center', color: pav.color, backgroundColor: '#F5F5F3', padding: '0 2px', whiteSpace: 'nowrap' }}>5.2m</span>
                   </div>
                 );
               })}
