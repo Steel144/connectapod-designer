@@ -312,7 +312,7 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
                     left: leftPx,
                     top: 0,
                     width: slotWidthPx,
-                    height: wallHPx,
+                    height: endElevationHPx,
                     overflow: "visible",
                     borderRight: "1px solid rgba(0,0,0,0.12)",
                   }}
