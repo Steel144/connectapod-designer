@@ -422,6 +422,9 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
               }
             }
           } else if (wall.orientation === "vertical") {
+            // Only move Z/X walls with end modules
+            const isEndMod = mod.chassis === "EF" || mod.chassis === "ER" || mod.chassis === "LF" || mod.chassis === "RF" || mod.chassis === "End";
+            if (!isEndMod) continue;
             // Wall must be exactly aligned with the module
             if (Math.abs(wall.y - mod.y) < WALL_THRESHOLD) {
               // Left (Z face)
