@@ -186,17 +186,18 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
     const exteriorX = placedModules.filter(m =>
       !placedModules.some(o => o.y < m.y + m.h && o.y + o.h > m.y && o.x === m.x + m.w)
     );
-    const xByX = {};
+    // For each Y-row segment, pick the easternmost (highest X+w) exterior module
+    const xByY = {};
     exteriorX.forEach(m => {
-      const key = m.x + m.w;
-      if (!xByX[key]) xByX[key] = [];
-      xByX[key].push({ mod: m, wall: bestWallForMod(m, "X"), yOffsetCells: m.y - allMinY, depthCells: m.h, face: "X" });
+      const key = `${m.y}-${m.y + m.h}`;
+      if (!xByY[key] || (m.x + m.w) > (xByY[key].x + xByY[key].w)) xByY[key] = m;
     });
-    const xColsSorted = Object.keys(xByX).map(Number).sort((a, b) => a - b); // back→front
-    const xElevation = xColsSorted.map(colX => ({
-      colX,
-      slots: [...xByX[colX]].sort((a, b) => a.yOffsetCells - b.yOffsetCells),
-    }));
+    const xSlots = [];
+    Object.values(xByY).forEach(m => {
+      xSlots.push({ mod: m, wall: bestWallForMod(m, "X"), yOffsetCells: m.y - allMinY, depthCells: m.h, face: "X" });
+    });
+    xSlots.sort((a, b) => a.yOffsetCells - b.yOffsetCells);
+    const xElevation = xSlots.length > 0 ? [{ colX: 0, slots: xSlots }] : [];
 
     return { minX: allMinX, maxX: allMaxX, wElevation, yElevation, zElevation, xElevation };
   }, [placedModules, walls]);
