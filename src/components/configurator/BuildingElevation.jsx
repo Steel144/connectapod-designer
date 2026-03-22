@@ -272,8 +272,8 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
         <div style={{ transform: `translate(${pan.x}px, ${pan.y}px)`, padding: "40px", display: "inline-flex", flexDirection: "column", gap: 48 }}>
           <HorizElevation layers={wElevation} label="W — North Elevation" color="#22c55e" />
           <HorizElevation layers={yElevation} label="Y — South Elevation" color="#3b82f6" />
-          <VertElevation  layers={zElevation} label="Z — West Elevation"  color="#f59e0b" />
-          <VertElevation  layers={xElevation} label="X — East Elevation"  color="#ef4444" />
+          <HorizElevation layers={zElevation} label="Z — West Elevation"  color="#f59e0b" />
+          <HorizElevation layers={xElevation} label="X — East Elevation"  color="#ef4444" />
         </div>
       </div>
     </div>
