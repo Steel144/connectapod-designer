@@ -10,7 +10,8 @@ const VerticalElevation = memo(function VerticalElevation({
   scale,
   CELL_M,
   PX_PER_M,
-  WALL_H_M
+  WALL_H_M,
+  slotOffsets = {}
 }) {
   if (layers.length === 0) return null;
 
