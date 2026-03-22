@@ -135,7 +135,7 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
                 PX_PER_M={PX_PER_M}
                 WALL_H_M={WALL_H_M}
                 slotOffsets={{ 2: slotOffset2, 3: slotOffset3 }}
-                labelMap={labelMap}
+                labelMap={labelMapZ}
               />
             </div>
             <div style={{ maxHeight: "600px", overflow: "visible", flex: "0 0 auto", marginLeft: -1 }}>
@@ -150,7 +150,7 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
                 PX_PER_M={PX_PER_M}
                 WALL_H_M={WALL_H_M}
                 slotOffsets={{ 2: slotOffset2, 3: slotOffset3 }}
-                labelMap={labelMap}
+                labelMap={labelMapX}
               />
             </div>
           </div>
