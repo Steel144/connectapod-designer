@@ -275,13 +275,10 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
     );
   };
 
-  // ── Render a vertical (Z/X) composite elevation ─────────────────────────────
-  // Canvas X axis = building depth (total Y span on plan).
-  // Each slot is positioned at its Y offset on plan; width = module depth (h cells).
-  // The wall image is shown at natural aspect ratio centred in its slot.
-  const VertElevation = ({ layers, label, color }) => {
+  // ── Render Z/X elevations stacked vertically (one slot per row) ─────────────
+  // Each slot positioned at its Y offset, width = module depth (h cells).
+  const VerticalStackElevation = ({ layers, label, color }) => {
     if (layers.length === 0) return null;
-    // Calculate canvas width: extent of all slots
     let maxContentWidth = totalDepthPx;
     layers.forEach(layer => {
       layer.slots.forEach(slot => {
@@ -289,6 +286,8 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
         maxContentWidth = Math.max(maxContentWidth, slotRight);
       });
     });
+    const totalSlots = layers.reduce((sum, layer) => sum + layer.slots.length, 0);
+    const totalHeightPx = totalSlots * wallHPx + (totalSlots - 1) * 8; // 8px gap between rows
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -297,24 +296,20 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
           </span>
           <div style={{ flex: 1, height: 1, backgroundColor: "#e5e7eb" }} />
         </div>
-        {/* Composite canvas: width = total extent of all slots */}
-        <div style={{ position: "relative", width: maxContentWidth, height: wallHPx, border: "1px solid #e5e7eb", backgroundColor: "#f9fafb", overflowY: "hidden", overflowX: "auto" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 2, border: "1px solid #e5e7eb", backgroundColor: "#f9fafb", padding: 0, overflow: "auto" }}>
           {layers.map((layer) =>
             layer.slots.map((slot, si) => {
-              const leftPx = Math.round(scale * slot.yOffsetCells * CELL_M * PX_PER_M);
               const slotWidthPx = Math.round(scale * slot.depthCells * CELL_M * PX_PER_M);
               const wall = slot.wall;
               return (
                 <div
                   key={`${layer.colX}-${si}`}
                   style={{
-                    position: "absolute",
-                    left: leftPx,
-                    top: 0,
-                    width: slotWidthPx,
+                    position: "relative",
+                    width: Math.max(slotWidthPx, 200),
                     height: wallHPx,
                     overflow: "hidden",
-                    borderRight: "1px solid rgba(0,0,0,0.12)",
+                    borderBottom: "1px solid rgba(0,0,0,0.08)",
                   }}
                 >
                   {wall?.elevationImage ? (
@@ -342,7 +337,6 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
               );
             })
           )}
-          <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 2, backgroundColor: "#374151" }} />
         </div>
       </div>
     );
