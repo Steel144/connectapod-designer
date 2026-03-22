@@ -135,36 +135,23 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
     // ── Z (West) elevation ────────────────────────────────────────────────────
     const allMinY = Math.min(...placedModules.map(m => m.y));
 
-    // Match each wall to its best module by finding the module whose Y range best
-    // contains the wall's Y coordinate and whose X matches the wall's X face.
-    // Build a map: wallId → mod for Z and X walls.
-    const zWallToMod = new Map();
-    walls.filter(w => w.face === "Z").forEach(w => {
-      // Find the module whose left edge (x) is closest to wall.x AND whose Y range contains wall.y
-      const best = placedModules
-        .filter(m => Math.abs(w.x - m.x) < 2 && w.y >= m.y - 1 && w.y < m.y + m.h + 1)
-        .sort((a, b) => Math.abs(w.x - a.x) - Math.abs(w.x - b.x))[0];
-      if (best) zWallToMod.set(w.id, { wall: w, mod: best });
-    });
-
-    const xWallToMod = new Map();
-    walls.filter(w => w.face === "X").forEach(w => {
-      // Find the module whose right edge (x+w) is closest to wall.x AND whose Y range contains wall.y
-      const best = placedModules
-        .filter(m => Math.abs(w.x - (m.x + m.w)) < 2 && w.y >= m.y - 1 && w.y < m.y + m.h + 1)
-        .sort((a, b) => Math.abs(w.x - (a.x + a.w)) - Math.abs(w.x - (b.x + b.w)))[0];
-      if (best) xWallToMod.set(w.id, { wall: w, mod: best });
-    });
-
-    // Build mod→wall lookup (one wall per mod, prefer closest)
-    const modToZWall = new Map();
-    zWallToMod.forEach(({ wall, mod }) => {
-      if (!modToZWall.has(mod.id)) modToZWall.set(mod.id, wall);
-    });
-    const modToXWall = new Map();
-    xWallToMod.forEach(({ wall, mod }) => {
-      if (!modToXWall.has(mod.id)) modToXWall.set(mod.id, wall);
-    });
+    // For each exterior module, find the best matching wall by face.
+    // Match on: correct face, X proximity, and wall Y overlaps module Y range.
+    const bestWallForMod = (mod, face) => {
+      const candidates = walls.filter(w => {
+        if (w.face !== face) return false;
+        if (face === "Z") {
+          return Math.abs(w.x - mod.x) < 2 && w.y >= mod.y - 1 && w.y < mod.y + mod.h + 1;
+        }
+        if (face === "X") {
+          return Math.abs(w.x - (mod.x + mod.w)) < 2 && w.y >= mod.y - 1 && w.y < mod.y + mod.h + 1;
+        }
+        return false;
+      });
+      if (candidates.length === 0) return null;
+      // Pick the one whose Y is closest to mod.y
+      return candidates.sort((a, b) => Math.abs(a.y - mod.y) - Math.abs(b.y - mod.y))[0];
+    };
 
     // Exterior-Z: no module directly to the left
     const exteriorZ = placedModules.filter(m =>
@@ -173,7 +160,7 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
     const zByX = {};
     exteriorZ.forEach(m => {
       if (!zByX[m.x]) zByX[m.x] = [];
-      zByX[m.x].push({ mod: m, wall: modToZWall.get(m.id) || null, yOffsetCells: m.y - allMinY, depthCells: m.h, face: "Z" });
+      zByX[m.x].push({ mod: m, wall: bestWallForMod(m, "Z"), yOffsetCells: m.y - allMinY, depthCells: m.h, face: "Z" });
     });
     const zColsSorted = Object.keys(zByX).map(Number).sort((a, b) => b - a); // back→front
     const zElevation = zColsSorted.map(colX => ({
@@ -190,7 +177,7 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
     exteriorX.forEach(m => {
       const key = m.x + m.w;
       if (!xByX[key]) xByX[key] = [];
-      xByX[key].push({ mod: m, wall: modToXWall.get(m.id) || null, yOffsetCells: m.y - allMinY, depthCells: m.h, face: "X" });
+      xByX[key].push({ mod: m, wall: bestWallForMod(m, "X"), yOffsetCells: m.y - allMinY, depthCells: m.h, face: "X" });
     });
     const xColsSorted = Object.keys(xByX).map(Number).sort((a, b) => a - b); // back→front
     const xElevation = xColsSorted.map(colX => ({
