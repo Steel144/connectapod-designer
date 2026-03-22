@@ -31,7 +31,7 @@ export default function PrintMenu({ placedModules, walls, onPrint }) {
       </button>
 
       {open && (
-        <div className="absolute right-0 mt-1 w-40 bg-white border border-gray-200 shadow-lg rounded z-50">
+        <div className="absolute right-0 mt-1 w-40 bg-white border border-gray-200 shadow-lg rounded z-[9999]">
           {options.map((opt) => (
             <button
               key={opt.value}
