@@ -882,7 +882,12 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
           }
           if (currentGroup.length > 0) groups.push(currentGroup);
 
-          const pavilionDimensions = groups.map((group, i) => {
+          // Identify which groups are pavilions vs connection module (middle group)
+          // Connection module is the group between two pavilion groups (if 3 groups exist)
+          const pavilionColors = ['#22c55e', '#3b82f6', '#f59e0b', '#ef4444'];
+          const connColor = '#94a3b8';
+
+          const allGroupDimensions = groups.map((group, i) => {
             const yMin = group[0];
             const yMax = group[group.length - 1];
             const modsInPav = placedModules.filter(m => m.y >= yMin && m.y <= yMax + 2);
@@ -891,8 +896,12 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
             const pavMaxX = Math.max(...modsInPav.map(m => m.x + m.w));
             const pavMinY = Math.min(...modsInPav.map(m => m.y));
             const pavMaxY = Math.max(...modsInPav.map(m => m.y + m.h));
-            return { name: `P${i+1}`, color: colors[i % colors.length], minX: pavMinX, maxX: pavMaxX, pavMinY, pavMaxY };
+            const isConnection = groups.length === 3 && i === 1;
+            return { name: isConnection ? 'Conn' : `P${isConnection ? i : (i < 1 ? i+1 : i)}`, isConnection, color: isConnection ? connColor : pavilionColors[i < 1 ? i : i - 1], minX: pavMinX, maxX: pavMaxX, pavMinY, pavMaxY };
           }).filter(Boolean);
+
+          const pavilionDimensions = allGroupDimensions.filter(g => !g.isConnection);
+          const connectionDimensions = allGroupDimensions.filter(g => g.isConnection);
 
           const depthM = (maxY - minY) * 0.6;
 
