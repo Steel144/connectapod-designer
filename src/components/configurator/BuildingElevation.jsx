@@ -166,18 +166,20 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
     );
     console.log("[BuildingElevation] Z walls:", walls.filter(w => w.face === "Z").map(w => `(x=${w.x.toFixed(2)},y=${w.y.toFixed(2)},img=${!!w.elevationImage})`));
     console.log("[BuildingElevation] exteriorZ mods:", exteriorZ.map(m => `(x=${m.x},y=${m.y},w=${m.w},h=${m.h})`));
-    const zByX = {};
+    // Z (West) elevation: for each Y-row segment, pick the westernmost (lowest X) exterior module
+    // All slots share one composite canvas positioned by their Y offset
+    const zSlots = [];
+    // Group exteriorZ by Y position, pick lowest X per row
+    const zByY = {};
     exteriorZ.forEach(m => {
-      const matched = bestWallForMod(m, "Z");
-      console.log(`[BuildingElevation] mod(x=${m.x},y=${m.y}) → Z wall:`, matched ? `(x=${matched.x.toFixed(2)},y=${matched.y.toFixed(2)},img=${!!matched.elevationImage})` : "null");
-      if (!zByX[m.x]) zByX[m.x] = [];
-      zByX[m.x].push({ mod: m, wall: matched, yOffsetCells: m.y - allMinY, depthCells: m.h, face: "Z" });
+      const key = `${m.y}-${m.y + m.h}`;
+      if (!zByY[key] || m.x < zByY[key].x) zByY[key] = m;
     });
-    const zColsSorted = Object.keys(zByX).map(Number).sort((a, b) => b - a); // back→front
-    const zElevation = zColsSorted.map(colX => ({
-      colX,
-      slots: [...zByX[colX]].sort((a, b) => a.yOffsetCells - b.yOffsetCells),
-    }));
+    Object.values(zByY).forEach(m => {
+      zSlots.push({ mod: m, wall: bestWallForMod(m, "Z"), yOffsetCells: m.y - allMinY, depthCells: m.h, face: "Z" });
+    });
+    zSlots.sort((a, b) => a.yOffsetCells - b.yOffsetCells);
+    const zElevation = zSlots.length > 0 ? [{ colX: 0, slots: zSlots }] : [];
 
     // ── X (East) elevation ────────────────────────────────────────────────────
     // Exterior-X: no module directly to the right
