@@ -14,6 +14,7 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
   const isPanning = useRef(false);
   const panStart = useRef({ x: 0, y: 0 });
   const panOrigin = useRef({ x: 0, y: 0 });
+  const scrollContainerRef = useRef(null);
 
   const zoomLevels = [20, 25, 37, 50, 62, 75, 100, 125, 150, 200];
 
@@ -74,6 +75,20 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
   const totalWidthPx = Math.round(scale * totalWidthCells * CELL_M * PX_PER_M);
   const totalDepthCells = allMaxY - allMinY;
 
+  const handleFitToWindow = () => {
+    if (!scrollContainerRef.current) return;
+    
+    const containerWidth = scrollContainerRef.current.clientWidth - 80; // 40px padding on each side
+    const containerHeight = scrollContainerRef.current.clientHeight - 80;
+    
+    const horizontalZoom = Math.max(20, Math.min(100, Math.floor((containerWidth / totalWidthPx) * 100)));
+    const verticalZoom = Math.max(20, Math.min(100, Math.floor((containerHeight / (wallHPx * 2.5)) * 100)));
+    
+    const fitZoom = Math.min(horizontalZoom, verticalZoom);
+    setZoom(fitZoom);
+    setPan({ x: 0, y: 0 });
+  };
+
   return (
     <div className="w-full h-full bg-white flex flex-col">
       <div className="flex items-center justify-between px-6 py-3 bg-white border-b border-gray-200 shrink-0">
@@ -88,10 +103,15 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
           <button onClick={() => adjustZoom(1)} disabled={zoom >= zoomLevels[zoomLevels.length - 1]} className="p-1.5 rounded hover:bg-white hover:shadow-sm transition-all text-gray-500 hover:text-gray-800 disabled:opacity-30 disabled:cursor-not-allowed">
             <ZoomIn size={15} />
           </button>
+          <div className="w-px h-6 bg-gray-300 mx-1"></div>
+          <button onClick={handleFitToWindow} className="px-3 py-1.5 text-xs font-semibold text-gray-600 hover:text-[#F15A22] rounded hover:bg-white transition-all">
+            Fit
+          </button>
         </div>
       </div>
 
       <div
+        ref={scrollContainerRef}
         className="flex-1 overflow-auto relative select-none bg-gray-50"
         style={{ cursor: "grab" }}
         onMouseDown={handleMouseDown}
