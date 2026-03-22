@@ -212,6 +212,8 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
 
   const totalWidthCells = maxX - minX;
   const totalWidthPx = Math.round(scale * totalWidthCells * CELL_M * PX_PER_M);
+  const totalDepthCells = allMaxY - allMinY;
+  const totalDepthPx = Math.round(scale * totalDepthCells * CELL_M * PX_PER_M);
 
   // ── Render a horizontal (W/Y) composite elevation ───────────────────────────
   // All layers share the same canvas width = totalWidthPx.
