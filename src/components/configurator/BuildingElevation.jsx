@@ -54,6 +54,8 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
   const endElevationHPx = hasConnectionModules ? Math.round(wallHPx * 0.88) : wallHPx;
 
   const { minX, maxX, allMinY, allMaxY, wElevation, yElevation, zElevation, xElevation } = useElevationGeometry(placedModules, walls);
+  
+  const slotOffset2 = Math.round(0.6 * PX_PER_M);
 
   if (placedModules.length === 0) {
     return (
