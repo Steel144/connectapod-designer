@@ -7,7 +7,8 @@ const ElevationSlot = memo(function ElevationSlot({
   heightPx, 
   labelNum,
   objectFit = "cover",
-  showLabel = true 
+  showLabel = true,
+  labelOffsetPx = 0
 }) {
   const wall = slot.wall;
 
