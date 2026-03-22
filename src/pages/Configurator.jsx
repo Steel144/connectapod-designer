@@ -803,6 +803,10 @@ export default function Configurator() {
           <div className="flex-1 z-10">
             <ElevationGallery walls={walls} placedModules={placedModules} onWallSelect={setSelectedWall} customWalls={customWalls} />
           </div>
+        ) : viewMode === "building" ? (
+          <div className="flex-1 z-10">
+            <BuildingElevation walls={walls} placedModules={placedModules} />
+          </div>
         ) : (
           <ConfigGrid
             placedModules={placedModules}
