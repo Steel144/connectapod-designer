@@ -275,10 +275,20 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
     );
   };
 
-  // ── Render Z/X elevations stacked vertically (one slot per row) ─────────────
-  // Uses same width principle as HorizElevation (totalDepthPx) but stacks slots vertically.
-  const VerticalStackElevation = ({ layers, label, color }) => {
+  // ── Render a vertical (Z/X) composite elevation ─────────────────────────────
+  // Canvas X axis = building depth (total Y span on plan).
+  // Each slot is positioned at its Y offset on plan; width = module depth (h cells).
+  // The wall image is shown at natural aspect ratio centred in its slot.
+  const VertElevation = ({ layers, label, color }) => {
     if (layers.length === 0) return null;
+    // Calculate canvas width: extent of all slots
+    let maxContentWidth = totalDepthPx;
+    layers.forEach(layer => {
+      layer.slots.forEach(slot => {
+        const slotRight = Math.round(scale * slot.yOffsetCells * CELL_M * PX_PER_M) + Math.round(scale * slot.depthCells * CELL_M * PX_PER_M);
+        maxContentWidth = Math.max(maxContentWidth, slotRight);
+      });
+    });
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -287,20 +297,24 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
           </span>
           <div style={{ flex: 1, height: 1, backgroundColor: "#e5e7eb" }} />
         </div>
-        <div style={{ display: "flex", flexDirection: "column", gap: 0, border: "1px solid #e5e7eb", backgroundColor: "#f9fafb", overflow: "auto" }}>
+        {/* Composite canvas: width = total extent of all slots */}
+        <div style={{ position: "relative", width: maxContentWidth, height: wallHPx, border: "1px solid #e5e7eb", backgroundColor: "#f9fafb", overflowY: "hidden", overflowX: "auto" }}>
           {layers.map((layer) =>
             layer.slots.map((slot, si) => {
+              const leftPx = Math.round(scale * slot.yOffsetCells * CELL_M * PX_PER_M);
+              const slotWidthPx = Math.round(scale * slot.depthCells * CELL_M * PX_PER_M);
               const wall = slot.wall;
               return (
                 <div
                   key={`${layer.colX}-${si}`}
                   style={{
-                    position: "relative",
-                    width: totalDepthPx,
+                    position: "absolute",
+                    left: leftPx,
+                    top: 0,
+                    width: slotWidthPx,
                     height: wallHPx,
                     overflow: "hidden",
-                    borderBottom: "1px solid rgba(0,0,0,0.08)",
-                    flex: "0 0 auto",
+                    borderRight: "1px solid rgba(0,0,0,0.12)",
                   }}
                 >
                   {wall?.elevationImage ? (
@@ -328,6 +342,7 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
               );
             })
           )}
+          <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 2, backgroundColor: "#374151" }} />
         </div>
       </div>
     );
@@ -367,11 +382,11 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
           <div style={{ maxHeight: "600px", overflow: "auto", overflowX: "hidden" }}>
             <HorizElevation layers={yElevation} label="Y — South Elevation" color="#3b82f6" />
           </div>
-          <div style={{ maxHeight: "600px", overflow: "auto" }}>
-            <VerticalStackElevation layers={zElevation} label="Z — West Elevation" color="#f59e0b" />
+          <div style={{ maxHeight: "600px", overflow: "auto", overflowX: "hidden" }}>
+            <HorizElevation layers={zElevation} label="Z — West Elevation" color="#f59e0b" />
           </div>
-          <div style={{ maxHeight: "600px", overflow: "auto" }}>
-            <VerticalStackElevation layers={xElevation} label="X — East Elevation" color="#ef4444" />
+          <div style={{ maxHeight: "600px", overflow: "auto", overflowX: "hidden" }}>
+            <HorizElevation layers={xElevation} label="X — East Elevation" color="#ef4444" />
           </div>
         </div>
       </div>
