@@ -1,23 +1,12 @@
-import React, { useState, useRef, useCallback, useMemo } from "react";
+import React, { useState, useRef, useCallback } from "react";
 import { ZoomIn, ZoomOut } from "lucide-react";
+import { useElevationGeometry } from "@/hooks/useElevationGeometry";
+import HorizontalElevation from "./HorizontalElevation";
+import VerticalElevation from "./VerticalElevation";
 
-/**
- * BuildingElevation — true composite WXYZ elevation view.
- *
- * W (North) elevation: all exterior-W modules composited on a shared X axis,
- *   back rows drawn first so front rows (lower Y on plan) paint over them — 
- *   giving a realistic "building seen from the north" view.
- * Y (South) elevation: same idea but front is highest Y (southernmost).
- * Z (West) elevation: modules stacked by their Y position on plan, leftmost X column visible.
- * X (East) elevation: rightmost X column visible.
- */
-
-const CELL_M = 0.6;      // metres per grid cell
-const PX_PER_M = 100;    // px per metre at 100% zoom
-const WALL_H_M = 4.2;    // assumed wall height in metres for display (includes roof/foundation)
-const PAV_END_WIDTH_M = 5.2;  // pavilion elevation end width in metres (5200mm)
-
-const THRESH = 0.6;
+const CELL_M = 0.6;
+const PX_PER_M = 100;
+const WALL_H_M = 4.2;
 
 export default function BuildingElevation({ walls = [], placedModules = [] }) {
   const [zoom, setZoom] = useState(50);
@@ -61,151 +50,10 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
 
   const scale = zoom / 100;
   const wallHPx = Math.round(scale * WALL_H_M * PX_PER_M);
-  
-  // Check if we have connection modules and apply 88% scale to Z/X elevations
   const hasConnectionModules = placedModules.some(m => m.chassis === "C" || (m.y >= 18 && m.y < 21 && m.h <= 2));
   const endElevationHPx = hasConnectionModules ? Math.round(wallHPx * 0.88) : wallHPx;
 
-  // ── Derived geometry ──────────────────────────────────────────────────────────
-
-  const {
-    minX, maxX,          // overall grid X span (cells)
-    allMinY, allMaxY,    // overall grid Y span (cells)
-    wElevation,          // W face: layers back→front
-    yElevation,          // Y face: layers front→back
-    zElevation,          // Z face: layers right→left (back-to-front)
-    xElevation,          // X face: layers left→right (back-to-front)
-  } = useMemo(() => {
-    if (placedModules.length === 0) return { minX: 0, maxX: 0, wElevation: [], yElevation: [], zElevation: [], xElevation: [] };
-
-    const allMinX = Math.min(...placedModules.map(m => m.x));
-    const allMaxX = Math.max(...placedModules.map(m => m.x + m.w));
-    const allMinY = Math.min(...placedModules.map(m => m.y));
-    const allMaxY = Math.max(...placedModules.map(m => m.y + m.h));
-
-    // Helper: find W/Y face wall attached to a module
-    const findWall = (face, mod) => {
-      if (face === "W") {
-        return walls.find(w =>
-          w.face === "W" &&
-          Math.abs(w.x - mod.x) < THRESH &&
-          w.y < mod.y && w.y > mod.y - 2
-        ) || null;
-      }
-      if (face === "Y") {
-        return walls.find(w =>
-          w.face === "Y" &&
-          Math.abs(w.x - mod.x) < THRESH &&
-          Math.abs(w.y - (mod.y + mod.h)) < THRESH
-        ) || null;
-      }
-      return null;
-    };
-
-    // ── W (North) elevation ───────────────────────────────────────────────────
-    // Exterior-W modules = no module directly above (lower Y) touching them
-    const exteriorW = placedModules.filter(m =>
-      !placedModules.some(o => o.x < m.x + m.w && o.x + o.w > m.x && o.y + o.h === m.y)
-    );
-    // Group by Y row, sort rows so highest Y (furthest back/north on plan) is drawn first
-    const wByY = {};
-    exteriorW.forEach(m => { if (!wByY[m.y]) wByY[m.y] = []; wByY[m.y].push(m); });
-    // Descending Y = back first, front last (front row has lowest Y on plan = closest to viewer looking north)
-    const wRowsSorted = Object.keys(wByY).map(Number).sort((a, b) => b - a);
-    const wElevation = wRowsSorted.map(rowY => ({
-      rowY,
-      slots: [...wByY[rowY]].sort((a, b) => a.x - b.x).map(mod => ({
-        mod, face: "W",
-        wall: findWall("W", mod),
-        xOffsetCells: mod.x - allMinX,
-        widthCells: mod.w,
-      })),
-    }));
-
-    // ── Y (South) elevation ───────────────────────────────────────────────────
-    const exteriorY = placedModules.filter(m =>
-      !placedModules.some(o => o.x < m.x + m.w && o.x + o.w > m.x && o.y === m.y + m.h)
-    );
-    const yByY = {};
-    exteriorY.forEach(m => { if (!yByY[m.y]) yByY[m.y] = []; yByY[m.y].push(m); });
-    // For south face: ascending Y = furthest away drawn first (front = highest Y)
-    const yRowsSorted = Object.keys(yByY).map(Number).sort((a, b) => a - b);
-    const yElevation = yRowsSorted.map(rowY => ({
-      rowY,
-      slots: [...yByY[rowY]].sort((a, b) => a.x - b.x).map(mod => ({
-        mod, face: "Y",
-        wall: findWall("Y", mod),
-        xOffsetCells: mod.x - allMinX,
-        widthCells: mod.w,
-      })),
-    }));
-
-    // ── Z (West) elevation ────────────────────────────────────────────────────
-
-    // For each exterior module, find the best matching wall by face.
-    // Match on: correct face, X proximity, and wall Y overlaps module Y range.
-    const bestWallForMod = (mod, face) => {
-      const candidates = walls.filter(w => {
-        if (w.face !== face) return false;
-        if (face === "Z") {
-          // Z wall can be snapped at mod.x OR mod.x+mod.w (placed on either end)
-          const nearLeft = Math.abs(w.x - mod.x) < 2;
-          const nearRight = Math.abs(w.x - (mod.x + mod.w)) < 2;
-          return (nearLeft || nearRight) && w.y >= mod.y - 1 && w.y < mod.y + mod.h + 1;
-        }
-        if (face === "X") {
-          // X wall can be snapped at mod.x+mod.w OR mod.x
-          const nearRight = Math.abs(w.x - (mod.x + mod.w)) < 2;
-          const nearLeft = Math.abs(w.x - mod.x) < 2;
-          return (nearRight || nearLeft) && w.y >= mod.y - 1 && w.y < mod.y + mod.h + 1;
-        }
-        return false;
-      });
-      if (candidates.length === 0) return null;
-      // Pick the one whose X is closest to the expected edge
-      const expectedX = face === "Z" ? mod.x : mod.x + mod.w;
-      return candidates.sort((a, b) => Math.abs(a.x - expectedX) - Math.abs(b.x - expectedX))[0];
-    };
-
-    // Exterior-Z: no module directly to the left
-    const exteriorZ = placedModules.filter(m =>
-      !placedModules.some(o => o.y < m.y + m.h && o.y + o.h > m.y && o.x + o.w === m.x)
-    );
-    // Z (West) elevation: for each Y-row segment, pick the westernmost (lowest X) exterior module
-    // All slots share one composite canvas positioned by their Y offset
-    const zSlots = [];
-    // Group exteriorZ by Y position, pick lowest X per row
-    const zByY = {};
-    exteriorZ.forEach(m => {
-      const key = `${m.y}-${m.y + m.h}`;
-      if (!zByY[key] || m.x < zByY[key].x) zByY[key] = m;
-    });
-    Object.values(zByY).forEach(m => {
-      zSlots.push({ mod: m, wall: bestWallForMod(m, "Z"), yOffsetCells: m.y - allMinY, depthCells: m.h, face: "Z" });
-    });
-    zSlots.sort((a, b) => a.yOffsetCells - b.yOffsetCells);
-    const zElevation = zSlots.length > 0 ? [{ colX: 0, slots: zSlots }] : [];
-
-    // ── X (East) elevation ────────────────────────────────────────────────────
-    // Exterior-X: no module directly to the right
-    const exteriorX = placedModules.filter(m =>
-      !placedModules.some(o => o.y < m.y + m.h && o.y + o.h > m.y && o.x === m.x + m.w)
-    );
-    // For each Y-row segment, pick the easternmost (highest X+w) exterior module
-    const xByY = {};
-    exteriorX.forEach(m => {
-      const key = `${m.y}-${m.y + m.h}`;
-      if (!xByY[key] || (m.x + m.w) > (xByY[key].x + xByY[key].w)) xByY[key] = m;
-    });
-    const xSlots = [];
-    Object.values(xByY).forEach(m => {
-      xSlots.push({ mod: m, wall: bestWallForMod(m, "X"), yOffsetCells: m.y - allMinY, depthCells: m.h, face: "X" });
-    });
-    xSlots.sort((a, b) => a.yOffsetCells - b.yOffsetCells);
-    const xElevation = xSlots.length > 0 ? [{ colX: 0, slots: xSlots }] : [];
-
-    return { minX: allMinX, maxX: allMaxX, allMinY, allMaxY, wElevation, yElevation, zElevation, xElevation };
-  }, [placedModules, walls]);
+  const { minX, maxX, allMinY, allMaxY, wElevation, yElevation, zElevation, xElevation } = useElevationGeometry(placedModules, walls);
 
   if (placedModules.length === 0) {
     return (
@@ -218,258 +66,9 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
   const totalWidthCells = maxX - minX;
   const totalWidthPx = Math.round(scale * totalWidthCells * CELL_M * PX_PER_M);
   const totalDepthCells = allMaxY - allMinY;
-  const totalDepthPx = Math.round(scale * totalDepthCells * CELL_M * PX_PER_M);
-
-  // ── Render a horizontal (W/Y) composite elevation ───────────────────────────
-  // All layers share the same canvas width = totalWidthPx.
-  // Each layer is absolutely positioned so modules line up on their X position.
-  const HorizElevation = ({ layers, label, color }) => {
-    if (layers.length === 0) return null;
-    return (
-      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <span style={{ fontSize: 10, fontWeight: 700, color: "#fff", backgroundColor: color, padding: "2px 10px", borderRadius: 2, letterSpacing: "0.08em", textTransform: "uppercase" }}>
-            {label}
-          </span>
-          <div style={{ flex: 1, height: 1, backgroundColor: "#e5e7eb" }} />
-        </div>
-        {/* Composite canvas: layers stacked, each absolutely positioned */}
-        <div style={{ position: "relative", width: totalWidthPx, height: wallHPx, border: "1px solid #e5e7eb", backgroundColor: "#f9fafb", overflow: "hidden" }}>
-          {layers.map((layer, li) =>
-            layer.slots.map((slot, si) => {
-              const leftPx = Math.round(scale * slot.xOffsetCells * CELL_M * PX_PER_M);
-              const widthPx = Math.round(scale * slot.widthCells * CELL_M * PX_PER_M);
-              const wall = slot.wall;
-              return (
-                <div
-                  key={`${li}-${si}`}
-                  style={{
-                    position: "absolute",
-                    left: leftPx,
-                    top: 0,
-                    width: widthPx,
-                    height: wallHPx,
-                    overflow: "hidden",
-                    borderRight: "1px solid rgba(0,0,0,0.08)",
-                  }}
-                >
-                  {wall?.elevationImage ? (
-                    <img
-                      src={wall.elevationImage}
-                      alt={wall.type}
-                      style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", transform: wall.flipped ? "scaleX(-1)" : undefined }}
-                    />
-                  ) : (
-                    <div style={{
-                      width: "100%", height: "100%",
-                      background: "repeating-linear-gradient(45deg, #f3f4f6, #f3f4f6 6px, #e5e7eb 6px, #e5e7eb 12px)",
-                      display: "flex", alignItems: "center", justifyContent: "center",
-                    }}>
-                      <span style={{ fontSize: 9, color: "#9ca3af" }}>{slot.face}</span>
-                    </div>
-                  )}
-                </div>
-              );
-            })
-          )}
-          {/* Ground line */}
-          <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 2, backgroundColor: "#374151" }} />
-        </div>
-      </div>
-    );
-  };
-
-  // ── Render Z/X elevations as side-by-side columns ─────────────────────────
-  const EndElevation = ({ layers, label, color }) => {
-    if (layers.length === 0) return null;
-    let maxExtent = 0;
-    layers.forEach(layer => {
-      layer.slots.forEach(slot => {
-        const slotRight = Math.round(scale * slot.yOffsetCells * CELL_M * PX_PER_M) + Math.round(scale * slot.depthCells * CELL_M * PX_PER_M);
-        maxExtent = Math.max(maxExtent, slotRight);
-      });
-    });
-    const canvasWidthPx = Math.max(maxExtent, Math.round(scale * totalDepthCells * CELL_M * PX_PER_M));
-    return (
-      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <span style={{ fontSize: 10, fontWeight: 700, color: "#fff", backgroundColor: color, padding: "2px 10px", borderRadius: 2, letterSpacing: "0.08em", textTransform: "uppercase" }}>
-            {label}
-          </span>
-          <div style={{ flex: 1, height: 1, backgroundColor: "#e5e7eb" }} />
-        </div>
-        <div style={{ position: "relative", width: canvasWidthPx, height: endElevationHPx, border: "1px solid #e5e7eb", backgroundColor: "#f9fafb", overflow: "visible" }}>
-          {layers.map((layer) =>
-            layer.slots.map((slot, si) => {
-              const leftPx = Math.round(scale * slot.yOffsetCells * CELL_M * PX_PER_M);
-              const slotWidthPx = Math.round(scale * slot.depthCells * CELL_M * PX_PER_M);
-              const wall = slot.wall;
-              return (
-                <div
-                  key={`${si}`}
-                  style={{
-                    position: "absolute",
-                    left: leftPx,
-                    top: 0,
-                    width: slotWidthPx,
-                    height: endElevationHPx,
-                    overflow: "visible",
-                  }}
-                >
-                  {wall?.elevationImage ? (
-                    <img
-                      src={wall.elevationImage}
-                      alt={wall.label || wall.type || label}
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "contain",
-                        display: "block",
-                        transform: wall.flipped ? "scaleX(-1)" : undefined,
-                      }}
-                    />
-                  ) : (
-                    <div style={{
-                      width: "100%", height: "100%",
-                      background: "repeating-linear-gradient(45deg, #f3f4f6, #f3f4f6 6px, #e5e7eb 6px, #e5e7eb 12px)",
-                      display: "flex", alignItems: "center", justifyContent: "center",
-                    }}>
-                      <span style={{ fontSize: 9, color: "#9ca3af" }}>{slot.face}</span>
-                    </div>
-                  )}
-                </div>
-              );
-            })
-          )}
-          <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 2, backgroundColor: "#374151" }} />
-        </div>
-      </div>
-    );
-  };
-
-  // ── Render a vertical (Z/X) composite elevation ─────────────────────────────
-  // Canvas X axis = building depth (total Y span on plan).
-  // Each slot is positioned at its Y offset on plan; width = module depth (h cells).
-  // The wall image is shown at natural aspect ratio centred in its slot.
-  const VertElevation = ({ layers, label, color }) => {
-    if (layers.length === 0) return null;
-    // Calculate canvas width: extent of all slots
-    let maxContentWidth = totalDepthPx;
-    layers.forEach(layer => {
-      layer.slots.forEach(slot => {
-        const slotRight = Math.round(scale * slot.yOffsetCells * CELL_M * PX_PER_M) + Math.round(scale * slot.depthCells * CELL_M * PX_PER_M);
-        maxContentWidth = Math.max(maxContentWidth, slotRight);
-      });
-    });
-    
-    // Calculate window height in pixels and foundation height
-    const windowHeightM = 2.14; // 2140mm
-    const windowHeightPx = Math.round(scale * windowHeightM * PX_PER_M);
-    const foundationHeightM = (WALL_H_M - windowHeightM) / 2; // Centre window vertically
-    const foundationHeightPx = Math.round(scale * foundationHeightM * PX_PER_M);
-    
-    return (
-      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <span style={{ fontSize: 10, fontWeight: 700, color: "#fff", backgroundColor: color, padding: "2px 10px", borderRadius: 2, letterSpacing: "0.08em", textTransform: "uppercase" }}>
-            {label}
-          </span>
-          <div style={{ flex: 1, height: 1, backgroundColor: "#e5e7eb" }} />
-        </div>
-        {/* Composite canvas with dimension guides */}
-        <div style={{ display: "flex", gap: 0, alignItems: "flex-start" }}>
-          {/* Height dimension ruler */}
-          <div style={{ display: "flex", flexDirection: "column", position: "relative", height: endElevationHPx, justifyContent: "space-between", alignItems: "flex-end", minWidth: 50, paddingRight: 8, borderRight: "1px solid #d1d5db" }}>
-            <div style={{ fontSize: 9, fontWeight: 600, color: "#4b5563", textAlign: "right", lineHeight: "1.2" }}>
-              <div>{WALL_H_M}m</div>
-              <div style={{ fontSize: 7, color: "#9ca3af" }}>Top</div>
-            </div>
-            <div style={{ fontSize: 9, fontWeight: 600, color: "#3b82f6", textAlign: "right", lineHeight: "1.2" }}>
-              <div>{windowHeightM}m</div>
-              <div style={{ fontSize: 7, color: "#9ca3af" }}>Window</div>
-            </div>
-            <div style={{ fontSize: 9, fontWeight: 600, color: "#4b5563", textAlign: "right", lineHeight: "1.2" }}>
-              <div>0m</div>
-              <div style={{ fontSize: 7, color: "#9ca3af" }}>Ground</div>
-            </div>
-          </div>
-          
-          {/* Canvas with alignment guides */}
-          <div style={{ position: "relative", flex: 1, width: maxContentWidth, height: endElevationHPx, border: "1px solid #e5e7eb", backgroundColor: "transparent", overflowY: "hidden", overflowX: "auto" }}>
-            {/* Window top guide line */}
-            <div style={{
-              position: "absolute",
-              top: foundationHeightPx,
-              left: 0,
-              right: 0,
-              height: 1,
-              backgroundColor: "transparent",
-              borderTop: "2px dashed rgba(59, 130, 246, 0.6)",
-              zIndex: 2,
-            }} />
-            
-            {/* Foundation line */}
-            <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 2, backgroundColor: "#374151", zIndex: 2 }} />
-            
-            {layers.map((layer) =>
-              layer.slots.map((slot, si) => {
-                const compressionPx = Math.round(scale * 0.6 * PX_PER_M); // 600mm compression
-                const leftPx = Math.round(scale * slot.yOffsetCells * CELL_M * PX_PER_M) - (si > 0 ? compressionPx : 0);
-                const slotWidthPx = Math.round(scale * slot.depthCells * CELL_M * PX_PER_M);
-                const wall = slot.wall;
-                const elevationNum = si + 1;
-                return (
-                  <div
-                    key={`${layer.colX}-${si}`}
-                    style={{
-                      position: "absolute",
-                      left: leftPx,
-                      top: 0,
-                      width: slotWidthPx,
-                      height: endElevationHPx,
-                      overflow: "hidden",
-                      borderRight: "1px solid rgba(0,0,0,0.12)",
-                    }}
-                  >
-                    <div style={{ position: "relative", width: "100%", height: "100%" }}>
-                      {wall?.elevationImage ? (
-                        <img
-                          src={wall.elevationImage}
-                          alt={wall.label || wall.type || slot.face}
-                          style={{
-                            width: "100%",
-                            height: "100%",
-                            objectFit: "fill",
-                            display: "block",
-                            transform: wall.flipped ? "scaleX(-1)" : undefined,
-                          }}
-                        />
-                      ) : (
-                        <div style={{
-                          width: "100%", height: "100%",
-                          background: "repeating-linear-gradient(45deg, #f3f4f6, #f3f4f6 6px, #e5e7eb 6px, #e5e7eb 12px)",
-                          display: "flex", alignItems: "center", justifyContent: "center",
-                        }}>
-                          <span style={{ fontSize: 9, color: "#9ca3af" }}>{slot.face}</span>
-                        </div>
-                      )}
-                      <div style={{ position: "absolute", top: 8, left: 8, backgroundColor: "#000", color: "#fff", width: 28, height: 28, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 700, zIndex: 50, boxShadow: "0 2px 4px rgba(0,0,0,0.4)" }}>
-                        {elevationNum}
-                      </div>
-                    </div>
-                  </div>
-                );
-              })
-            )}
-          </div>
-        </div>
-      </div>
-    );
-  };
 
   return (
     <div className="w-full h-full bg-white flex flex-col">
-      {/* Header */}
       <div className="flex items-center justify-between px-6 py-3 bg-white border-b border-gray-200 shrink-0">
         <span className="text-xs font-semibold text-gray-500 uppercase tracking-widest">Building Elevations — WXYZ</span>
         <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-1">
@@ -485,7 +84,6 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
         </div>
       </div>
 
-      {/* Canvas */}
       <div
         className="flex-1 overflow-auto relative select-none bg-gray-50"
         style={{ cursor: "grab" }}
@@ -496,17 +94,55 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
       >
         <div style={{ transform: `translate(${pan.x}px, ${pan.y}px)`, padding: "40px", display: "flex", flexDirection: "column", gap: 12, width: "max-content", minWidth: "max-content" }}>
           <div style={{ maxHeight: "600px", overflow: "auto", overflowX: "hidden" }}>
-            <HorizElevation layers={wElevation} label="W — North Elevation" color="#22c55e" />
+            <HorizontalElevation 
+              layers={wElevation} 
+              label="W — North Elevation" 
+              color="#22c55e"
+              totalWidthPx={totalWidthPx}
+              wallHPx={wallHPx}
+              scale={scale}
+              CELL_M={CELL_M}
+              PX_PER_M={PX_PER_M}
+            />
           </div>
           <div style={{ maxHeight: "600px", overflow: "auto", overflowX: "hidden" }}>
-            <HorizElevation layers={yElevation} label="Y — South Elevation" color="#3b82f6" />
+            <HorizontalElevation 
+              layers={yElevation} 
+              label="Y — South Elevation" 
+              color="#3b82f6"
+              totalWidthPx={totalWidthPx}
+              wallHPx={wallHPx}
+              scale={scale}
+              CELL_M={CELL_M}
+              PX_PER_M={PX_PER_M}
+            />
           </div>
           <div style={{ display: "flex", gap: 0, flexDirection: "row", width: "max-content", flexWrap: "nowrap" }}>
             <div style={{ maxHeight: "600px", overflow: "visible", flex: "0 0 auto" }}>
-              <EndElevation layers={zElevation} label="Z — West Elevation" color="#f59e0b" />
+              <VerticalElevation 
+                layers={zElevation} 
+                label="Z — West Elevation" 
+                color="#f59e0b"
+                totalDepthCells={totalDepthCells}
+                endElevationHPx={endElevationHPx}
+                scale={scale}
+                CELL_M={CELL_M}
+                PX_PER_M={PX_PER_M}
+                WALL_H_M={WALL_H_M}
+              />
             </div>
             <div style={{ maxHeight: "600px", overflow: "visible", flex: "0 0 auto", marginLeft: -1 }}>
-              <EndElevation layers={xElevation} label="X — East Elevation" color="#ef4444" />
+              <VerticalElevation 
+                layers={xElevation} 
+                label="X — East Elevation" 
+                color="#ef4444"
+                totalDepthCells={totalDepthCells}
+                endElevationHPx={endElevationHPx}
+                scale={scale}
+                CELL_M={CELL_M}
+                PX_PER_M={PX_PER_M}
+                WALL_H_M={WALL_H_M}
+              />
             </div>
           </div>
         </div>
