@@ -432,11 +432,17 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
                            <FloorPlanSVG code={item.code} className="h-full w-auto" />
                          )}
                        </div>
-                       <div className="min-w-0">
+                       <div className="min-w-0 flex-1">
                          <p className="text-xs font-medium text-gray-700 leading-tight">{item.name}</p>
                          {item.description && <p className="text-[10px] text-gray-500 mt-0.5 truncate">{item.description}</p>}
                          <p className="text-[10px] font-mono text-[#F15A22] mt-0.5 truncate" title={item.mpCode}>{item.mpCode}</p>
-                         <p className="text-[10px] text-gray-400">{item.width}×{item.depth}m · {item.sqm}m²</p>
+                         <div className="flex items-center gap-2 mt-0.5">
+                           <p className="text-[10px] text-gray-400">{item.width}×{item.depth}m · {item.sqm}m²</p>
+                           {item.chassis && (
+                             <span className="text-[9px] bg-gray-100 text-gray-500 px-1 py-0.5 font-mono">{item.chassis}</span>
+                           )}
+                         </div>
+                         <p className="text-[10px] text-green-600 font-medium">${(group.price || 0).toLocaleString()}</p>
                        </div>
                      </div>
                   );
@@ -506,11 +512,16 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
                       />
                     )}
                   </div>
-                  <div className="min-w-0">
+                  <div className="min-w-0 flex-1">
                     <p className="text-xs font-medium text-gray-700 leading-tight">{wall.label}</p>
                     <p className="text-[10px] font-mono text-[#F15A22] mt-0.5 truncate" title={wall.mpCode}>{wall.mpCode}</p>
                     {wall.description && <p className="text-[10px] text-gray-500 mt-0.5 truncate">{wall.description}</p>}
-                    <p className="text-[10px] text-gray-400">{wall.width.toFixed ? wall.width.toFixed(1) : wall.width}m wide</p>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <p className="text-[10px] text-gray-400">{wall.width.toFixed ? wall.width.toFixed(1) : wall.width}m wide</p>
+                      {wall.variants && wall.variants.length > 0 && (
+                        <span className="text-[9px] bg-blue-50 text-blue-600 px-1 py-0.5">{wall.variants.length} variant{wall.variants.length > 1 ? "s" : ""}</span>
+                      )}
+                    </div>
                   </div>
                 </div>
               ))}

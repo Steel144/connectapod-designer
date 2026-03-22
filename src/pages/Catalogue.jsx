@@ -614,12 +614,56 @@ export default function Catalogue() {
                       </button>
                     )}
 
-                    <div className="flex gap-3 text-xs text-gray-500 border-t border-gray-100 pt-2.5 mb-3">
+                    <div className="flex gap-3 text-xs text-gray-500 border-t border-gray-100 pt-2.5 mb-2">
                       <span><span className="font-semibold text-gray-700">{mod.width}m</span> wide</span>
                       <span><span className="font-semibold text-gray-700">{mod.depth}m</span> deep</span>
                       <span><span className="font-semibold text-gray-700">{mod.sqm.toFixed(1)}</span> m²</span>
                     </div>
 
+                    {/* Variants */}
+                    {mod.variants && mod.variants.length > 0 && (
+                      <div className="mb-2">
+                        <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-1">Variants</p>
+                        <div className="flex flex-wrap gap-1">
+                          {mod.variants.map((v, i) => (
+                            <span key={i} className="text-[10px] bg-blue-50 text-blue-600 px-1.5 py-0.5 border border-blue-100">
+                              {v}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Chassis codes */}
+                    {mod.chassisCodes && mod.chassisCodes.length > 0 && (
+                      <div className="mb-2">
+                        <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-1">Chassis</p>
+                        <div className="flex flex-wrap gap-1">
+                          {mod.chassisCodes.map((c, i) => (
+                            <span key={i} className="text-[10px] bg-gray-100 text-gray-600 px-1.5 py-0.5 font-mono">
+                              {c}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Wall elevations */}
+                    {mod.wallElevations_list && mod.wallElevations_list.length > 0 && (
+                      <div className="mb-2">
+                        <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-1">Wall Elevations</p>
+                        <div className="flex flex-wrap gap-1">
+                          {mod.wallElevations_list.slice(0, 4).map((w, i) => (
+                            <span key={i} className="text-[10px] bg-orange-50 text-[#F15A22] px-1.5 py-0.5 border border-orange-100 font-mono">
+                              {w}
+                            </span>
+                          ))}
+                          {mod.wallElevations_list.length > 4 && (
+                            <span className="text-[10px] text-gray-400">+{mod.wallElevations_list.length - 4} more</span>
+                          )}
+                        </div>
+                      </div>
+                    )}
 
                   </div>
                 ))}

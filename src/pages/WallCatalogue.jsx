@@ -576,8 +576,9 @@ export default function WallCatalogue() {
                     )}
                   </div>
 
-                  <p className="text-xs font-semibold text-gray-800 leading-tight mb-1 group-hover:text-[#F15A22] transition-colors">{wall.name}</p>
-                  <p className="text-[10px] font-mono text-gray-400 mb-2">{wall.code}</p>
+                  <p className="text-xs font-semibold text-gray-800 leading-tight mb-0.5 group-hover:text-[#F15A22] transition-colors">{wall.name}</p>
+                  <p className="text-[10px] font-mono text-[#F15A22] mb-1">{wall.code}</p>
+                  {wall.description && <p className="text-[10px] text-gray-500 mb-2 leading-relaxed">{wall.description}</p>}
                   {(wall.windowStyle || wall.openingPanes != null || wall.windowHeight != null || wall.windowWidth != null || wall.doorStyle || wall.doorHeight != null || wall.doorWidth != null || wall.price != null) && (
                     <div className="flex flex-wrap gap-x-3 gap-y-1 mb-2 text-[10px] text-gray-500 border-t border-gray-100 pt-2">
                       {(() => {
