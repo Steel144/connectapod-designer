@@ -496,10 +496,10 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
             <HorizElevation layers={yElevation} label="Y — South Elevation" color="#3b82f6" />
           </div>
           <div style={{ display: "flex", gap: 0, flexDirection: "row", width: "max-content", flexWrap: "nowrap" }}>
-            <div style={{ maxHeight: "600px", overflow: "auto", flex: "0 0 auto" }}>
+            <div style={{ maxHeight: "600px", overflow: "visible", flex: "0 0 auto" }}>
               <EndElevation layers={zElevation} label="Z — West Elevation" color="#f59e0b" />
             </div>
-            <div style={{ maxHeight: "600px", overflow: "auto", flex: "0 0 auto" }}>
+            <div style={{ maxHeight: "600px", overflow: "visible", flex: "0 0 auto", marginLeft: -1 }}>
               <EndElevation layers={xElevation} label="X — East Elevation" color="#ef4444" />
             </div>
           </div>
