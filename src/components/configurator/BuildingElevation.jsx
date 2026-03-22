@@ -377,7 +377,7 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
           <div style={{ flex: 1, height: 1, backgroundColor: "#e5e7eb" }} />
         </div>
         {/* Composite canvas with dimension guides */}
-        <div style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
+        <div style={{ display: "flex", gap: 0, alignItems: "flex-start" }}>
           {/* Height dimension ruler */}
           <div style={{ display: "flex", flexDirection: "column", position: "relative", height: endElevationHPx, justifyContent: "space-between", alignItems: "flex-end", minWidth: 50, paddingRight: 8, borderRight: "1px solid #d1d5db" }}>
             <div style={{ fontSize: 9, fontWeight: 600, color: "#4b5563", textAlign: "right", lineHeight: "1.2" }}>
