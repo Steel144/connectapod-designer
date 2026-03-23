@@ -90,7 +90,9 @@ export default function PrintableElevationsSheet({ walls = [], placedModules = [
           const xWall = walls.find(w => w.face === "X" && modsAtY.some(mod => Math.abs(w.y - mod.y) < 0.5 && Math.abs(w.x - (mod.x + mod.w - 0.31)) < 0.5)) || null;
 
           rows.push({ type: "Y", yPos, zWall, midWalls: yFaceWalls, xWall });
-          rows.push({ type: "W", yPos, zWall, midWalls: wFaceWalls, xWall });
+          if (pavNum !== 2) {
+            rows.push({ type: "W", yPos, zWall, midWalls: wFaceWalls, xWall });
+          }
         });
 
       return { pavilionNum: pavNum, rows };
