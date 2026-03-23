@@ -82,7 +82,7 @@ export default function BuildingElevation({ walls = [], placedModules = [], stic
         className="relative select-none bg-gray-50"
 
       >
-        <div style={{ padding: "40px", display: "inline-flex", flexDirection: "column", gap: 48, minWidth: "max-content" }}>
+        <div style={{ padding: "40px", display: "inline-flex", flexDirection: "column", gap: 40, minWidth: "max-content" }}>
           <div style={{ display: "flex", gap: 48, flexDirection: "row", width: "max-content", flexWrap: "nowrap" }}>
             <VerticalElevation 
               layers={zElevation} 
