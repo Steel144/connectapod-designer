@@ -607,7 +607,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
 
   const dragSnap = getDragSnapPos();
 
-  const SCROLL_BUFFER = 75 * CELL_W; // 75 extra cells of space on the left
+  const SCROLL_BUFFER = 75 * scaledCellW; // 75 extra cells of space on the left
 
   // Scroll to centre on mount
   useEffect(() => {
