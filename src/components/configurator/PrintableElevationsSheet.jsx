@@ -158,8 +158,10 @@ export default function PrintableElevationsSheet({ walls = [], placedModules = [
                 <div key={`${pav.pavilionNum}-${row.yPos}-${row.type}`}>
                   <div className="flex items-center gap-3 mb-3">
                      <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-                       {row.type === "Z-X" 
-                         ? `${getPavilionLabel(pav.pavilionNum)} - End Faces` 
+                       {row.type === "Z" 
+                         ? `${getPavilionLabel(pav.pavilionNum)} - Z face (left end)` 
+                         : row.type === "X"
+                         ? `${getPavilionLabel(pav.pavilionNum)} - X face (right end)`
                          : `${getPavilionLabel(pav.pavilionNum)} - ${row.type === "Y" ? "Y face (outside/top)" : "W face (outside/bottom)"}`}
                      </span>
                      <div className="flex-1 h-px bg-gray-200" />
