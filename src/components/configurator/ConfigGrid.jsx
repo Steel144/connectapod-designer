@@ -754,17 +754,17 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
           Array.from(dragging.selectedIds).map((id) => {
             const mod = placedModules.find((m) => m.id === id);
             if (!mod) return null;
-            const deltaX = Math.round((dragging.cursorX - (gridRef.current.getBoundingClientRect().left + dragging.mod.x * CELL_W + dragging.offsetX)) / CELL_W);
-            const deltaY = Math.round((dragging.cursorY - (gridRef.current.getBoundingClientRect().top + dragging.mod.y * CELL_H + dragging.offsetY)) / CELL_H);
+            const deltaX = Math.round((dragging.cursorX - (gridRef.current.getBoundingClientRect().left + dragging.mod.x * scaledCellW + dragging.offsetX)) / scaledCellW);
+            const deltaY = Math.round((dragging.cursorY - (gridRef.current.getBoundingClientRect().top + dragging.mod.y * scaledCellH + dragging.offsetY)) / scaledCellH);
             return (
               <div
                 key={id}
                 className="absolute pointer-events-none opacity-60"
                 style={{
-                  left: (mod.x + deltaX) * CELL_W,
-                  top: (mod.y + deltaY) * CELL_H,
-                  width: mod.w * CELL_W,
-                  height: mod.h * CELL_H,
+                  left: (mod.x + deltaX) * scaledCellW,
+                  top: (mod.y + deltaY) * scaledCellH,
+                  width: mod.w * scaledCellW,
+                  height: mod.h * scaledCellH,
                 }}
               >
                 <FloorPlanSVG code={mod.type} className="w-full h-full" />
