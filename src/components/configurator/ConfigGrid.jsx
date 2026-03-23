@@ -873,6 +873,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
           const minY = Math.min(...placedModules.map(m => m.y));
           const maxY = Math.max(...placedModules.map(m => m.y + m.h));
           const widthM = (maxX - minX) * 0.6;
+          const zoomScale = zoom / 100;
 
           // Detect pavilions dynamically by clustering modules by Y position
           const colors = ['#22c55e', '#3b82f6', '#f59e0b', '#ef4444'];
