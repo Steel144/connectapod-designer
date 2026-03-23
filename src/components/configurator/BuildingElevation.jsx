@@ -50,9 +50,9 @@ export default function BuildingElevation({ walls = [], placedModules = [], stic
   const slotOffset1Z = -0.02;
   const slotOffset2Z = 0.14;
   const slotOffset3Z = 0;
-  const slotOffset1X = 0.14;
+  const slotOffset1X = -0.02;
   const slotOffset2X = 0.15;
-  const slotOffset3X = 0;
+  const slotOffset3X = 0.14;
   const labelMapZ = { 1: "P1", 2: "C", 3: "P2" };
   const labelMapX = { 1: "P2", 2: "C", 3: "P1" };
 
@@ -115,18 +115,19 @@ export default function BuildingElevation({ walls = [], placedModules = [], stic
                labelMap={labelMapZ}
             />
             <VerticalElevation 
-              layers={xElevation} 
-              label="X — East Elevation" 
-              color="#ef4444"
-              totalDepthCells={totalDepthCells}
-              endElevationHPx={endElevationHPx}
-              scale={scale}
-              CELL_M={CELL_M}
-              PX_PER_M={PX_PER_M}
-              WALL_H_M={WALL_H_M}
-              slotOffsets={{ 1: slotOffset1X, 2: slotOffset2X, 3: slotOffset3X }}
+               layers={xElevation} 
+               label="X — East Elevation" 
+               color="#ef4444"
+               totalDepthCells={totalDepthCells}
+               endElevationHPx={endElevationHPx}
+               scale={scale}
+               CELL_M={CELL_M}
+               PX_PER_M={PX_PER_M}
+               WALL_H_M={WALL_H_M}
+               slotOffsets={{ 1: slotOffset1X, 2: slotOffset2X, 3: slotOffset3X }}
                labelMap={labelMapX}
-            />
+               p1Index={2}
+             />
           </div>
           <HorizontalElevation 
             layers={wElevation} 
