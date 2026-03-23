@@ -853,11 +853,11 @@ export default function Configurator() {
       <div className={`flex-1 relative overflow-auto ${isMobile ? "pt-12" : "pt-16"}`}>
         {viewMode === "elevations" ? (
           <div className="flex flex-col">
-            <div style={{ minWidth: 0 }}>
-              <ElevationGallery walls={walls} placedModules={placedModules} onWallSelect={setSelectedWall} customWalls={customWalls} />
+            <div style={{ minWidth: 0, background: "#f9fafb" }}>
+              <BuildingElevation walls={walls} placedModules={placedModules} stickyTop={navBarHeight} showHeader={false} />
             </div>
-            <div style={{ minWidth: 0, borderTop: "1px solid #e5e7eb", background: "#f9fafb" }}>
-              <BuildingElevation walls={walls} placedModules={placedModules} stickyTop={navBarHeight} />
+            <div style={{ minWidth: 0, borderTop: "1px solid #e5e7eb" }}>
+              <ElevationGallery walls={walls} placedModules={placedModules} onWallSelect={setSelectedWall} customWalls={customWalls} />
             </div>
           </div>
         ) : (
