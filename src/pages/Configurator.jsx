@@ -699,7 +699,7 @@ export default function Configurator() {
 
       {/* ── DESKTOP TOP BAR ── */}
       {!isMobile && (
-        <div className={`${viewMode === "building" ? "fixed" : "absolute"} top-0 left-0 right-0 z-30 flex items-center px-4 py-4 bg-white/80 backdrop-blur border-b border-gray-200 overflow-x-auto gap-4 min-w-0`}>
+        <div className={`${viewMode === "building" ? "sticky" : "absolute"} top-0 left-0 right-0 z-30 flex items-center px-4 py-4 bg-white border-b border-gray-200 overflow-x-auto gap-4 min-w-0`}>
           <div className="shrink-0 flex flex-col gap-0.5">
             <img src="https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/1a43e85d2_Connectapod-01.png" alt="connectapod" style={{ height: "25px", width: "auto" }} />
             <span className="text-[10px] text-gray-400 tracking-widest uppercase">Design Studio</span>
