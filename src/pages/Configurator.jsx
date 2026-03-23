@@ -75,6 +75,7 @@ export default function Configurator() {
   const [quoteOpen, setQuoteOpen] = useState(false);
   const [viewMode, setViewMode] = useState("2d");
   const [loadCounter, setLoadCounter] = useState(0);
+  const [gridZoom, setGridZoom] = useState(100);
   const navBarRef = useRef(null);
   const [navBarHeight, setNavBarHeight] = useState(0);
 
