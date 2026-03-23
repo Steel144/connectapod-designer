@@ -734,13 +734,13 @@ export default function Configurator() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-gray-600 bg-white border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22] transition-all">
-                  <LayoutTemplate size={13} /> Plans
+                  <LayoutTemplate size={13} /> Design Catalogue
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start">
                 <DropdownMenuItem asChild>
                   <Link to={createPageUrl("DesignCatalogue")} className="flex items-center gap-2 cursor-pointer">
-                    <LayoutTemplate size={13} /> Design Catalogue
+                    <LayoutTemplate size={13} /> Starter Designs
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setShowSaved(true)}>
