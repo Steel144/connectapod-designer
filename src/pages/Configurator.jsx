@@ -9,7 +9,17 @@ import SaveDesignModal from "@/components/configurator/SaveDesignModal";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { BookOpen, FolderOpen, Save, Trash2, ChevronLeft, ChevronRight, Undo2, Box, Grid2X2, Image, LayoutTemplate } from "lucide-react";
+import { BookOpen, FolderOpen, Save, Trash2, ChevronLeft, ChevronRight, Undo2, Box, Grid2X2, Image, LayoutTemplate, Menu, X, ChevronUp, ChevronDown } from "lucide-react";
+
+const useIsMobile = () => {
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
+  useEffect(() => {
+    const handler = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", handler);
+    return () => window.removeEventListener("resize", handler);
+  }, []);
+  return isMobile;
+};
 
 import ElevationGallery from "@/components/configurator/ElevationGallery";
 import BuildingElevation from "@/components/configurator/BuildingElevation";
