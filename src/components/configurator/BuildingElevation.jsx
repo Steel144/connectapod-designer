@@ -8,7 +8,7 @@ const CELL_M = 0.6;
 const PX_PER_M = 100;
 const WALL_H_M = 4.2;
 
-export default function BuildingElevation({ walls = [], placedModules = [], stickyTop = 0 }) {
+export default function BuildingElevation({ walls = [], placedModules = [], stickyTop = 0, navBarHeight = 0 }) {
   const [zoom, setZoom] = useState(50);
 
 
