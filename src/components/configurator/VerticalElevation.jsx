@@ -53,11 +53,13 @@ const VerticalElevation = memo(function VerticalElevation({
                const leftPx = slotLeftPx + extraOffsetPx;
 
                const displayLabel = labelMap[elevationNum] || elevationNum;
+               const topPx = si === 0 ? Math.round(scale * 0.02 * PX_PER_M) : 0;
                return (
                  <ElevationSlot
                    key={`${layer.colX}-${si}`}
                    slot={slot}
                    leftPx={leftPx}
+                   topPx={topPx}
                    widthPx={slotWidthPx}
                    heightPx={endElevationHPx}
                    labelNum={displayLabel}
