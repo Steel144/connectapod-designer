@@ -203,7 +203,7 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
           {endLeft && (
             <div className="flex items-center shrink-0" style={{ marginRight: `${spacingPx}px`, marginTop: `${Math.round((zoom / 100) * 5)}px` }}>
               <div className="flex flex-col items-center gap-0">
-                <ElevationImage wall={endLeft} label={endLeft.type || "End"} face={endLeft.face} tight />
+                <ElevationImage wall={endLeft} label={endLeft.type || "End"} face={endLeft.face} tight sizeMultiplier={1.05} />
                 <span className="text-[8px] text-gray-400 mt-0.5">Left</span>
               </div>
             </div>
