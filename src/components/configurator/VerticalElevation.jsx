@@ -31,14 +31,11 @@ const VerticalElevation = memo(function VerticalElevation({
   const foundationHeightPx = Math.round(scale * foundationHeightM * PX_PER_M);
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-      <div style={{ fontSize: "14px", fontWeight: "bold", color: "black", textTransform: "uppercase", letterSpacing: "0.05em", backgroundColor: "#fed7aa", padding: "8px 12px", borderRadius: "4px", width: "fit-content", marginLeft: "4px" }}>
+    <div style={{ display: "inline-block", verticalAlign: "top", marginRight: "16px" }}>
+      <div style={{ fontSize: "14px", fontWeight: "bold", color: "black", textTransform: "uppercase", letterSpacing: "0.05em", backgroundColor: "#fed7aa", padding: "8px 12px", borderRadius: "4px", width: "fit-content", marginLeft: "4px", marginBottom: "16px" }}>
         {label}
       </div>
-      <div style={{ display: "flex", gap: 0, alignItems: "flex-start" }}>
-
-
-        <div style={{ position: "relative", width: maxContentWidth + 100, height: endElevationHPx, backgroundColor: "transparent", overflowY: "hidden", overflowX: "visible", paddingLeft: 50, paddingRight: 50, boxSizing: "border-box" }}>
+      <div style={{ position: "relative", width: maxContentWidth + 100, height: endElevationHPx, backgroundColor: "transparent", overflow: "hidden", paddingLeft: 50, paddingRight: 50, boxSizing: "border-box" }}>
 
           <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 2, backgroundColor: "#374151", zIndex: 2 }} />
 
@@ -71,9 +68,8 @@ const VerticalElevation = memo(function VerticalElevation({
                );
              });
            })}
-        </div>
-      </div>
-    </div>
+          </div>
+          </div>
   );
 });
 

@@ -101,40 +101,44 @@ export default function BuildingElevation({ walls = [], placedModules = [], stic
       {showHeader && <div style={{ height: stickyTop + zoomBarHeight }} />}
 
       <div
-        className="relative select-none bg-gray-50 overflow-x-auto"
+        className="relative select-none bg-gray-50 overflow-x-auto overflow-y-hidden"
         style={{ minHeight: "500px" }}
         ref={containerRef}
         onScroll={handleScroll}
       >
-        <div ref={contentRef} style={{ padding: "40px", paddingLeft: "2400px", paddingRight: "1800px", display: "inline-flex", flexDirection: "column", gap: 40, minWidth: "max-content" }}>
-          <div style={{ display: "flex", gap: 16, flexDirection: "row", width: "max-content", flexWrap: "nowrap" }}>
-            <VerticalElevation 
-              layers={zElevation} 
-              label="Z — West Elevation" 
-              color="#f59e0b"
-              totalDepthCells={totalDepthCells}
-              endElevationHPx={endElevationHPx}
-              scale={scale}
-              CELL_M={CELL_M}
-              PX_PER_M={PX_PER_M}
-              WALL_H_M={WALL_H_M}
-              slotOffsets={{ 1: slotOffset1Z, 2: slotOffset2Z, 3: slotOffset3Z }}
-               labelMap={labelMapZ}
-            />
-            <VerticalElevation 
-               layers={xElevation} 
-               label="X — East Elevation" 
-               color="#ef4444"
-               totalDepthCells={totalDepthCells}
-               endElevationHPx={endElevationHPx}
-               scale={scale}
-               CELL_M={CELL_M}
-               PX_PER_M={PX_PER_M}
-               WALL_H_M={WALL_H_M}
-               slotOffsets={{ 1: slotOffset1X, 2: slotOffset2X, 3: slotOffset3X }}
-               slotScales={{ 3: slotScale3X }}
-               labelMap={labelMapX}
-             />
+        <div ref={contentRef} style={{ padding: "40px", paddingLeft: "2400px", paddingRight: "1800px", display: "inline-block", minWidth: "max-content" }}>
+          <div style={{ display: "inline-block", marginBottom: "40px", verticalAlign: "top" }}>
+            <div style={{ display: "inline-block", marginRight: "16px", verticalAlign: "top" }}>
+              <VerticalElevation 
+                layers={zElevation} 
+                label="Z — West Elevation" 
+                color="#f59e0b"
+                totalDepthCells={totalDepthCells}
+                endElevationHPx={endElevationHPx}
+                scale={scale}
+                CELL_M={CELL_M}
+                PX_PER_M={PX_PER_M}
+                WALL_H_M={WALL_H_M}
+                slotOffsets={{ 1: slotOffset1Z, 2: slotOffset2Z, 3: slotOffset3Z }}
+                 labelMap={labelMapZ}
+              />
+            </div>
+            <div style={{ display: "inline-block", verticalAlign: "top" }}>
+              <VerticalElevation 
+                 layers={xElevation} 
+                 label="X — East Elevation" 
+                 color="#ef4444"
+                 totalDepthCells={totalDepthCells}
+                 endElevationHPx={endElevationHPx}
+                 scale={scale}
+                 CELL_M={CELL_M}
+                 PX_PER_M={PX_PER_M}
+                 WALL_H_M={WALL_H_M}
+                 slotOffsets={{ 1: slotOffset1X, 2: slotOffset2X, 3: slotOffset3X }}
+                 slotScales={{ 3: slotScale3X }}
+                 labelMap={labelMapX}
+               />
+            </div>
           </div>
           <HorizontalElevation 
             layers={wElevation} 
