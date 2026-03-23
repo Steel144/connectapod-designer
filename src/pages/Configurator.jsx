@@ -720,17 +720,6 @@ export default function Configurator() {
             <span className="text-[10px] text-gray-400 tracking-widest uppercase">Design Studio</span>
           </div>
           <div className="flex items-center gap-2 ml-auto shrink-0">
-            <div className="flex border border-gray-200 overflow-hidden">
-              <button onClick={() => setViewMode("2d")} className={`flex items-center gap-1.5 px-3 py-1.5 text-xs transition-all ${viewMode === "2d" ? "bg-[#F15A22] text-white" : "bg-white text-gray-600 hover:text-[#F15A22]"}`}>
-                <Grid2X2 size={13} /> 2D
-              </button>
-              <button onClick={() => setViewMode("elevations")} className={`flex items-center gap-1.5 px-3 py-1.5 text-xs transition-all ${viewMode === "elevations" ? "bg-[#F15A22] text-white" : "bg-white text-gray-600 hover:text-[#F15A22]"}`}>
-                <Image size={13} /> Elevations
-              </button>
-              <button onClick={() => setViewMode("building")} className={`flex items-center gap-1.5 px-3 py-1.5 text-xs transition-all ${viewMode === "building" ? "bg-[#F15A22] text-white" : "bg-white text-gray-600 hover:text-[#F15A22]"}`}>
-                <Box size={13} /> Building
-              </button>
-            </div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-gray-600 bg-white border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22] transition-all">
@@ -748,6 +737,17 @@ export default function Configurator() {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
+            <div className="flex border border-gray-200 overflow-hidden">
+              <button onClick={() => setViewMode("2d")} className={`flex items-center gap-1.5 px-3 py-1.5 text-xs transition-all ${viewMode === "2d" ? "bg-[#F15A22] text-white" : "bg-white text-gray-600 hover:text-[#F15A22]"}`}>
+                <Grid2X2 size={13} /> 2D
+              </button>
+              <button onClick={() => setViewMode("elevations")} className={`flex items-center gap-1.5 px-3 py-1.5 text-xs transition-all ${viewMode === "elevations" ? "bg-[#F15A22] text-white" : "bg-white text-gray-600 hover:text-[#F15A22]"}`}>
+                <Image size={13} /> Elevations
+              </button>
+              <button onClick={() => setViewMode("building")} className={`flex items-center gap-1.5 px-3 py-1.5 text-xs transition-all ${viewMode === "building" ? "bg-[#F15A22] text-white" : "bg-white text-gray-600 hover:text-[#F15A22]"}`}>
+                <Box size={13} /> Building
+              </button>
+            </div>
             <button onClick={handleUndo} disabled={history.length === 0} title="Undo (Ctrl+Z)" className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-gray-600 bg-white border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22] disabled:opacity-30 transition-all">
               <Undo2 size={13} /> Undo {history.length > 0 && <span className="text-[10px] text-gray-400">({history.length})</span>}
             </button>
