@@ -12,9 +12,13 @@ import { createPageUrl } from "@/utils";
 import { BookOpen, FolderOpen, Save, Trash2, ChevronLeft, ChevronRight, Undo2, Box, Grid2X2, Image, LayoutTemplate, Menu, X, ChevronUp, ChevronDown } from "lucide-react";
 
 const useIsMobile = () => {
-  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
+  const isTouchDevice = () =>
+    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+    ('ontouchstart' in window) ||
+    window.innerWidth < 768;
+  const [isMobile, setIsMobile] = useState(isTouchDevice);
   useEffect(() => {
-    const handler = () => setIsMobile(window.innerWidth < 768);
+    const handler = () => setIsMobile(isTouchDevice());
     window.addEventListener("resize", handler);
     return () => window.removeEventListener("resize", handler);
   }, []);
