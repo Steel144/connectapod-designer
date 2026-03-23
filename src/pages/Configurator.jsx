@@ -821,7 +821,7 @@ export default function Configurator() {
             <ElevationGallery walls={walls} placedModules={placedModules} onWallSelect={setSelectedWall} customWalls={customWalls} />
           </div>
         ) : viewMode === "building" ? (
-          <div style={{ flex: 1, minWidth: 0, zIndex: 10, paddingBottom: isMobile ? "64px" : "0px" }}>
+          <div style={{ flex: 1, minWidth: 0, zIndex: 10, paddingBottom: isMobile ? "64px" : "0px", overflowX: "auto" }}>
             <BuildingElevation walls={walls} placedModules={placedModules} stickyTop={navBarHeight} />
           </div>
         ) : (
