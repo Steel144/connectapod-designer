@@ -28,7 +28,13 @@ export default function PrintableElevationGallery({ walls = [], placedModules = 
   }, [placedModules]);
 
   return (
-    <div className="w-full bg-white p-12">
+    <div className="w-full bg-white p-12 relative">
+      <button
+        onClick={() => onClose?.()}
+        className="fixed top-4 right-4 z-50 bg-red-500 text-white px-4 py-2 rounded text-sm font-bold print:hidden"
+      >
+        Close
+      </button>
       <style>{`
         @media print {
           body { margin: 0; padding: 0; }
