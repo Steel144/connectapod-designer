@@ -9,7 +9,11 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 export default function QuoteGenerator({ placedModules, walls, open, onClose }) {
   const [clientName, setClientName] = useState("");
   const [clientEmail, setClientEmail] = useState("");
+  const [clientPhone, setClientPhone] = useState("");
   const [projectName, setProjectName] = useState("");
+  const [address, setAddress] = useState("");
+  const [city, setCity] = useState("");
+  const [postalCode, setPostalCode] = useState("");
   const [generating, setGenerating] = useState(false);
 
   const totalSqm = placedModules.reduce((s, m) => s + (m.sqm || 0), 0);
@@ -77,24 +81,37 @@ export default function QuoteGenerator({ placedModules, walls, open, onClose }) 
     y += 10;
 
     // Client info
-    if (clientName || projectName) {
-      doc.setFillColor(248, 248, 248);
-      doc.rect(col1, y, pageW - 2 * margin, 22, "F");
-      doc.setTextColor(30, 30, 30);
-      doc.setFontSize(9);
-      doc.setFont("helvetica", "bold");
-      if (clientName) {
-        doc.text("Prepared for:", col1 + 4, y + 7);
-        doc.setFont("helvetica", "normal");
-        doc.text(clientName, col1 + 4, y + 14);
+    if (clientName || projectName || address || clientPhone || clientEmail) {
+      const infoLines = [];
+      if (clientName) infoLines.push(`Client: ${clientName}`);
+      if (clientPhone) infoLines.push(`Phone: ${clientPhone}`);
+      if (clientEmail) infoLines.push(`Email: ${clientEmail}`);
+      if (address || city || postalCode) {
+        const addressStr = [address, city, postalCode].filter(Boolean).join(", ");
+        if (addressStr) infoLines.push(`Address: ${addressStr}`);
       }
+      
+      const boxHeight = 8 + infoLines.length * 5;
+      doc.setFillColor(248, 248, 248);
+      doc.rect(col1, y, pageW - 2 * margin, boxHeight, "F");
+      doc.setTextColor(30, 30, 30);
+      doc.setFontSize(8.5);
+      doc.setFont("helvetica", "normal");
+      
+      let infoY = y + 5;
+      infoLines.forEach(line => {
+        doc.text(line, col1 + 4, infoY);
+        infoY += 5;
+      });
+      
       if (projectName) {
         doc.setFont("helvetica", "bold");
-        doc.text("Project:", pageW / 2, y + 7);
+        doc.text("Project:", col1 + 4, infoY);
         doc.setFont("helvetica", "normal");
-        doc.text(projectName, pageW / 2, y + 14);
+        doc.text(projectName, col1 + 25, infoY);
       }
-      y += 28;
+      
+      y += boxHeight + 6;
     }
 
     y += 4;
@@ -256,16 +273,38 @@ export default function QuoteGenerator({ placedModules, walls, open, onClose }) 
         </div>
 
         {/* Client details */}
-        <div className="space-y-3">
-          <div>
-            <Label className="text-xs text-gray-600">Client Name</Label>
-            <Input value={clientName} onChange={e => setClientName(e.target.value)} placeholder="e.g. Jane Smith" className="mt-1 rounded-none text-sm h-9" />
-          </div>
-          <div>
-            <Label className="text-xs text-gray-600">Project Name</Label>
-            <Input value={projectName} onChange={e => setProjectName(e.target.value)} placeholder="e.g. Beach House" className="mt-1 rounded-none text-sm h-9" />
-          </div>
-        </div>
+         <div className="space-y-3">
+           <div>
+             <Label className="text-xs text-gray-600">Client Name</Label>
+             <Input value={clientName} onChange={e => setClientName(e.target.value)} placeholder="e.g. Jane Smith" className="mt-1 rounded-none text-sm h-9" />
+           </div>
+           <div>
+             <Label className="text-xs text-gray-600">Phone</Label>
+             <Input value={clientPhone} onChange={e => setClientPhone(e.target.value)} placeholder="e.g. 021 234 5678" className="mt-1 rounded-none text-sm h-9" />
+           </div>
+           <div>
+             <Label className="text-xs text-gray-600">Email</Label>
+             <Input value={clientEmail} onChange={e => setClientEmail(e.target.value)} placeholder="e.g. jane@example.com" className="mt-1 rounded-none text-sm h-9" />
+           </div>
+           <div>
+             <Label className="text-xs text-gray-600">Street Address</Label>
+             <Input value={address} onChange={e => setAddress(e.target.value)} placeholder="e.g. 123 Main Street" className="mt-1 rounded-none text-sm h-9" />
+           </div>
+           <div className="grid grid-cols-2 gap-2">
+             <div>
+               <Label className="text-xs text-gray-600">City</Label>
+               <Input value={city} onChange={e => setCity(e.target.value)} placeholder="e.g. Auckland" className="mt-1 rounded-none text-sm h-9" />
+             </div>
+             <div>
+               <Label className="text-xs text-gray-600">Postal Code</Label>
+               <Input value={postalCode} onChange={e => setPostalCode(e.target.value)} placeholder="e.g. 1010" className="mt-1 rounded-none text-sm h-9" />
+             </div>
+           </div>
+           <div>
+             <Label className="text-xs text-gray-600">Project Name</Label>
+             <Input value={projectName} onChange={e => setProjectName(e.target.value)} placeholder="e.g. Beach House" className="mt-1 rounded-none text-sm h-9" />
+           </div>
+         </div>
 
         <div className="flex gap-2 pt-1">
           <Button variant="outline" onClick={onClose} className="flex-1 rounded-none border-gray-200 text-gray-500 h-9">
