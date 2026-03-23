@@ -348,17 +348,17 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
     // Handle selection box
     if (selectionBox) {
       const rect = gridRef.current.getBoundingClientRect();
-      const minX = Math.min(selectionBox.startX, selectionBox.cursorX);
-      const maxX = Math.max(selectionBox.startX, selectionBox.cursorX);
-      const minY = Math.min(selectionBox.startY, selectionBox.cursorY);
-      const maxY = Math.max(selectionBox.startY, selectionBox.cursorY);
-      
+      const minX = Math.min(selectionBox.startX, selectionBox.cursorX) * (zoom / 100);
+      const maxX = Math.max(selectionBox.startX, selectionBox.cursorX) * (zoom / 100);
+      const minY = Math.min(selectionBox.startY, selectionBox.cursorY) * (zoom / 100);
+      const maxY = Math.max(selectionBox.startY, selectionBox.cursorY) * (zoom / 100);
+
       const newSelected = new Set();
       placedModules.forEach((mod) => {
-        const modX1 = mod.x * CELL_W;
-        const modY1 = mod.y * CELL_H;
-        const modX2 = modX1 + mod.w * CELL_W;
-        const modY2 = modY1 + mod.h * CELL_H;
+        const modX1 = mod.x * scaledCellW;
+        const modY1 = mod.y * scaledCellH;
+        const modX2 = modX1 + mod.w * scaledCellW;
+        const modY2 = modY1 + mod.h * scaledCellH;
         
         if (!(modX2 < minX || modX1 > maxX || modY2 < minY || modY1 > maxY)) {
           newSelected.add(mod.id);
