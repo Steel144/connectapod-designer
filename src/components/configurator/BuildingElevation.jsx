@@ -52,7 +52,7 @@ export default function BuildingElevation({ walls = [], placedModules = [], stic
   const slotOffset3Z = 0;
   const slotOffset1X = -0.02;
   const slotOffset2X = 0.15;
-  const slotOffset3X = -0.04;
+  const slotOffset3X = 0;
   const slotScale3X = 1.1;
   const labelMapZ = { 1: "P1", 2: "C", 3: "P2" };
   const labelMapX = { 1: "P2", 2: "C", 3: "P1" };
