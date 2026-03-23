@@ -2,7 +2,8 @@ import React, { memo } from "react";
 
 const ElevationSlot = memo(function ElevationSlot({ 
   slot, 
-  leftPx, 
+  leftPx,
+  topPx = 0,
   widthPx, 
   heightPx, 
   labelNum,
