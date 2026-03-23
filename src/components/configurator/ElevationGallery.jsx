@@ -227,7 +227,7 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
 
   return (
     <div style={{ width: "100%", minHeight: "100%", background: "white", display: "flex", flexDirection: "column", minWidth: 0 }}>
-      <div className="sticky top-0 z-10 flex items-center justify-between px-6 py-3 bg-white border-b border-gray-200 shrink-0">
+      <div className="fixed top-0 left-0 right-0 z-20 flex items-center justify-between px-6 py-3 bg-white border-b border-gray-200 shrink-0">
         <div className="flex items-center gap-2">
           <span className="text-xs font-semibold text-gray-500 uppercase tracking-widest">Elevations</span>
           <span className="text-xs text-gray-400">{walls.filter(w => w.elevationImage).length} wall{walls.filter(w => w.elevationImage).length !== 1 ? "s" : ""}</span>
