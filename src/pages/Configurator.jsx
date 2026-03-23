@@ -74,6 +74,18 @@ export default function Configurator() {
   const [quoteOpen, setQuoteOpen] = useState(false);
   const [viewMode, setViewMode] = useState("2d");
   const [loadCounter, setLoadCounter] = useState(0);
+  const navBarRef = useRef(null);
+  const [navBarHeight, setNavBarHeight] = useState(0);
+
+  useEffect(() => {
+    if (!navBarRef.current) return;
+    const ro = new ResizeObserver(() => {
+      setNavBarHeight(navBarRef.current?.offsetHeight ?? 0);
+    });
+    ro.observe(navBarRef.current);
+    setNavBarHeight(navBarRef.current.offsetHeight);
+    return () => ro.disconnect();
+  }, [viewMode, isMobile]);
 
   // Load template from catalogue if set
   useEffect(() => {
