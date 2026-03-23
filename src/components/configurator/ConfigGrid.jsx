@@ -630,13 +630,13 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
         ref={gridRef}
         className="relative select-none"
         style={{
-          width: GRID_COLS * CELL_W,
-          height: GRID_ROWS * CELL_H,
+          width: GRID_COLS * scaledCellW,
+          height: GRID_ROWS * scaledCellH,
           backgroundImage: `
             linear-gradient(to right, #D1D5DB 1px, transparent 1px),
             linear-gradient(to bottom, #D1D5DB 1px, transparent 1px)
           `,
-          backgroundSize: `${CELL_W}px ${CELL_H}px`,
+          backgroundSize: `${scaledCellW}px ${scaledCellH}px`,
           backgroundColor: "#F5F5F3",
           border: "1.5px solid #D1D5DB",
         }}
