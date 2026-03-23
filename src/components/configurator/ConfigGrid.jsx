@@ -137,8 +137,8 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
     e.preventDefault();
     e.stopPropagation();
     const rect = gridRef.current.getBoundingClientRect();
-    const offsetX = e.clientX - rect.left - mod.x * CELL_W;
-    const offsetY = e.clientY - rect.top - mod.y * CELL_H;
+    const offsetX = e.clientX - rect.left - mod.x * scaledCellW;
+    const offsetY = e.clientY - rect.top - mod.y * scaledCellH;
     
     // If clicking on already-selected module, prepare to toggle; otherwise select just this one
     const newSelected = selected.has(mod.id) ? selected : new Set([mod.id]);
