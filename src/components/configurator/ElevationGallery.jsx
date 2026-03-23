@@ -191,6 +191,9 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
     const hasContent = endLeft || midWalls.length > 0 || endRight;
     if (!hasContent) return null;
 
+    // 400mm space at 100% zoom (100px/metre) = 40px
+    const spacingPx = Math.round((zoom / 100) * 40);
+
     return (
       <div className="flex flex-col gap-1">
         <div className="flex items-center gap-2" style={{ minWidth: "max-content" }}>
@@ -198,7 +201,7 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
         </div>
         <div className="flex items-center gap-2" style={{ minWidth: "max-content" }}>
           {endLeft && (
-            <div className="flex items-center shrink-0">
+            <div className="flex items-center shrink-0" style={{ marginRight: `${spacingPx}px` }}>
               <div className="flex flex-col items-center gap-0">
                 <ElevationImage wall={endLeft} label={endLeft.type || "End"} face={endLeft.face} tight />
                 <span className="text-[8px] text-gray-400 mt-0.5">Left</span>
@@ -213,7 +216,7 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
             ))}
           </div>
           {endRight && (
-            <div className="flex items-center shrink-0">
+            <div className="flex items-center shrink-0" style={{ marginLeft: `${spacingPx}px` }}>
               <div className="flex flex-col items-center gap-0">
                 <ElevationImage wall={endRight} label={endRight.type || "End"} face={endRight.face} tight />
                 <span className="text-[8px] text-gray-400 mt-0.5">Right</span>
