@@ -201,7 +201,7 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
         </div>
         <div className="flex items-center gap-2" style={{ minWidth: "max-content" }}>
           {endLeft && (
-            <div className="flex items-center shrink-0" style={{ marginRight: `${spacingPx}px` }}>
+            <div className="flex items-center shrink-0" style={{ marginRight: `${spacingPx}px`, marginTop: `${Math.round((zoom / 100) * 5)}px` }}>
               <div className="flex flex-col items-center gap-0">
                 <ElevationImage wall={endLeft} label={endLeft.type || "End"} face={endLeft.face} tight />
                 <span className="text-[8px] text-gray-400 mt-0.5">Left</span>
@@ -216,7 +216,7 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
             ))}
           </div>
           {endRight && (
-            <div className="flex items-center shrink-0" style={{ marginLeft: `${spacingPx}px` }}>
+            <div className="flex items-center shrink-0" style={{ marginLeft: `${spacingPx}px`, marginTop: `${Math.round((zoom / 100) * 5)}px` }}>
               <div className="flex flex-col items-center gap-0">
                 <ElevationImage wall={endRight} label={endRight.type || "End"} face={endRight.face} tight />
                 <span className="text-[8px] text-gray-400 mt-0.5">Right</span>
