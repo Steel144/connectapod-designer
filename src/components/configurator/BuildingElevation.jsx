@@ -33,7 +33,7 @@ export default function BuildingElevation({ walls = [], placedModules = [], stic
 
   const { minX, maxX, allMinY, allMaxY, wElevation, yElevation, zElevation, xElevation } = useElevationGeometry(placedModules, walls);
   
-  const slotOffset2Z = 0.08;
+  const slotOffset2Z = 0.12;
   const slotOffset3Z = 0;
   const slotOffset2X = 0;
   const slotOffset3X = 0;
