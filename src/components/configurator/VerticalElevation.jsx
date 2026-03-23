@@ -42,31 +42,31 @@ const VerticalElevation = memo(function VerticalElevation({
           <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 2, backgroundColor: "#374151", zIndex: 2 }} />
 
           {layers.map((layer) => {
-            const slotCount = layer.slots.length;
-            const slotWidthPx = slotCount > 0 ? Math.round(maxContentWidth / slotCount) : 0;
+             const slotCount = layer.slots.length;
+             const slotWidthPx = slotCount > 0 ? Math.round(maxContentWidth / slotCount) : 0;
 
-            return layer.slots.map((slot, si) => {
-              const compressionPx = Math.round(scale * 0.31 * PX_PER_M);
-              const baseLeftPx = slotWidthPx * si - (si > 0 ? compressionPx : 0);
-              const elevationNum = si + 1;
-              const extraOffsetPx = slotOffsets[elevationNum] ? Math.round(scale * slotOffsets[elevationNum] * PX_PER_M) : 0;
-              const leftPx = baseLeftPx + extraOffsetPx;
+             return layer.slots.map((slot, si) => {
+               const compressionPx = Math.round(scale * 0.31 * PX_PER_M);
+               const baseLeftPx = slotWidthPx * si - (si > 0 ? compressionPx : 0);
+               const elevationNum = si + 1;
+               const extraOffsetPx = slotOffsets[elevationNum] ? Math.round(scale * slotOffsets[elevationNum] * PX_PER_M) : 0;
+               const leftPx = baseLeftPx + extraOffsetPx;
 
-              const displayLabel = labelMap[elevationNum] || elevationNum;
-              return (
-                <ElevationSlot
-                  key={`${layer.colX}-${si}`}
-                  slot={slot}
-                  leftPx={leftPx}
-                  widthPx={slotWidthPx}
-                  heightPx={endElevationHPx}
-                  labelNum={displayLabel}
-                  objectFit="fill"
-                  showLabel={true}
-                />
-              );
-              });
-              })}
+               const displayLabel = labelMap[elevationNum] || elevationNum;
+               return (
+                 <ElevationSlot
+                   key={`${layer.colX}-${si}`}
+                   slot={slot}
+                   leftPx={leftPx}
+                   widthPx={slotWidthPx}
+                   heightPx={endElevationHPx}
+                   labelNum={displayLabel}
+                   objectFit="fill"
+                   showLabel={true}
+                 />
+               );
+             });
+           })}
         </div>
       </div>
     </div>
