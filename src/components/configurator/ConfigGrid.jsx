@@ -263,8 +263,8 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
 
           const SNAP_THRESHOLD = 1.5; // cells
           let snapped = null;
-          const cursorCellX = cursorX / CELL_W;
-          const cursorCellY = cursorY / CELL_H;
+          const cursorCellX = cursorX / scaledCellW;
+          const cursorCellY = cursorY / scaledCellH;
 
           if (wall.orientation === "horizontal") {
             let bestDist = Infinity;
