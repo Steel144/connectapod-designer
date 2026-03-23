@@ -800,6 +800,21 @@ export default function Configurator() {
             </div>
           </div>
 
+          {/* Zoom controls for 2D view on mobile */}
+          {viewMode === "2d" && (
+            <div className="flex border-t border-gray-100 bg-gray-50 px-3 py-2 gap-2">
+              <button onClick={() => setGridZoom(z => Math.max(25, z - 10))} title="Zoom out" className="p-1.5 text-gray-600 hover:text-[#F15A22] transition-all">
+                <ZoomOut size={14} />
+              </button>
+              <button onClick={() => setGridZoom(100)} title="Reset zoom" className="px-2 py-1 text-xs font-semibold text-gray-600 hover:text-[#F15A22] transition-all min-w-10 border border-gray-200 rounded-sm bg-white">
+                {gridZoom}%
+              </button>
+              <button onClick={() => setGridZoom(z => Math.min(300, z + 10))} title="Zoom in" className="p-1.5 text-gray-600 hover:text-[#F15A22] transition-all">
+                <ZoomIn size={14} />
+              </button>
+            </div>
+          )}
+
           {/* Mobile dropdown menu */}
           {mobileMenuOpen && (
             <div className="border-t border-gray-100 bg-white shadow-lg">
