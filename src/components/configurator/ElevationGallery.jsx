@@ -193,6 +193,8 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
 
     // 400mm space at 100% zoom (100px/metre) = 40px
     const spacingPx = Math.round((zoom / 100) * 40);
+    // 100mm offset at 100% zoom = 10px
+    const offsetPx = Math.round((zoom / 100) * 10);
 
     return (
       <div className="flex flex-col gap-1">
