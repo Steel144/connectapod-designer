@@ -248,8 +248,8 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
       const cursorY = draggingWall.cursorY - rect.top;
       const rawX = cursorX - draggingWall.offsetX;
       const rawY = cursorY - draggingWall.offsetY;
-      const exactX = rawX / CELL_W;
-      const exactY = rawY / CELL_H;
+      const exactX = rawX / scaledCellW;
+      const exactY = rawY / scaledCellH;
 
       // Only snap if the wall moved significantly (more than 0.1 cells)
       const movedX = Math.abs(exactX - draggingWall.wall.x);
