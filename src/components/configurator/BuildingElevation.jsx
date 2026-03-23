@@ -101,12 +101,12 @@ export default function BuildingElevation({ walls = [], placedModules = [], stic
       {showHeader && <div style={{ height: stickyTop + zoomBarHeight }} />}
 
       <div
-        className="relative select-none bg-gray-50 overflow-x-auto overflow-y-hidden"
+        className="relative select-none bg-gray-50 overflow-auto"
         style={{ minHeight: "500px" }}
         ref={containerRef}
         onScroll={handleScroll}
       >
-        <div ref={contentRef} style={{ padding: "40px", paddingLeft: "2400px", paddingRight: "1800px", display: "inline-block", minWidth: "max-content" }}>
+        <div ref={contentRef} style={{ padding: "40px", paddingLeft: "2400px", paddingRight: "1800px", display: "block", minWidth: "max-content" }}>
           <div style={{ display: "inline-block", marginBottom: "40px", verticalAlign: "top" }}>
             <div style={{ display: "inline-block", marginRight: "16px", verticalAlign: "top" }}>
               <VerticalElevation 
