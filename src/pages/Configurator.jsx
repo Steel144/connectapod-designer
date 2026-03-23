@@ -853,9 +853,9 @@ export default function Configurator() {
       )}
 
       {/* ── WORKSPACE ── */}
-      <div className={`flex-1 relative ${isMobile ? "pt-12" : "pt-16"}`} style={{ overflow: "hidden" }}>
+      <div className={`flex-1 relative overflow-auto ${isMobile ? "pt-12" : "pt-16"}`}>
         {viewMode === "elevations" ? (
-          <div className="w-full h-full overflow-auto">
+          <div className="flex flex-col">
             <div style={{ minWidth: 0, background: "#f9fafb" }}>
               <BuildingElevation walls={walls} placedModules={placedModules} stickyTop={navBarHeight} showHeader={false} />
             </div>
