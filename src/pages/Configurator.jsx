@@ -850,15 +850,16 @@ export default function Configurator() {
       )}
 
       {/* ── WORKSPACE ── */}
-      <div className={`${viewMode === "building" ? "relative flex" : "flex-1 relative flex min-h-0"} ${viewMode !== "building" ? (isMobile ? "pt-12" : "pt-16") : ""}`}>
+      <div className={`flex-1 relative flex flex-col min-h-0 ${isMobile ? "pt-12" : "pt-16"}`}>
         {viewMode === "elevations" ? (
-          <div style={{ flex: 1, minWidth: 0, overflow: "auto", zIndex: 10 }}>
-            <ElevationGallery walls={walls} placedModules={placedModules} onWallSelect={setSelectedWall} customWalls={customWalls} />
-          </div>
-        ) : viewMode === "building" ? (
-          <div style={{ flex: 1, minWidth: 0, zIndex: 10, paddingBottom: isMobile ? "64px" : "0px", overflowX: "auto" }}>
-            <BuildingElevation walls={walls} placedModules={placedModules} stickyTop={navBarHeight} />
-          </div>
+          <>
+            <div style={{ flex: 1, minWidth: 0, overflow: "auto", zIndex: 10 }}>
+              <ElevationGallery walls={walls} placedModules={placedModules} onWallSelect={setSelectedWall} customWalls={customWalls} />
+            </div>
+            <div style={{ flex: 1, minWidth: 0, borderTop: "1px solid #e5e7eb", overflowX: "auto", background: "#f9fafb" }}>
+              <BuildingElevation walls={walls} placedModules={placedModules} stickyTop={navBarHeight} />
+            </div>
+          </>
         ) : (
           <ConfigGrid
              placedModules={placedModules}
@@ -880,7 +881,7 @@ export default function Configurator() {
              floorPlanImages={floorPlanImages}
              wallImages={wallImages}
              zoom={gridZoom}
-           />
+            />
         )}
       </div>
 
