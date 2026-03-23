@@ -243,8 +243,8 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
           <button onClick={() => adjustZoom(1)} disabled={zoom >= zoomLevels[zoomLevels.length - 1]} className="p-1.5 rounded hover:bg-white hover:shadow-sm transition-all text-gray-500 hover:text-gray-800 disabled:opacity-30 disabled:cursor-not-allowed" title="Zoom in">
             <ZoomIn size={15} />
           </button>
-          <button onClick={fitToPage} className="p-1.5 rounded hover:bg-white hover:shadow-sm transition-all text-gray-500 hover:text-gray-800" title="Fit to page">
-            <Maximize size={15} />
+          <button onClick={() => { setZoom(50); }} className="p-1.5 rounded hover:bg-white hover:shadow-sm transition-all text-gray-500 hover:text-gray-800" title="Reset zoom">
+            <Maximize2 size={15} />
           </button>
         </div>
       </div>
