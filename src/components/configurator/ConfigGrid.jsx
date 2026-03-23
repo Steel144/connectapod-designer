@@ -679,10 +679,10 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
               onMouseLeave={() => setHoveredModuleId(null)}
               className="absolute group cursor-grab active:cursor-grabbing"
               style={{
-                left: mod.x * CELL_W,
-                top: mod.y * CELL_H,
-                width: mod.w * CELL_W,
-                height: mod.h * CELL_H,
+                left: mod.x * scaledCellW,
+                top: mod.y * scaledCellH,
+                width: mod.w * scaledCellW,
+                height: mod.h * scaledCellH,
                 opacity: isDragging ? 0 : 1,
                 userSelect: "none",
                 border: isSelected ? "3px solid #4F46E5" : "none",
