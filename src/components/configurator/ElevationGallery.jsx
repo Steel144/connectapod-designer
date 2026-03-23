@@ -250,26 +250,10 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
       </div>
 
       <div
-        className="flex-1 overflow-auto relative select-none bg-gray-50"
-        style={{ cursor: "grab" }}
-        ref={(el) => {
-          containerRef.current = el;
-          if (el && !el._wheelListenerAdded) {
-            el._wheelListenerAdded = true;
-            el.addEventListener('wheel', (e) => {
-              if (e.ctrlKey || e.metaKey) {
-                e.preventDefault();
-                adjustZoom(e.deltaY < 0 ? 1 : -1);
-              }
-            }, { passive: false });
-          }
-        }}
-        onMouseDown={handleCanvasMouseDown}
-        onMouseMove={handleCanvasMouseMove}
-        onMouseUp={handleCanvasMouseUp}
-        onMouseLeave={handleCanvasMouseUp}
+        className="flex-1 overflow-auto bg-gray-50"
+        ref={containerRef}
       >
-        <div ref={contentRef} style={{ transform: `translate(${pan.x}px, ${pan.y}px)`, position: "relative", display: "flex", flexDirection: "column", gap: 0, width: "max-content", minWidth: "max-content", padding: "40px" }}>
+        <div ref={contentRef} style={{ display: "inline-block", minWidth: "max-content", padding: "40px" }}>
           <div className="flex flex-col" style={{ gap: `${Math.round((zoom / 100) * 48)}px` }}>
             {pavilions.filter(Boolean).map((pav) => (
               <div key={pav.pavilionNum} className="flex flex-col" style={{ gap: `${Math.round((zoom / 100) * 64)}px` }}>
