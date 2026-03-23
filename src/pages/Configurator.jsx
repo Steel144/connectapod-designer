@@ -747,6 +747,10 @@ export default function Configurator() {
               <button onClick={() => setViewMode("building")} className={`flex items-center gap-1.5 px-3 py-1.5 text-xs transition-all ${viewMode === "building" ? "bg-[#F15A22] text-white" : "bg-white text-gray-600 hover:text-[#F15A22]"}`} style={{ clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 50%, calc(100% - 6px) 100%, 0 100%)" }}>
                 <Box size={13} /> Building
               </button>
+              <button onClick={() => setSaveModalOpen(true)} disabled={placedModules.length === 0 || saveMutation.isPending} className={`flex items-center gap-1.5 px-3 py-1.5 text-xs transition-all ${placedModules.length === 0 || saveMutation.isPending ? "bg-white text-gray-600 opacity-40" : "bg-[#F15A22] text-white hover:bg-[#d94e1a]"}`} style={{ clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 50%, calc(100% - 6px) 100%, 0 100%)" }}>
+                <Save size={13} /> {saveMutation.isPending ? "Saving…" : "Save"}
+              </button>
+              <PrintMenu placedModules={placedModules} walls={walls} onPrint={setPrintMode} />
             </div>
             <button onClick={handleUndo} disabled={history.length === 0} title="Undo (Ctrl+Z)" className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-gray-600 bg-white border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22] disabled:opacity-30 transition-all" style={{ clipPath: "polygon(0 0, calc(100% - 8px) 0, 100% 50%, calc(100% - 8px) 100%, 0 100%)" }}>
               <Undo2 size={13} /> Undo {history.length > 0 && <span className="text-[10px] text-gray-400">({history.length})</span>}
@@ -768,10 +772,6 @@ export default function Configurator() {
                 <ZoomIn size={13} />
               </button>
             </div>
-            <button onClick={() => setSaveModalOpen(true)} disabled={placedModules.length === 0 || saveMutation.isPending} className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-[#F15A22] text-white hover:bg-[#d94e1a] disabled:opacity-40 transition-all" style={{ clipPath: "polygon(0 0, calc(100% - 8px) 0, 100% 50%, calc(100% - 8px) 100%, 0 100%)" }}>
-              <Save size={13} /> {saveMutation.isPending ? "Saving…" : "Save Design"}
-            </button>
-            <PrintMenu placedModules={placedModules} walls={walls} onPrint={setPrintMode} />
             {placedModules.length > 0 && (
               <button onClick={handleClear} className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-gray-500 bg-white border border-gray-200 hover:border-red-300 hover:text-red-500 transition-all">
                 <Trash2 size={13} /> Clear
