@@ -16,19 +16,23 @@ const getPavilion = (moduleY) => {
   return null;
 };
 
-export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, onRotate, onFlip, walls = [], wallTypes = [], onPlaceWall, onRemoveWall, onFlipWall, onMoveWall, onWallSelect, onModuleSelect, hidden = false, customModules = [], floorPlanImages = {} }) {
-  const gridRef = useRef(null);
-  const scrollRef = useRef(null);
+export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, onRotate, onFlip, walls = [], wallTypes = [], onPlaceWall, onRemoveWall, onFlipWall, onMoveWall, onWallSelect, onModuleSelect, hidden = false, customModules = [], floorPlanImages = {}, zoom = 100 }) {
+   const gridRef = useRef(null);
+   const scrollRef = useRef(null);
 
-  // Calculate dynamic pavilion spacing based on connection module width
-  const getConnectionModuleWidth = () => {
-    const midpoint = GRID_ROWS / 2;
-    const centerModules = placedModules.filter(m => m.y >= midpoint - 4 && m.y < midpoint + 4);
-    if (centerModules.length === 0) return 0;
-    const centerLeft = Math.min(...centerModules.map(m => m.x));
-    const centerRight = Math.max(...centerModules.map(m => m.x + m.w));
-    return centerRight - centerLeft;
-  };
+   // Calculate scaled cell size based on zoom
+   const scaledCellW = CELL_W * (zoom / 100);
+   const scaledCellH = CELL_H * (zoom / 100);
+
+   // Calculate dynamic pavilion spacing based on connection module width
+   const getConnectionModuleWidth = () => {
+     const midpoint = GRID_ROWS / 2;
+     const centerModules = placedModules.filter(m => m.y >= midpoint - 4 && m.y < midpoint + 4);
+     if (centerModules.length === 0) return 0;
+     const centerLeft = Math.min(...centerModules.map(m => m.x));
+     const centerRight = Math.max(...centerModules.map(m => m.x + m.w));
+     return centerRight - centerLeft;
+   };
 
   const connectionWidth = getConnectionModuleWidth();
   // Pavilion spacing: 4.2m = 7 cells (4.2 / 0.6)
