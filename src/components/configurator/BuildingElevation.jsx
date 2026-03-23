@@ -101,7 +101,7 @@ export default function BuildingElevation({ walls = [], placedModules = [], stic
       {showHeader && <div style={{ height: stickyTop + zoomBarHeight }} />}
 
       <div
-        className="relative select-none bg-gray-50 overflow-auto"
+        className="relative select-none bg-gray-50 overflow-x-auto overflow-y-hidden"
         style={{ minHeight: "500px" }}
         ref={containerRef}
         onScroll={handleScroll}
