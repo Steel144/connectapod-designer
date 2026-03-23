@@ -12,6 +12,7 @@ const VerticalElevation = memo(function VerticalElevation({
   PX_PER_M,
   WALL_H_M,
   slotOffsets = {},
+  slotScales = {},
   labelMap = {}
 }) {
   if (layers.length === 0) return null;
