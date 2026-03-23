@@ -183,7 +183,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
   const onMouseMove = useCallback((e) => {
     if (selectionBox) {
       const rect = gridRef.current.getBoundingClientRect();
-      setSelectionBox((b) => ({ ...b, cursorX: e.clientX - rect.left, cursorY: e.clientY - rect.top }));
+      setSelectionBox((b) => ({ ...b, cursorX: (e.clientX - rect.left) / (zoom / 100), cursorY: (e.clientY - rect.top) / (zoom / 100) }));
       return;
     }
     if (draggingWall) {
