@@ -949,7 +949,7 @@ export default function Configurator() {
       {/* ── MOBILE BOTTOM DRAWER — Module Library ── */}
       {isMobile && (
         <div
-          className="absolute bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-200 shadow-2xl transition-all duration-300"
+          className={`${viewMode === "building" ? "fixed" : "absolute"} bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-200 shadow-2xl transition-all duration-300`}
           style={{ height: mobileDrawerOpen ? "65vh" : "48px" }}
         >
           {/* Drawer handle / toggle */}
