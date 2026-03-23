@@ -88,7 +88,8 @@ export default function PrintableElevationsSheet({ walls = [], placedModules = [
            const xWall = walls.find(w => w.face === "X" && modsAtY.some(mod => Math.abs(w.y - mod.y) < 0.5 && Math.abs(w.x - (mod.x + mod.w - 0.31)) < 0.5)) || null;
 
            if (isConnectionModule) {
-             rows.push({ type: "Z-X", yPos, zWall, midWalls: [], xWall });
+             rows.push({ type: "Z", yPos, zWall, midWalls: [], xWall: null });
+             rows.push({ type: "X", yPos, zWall: null, midWalls: [], xWall });
            } else {
              const yFaceWalls = modsAtY.map(mod => findWall(mod, "Y") || makePlaceholder(mod, "Y"));
              const wFaceWalls = modsAtY.map(mod => findWall(mod, "W") || makePlaceholder(mod, "W"));
