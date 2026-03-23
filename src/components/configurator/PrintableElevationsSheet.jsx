@@ -77,21 +77,26 @@ export default function PrintableElevationsSheet({ walls = [], placedModules = [
       });
 
       const rows = [];
-      Object.keys(yRows)
-        .map(Number)
-        .sort((a, b) => a - b)
-        .forEach(yPos => {
-          const modsAtY = yRows[yPos].sort((a, b) => a.x - b.x);
+       const isConnectionModule = pavNum === 2;
+       Object.keys(yRows)
+         .map(Number)
+         .sort((a, b) => a - b)
+         .forEach(yPos => {
+           const modsAtY = yRows[yPos].sort((a, b) => a.x - b.x);
 
-          const yFaceWalls = modsAtY.map(mod => findWall(mod, "Y") || makePlaceholder(mod, "Y"));
-          const wFaceWalls = modsAtY.map(mod => findWall(mod, "W") || makePlaceholder(mod, "W"));
+           const zWall = walls.find(w => w.face === "Z" && modsAtY.some(mod => Math.abs(w.y - mod.y) < 0.5 && Math.abs(w.x - mod.x) < 0.5)) || null;
+           const xWall = walls.find(w => w.face === "X" && modsAtY.some(mod => Math.abs(w.y - mod.y) < 0.5 && Math.abs(w.x - (mod.x + mod.w - 0.31)) < 0.5)) || null;
 
-          const zWall = walls.find(w => w.face === "Z" && modsAtY.some(mod => Math.abs(w.y - mod.y) < 0.5 && Math.abs(w.x - mod.x) < 0.5)) || null;
-          const xWall = walls.find(w => w.face === "X" && modsAtY.some(mod => Math.abs(w.y - mod.y) < 0.5 && Math.abs(w.x - (mod.x + mod.w - 0.31)) < 0.5)) || null;
+           if (isConnectionModule) {
+             rows.push({ type: "Z-X", yPos, zWall, midWalls: [], xWall });
+           } else {
+             const yFaceWalls = modsAtY.map(mod => findWall(mod, "Y") || makePlaceholder(mod, "Y"));
+             const wFaceWalls = modsAtY.map(mod => findWall(mod, "W") || makePlaceholder(mod, "W"));
 
-          rows.push({ type: "Y", yPos, zWall, midWalls: yFaceWalls, xWall });
-          rows.push({ type: "W", yPos, zWall, midWalls: wFaceWalls, xWall });
-        });
+             rows.push({ type: "Y", yPos, zWall, midWalls: yFaceWalls, xWall });
+             rows.push({ type: "W", yPos, zWall, midWalls: wFaceWalls, xWall });
+           }
+         });
 
       return { pavilionNum: pavNum, rows };
     });
