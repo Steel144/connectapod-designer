@@ -111,8 +111,8 @@ export default function BuildingElevation({ walls = [], placedModules = [], stic
               CELL_M={CELL_M}
               PX_PER_M={PX_PER_M}
               WALL_H_M={WALL_H_M}
-              slotOffsets={{ 2: slotOffset2Z, 3: slotOffset3Z }}
-              labelMap={labelMapZ}
+              slotOffsets={{ 1: slotOffset1Z, 2: slotOffset2Z, 3: slotOffset3Z }}
+               labelMap={labelMapZ}
             />
             <VerticalElevation 
               layers={xElevation} 
