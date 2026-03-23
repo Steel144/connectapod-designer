@@ -777,12 +777,12 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
         {walls.map((wall) => {
            const isBeingDragged = draggingWall?.wall.id === wall.id;
            const isSelected = selectedWallIds.has(wall.id);
-           const wallW = wall.orientation === "horizontal" ? wall.length * CELL_W : wall.thickness * CELL_W;
-           const wallH = wall.orientation === "vertical" ? wall.length * CELL_H : wall.thickness * CELL_H;
+           const wallW = wall.orientation === "horizontal" ? wall.length * scaledCellW : wall.thickness * scaledCellW;
+           const wallH = wall.orientation === "vertical" ? wall.length * scaledCellH : wall.thickness * scaledCellH;
 
            // Ghost position while dragging
-           let ghostLeft = wall.x * CELL_W;
-           let ghostTop = wall.y * CELL_H;
+           let ghostLeft = wall.x * scaledCellW;
+           let ghostTop = wall.y * scaledCellH;
            if (isBeingDragged && gridRef.current) {
              const rect = gridRef.current.getBoundingClientRect();
              ghostLeft = Math.max(0, (draggingWall.cursorX - rect.left - draggingWall.offsetX));
@@ -790,7 +790,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
            }
 
            return (
-             <div key={wall.id} className="group absolute" style={{ left: wall.x * CELL_W, top: wall.y * CELL_H, width: wallW, height: wallH }} onMouseEnter={() => setHoveredWallId(wall.id)} onMouseLeave={() => setHoveredWallId(null)}>
+             <div key={wall.id} className="group absolute" style={{ left: wall.x * scaledCellW, top: wall.y * scaledCellH, width: wallW, height: wallH }} onMouseEnter={() => setHoveredWallId(wall.id)} onMouseLeave={() => setHoveredWallId(null)}>
                <div
                   onMouseDown={(e) => {
                     if (e.target.closest("button")) return;
