@@ -65,8 +65,8 @@ const VerticalElevation = memo(function VerticalElevation({
                   showLabel={true}
                 />
               );
-            })
-          )}
+              });
+              })}
         </div>
       </div>
     </div>
