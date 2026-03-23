@@ -74,61 +74,53 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
 
       >
         <div style={{ padding: "40px", display: "inline-flex", flexDirection: "column", gap: 48, minWidth: "max-content" }}>
-          <div style={{ maxHeight: "600px", overflow: "auto", overflowX: "hidden" }}>
-            <HorizontalElevation 
-              layers={wElevation} 
-              label="W — North Elevation" 
-              color="#22c55e"
-              totalWidthPx={totalWidthPx}
-              wallHPx={wallHPx}
-              scale={scale}
-              CELL_M={CELL_M}
-              PX_PER_M={PX_PER_M}
-            />
-          </div>
-          <div style={{ maxHeight: "600px", overflow: "auto", overflowX: "hidden" }}>
-            <HorizontalElevation 
-              layers={yElevation} 
-              label="Y — South Elevation" 
-              color="#3b82f6"
-              totalWidthPx={totalWidthPx}
-              wallHPx={wallHPx}
-              scale={scale}
-              CELL_M={CELL_M}
-              PX_PER_M={PX_PER_M}
-            />
-          </div>
+          <HorizontalElevation 
+            layers={wElevation} 
+            label="W — North Elevation" 
+            color="#22c55e"
+            totalWidthPx={totalWidthPx}
+            wallHPx={wallHPx}
+            scale={scale}
+            CELL_M={CELL_M}
+            PX_PER_M={PX_PER_M}
+          />
+          <HorizontalElevation 
+            layers={yElevation} 
+            label="Y — South Elevation" 
+            color="#3b82f6"
+            totalWidthPx={totalWidthPx}
+            wallHPx={wallHPx}
+            scale={scale}
+            CELL_M={CELL_M}
+            PX_PER_M={PX_PER_M}
+          />
           <div style={{ display: "flex", gap: 48, flexDirection: "row", width: "max-content", flexWrap: "nowrap" }}>
-            <div style={{ maxHeight: "600px", overflow: "visible", flex: "0 0 auto" }}>
-              <VerticalElevation 
-                layers={zElevation} 
-                label="Z — West Elevation" 
-                color="#f59e0b"
-                totalDepthCells={totalDepthCells}
-                endElevationHPx={endElevationHPx}
-                scale={scale}
-                CELL_M={CELL_M}
-                PX_PER_M={PX_PER_M}
-                WALL_H_M={WALL_H_M}
-                slotOffsets={{ 2: slotOffset2Z, 3: slotOffset3Z }}
-                labelMap={labelMapZ}
-              />
-            </div>
-            <div style={{ maxHeight: "600px", overflow: "visible", flex: "0 0 auto", marginLeft: -1 }}>
-              <VerticalElevation 
-                layers={xElevation} 
-                label="X — East Elevation" 
-                color="#ef4444"
-                totalDepthCells={totalDepthCells}
-                endElevationHPx={endElevationHPx}
-                scale={scale}
-                CELL_M={CELL_M}
-                PX_PER_M={PX_PER_M}
-                WALL_H_M={WALL_H_M}
-                slotOffsets={{ 2: slotOffset2X, 3: slotOffset3X }}
-                labelMap={labelMapX}
-              />
-            </div>
+            <VerticalElevation 
+              layers={zElevation} 
+              label="Z — West Elevation" 
+              color="#f59e0b"
+              totalDepthCells={totalDepthCells}
+              endElevationHPx={endElevationHPx}
+              scale={scale}
+              CELL_M={CELL_M}
+              PX_PER_M={PX_PER_M}
+              WALL_H_M={WALL_H_M}
+              slotOffsets={{ 2: slotOffset2Z, 3: slotOffset3Z }}
+              labelMap={labelMapZ}
+            />
+            <VerticalElevation 
+              layers={xElevation} 
+              label="X — East Elevation" 
+              color="#ef4444"
+              totalDepthCells={totalDepthCells}
+              endElevationHPx={endElevationHPx}
+              scale={scale}
+              CELL_M={CELL_M}
+              PX_PER_M={PX_PER_M}
+              WALL_H_M={WALL_H_M}
+              slotOffsets={{ 2: slotOffset2X, 3: slotOffset3X }}
+              labelMap={labelMapX}
+            />
           </div>
         </div>
       </div>
