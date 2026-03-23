@@ -524,8 +524,8 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
       if (selected.size === 0) return;
       
       const rect = gridRef.current.getBoundingClientRect();
-      const exactX = (e.clientX - rect.left) / CELL_W;
-      const exactY = (e.clientY - rect.top) / CELL_H;
+      const exactX = (e.clientX - rect.left) / scaledCellW;
+      const exactY = (e.clientY - rect.top) / scaledCellH;
       const SNAP_THRESHOLD = 0.8; // cells — tight enough to avoid adjacent modules
       
       let snapped = null;
