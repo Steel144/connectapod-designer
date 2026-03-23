@@ -747,7 +747,7 @@ export default function Configurator() {
 
       {/* ── MOBILE TOP BAR ── */}
       {isMobile && (
-        <div className={`${viewMode === "building" ? "sticky" : "absolute"} top-0 left-0 right-0 z-30 bg-white border-b border-gray-200 shadow-sm`}>
+        <div className={`${viewMode === "building" ? "fixed" : "absolute"} top-0 left-0 right-0 z-30 bg-white border-b border-gray-200 shadow-sm`}>
           <div className="flex items-center px-3 py-2 gap-2">
             <img src="https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/1a43e85d2_Connectapod-01.png" alt="connectapod" style={{ height: "22px", width: "auto" }} />
             {/* View switcher */}
