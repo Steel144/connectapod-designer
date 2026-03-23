@@ -822,7 +822,7 @@ export default function Configurator() {
           </div>
         ) : viewMode === "building" ? (
           <div style={{ flex: 1, minWidth: 0, zIndex: 10, paddingBottom: isMobile ? "64px" : "0px" }}>
-            <BuildingElevation walls={walls} placedModules={placedModules} />
+            <BuildingElevation walls={walls} placedModules={placedModules} stickyTop={navBarHeight} />
           </div>
         ) : (
           <ConfigGrid
