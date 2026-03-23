@@ -855,14 +855,7 @@ export default function Configurator() {
       {/* ── WORKSPACE ── */}
       <div className={`flex-1 relative overflow-auto ${isMobile ? "pt-12" : "pt-16"}`}>
         {viewMode === "elevations" ? (
-          <div className="flex flex-col">
-            <div style={{ minWidth: 0, background: "#f9fafb" }}>
-              <BuildingElevation walls={walls} placedModules={placedModules} stickyTop={navBarHeight} showHeader={false} />
-            </div>
-            <div style={{ minWidth: 0, borderTop: "1px solid #e5e7eb" }}>
-              <ElevationGallery walls={walls} placedModules={placedModules} onWallSelect={setSelectedWall} customWalls={customWalls} />
-            </div>
-          </div>
+          <CombinedElevations walls={walls} placedModules={placedModules} stickyTop={navBarHeight} showHeader={true} />
         ) : (
           <div style={{ display: "flex", height: "100%" }}>
             <ConfigGrid
