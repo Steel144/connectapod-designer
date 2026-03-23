@@ -156,7 +156,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
     setSelectedModId(null);
     setSelectedWallIds(new Set());
     const rect = gridRef.current.getBoundingClientRect();
-    setSelectionBox({ startX: e.clientX - rect.left, startY: e.clientY - rect.top, cursorX: e.clientX - rect.left, cursorY: e.clientY - rect.top });
+    setSelectionBox({ startX: (e.clientX - rect.left) / (zoom / 100), startY: (e.clientY - rect.top) / (zoom / 100), cursorX: (e.clientX - rect.left) / (zoom / 100), cursorY: (e.clientY - rect.top) / (zoom / 100) });
   };
 
   const startDragNew = (e, mod) => {
