@@ -106,7 +106,7 @@ export default function BuildingElevation({ walls = [], placedModules = [], stic
         ref={containerRef}
         onScroll={handleScroll}
       >
-        <div ref={contentRef} style={{ padding: "40px", paddingLeft: "2400px", paddingRight: "1800px", display: "block" }}>
+        <div ref={contentRef} style={{ padding: "40px", paddingLeft: "2400px", paddingRight: "1800px", display: "inline-block", minWidth: "max-content" }}>
           <div style={{ display: "inline-block", marginBottom: "40px", verticalAlign: "top" }}>
             <div style={{ display: "inline-block", marginRight: "16px", verticalAlign: "top" }}>
               <VerticalElevation 
