@@ -29,7 +29,7 @@ export default function BuildingElevation({ walls = [], placedModules = [], stic
   const scale = zoom / 100;
   const wallHPx = Math.round(scale * WALL_H_M * PX_PER_M);
   const hasConnectionModules = placedModules.some(m => m.chassis === "C" || (m.y >= 18 && m.y < 21 && m.h <= 2));
-  const endElevationHPx = hasConnectionModules ? Math.round(wallHPx * 0.88) : wallHPx;
+  const endElevationHPx = wallHPx;
 
   const { minX, maxX, allMinY, allMaxY, wElevation, yElevation, zElevation, xElevation } = useElevationGeometry(placedModules, walls);
   
