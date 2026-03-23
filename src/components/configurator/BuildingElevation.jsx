@@ -79,8 +79,8 @@ export default function BuildingElevation({ walls = [], placedModules = [], stic
       {showHeader && <div style={{ height: stickyTop + zoomBarHeight }} />}
 
       <div
-        className="relative select-none bg-gray-50"
-
+        className="relative select-none bg-gray-50 overflow-x-auto"
+        style={{ minHeight: "500px" }}
       >
         <div style={{ padding: "40px", display: "inline-flex", flexDirection: "column", gap: 40, minWidth: "max-content" }}>
           <div style={{ display: "flex", gap: 40, flexDirection: "row", width: "max-content", flexWrap: "nowrap" }}>
