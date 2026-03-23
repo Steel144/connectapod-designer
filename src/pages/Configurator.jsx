@@ -53,6 +53,10 @@ export default function Configurator() {
   const [saveModalOpen, setSaveModalOpen] = useState(false);
   const [showSaved, setShowSaved] = useState(false);
 
+  const isMobile = useIsMobile();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
+
   const [panelCollapsed, setPanelCollapsed] = useState(false);
   const [panelPos, setPanelPos] = useState({ x: 16, y: 60 });
   const [draggingPanel, setDraggingPanel] = useState(null);
