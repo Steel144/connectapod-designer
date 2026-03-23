@@ -24,26 +24,7 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
     }
   };
 
-  const handleMouseDown = useCallback((e) => {
-    if (e.button !== 0) return;
-    isPanning.current = true;
-    panStart.current = { x: e.clientX, y: e.clientY };
-    panOrigin.current = { ...pan };
-    e.currentTarget.style.cursor = "grabbing";
-  }, [pan]);
 
-  const handleMouseMove = useCallback((e) => {
-    if (!isPanning.current) return;
-    setPan({
-      x: panOrigin.current.x + (e.clientX - panStart.current.x),
-      y: panOrigin.current.y + (e.clientY - panStart.current.y),
-    });
-  }, []);
-
-  const handleMouseUp = useCallback((e) => {
-    isPanning.current = false;
-    if (e.currentTarget) e.currentTarget.style.cursor = "grab";
-  }, []);
 
   const scale = zoom / 100;
   const wallHPx = Math.round(scale * WALL_H_M * PX_PER_M);
