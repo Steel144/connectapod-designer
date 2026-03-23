@@ -731,9 +731,23 @@ export default function Configurator() {
                 <Box size={13} /> Building
               </button>
             </div>
-            <Link to={createPageUrl("DesignCatalogue")} className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-white bg-[#F15A22] hover:bg-[#d94e1a] border border-[#F15A22] transition-all">
-              <LayoutTemplate size={13} /> Design Catalogue
-            </Link>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-gray-600 bg-white border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22] transition-all">
+                  <LayoutTemplate size={13} /> Plans
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start">
+                <DropdownMenuItem asChild>
+                  <Link to={createPageUrl("DesignCatalogue")} className="flex items-center gap-2 cursor-pointer">
+                    <LayoutTemplate size={13} /> Design Catalogue
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setShowSaved(true)}>
+                  <FolderOpen size={13} /> My Designs {designs.length > 0 && `(${designs.length})`}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
             <button onClick={handleUndo} disabled={history.length === 0} title="Undo (Ctrl+Z)" className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-gray-600 bg-white border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22] disabled:opacity-30 transition-all">
               <Undo2 size={13} /> Undo {history.length > 0 && <span className="text-[10px] text-gray-400">({history.length})</span>}
             </button>
@@ -743,10 +757,6 @@ export default function Configurator() {
             <Link to={createPageUrl("WallCatalogue")} className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-gray-600 hover:text-[#F15A22] border border-gray-200 bg-white hover:border-[#F15A22] transition-all">
               <BookOpen size={13} /> Wall Catalogue
             </Link>
-            <button onClick={() => setShowSaved(!showSaved)} className={`flex items-center gap-1.5 px-3 py-1.5 text-xs border transition-all ${showSaved ? "bg-[#F15A22] text-white border-[#F15A22]" : "text-gray-600 bg-white border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22]"}`}>
-              <FolderOpen size={13} /> My Designs
-              {designs.length > 0 && <span className={`ml-0.5 rounded-full px-1.5 text-[10px] font-bold ${showSaved ? "bg-white/30 text-white" : "bg-gray-100 text-gray-600"}`}>{designs.length}</span>}
-            </button>
             <div className="flex border border-gray-200 overflow-hidden">
               <button onClick={() => setGridZoom(z => Math.max(25, z - 10))} title="Zoom out" className="px-2.5 py-1.5 text-xs text-gray-600 hover:text-[#F15A22] transition-all">
                 <ZoomOut size={13} />
