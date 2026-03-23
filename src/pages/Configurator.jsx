@@ -722,7 +722,7 @@ export default function Configurator() {
           <div className="flex items-center gap-2 ml-auto shrink-0">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-[#F15A22] text-white hover:bg-[#d94e1a] transition-all">
+                <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-[#F15A22] text-white hover:bg-[#d94e1a] transition-all" style={{ clipPath: "polygon(0 0, calc(100% - 8px) 0, 100% 50%, calc(100% - 8px) 100%, 0 100%)" }}>
                   <LayoutTemplate size={13} /> Design Catalogue
                 </button>
               </DropdownMenuTrigger>
@@ -732,7 +732,7 @@ export default function Configurator() {
                     <LayoutTemplate size={13} /> Starter Designs
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setShowSaved(true)}>
+                <DropdownMenuItem onClick={() => { setShowSaved(true); setViewMode("2d"); }}>
                   <FolderOpen size={13} /> My Designs {designs.length > 0 && `(${designs.length})`}
                 </DropdownMenuItem>
               </DropdownMenuContent>
