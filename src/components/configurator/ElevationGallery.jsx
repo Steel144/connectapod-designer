@@ -29,7 +29,7 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
 
    const zoomLevels = [20, 25, 37, 50, 62, 75, 100, 125, 150, 200, 300];
 
-   React.useEffect(() => {
+   useEffect(() => {
      if (!centeredRef.current && containerRef.current && contentRef.current) {
        setTimeout(() => {
          const scrollWidth = contentRef.current.scrollWidth;
@@ -38,7 +38,7 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
          centeredRef.current = true;
        }, 0);
      }
-   }, [pavilions]);
+   }, []);
 
   const adjustZoom = (delta) => {
     if (delta > 0) {
