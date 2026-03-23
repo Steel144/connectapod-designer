@@ -765,17 +765,31 @@ export default function Configurator() {
           <div className="flex items-center px-3 py-2 gap-2">
             <img src="https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/1a43e85d2_Connectapod-01.png" alt="connectapod" style={{ height: "22px", width: "auto" }} />
             {/* View switcher */}
-            <div className="flex border border-gray-200 overflow-hidden ml-2">
-              <button onClick={() => setViewMode("2d")} className={`px-2.5 py-1.5 text-xs transition-all ${viewMode === "2d" ? "bg-[#F15A22] text-white" : "bg-white text-gray-600"}`}>
-                <Grid2X2 size={14} />
-              </button>
-              <button onClick={() => setViewMode("elevations")} className={`px-2.5 py-1.5 text-xs transition-all ${viewMode === "elevations" ? "bg-[#F15A22] text-white" : "bg-white text-gray-600"}`}>
-                <Image size={14} />
-              </button>
-              <button onClick={() => setViewMode("building")} className={`px-2.5 py-1.5 text-xs transition-all ${viewMode === "building" ? "bg-[#F15A22] text-white" : "bg-white text-gray-600"}`}>
-                <Box size={14} />
-              </button>
-            </div>
+              <div className="flex border border-gray-200 overflow-hidden ml-2">
+                <button onClick={() => setViewMode("2d")} className={`px-2.5 py-1.5 text-xs transition-all ${viewMode === "2d" ? "bg-[#F15A22] text-white" : "bg-white text-gray-600"}`}>
+                  <Grid2X2 size={14} />
+                </button>
+                <button onClick={() => setViewMode("elevations")} className={`px-2.5 py-1.5 text-xs transition-all ${viewMode === "elevations" ? "bg-[#F15A22] text-white" : "bg-white text-gray-600"}`}>
+                  <Image size={14} />
+                </button>
+                <button onClick={() => setViewMode("building")} className={`px-2.5 py-1.5 text-xs transition-all ${viewMode === "building" ? "bg-[#F15A22] text-white" : "bg-white text-gray-600"}`}>
+                  <Box size={14} />
+                </button>
+              </div>
+              {/* Zoom controls for 2D view */}
+              {viewMode === "2d" && (
+                <div className="flex border border-gray-200 overflow-hidden ml-1">
+                  <button onClick={() => setGridZoom(z => Math.max(25, z - 10))} title="Zoom out" className="px-2.5 py-1.5 text-xs text-gray-600 hover:text-[#F15A22] transition-all">
+                    <ZoomOut size={14} />
+                  </button>
+                  <button onClick={() => setGridZoom(100)} title="Reset zoom" className="px-2 py-1.5 text-xs font-semibold text-gray-600 hover:text-[#F15A22] transition-all min-w-10">
+                    {gridZoom}%
+                  </button>
+                  <button onClick={() => setGridZoom(z => Math.min(300, z + 10))} title="Zoom in" className="px-2.5 py-1.5 text-xs text-gray-600 hover:text-[#F15A22] transition-all">
+                    <ZoomIn size={14} />
+                  </button>
+                </div>
+              )}
             <div className="ml-auto flex items-center gap-2">
               <button onClick={() => setSaveModalOpen(true)} disabled={placedModules.length === 0 || saveMutation.isPending} className="px-3 py-1.5 text-xs bg-[#F15A22] text-white disabled:opacity-40 transition-all rounded-sm">
                 <Save size={14} />
