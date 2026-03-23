@@ -71,11 +71,7 @@ export default function BuildingElevation({ walls = [], placedModules = [] }) {
 
       <div
         className="flex-1 overflow-auto relative select-none bg-gray-50"
-        style={{ cursor: "grab" }}
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseUp}
+
       >
         <div style={{ padding: "40px", display: "inline-flex", flexDirection: "column", gap: 48, minWidth: "max-content" }}>
           <div style={{ maxHeight: "600px", overflow: "auto", overflowX: "hidden" }}>
