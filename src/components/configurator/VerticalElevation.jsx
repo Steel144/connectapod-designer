@@ -43,7 +43,8 @@ const VerticalElevation = memo(function VerticalElevation({
 
           {layers.map((layer) => {
              return layer.slots.map((slot, si) => {
-               const slotWidthPx = Math.round(scale * slot.depthCells * CELL_M * PX_PER_M);
+               const baseWidthPx = Math.round(scale * slot.depthCells * CELL_M * PX_PER_M);
+               const slotWidthPx = si === 0 ? Math.round(baseWidthPx * 1.1) : baseWidthPx;
                const slotLeftPx = Math.round(scale * slot.yOffsetCells * CELL_M * PX_PER_M);
                const elevationNum = si + 1;
                const extraOffsetPx = slotOffsets[elevationNum] ? Math.round(scale * slotOffsets[elevationNum] * PX_PER_M) : 0;
