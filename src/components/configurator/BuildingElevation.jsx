@@ -50,10 +50,10 @@ export default function BuildingElevation({ walls = [], placedModules = [], stic
   const slotOffset1Z = -0.02;
   const slotOffset2Z = 0.14;
   const slotOffset3Z = 0;
-  const slotOffset1X = 0.247;
+  const slotOffset1X = -0.02;
   const slotOffset2X = 0.15;
-  const slotOffset3X = 0;
-  const slotScale1X = 1.1;
+  const slotOffset3X = 0.247;
+  const slotScale3X = 1.1;
   const labelMapZ = { 1: "P1", 2: "C", 3: "P2" };
   const labelMapX = { 1: "P2", 2: "C", 3: "P1" };
 
