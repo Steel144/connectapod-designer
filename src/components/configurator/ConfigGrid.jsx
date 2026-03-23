@@ -168,15 +168,15 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
   const startDragWall = (e, wall) => {
     // Only allow dragging if a module is selected
     if (selected.size === 0) return;
-    
+
     e.preventDefault();
     e.stopPropagation();
     const newWallSelection = selectedWallIds.has(wall.id) ? selectedWallIds : new Set([wall.id]);
     setSelectedWallIds(newWallSelection);
     setSelectedModId(null);
     const rect = gridRef.current.getBoundingClientRect();
-    const offsetX = e.clientX - rect.left - wall.x * CELL_W;
-    const offsetY = e.clientY - rect.top - wall.y * CELL_H;
+    const offsetX = e.clientX - rect.left - wall.x * scaledCellW;
+    const offsetY = e.clientY - rect.top - wall.y * scaledCellH;
     setDraggingWall({ wall, offsetX, offsetY, cursorX: e.clientX, cursorY: e.clientY, selectedIds: newWallSelection });
   };
 
