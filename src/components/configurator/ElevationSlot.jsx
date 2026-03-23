@@ -17,7 +17,7 @@ const ElevationSlot = memo(function ElevationSlot({
       style={{
         position: "absolute",
         left: leftPx,
-        top: 0,
+        top: topPx,
         width: widthPx,
         height: heightPx,
         overflow: "hidden",
