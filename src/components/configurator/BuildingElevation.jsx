@@ -126,7 +126,7 @@ export default function BuildingElevation({ walls = [], placedModules = [], stic
                PX_PER_M={PX_PER_M}
                WALL_H_M={WALL_H_M}
                slotOffsets={{ 1: slotOffset1X, 2: slotOffset2X, 3: slotOffset3X }}
-               slotScales={{ 1: slotScale1X }}
+               slotScales={{ 3: slotScale3X }}
                labelMap={labelMapX}
              />
           </div>
