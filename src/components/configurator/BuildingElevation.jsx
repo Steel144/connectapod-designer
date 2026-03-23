@@ -27,18 +27,7 @@ export default function BuildingElevation({ walls = [], placedModules = [], stic
   }, []);
 
   const handleScroll = (e) => {
-    if (isScrollingRef.current) return;
-    
-    isScrollingRef.current = true;
-    const scrollLeft = e.target.scrollLeft;
-    
-    // Update scroll position for all child elevation containers
-    const elevationContainers = containerRef.current?.querySelectorAll('[data-elevation-scroll]');
-    elevationContainers?.forEach(el => {
-      el.scrollLeft = scrollLeft;
-    });
-    
-    isScrollingRef.current = false;
+    // Parent container handles all scrolling now
   };
 
 
