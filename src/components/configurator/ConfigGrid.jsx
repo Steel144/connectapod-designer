@@ -915,7 +915,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
           return (
             <>
               {/* Overall length dimension (horizontal) */}
-              <div className="absolute pointer-events-none flex items-center justify-center" style={{ left: minX * CELL_W, top: (minY - 3) * CELL_H, width: (maxX - minX) * CELL_W, height: 1 }}>
+              <div className="absolute pointer-events-none flex items-center justify-center" style={{ left: minX * scaledCellW, top: (minY - 3) * scaledCellH, width: (maxX - minX) * scaledCellW, height: 1 }}>
                 <div className="absolute" style={{ height: 2, width: '100%', backgroundColor: '#CBD5E1' }} />
                 <div className="absolute pointer-events-none" style={{ left: 0, top: '-4px', width: 2, height: 10, backgroundColor: '#CBD5E1' }} />
                 <div className="absolute pointer-events-none" style={{ right: 0, top: '-4px', width: 2, height: 10, backgroundColor: '#CBD5E1' }} />
