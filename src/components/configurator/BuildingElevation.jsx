@@ -115,6 +115,7 @@ export default function BuildingElevation({ walls = [], placedModules = [], stic
         className="relative select-none bg-gray-50 overflow-x-auto"
         style={{ minHeight: "500px" }}
         ref={containerRef}
+        onScroll={handleScroll}
       >
         <div ref={contentRef} style={{ padding: "40px", paddingLeft: "2400px", paddingRight: "1800px", display: "inline-flex", flexDirection: "column", gap: 40, minWidth: "max-content" }}>
           <div style={{ display: "flex", gap: 16, flexDirection: "row", width: "max-content", flexWrap: "nowrap" }}>
