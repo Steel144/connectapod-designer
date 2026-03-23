@@ -170,7 +170,7 @@ export default function PrintableElevationsSheet({ walls = [], placedModules = [
                   <div className="flex items-end pb-2" style={{ gap: "0px" }}>
                     {row.zWall?.elevationImage && (
                       <div className="flex flex-col items-center gap-0">
-                        <div className="bg-white flex items-center justify-center" style={{ height: "220px", width: `${pxPerMeter * 0.6}px` }}>
+                        <div className="bg-white flex items-center justify-center" style={{ height: "220px", width: `${(row.zWall.width / 1000) * pxPerMeter}px` }}>
                           <img src={row.zWall.elevationImage} alt="Z" style={{ height: "100%", width: "100%", objectFit: "contain", pointerEvents: "none" }} />
                         </div>
                       </div>
