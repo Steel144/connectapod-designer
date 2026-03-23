@@ -388,8 +388,8 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
 
     if (!dragging) return;
     const rect = gridRef.current.getBoundingClientRect();
-    const deltaX = Math.round((dragging.cursorX - (rect.left + dragging.mod.x * CELL_W + dragging.offsetX)) / CELL_W);
-    const deltaY = Math.round((dragging.cursorY - (rect.top + dragging.mod.y * CELL_H + dragging.offsetY)) / CELL_H);
+    const deltaX = Math.round((dragging.cursorX - (rect.left + dragging.mod.x * scaledCellW + dragging.offsetX)) / scaledCellW);
+    const deltaY = Math.round((dragging.cursorY - (rect.top + dragging.mod.y * scaledCellH + dragging.offsetY)) / scaledCellH);
 
     // Check if it was a click (no movement) on already-selected module
     const movedSignificantly = Math.abs(deltaX) > 0 || Math.abs(deltaY) > 0;
