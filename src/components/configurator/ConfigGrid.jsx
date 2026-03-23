@@ -600,8 +600,8 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
     const rect = gridRef.current.getBoundingClientRect();
     const rawX = dragging.cursorX - rect.left - dragging.offsetX;
     const rawY = dragging.cursorY - rect.top - dragging.offsetY;
-    const snapX = Math.round(rawX / CELL_W);
-    const snapY = Math.round(rawY / CELL_H);
+    const snapX = Math.round(rawX / scaledCellW);
+    const snapY = Math.round(rawY / scaledCellH);
     return { snapX, snapY };
   };
 
