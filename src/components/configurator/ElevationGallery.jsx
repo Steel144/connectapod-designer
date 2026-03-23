@@ -193,11 +193,10 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
 
     return (
       <div className="flex flex-col gap-1">
-        <div className="flex items-center gap-2">
-          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{getPavilionLabel(pavilionNum)} - {rowLabel}</span>
-          <div className="flex-1 h-px bg-gray-200" />
+        <div className="flex items-center gap-2" style={{ minWidth: "max-content" }}>
+          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest whitespace-nowrap">{getPavilionLabel(pavilionNum)} - {rowLabel}</span>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2" style={{ minWidth: "max-content" }}>
           {endLeft && (
             <div className="flex items-center shrink-0">
               <div className="flex flex-col items-center gap-0">
