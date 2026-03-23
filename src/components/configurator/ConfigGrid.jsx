@@ -80,8 +80,8 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
 
   const getCellFromClient = (clientX, clientY) => {
     const rect = gridRef.current.getBoundingClientRect();
-    const x = Math.floor((clientX - rect.left) / CELL_W);
-    const y = Math.floor((clientY - rect.top) / CELL_H);
+    const x = Math.floor((clientX - rect.left) / scaledCellW);
+    const y = Math.floor((clientY - rect.top) / scaledCellH);
     return { x, y };
   };
 
