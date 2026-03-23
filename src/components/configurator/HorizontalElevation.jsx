@@ -15,11 +15,8 @@ const HorizontalElevation = memo(function HorizontalElevation({
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-        <span style={{ fontSize: 10, fontWeight: 700, color: "#fff", backgroundColor: color, padding: "2px 10px", borderRadius: 2, letterSpacing: "0.08em", textTransform: "uppercase" }}>
-          {label}
-        </span>
-        <div style={{ flex: 1, height: 1, backgroundColor: "#e5e7eb" }} />
+      <div style={{ fontSize: "14px", fontWeight: "bold", color: "black", textTransform: "uppercase", letterSpacing: "0.05em", backgroundColor: "#fed7aa", padding: "8px 12px", borderRadius: "4px", width: "fit-content", marginLeft: "4px" }}>
+        {label}
       </div>
       <div style={{ position: "relative", width: totalWidthPx, height: wallHPx, backgroundColor: "#f9fafb", overflow: "hidden" }}>
          {layers.map((layer, li) => {
