@@ -151,7 +151,7 @@ export default function PrintableElevationsSheet({ walls = [], placedModules = [
               return (
                 <div key={`${pav.pavilionNum}-${row.yPos}-${row.type}`}>
                   <div className="flex items-center gap-3 mb-3">
-                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{getPavilionLabel(pav.pavilionNum)} - Y face (outside)</span>
+                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{getPavilionLabel(pav.pavilionNum)} - {row.type === "Y" ? "Y face (outside/top)" : "W face (outside/bottom)"}</span>
                     <div className="flex-1 h-px bg-gray-200" />
                   </div>
 
