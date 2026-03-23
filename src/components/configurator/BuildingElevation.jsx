@@ -83,26 +83,6 @@ export default function BuildingElevation({ walls = [], placedModules = [], stic
 
       >
         <div style={{ padding: "40px", display: "inline-flex", flexDirection: "column", gap: 48, minWidth: "max-content" }}>
-          <HorizontalElevation 
-            layers={wElevation} 
-            label="W — North Elevation" 
-            color="#22c55e"
-            totalWidthPx={totalWidthPx}
-            wallHPx={wallHPx}
-            scale={scale}
-            CELL_M={CELL_M}
-            PX_PER_M={PX_PER_M}
-          />
-          <HorizontalElevation 
-            layers={yElevation} 
-            label="Y — South Elevation" 
-            color="#3b82f6"
-            totalWidthPx={totalWidthPx}
-            wallHPx={wallHPx}
-            scale={scale}
-            CELL_M={CELL_M}
-            PX_PER_M={PX_PER_M}
-          />
           <div style={{ display: "flex", gap: 48, flexDirection: "row", width: "max-content", flexWrap: "nowrap" }}>
             <VerticalElevation 
               layers={zElevation} 
@@ -131,6 +111,26 @@ export default function BuildingElevation({ walls = [], placedModules = [], stic
               labelMap={labelMapX}
             />
           </div>
+          <HorizontalElevation 
+            layers={wElevation} 
+            label="W — North Elevation" 
+            color="#22c55e"
+            totalWidthPx={totalWidthPx}
+            wallHPx={wallHPx}
+            scale={scale}
+            CELL_M={CELL_M}
+            PX_PER_M={PX_PER_M}
+          />
+          <HorizontalElevation 
+            layers={yElevation} 
+            label="Y — South Elevation" 
+            color="#3b82f6"
+            totalWidthPx={totalWidthPx}
+            wallHPx={wallHPx}
+            scale={scale}
+            CELL_M={CELL_M}
+            PX_PER_M={PX_PER_M}
+          />
         </div>
       </div>
     </div>
