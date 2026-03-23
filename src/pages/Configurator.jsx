@@ -817,7 +817,7 @@ export default function Configurator() {
       {/* ── WORKSPACE ── */}
       <div className={`${viewMode === "building" ? "relative flex" : "flex-1 relative flex min-h-0"} ${viewMode !== "building" ? (isMobile ? "pt-12" : "pt-16") : ""}`}>
         {viewMode === "elevations" ? (
-          <div style={{ flex: 1, minWidth: 0, overflow: "hidden", zIndex: 10 }}>
+          <div style={{ flex: 1, minWidth: 0, overflow: "auto", zIndex: 10 }}>
             <ElevationGallery walls={walls} placedModules={placedModules} onWallSelect={setSelectedWall} customWalls={customWalls} />
           </div>
         ) : viewMode === "building" ? (
