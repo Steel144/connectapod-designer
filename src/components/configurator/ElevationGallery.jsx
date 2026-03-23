@@ -23,33 +23,8 @@ const getModulePavilion = (mod) => {
 
 export default function ElevationGallery({ walls = [], placedModules = [], onWallSelect = () => {}, customWalls = [] }) {
   const [zoom, setZoom] = useState(50);
-  const [pan, setPan] = useState({ x: 0, y: 0 });
-  const isPanning = useRef(false);
-  const panStart = useRef({ x: 0, y: 0 });
-  const panOrigin = useRef({ x: 0, y: 0 });
   const containerRef = useRef(null);
   const contentRef = useRef(null);
-
-  const handleCanvasMouseDown = useCallback((e) => {
-    if (e.button !== 0) return;
-    isPanning.current = true;
-    panStart.current = { x: e.clientX, y: e.clientY };
-    panOrigin.current = { ...pan };
-    e.currentTarget.style.cursor = "grabbing";
-  }, [pan]);
-
-  const handleCanvasMouseMove = useCallback((e) => {
-    if (!isPanning.current) return;
-    setPan({
-      x: panOrigin.current.x + (e.clientX - panStart.current.x),
-      y: panOrigin.current.y + (e.clientY - panStart.current.y),
-    });
-  }, []);
-
-  const handleCanvasMouseUp = useCallback((e) => {
-    isPanning.current = false;
-    e.currentTarget.style.cursor = "grab";
-  }, []);
 
   const zoomLevels = [20, 25, 37, 50, 62, 75, 100, 125, 150, 200, 300];
 
@@ -62,26 +37,6 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
       if (prev) setZoom(prev);
     }
   };
-
-  const fitToPage = useCallback(() => {
-    if (!containerRef.current || !contentRef.current) return;
-    
-    const containerRect = containerRef.current.getBoundingClientRect();
-    const contentRect = contentRef.current.getBoundingClientRect();
-    
-    const containerWidth = containerRect.width - 80; // account for padding
-    const containerHeight = containerRect.height - 80;
-    
-    const contentWidth = contentRect.width;
-    const contentHeight = contentRect.height;
-    
-    const zoomX = (containerWidth / contentWidth) * 100;
-    const zoomY = (containerHeight / contentHeight) * 100;
-    const newZoom = Math.min(zoomX, zoomY, 150);
-    
-    setZoom(Math.max(20, newZoom));
-    setPan({ x: 0, y: 0 });
-  }, []);
 
   const getWallPavilion = (wall) => {
     if (wall.pavilionNum !== null && wall.pavilionNum !== undefined) {
