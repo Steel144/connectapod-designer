@@ -10,6 +10,20 @@ const WALL_H_M = 4.2;
 
 export default function BuildingElevation({ walls = [], placedModules = [], stickyTop = 0, navBarHeight = 0, showHeader = true }) {
   const [zoom, setZoom] = useState(50);
+  const containerRef = useRef(null);
+  const contentRef = useRef(null);
+  const centeredRef = useRef(false);
+
+  useEffect(() => {
+    if (!centeredRef.current && containerRef.current && contentRef.current) {
+      setTimeout(() => {
+        const scrollWidth = contentRef.current.scrollWidth;
+        const containerWidth = containerRef.current.clientWidth;
+        containerRef.current.scrollLeft = (scrollWidth - containerWidth) / 2;
+        centeredRef.current = true;
+      }, 0);
+    }
+  }, []);
 
 
   const zoomLevels = [20, 25, 37, 50, 62, 75, 100, 125, 150, 200];
