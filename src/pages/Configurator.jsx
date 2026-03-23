@@ -27,8 +27,7 @@ const useIsMobile = () => {
   return isMobile;
 };
 
-import ElevationGallery from "@/components/configurator/ElevationGallery";
-import BuildingElevation from "@/components/configurator/BuildingElevation";
+import CombinedElevations from "@/components/configurator/CombinedElevations";
 import QuoteGenerator from "@/components/configurator/QuoteGenerator";
 import PrintRouter from "@/components/configurator/PrintRouter";
 import PrintMenu from "@/components/configurator/PrintMenu";
