@@ -20,6 +20,7 @@ const HorizontalElevation = memo(function HorizontalElevation({
       </div>
       <div style={{ position: "relative", width: totalWidthPx, height: wallHPx, backgroundColor: "#f9fafb", overflow: "hidden", overflowX: "auto" }} data-elevation-scroll>
          {layers.map((layer, li) => {
+           const isBackPavilion = li === layers.length - 1;
            let moduleNum = 0;
            return layer.slots.map((slot, si) => {
              moduleNum++;
@@ -34,6 +35,7 @@ const HorizontalElevation = memo(function HorizontalElevation({
                  heightPx={wallHPx}
                  objectFit="cover"
                  showLabel={false}
+                 dark={isBackPavilion}
                />
              );
            });

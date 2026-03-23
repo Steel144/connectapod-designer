@@ -8,7 +8,8 @@ const ElevationSlot = memo(function ElevationSlot({
   heightPx, 
   labelNum,
   objectFit = "cover",
-  showLabel = true 
+  showLabel = true,
+  dark = false
 }) {
   const wall = slot.wall;
 
@@ -33,6 +34,7 @@ const ElevationSlot = memo(function ElevationSlot({
             objectFit,
             display: "block",
             transform: wall.flipped ? "scaleX(-1)" : undefined,
+            filter: dark ? "brightness(0.75)" : undefined,
           }}
         />
       ) : (
