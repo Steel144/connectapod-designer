@@ -850,38 +850,40 @@ export default function Configurator() {
       )}
 
       {/* ── WORKSPACE ── */}
-      <div className={`flex-1 relative flex flex-col min-h-0 ${isMobile ? "pt-12" : "pt-16"}`}>
+      <div className={`flex-1 relative overflow-auto ${isMobile ? "pt-12" : "pt-16"}`}>
         {viewMode === "elevations" ? (
-          <>
-            <div style={{ flex: 1, minWidth: 0, overflow: "auto", zIndex: 10 }}>
+          <div className="flex flex-col">
+            <div style={{ minWidth: 0 }}>
               <ElevationGallery walls={walls} placedModules={placedModules} onWallSelect={setSelectedWall} customWalls={customWalls} />
             </div>
-            <div style={{ flex: 1, minWidth: 0, borderTop: "1px solid #e5e7eb", overflowX: "auto", background: "#f9fafb" }}>
+            <div style={{ minWidth: 0, borderTop: "1px solid #e5e7eb", background: "#f9fafb" }}>
               <BuildingElevation walls={walls} placedModules={placedModules} stickyTop={navBarHeight} />
             </div>
-          </>
+          </div>
         ) : (
-          <ConfigGrid
-             placedModules={placedModules}
-             onPlace={handlePlace}
-             onRemove={handleRemove}
-             onMove={handleMove}
-             onRotate={handleRotate}
-             onFlip={handleFlip}
-             draggingMod={draggingMod}
-             walls={walls}
-             wallTypes={availableWallTypes}
-             onPlaceWall={handlePlaceWall}
-             onRemoveWall={handleRemoveWall}
-             onFlipWall={handleFlipWall}
-             onMoveWall={handleMoveWall}
-             onWallSelect={setSelectedWall}
-             onModuleSelect={setSelectedModule}
-             customModules={customModules}
-             floorPlanImages={floorPlanImages}
-             wallImages={wallImages}
-             zoom={gridZoom}
-            />
+          <div style={{ display: "flex", height: "100%" }}>
+            <ConfigGrid
+               placedModules={placedModules}
+               onPlace={handlePlace}
+               onRemove={handleRemove}
+               onMove={handleMove}
+               onRotate={handleRotate}
+               onFlip={handleFlip}
+               draggingMod={draggingMod}
+               walls={walls}
+               wallTypes={availableWallTypes}
+               onPlaceWall={handlePlaceWall}
+               onRemoveWall={handleRemoveWall}
+               onFlipWall={handleFlipWall}
+               onMoveWall={handleMoveWall}
+               onWallSelect={setSelectedWall}
+               onModuleSelect={setSelectedModule}
+               customModules={customModules}
+               floorPlanImages={floorPlanImages}
+               wallImages={wallImages}
+               zoom={gridZoom}
+              />
+          </div>
         )}
       </div>
 
