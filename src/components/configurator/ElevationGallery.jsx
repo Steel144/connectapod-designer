@@ -249,7 +249,7 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
       </div>
 
       <div
-        style={{ flex: 1, background: "#f9fafb", minWidth: 0, paddingTop: "56px" }}
+        style={{ flex: 1, overflow: "auto", background: "#f9fafb", minWidth: 0, paddingTop: "56px" }}
         ref={containerRef}
       >
         <div ref={contentRef} style={{ display: "inline-block", padding: "40px" }}>
