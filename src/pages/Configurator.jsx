@@ -11,14 +11,15 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { BookOpen, FolderOpen, Save, Trash2, ChevronLeft, ChevronRight, Undo2, Box, Grid2X2, Image, LayoutTemplate, Menu, X, ChevronUp, ChevronDown } from "lucide-react";
 
+const checkIsMobile = () =>
+  /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+  ('ontouchstart' in window) ||
+  (window.screen?.width ?? window.innerWidth) < 768;
+
 const useIsMobile = () => {
-  const isTouchDevice = () =>
-    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
-    ('ontouchstart' in window) ||
-    window.innerWidth < 768;
-  const [isMobile, setIsMobile] = useState(isTouchDevice);
+  const [isMobile, setIsMobile] = useState(checkIsMobile);
   useEffect(() => {
-    const handler = () => setIsMobile(isTouchDevice());
+    const handler = () => setIsMobile(checkIsMobile());
     window.addEventListener("resize", handler);
     return () => window.removeEventListener("resize", handler);
   }, []);
