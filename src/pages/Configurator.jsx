@@ -827,10 +827,10 @@ export default function Configurator() {
             <div className="border-t border-gray-100 bg-white shadow-lg">
               <div className="grid grid-cols-2 gap-2 p-3">
                 <Link to={createPageUrl("DesignCatalogue")} onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-2 px-3 py-2 text-sm text-white bg-[#F15A22] rounded-sm">
-                  <LayoutTemplate size={14} /> Catalogue
+                  <LayoutTemplate size={14} /> Design Catalogue
                 </Link>
                 <button onClick={() => { setShowSaved(true); setMobileMenuOpen(false); }} className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 border border-gray-200 rounded-sm bg-white">
-                  <FolderOpen size={14} /> My Designs {designs.length > 0 && `(${designs.length})`}
+                  <FolderOpen size={14} /> My Designs
                 </button>
                 <button onClick={() => { handleUndo(); setMobileMenuOpen(false); }} disabled={history.length === 0} className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 border border-gray-200 rounded-sm bg-white disabled:opacity-30">
                   <Undo2 size={14} /> Undo
