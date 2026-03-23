@@ -95,8 +95,9 @@ export default function BuildingElevation({ walls = [], placedModules = [], stic
       <div
         className="relative select-none bg-gray-50 overflow-x-auto"
         style={{ minHeight: "500px" }}
+        ref={containerRef}
       >
-        <div style={{ padding: "40px", display: "inline-flex", flexDirection: "column", gap: 40, minWidth: "max-content" }}>
+        <div ref={contentRef} style={{ padding: "40px", paddingLeft: "1200px", paddingRight: "1000px", display: "inline-flex", flexDirection: "column", gap: 40, minWidth: "max-content" }}>
           <div style={{ display: "flex", gap: 40, flexDirection: "row", width: "max-content", flexWrap: "nowrap" }}>
             <VerticalElevation 
               layers={zElevation} 
