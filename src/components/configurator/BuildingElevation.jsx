@@ -58,8 +58,9 @@ export default function BuildingElevation({ walls = [], placedModules = [], stic
   return (
     <div className="w-full bg-white flex flex-col">
       {/* Fixed zoom bar — stays in place during horizontal scroll */}
-      <div className="fixed z-20 flex items-center justify-between px-6 py-3 bg-white border-b border-gray-200" style={{ top: stickyTop, left: 0, right: 0 }}>
-        <span className="text-xs font-semibold text-gray-500 uppercase tracking-widest">Building Elevations — WXYZ</span>
+      {showHeader && (
+        <div className="fixed z-20 flex items-center justify-between px-6 py-3 bg-white border-b border-gray-200" style={{ top: stickyTop, left: 0, right: 0 }}>
+          <span className="text-xs font-semibold text-gray-500 uppercase tracking-widest">Building Elevations — WXYZ</span>
         <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-1">
           <button onClick={() => adjustZoom(-1)} disabled={zoom <= zoomLevels[0]} className="p-1.5 rounded hover:bg-white hover:shadow-sm transition-all text-gray-500 hover:text-gray-800 disabled:opacity-30 disabled:cursor-not-allowed">
             <ZoomOut size={15} />
