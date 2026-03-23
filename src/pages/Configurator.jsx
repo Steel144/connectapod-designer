@@ -690,111 +690,115 @@ export default function Configurator() {
   }
 
   return (
-    <div 
-      className="w-screen h-screen bg-[#F0EFEd] overflow-hidden relative flex flex-col"
-    >
-      {/* Top bar */}
-      <div className="absolute top-0 left-0 right-0 z-30 flex items-center px-4 py-4 bg-white/80 backdrop-blur border-b border-gray-200 overflow-x-auto gap-4 min-w-0">
-        <div className="shrink-0 flex flex-col gap-0.5">
-          <img src="https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/1a43e85d2_Connectapod-01.png" alt="connectapod" style={{ height: "25px", width: "auto" }} />
-          <span className="text-[10px] text-gray-400 tracking-widest uppercase">Design Studio</span>
+    <div className="w-screen h-screen bg-[#F0EFEd] overflow-hidden relative flex flex-col">
+
+      {/* ── DESKTOP TOP BAR ── */}
+      {!isMobile && (
+        <div className="absolute top-0 left-0 right-0 z-30 flex items-center px-4 py-4 bg-white/80 backdrop-blur border-b border-gray-200 overflow-x-auto gap-4 min-w-0">
+          <div className="shrink-0 flex flex-col gap-0.5">
+            <img src="https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/1a43e85d2_Connectapod-01.png" alt="connectapod" style={{ height: "25px", width: "auto" }} />
+            <span className="text-[10px] text-gray-400 tracking-widest uppercase">Design Studio</span>
+          </div>
+          <div className="flex items-center gap-2 ml-auto shrink-0">
+            <div className="flex border border-gray-200 overflow-hidden">
+              <button onClick={() => setViewMode("2d")} className={`flex items-center gap-1.5 px-3 py-1.5 text-xs transition-all ${viewMode === "2d" ? "bg-[#F15A22] text-white" : "bg-white text-gray-600 hover:text-[#F15A22]"}`}>
+                <Grid2X2 size={13} /> 2D
+              </button>
+              <button onClick={() => setViewMode("elevations")} className={`flex items-center gap-1.5 px-3 py-1.5 text-xs transition-all ${viewMode === "elevations" ? "bg-[#F15A22] text-white" : "bg-white text-gray-600 hover:text-[#F15A22]"}`}>
+                <Image size={13} /> Elevations
+              </button>
+              <button onClick={() => setViewMode("building")} className={`flex items-center gap-1.5 px-3 py-1.5 text-xs transition-all ${viewMode === "building" ? "bg-[#F15A22] text-white" : "bg-white text-gray-600 hover:text-[#F15A22]"}`}>
+                <Box size={13} /> Building
+              </button>
+            </div>
+            <Link to={createPageUrl("DesignCatalogue")} className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-white bg-[#F15A22] hover:bg-[#d94e1a] border border-[#F15A22] transition-all">
+              <LayoutTemplate size={13} /> Design Catalogue
+            </Link>
+            <button onClick={handleUndo} disabled={history.length === 0} title="Undo (Ctrl+Z)" className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-gray-600 bg-white border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22] disabled:opacity-30 transition-all">
+              <Undo2 size={13} /> Undo {history.length > 0 && <span className="text-[10px] text-gray-400">({history.length})</span>}
+            </button>
+            <Link to={createPageUrl("Catalogue")} className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-gray-600 hover:text-[#F15A22] border border-gray-200 bg-white hover:border-[#F15A22] transition-all">
+              <BookOpen size={13} /> Floor Catalogue
+            </Link>
+            <Link to={createPageUrl("WallCatalogue")} className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-gray-600 hover:text-[#F15A22] border border-gray-200 bg-white hover:border-[#F15A22] transition-all">
+              <BookOpen size={13} /> Wall Catalogue
+            </Link>
+            <button onClick={() => setShowSaved(!showSaved)} className={`flex items-center gap-1.5 px-3 py-1.5 text-xs border transition-all ${showSaved ? "bg-[#F15A22] text-white border-[#F15A22]" : "text-gray-600 bg-white border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22]"}`}>
+              <FolderOpen size={13} /> My Designs
+              {designs.length > 0 && <span className={`ml-0.5 rounded-full px-1.5 text-[10px] font-bold ${showSaved ? "bg-white/30 text-white" : "bg-gray-100 text-gray-600"}`}>{designs.length}</span>}
+            </button>
+            <button onClick={() => setSaveModalOpen(true)} disabled={placedModules.length === 0 || saveMutation.isPending} className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-[#F15A22] text-white hover:bg-[#d94e1a] disabled:opacity-40 transition-all">
+              <Save size={13} /> {saveMutation.isPending ? "Saving…" : "Save Design"}
+            </button>
+            <PrintMenu placedModules={placedModules} walls={walls} onPrint={setPrintMode} />
+            {placedModules.length > 0 && (
+              <button onClick={handleClear} className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-gray-500 bg-white border border-gray-200 hover:border-red-300 hover:text-red-500 transition-all">
+                <Trash2 size={13} /> Clear
+              </button>
+            )}
+          </div>
         </div>
-        <div className="flex items-center gap-2 ml-auto shrink-0">
-          <div className="flex border border-gray-200 overflow-hidden">
-            <button
-              onClick={() => setViewMode("2d")}
-              className={`flex items-center gap-1.5 px-3 py-1.5 text-xs transition-all ${viewMode === "2d" ? "bg-[#F15A22] text-white" : "bg-white text-gray-600 hover:text-[#F15A22]"}`}
-            >
-              <Grid2X2 size={13} />
-              2D
-            </button>
-            <button
-              onClick={() => setViewMode("elevations")}
-              className={`flex items-center gap-1.5 px-3 py-1.5 text-xs transition-all ${viewMode === "elevations" ? "bg-[#F15A22] text-white" : "bg-white text-gray-600 hover:text-[#F15A22]"}`}
-            >
-              <Image size={13} />
-              Elevations
-            </button>
-            <button
-              onClick={() => setViewMode("building")}
-              className={`flex items-center gap-1.5 px-3 py-1.5 text-xs transition-all ${viewMode === "building" ? "bg-[#F15A22] text-white" : "bg-white text-gray-600 hover:text-[#F15A22]"}`}
-            >
-              <Box size={13} />
-              Building
-            </button>
+      )}
+
+      {/* ── MOBILE TOP BAR ── */}
+      {isMobile && (
+        <div className="absolute top-0 left-0 right-0 z-30 bg-white border-b border-gray-200 shadow-sm">
+          <div className="flex items-center px-3 py-2 gap-2">
+            <img src="https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/1a43e85d2_Connectapod-01.png" alt="connectapod" style={{ height: "22px", width: "auto" }} />
+            {/* View switcher */}
+            <div className="flex border border-gray-200 overflow-hidden ml-2">
+              <button onClick={() => setViewMode("2d")} className={`px-2.5 py-1.5 text-xs transition-all ${viewMode === "2d" ? "bg-[#F15A22] text-white" : "bg-white text-gray-600"}`}>
+                <Grid2X2 size={14} />
+              </button>
+              <button onClick={() => setViewMode("elevations")} className={`px-2.5 py-1.5 text-xs transition-all ${viewMode === "elevations" ? "bg-[#F15A22] text-white" : "bg-white text-gray-600"}`}>
+                <Image size={14} />
+              </button>
+              <button onClick={() => setViewMode("building")} className={`px-2.5 py-1.5 text-xs transition-all ${viewMode === "building" ? "bg-[#F15A22] text-white" : "bg-white text-gray-600"}`}>
+                <Box size={14} />
+              </button>
+            </div>
+            <div className="ml-auto flex items-center gap-2">
+              <button onClick={() => setSaveModalOpen(true)} disabled={placedModules.length === 0 || saveMutation.isPending} className="px-3 py-1.5 text-xs bg-[#F15A22] text-white disabled:opacity-40 transition-all rounded-sm">
+                <Save size={14} />
+              </button>
+              <button onClick={() => setMobileMenuOpen(v => !v)} className="p-1.5 text-gray-600 border border-gray-200 rounded-sm">
+                {mobileMenuOpen ? <X size={16} /> : <Menu size={16} />}
+              </button>
+            </div>
           </div>
 
-          <Link
-            to={createPageUrl("DesignCatalogue")}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-white bg-[#F15A22] hover:bg-[#d94e1a] border border-[#F15A22] transition-all"
-          >
-            <LayoutTemplate size={13} />
-            Design Catalogue
-          </Link>
-          <button
-            onClick={handleUndo}
-            disabled={history.length === 0}
-            title="Undo (Ctrl+Z)"
-            className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-gray-600 bg-white border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22] disabled:opacity-30 transition-all"
-          >
-            <Undo2 size={13} />
-            Undo {history.length > 0 && <span className="text-[10px] text-gray-400">({history.length})</span>}
-          </button>
-          <Link
-            to={createPageUrl("Catalogue")}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-gray-600 hover:text-[#F15A22] border border-gray-200 bg-white hover:border-[#F15A22] transition-all"
-          >
-            <BookOpen size={13} />
-            Floor Catalogue
-          </Link>
-          <Link
-            to={createPageUrl("WallCatalogue")}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-gray-600 hover:text-[#F15A22] border border-gray-200 bg-white hover:border-[#F15A22] transition-all"
-          >
-            <BookOpen size={13} />
-            Wall Catalogue
-          </Link>
-          <button
-            onClick={() => setShowSaved(!showSaved)}
-            className={`flex items-center gap-1.5 px-3 py-1.5 text-xs border transition-all ${
-              showSaved ? "bg-[#F15A22] text-white border-[#F15A22]" : "text-gray-600 bg-white border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22]"
-            }`}
-          >
-            <FolderOpen size={13} />
-            My Designs
-            {designs.length > 0 && (
-              <span className={`ml-0.5 rounded-full px-1.5 text-[10px] font-bold ${showSaved ? "bg-white/30 text-white" : "bg-gray-100 text-gray-600"}`}>
-                {designs.length}
-              </span>
-            )}
-          </button>
-          <button
-            onClick={() => setSaveModalOpen(true)}
-            disabled={placedModules.length === 0 || saveMutation.isPending}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-[#F15A22] text-white hover:bg-[#d94e1a] disabled:opacity-40 transition-all"
-          >
-            <Save size={13} />
-            {saveMutation.isPending ? "Saving…" : "Save Design"}
-          </button>
-          <PrintMenu
-            placedModules={placedModules}
-            walls={walls}
-            onPrint={setPrintMode}
-          />
-          {placedModules.length > 0 && (
-            <button
-              onClick={handleClear}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-gray-500 bg-white border border-gray-200 hover:border-red-300 hover:text-red-500 transition-all"
-            >
-              <Trash2 size={13} />
-              Clear
-            </button>
+          {/* Mobile dropdown menu */}
+          {mobileMenuOpen && (
+            <div className="border-t border-gray-100 bg-white shadow-lg">
+              <div className="grid grid-cols-2 gap-2 p-3">
+                <Link to={createPageUrl("DesignCatalogue")} onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-2 px-3 py-2 text-sm text-white bg-[#F15A22] rounded-sm">
+                  <LayoutTemplate size={14} /> Catalogue
+                </Link>
+                <button onClick={() => { setShowSaved(true); setMobileMenuOpen(false); }} className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 border border-gray-200 rounded-sm bg-white">
+                  <FolderOpen size={14} /> My Designs {designs.length > 0 && `(${designs.length})`}
+                </button>
+                <button onClick={() => { handleUndo(); setMobileMenuOpen(false); }} disabled={history.length === 0} className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 border border-gray-200 rounded-sm bg-white disabled:opacity-30">
+                  <Undo2 size={14} /> Undo
+                </button>
+                <Link to={createPageUrl("Catalogue")} onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 border border-gray-200 rounded-sm bg-white">
+                  <BookOpen size={14} /> Floor Cat.
+                </Link>
+                <Link to={createPageUrl("WallCatalogue")} onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 border border-gray-200 rounded-sm bg-white">
+                  <BookOpen size={14} /> Wall Cat.
+                </Link>
+                {placedModules.length > 0 && (
+                  <button onClick={() => { handleClear(); setMobileMenuOpen(false); }} className="flex items-center gap-2 px-3 py-2 text-sm text-red-500 border border-red-200 rounded-sm bg-white">
+                    <Trash2 size={14} /> Clear
+                  </button>
+                )}
+              </div>
+            </div>
           )}
         </div>
-      </div>
+      )}
 
-      {/* Workspace */}
-      <div className="flex-1 pt-16 relative flex overflow-hidden">
+      {/* ── WORKSPACE ── */}
+      <div className={`flex-1 relative flex overflow-hidden ${isMobile ? "pt-12" : "pt-16"}`}>
         {viewMode === "elevations" ? (
           <div className="flex-1 z-10">
             <ElevationGallery walls={walls} placedModules={placedModules} onWallSelect={setSelectedWall} customWalls={customWalls} />
@@ -825,132 +829,170 @@ export default function Configurator() {
             wallImages={wallImages}
           />
         )}
-        </div>
-
-      {/* Floating left panel — Module picker */}
-      <div
-        className="absolute z-40 flex"
-        style={{ left: `${panelPos.x}px`, top: `${panelPos.y}px`, cursor: draggingPanel ? "grabbing" : "default" }}
-      >
-        <div
-          className={`bg-white border border-gray-200 shadow-xl flex flex-col overflow-hidden transition-all duration-200 ${
-            panelCollapsed ? "w-0 opacity-0 pointer-events-none" : "w-64 opacity-100"
-          }`}
-          onMouseDown={handlePanelMouseDown}
-        >
-          <div className="px-4 pt-3 pb-2 border-b border-gray-100 shrink-0 cursor-grab active:cursor-grabbing">
-            <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest">Module Library</p>
-            <p className="text-[11px] text-gray-400 mt-0.5">Expand a category · drag to place</p>
-          </div>
-          <div className="flex-1 overflow-y-auto p-3">
-            <ModulePanel
-               onDragStart={handleDragStart}
-               onDragEnd={handleDragEnd}
-               selectedWall={selectedWall}
-               selectedModule={selectedModule}
-               placedModules={placedModules}
-               onModuleImageUpdate={handleModuleImageUpdate}
-               onWallImageUpdate={handleWallImageUpdate}
-               floorPlanImages={floorPlanImages}
-               wallImages={wallImages}
-             />
-          </div>
-        </div>
-
-        {/* Collapse toggle */}
-        <button
-          onClick={() => setPanelCollapsed(!panelCollapsed)}
-          className="self-start mt-3 ml-1 bg-white border border-gray-200 shadow-md p-1 hover:border-[#F15A22] hover:text-[#F15A22] text-gray-400 transition-all"
-        >
-          {panelCollapsed ? <ChevronRight size={15} /> : <ChevronLeft size={15} />}
-        </button>
       </div>
 
-      {/* Floating right panel — Design summary or preview */}
-       {placedModules.length > 0 && (
-         <div
-           className="absolute z-20"
-           style={{ left: `${summaryPos.x}px`, top: `${summaryPos.y}px`, cursor: draggingSummary ? "grabbing" : "default", width: "260px" }}
-         >
-           <div className="bg-white border border-gray-200 shadow-xl overflow-hidden" onMouseDown={handleSummaryMouseDown}>
-             <div className="px-4 py-3 border-b border-gray-100 cursor-grab active:cursor-grabbing flex items-center justify-between">
-               <p className="text-xs font-semibold text-gray-800">{selectedModule || selectedWall ? (selectedWall ? `Wall: ${selectedWall.face || selectedWall.type || "Preview"}` : "Preview") : "Design Summary"}</p>
-               <button
-                 onMouseDown={e => e.stopPropagation()}
-                 onClick={() => setSummaryCollapsed(c => !c)}
-                 className="text-gray-400 hover:text-[#F15A22] transition-colors text-xs leading-none"
-                 title={summaryCollapsed ? "Expand" : "Minimise"}
-               >
-                 {summaryCollapsed ? "▲" : "▼"}
-               </button>
-             </div>
-             {!summaryCollapsed && (
-               <div className="p-4 h-[320px] overflow-y-auto">
-                 {selectedModule && selectedModule.floorPlanImage ? (
-                   <div className="flex flex-col h-full gap-2">
-                     <div>
-                       <p className="text-xs font-semibold text-gray-900 break-words">{selectedModule.label}</p>
-                       <p className="text-[10px] text-gray-500">{selectedModule.type}</p>
-                     </div>
-                     <div className="flex-1 bg-gray-50 rounded overflow-hidden flex items-center justify-center">
-                       <img src={selectedModule.floorPlanImage} alt={selectedModule.label} className="w-full h-full object-contain" style={{ transform: `rotate(${selectedModule.rotation || 0}deg) ${selectedModule.flipped ? 'scaleX(-1)' : ''}` }} />
-                     </div>
-                     <div className="flex justify-between items-center text-xs border-t border-gray-200 pt-2">
-                       <span className="text-gray-600">{selectedModule.sqm?.toFixed(1)} m²</span>
-                       <span className="font-semibold text-gray-800">${(selectedModule.price || 0).toLocaleString()}</span>
-                     </div>
-                     </div>
-                     ) : selectedWall ? (
-                   <div className="flex flex-col h-full gap-2">
-                     <div>
-                       <p className="text-xs font-semibold text-gray-900 break-words">{selectedWall.label}</p>
-                       <p className="text-[10px] text-gray-500">{selectedWall.type}</p>
-                       {selectedWall.face && <span className="text-[10px] font-bold text-[#F15A22]">Face {selectedWall.face}</span>}
-                     </div>
-                     <div className="flex-1 bg-gray-50 rounded overflow-hidden flex items-center justify-center">
-                       {selectedWall.elevationImage ? (
-                         <img src={selectedWall.elevationImage} alt={selectedWall.label} className="w-full h-full object-contain" style={{ transform: selectedWall.flipped ? 'scaleX(-1)' : undefined }} />
-                       ) : (
-                         <div className="flex flex-col items-center gap-2 text-gray-400">
-                           <div className="w-16 h-24 border-2 border-gray-300 rounded flex items-center justify-center">
-                             <span className="text-2xl font-bold text-gray-300">{selectedWall.face || "W"}</span>
-                           </div>
-                           <p className="text-[10px] text-center">No elevation image</p>
-                         </div>
-                       )}
-                     </div>
-                     <div className="text-xs border-t border-gray-200 pt-2 text-right">
-                       <span className="font-semibold text-gray-800">${(selectedWall.price || 0).toLocaleString()}</span>
-                     </div>
-                     </div>
-                 ) : (
-                   <DesignSummary
-                     placedModules={placedModules}
-                     walls={walls}
-                     onSave={() => setSaveModalOpen(true)}
-                     onClear={handleClear}
-                     isSaving={saveMutation.isPending}
-                     onQuote={() => setQuoteOpen(true)}
-                   />
-                 )}
-               </div>
-             )}
-           </div>
-         </div>
-       )}
+      {/* ── DESKTOP FLOATING PANELS ── */}
+      {!isMobile && (
+        <>
+          {/* Floating left panel — Module picker */}
+          <div
+            className="absolute z-40 flex"
+            style={{ left: `${panelPos.x}px`, top: `${panelPos.y}px`, cursor: draggingPanel ? "grabbing" : "default" }}
+          >
+            <div
+              className={`bg-white border border-gray-200 shadow-xl flex flex-col overflow-hidden transition-all duration-200 ${
+                panelCollapsed ? "w-0 opacity-0 pointer-events-none" : "w-64 opacity-100"
+              }`}
+              onMouseDown={handlePanelMouseDown}
+            >
+              <div className="px-4 pt-3 pb-2 border-b border-gray-100 shrink-0 cursor-grab active:cursor-grabbing">
+                <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest">Module Library</p>
+                <p className="text-[11px] text-gray-400 mt-0.5">Expand a category · drag to place</p>
+              </div>
+              <div className="flex-1 overflow-y-auto p-3">
+                <ModulePanel
+                  onDragStart={handleDragStart}
+                  onDragEnd={handleDragEnd}
+                  selectedWall={selectedWall}
+                  selectedModule={selectedModule}
+                  placedModules={placedModules}
+                  onModuleImageUpdate={handleModuleImageUpdate}
+                  onWallImageUpdate={handleWallImageUpdate}
+                  floorPlanImages={floorPlanImages}
+                  wallImages={wallImages}
+                />
+              </div>
+            </div>
+            <button
+              onClick={() => setPanelCollapsed(!panelCollapsed)}
+              className="self-start mt-3 ml-1 bg-white border border-gray-200 shadow-md p-1 hover:border-[#F15A22] hover:text-[#F15A22] text-gray-400 transition-all"
+            >
+              {panelCollapsed ? <ChevronRight size={15} /> : <ChevronLeft size={15} />}
+            </button>
+          </div>
+
+          {/* Floating right panel — Design summary */}
+          {placedModules.length > 0 && (
+            <div
+              className="absolute z-20"
+              style={{ left: `${summaryPos.x}px`, top: `${summaryPos.y}px`, cursor: draggingSummary ? "grabbing" : "default", width: "260px" }}
+            >
+              <div className="bg-white border border-gray-200 shadow-xl overflow-hidden" onMouseDown={handleSummaryMouseDown}>
+                <div className="px-4 py-3 border-b border-gray-100 cursor-grab active:cursor-grabbing flex items-center justify-between">
+                  <p className="text-xs font-semibold text-gray-800">{selectedModule || selectedWall ? (selectedWall ? `Wall: ${selectedWall.face || selectedWall.type || "Preview"}` : "Preview") : "Design Summary"}</p>
+                  <button onMouseDown={e => e.stopPropagation()} onClick={() => setSummaryCollapsed(c => !c)} className="text-gray-400 hover:text-[#F15A22] transition-colors text-xs leading-none">
+                    {summaryCollapsed ? "▲" : "▼"}
+                  </button>
+                </div>
+                {!summaryCollapsed && (
+                  <div className="p-4 h-[320px] overflow-y-auto">
+                    {selectedModule && selectedModule.floorPlanImage ? (
+                      <div className="flex flex-col h-full gap-2">
+                        <div>
+                          <p className="text-xs font-semibold text-gray-900 break-words">{selectedModule.label}</p>
+                          <p className="text-[10px] text-gray-500">{selectedModule.type}</p>
+                        </div>
+                        <div className="flex-1 bg-gray-50 rounded overflow-hidden flex items-center justify-center">
+                          <img src={selectedModule.floorPlanImage} alt={selectedModule.label} className="w-full h-full object-contain" style={{ transform: `rotate(${selectedModule.rotation || 0}deg) ${selectedModule.flipped ? 'scaleX(-1)' : ''}` }} />
+                        </div>
+                        <div className="flex justify-between items-center text-xs border-t border-gray-200 pt-2">
+                          <span className="text-gray-600">{selectedModule.sqm?.toFixed(1)} m²</span>
+                          <span className="font-semibold text-gray-800">${(selectedModule.price || 0).toLocaleString()}</span>
+                        </div>
+                      </div>
+                    ) : selectedWall ? (
+                      <div className="flex flex-col h-full gap-2">
+                        <div>
+                          <p className="text-xs font-semibold text-gray-900 break-words">{selectedWall.label}</p>
+                          <p className="text-[10px] text-gray-500">{selectedWall.type}</p>
+                          {selectedWall.face && <span className="text-[10px] font-bold text-[#F15A22]">Face {selectedWall.face}</span>}
+                        </div>
+                        <div className="flex-1 bg-gray-50 rounded overflow-hidden flex items-center justify-center">
+                          {selectedWall.elevationImage ? (
+                            <img src={selectedWall.elevationImage} alt={selectedWall.label} className="w-full h-full object-contain" style={{ transform: selectedWall.flipped ? 'scaleX(-1)' : undefined }} />
+                          ) : (
+                            <div className="flex flex-col items-center gap-2 text-gray-400">
+                              <div className="w-16 h-24 border-2 border-gray-300 rounded flex items-center justify-center">
+                                <span className="text-2xl font-bold text-gray-300">{selectedWall.face || "W"}</span>
+                              </div>
+                              <p className="text-[10px] text-center">No elevation image</p>
+                            </div>
+                          )}
+                        </div>
+                        <div className="text-xs border-t border-gray-200 pt-2 text-right">
+                          <span className="font-semibold text-gray-800">${(selectedWall.price || 0).toLocaleString()}</span>
+                        </div>
+                      </div>
+                    ) : (
+                      <DesignSummary
+                        placedModules={placedModules}
+                        walls={walls}
+                        onSave={() => setSaveModalOpen(true)}
+                        onClear={handleClear}
+                        isSaving={saveMutation.isPending}
+                        onQuote={() => setQuoteOpen(true)}
+                      />
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </>
+      )}
+
+      {/* ── MOBILE BOTTOM DRAWER — Module Library ── */}
+      {isMobile && (
+        <div
+          className="absolute bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-200 shadow-2xl transition-all duration-300"
+          style={{ height: mobileDrawerOpen ? "65vh" : "48px" }}
+        >
+          {/* Drawer handle / toggle */}
+          <button
+            onClick={() => setMobileDrawerOpen(v => !v)}
+            className="w-full flex items-center justify-between px-4 py-3 text-left"
+          >
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-0.5 bg-gray-300 rounded absolute left-1/2 -translate-x-1/2 top-2" />
+              <span className="text-xs font-semibold text-gray-700 uppercase tracking-widest">Module Library</span>
+              {placedModules.length > 0 && (
+                <span className="text-[10px] bg-[#F15A22] text-white rounded-full px-1.5 py-0.5">{placedModules.length}</span>
+              )}
+            </div>
+            {mobileDrawerOpen ? <ChevronDown size={16} className="text-gray-400" /> : <ChevronUp size={16} className="text-gray-400" />}
+          </button>
+
+          {mobileDrawerOpen && (
+            <div className="flex-1 overflow-y-auto px-3 pb-4" style={{ height: "calc(65vh - 48px)" }}>
+              <p className="text-[11px] text-gray-400 mb-2 text-center">Tap items below to view · drag-and-drop available on desktop</p>
+              <ModulePanel
+                onDragStart={handleDragStart}
+                onDragEnd={handleDragEnd}
+                selectedWall={selectedWall}
+                selectedModule={selectedModule}
+                placedModules={placedModules}
+                onModuleImageUpdate={handleModuleImageUpdate}
+                onWallImageUpdate={handleWallImageUpdate}
+                floorPlanImages={floorPlanImages}
+                wallImages={wallImages}
+              />
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Saved Designs overlay panel */}
       {showSaved && (
-        <div className="absolute inset-0 z-40 bg-black/30 flex items-start justify-center pt-16" onClick={() => setShowSaved(false)}>
+        <div className="absolute inset-0 z-50 bg-black/30 flex items-start justify-center pt-12" onClick={() => setShowSaved(false)}>
           <div
-            className="bg-white border border-gray-200 shadow-2xl w-full max-w-3xl max-h-[75vh] overflow-y-auto"
+            className="bg-white border border-gray-200 shadow-2xl w-full max-w-3xl max-h-[80vh] overflow-y-auto mx-3"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
               <h2 className="text-base font-bold text-gray-800">My Saved Designs</h2>
               <button onClick={() => setShowSaved(false)} className="text-gray-400 hover:text-gray-600 text-xl leading-none">&times;</button>
             </div>
-            <div className="p-6">
+            <div className="p-4">
               <SavedDesigns
                 designs={designs}
                 onLoad={handleLoad}
@@ -976,9 +1018,11 @@ export default function Configurator() {
       />
 
       {/* Copyright footer */}
-      <div className="fixed bottom-0 left-0 right-0 z-10 text-center py-1 text-[10px] text-gray-400 bg-white/70 backdrop-blur pointer-events-none select-none">
-        © {new Date().getFullYear()} connectapod. All rights reserved.
-      </div>
+      {!isMobile && (
+        <div className="fixed bottom-0 left-0 right-0 z-10 text-center py-1 text-[10px] text-gray-400 bg-white/70 backdrop-blur pointer-events-none select-none">
+          © {new Date().getFullYear()} connectapod. All rights reserved.
+        </div>
+      )}
     </div>
   );
 }
