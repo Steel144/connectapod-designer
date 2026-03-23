@@ -722,7 +722,7 @@ export default function Configurator() {
           <div className="flex items-center gap-2 ml-auto shrink-0">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-gray-600 bg-white border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22] transition-all">
+                <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-[#F15A22] text-white hover:bg-[#d94e1a] transition-all">
                   <LayoutTemplate size={13} /> Design Catalogue
                 </button>
               </DropdownMenuTrigger>
