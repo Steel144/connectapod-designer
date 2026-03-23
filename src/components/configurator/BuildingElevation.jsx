@@ -116,18 +116,19 @@ export default function BuildingElevation({ walls = [], placedModules = [], stic
                labelMap={labelMapZ}
             />
             <VerticalElevation 
-              layers={xElevation} 
-              label="X — East Elevation" 
-              color="#ef4444"
-              totalDepthCells={totalDepthCells}
-              endElevationHPx={endElevationHPx}
-              scale={scale}
-              CELL_M={CELL_M}
-              PX_PER_M={PX_PER_M}
-              WALL_H_M={WALL_H_M}
-              slotOffsets={{ 1: slotOffset1X, 2: slotOffset2X, 3: slotOffset3X }}
+               layers={xElevation} 
+               label="X — East Elevation" 
+               color="#ef4444"
+               totalDepthCells={totalDepthCells}
+               endElevationHPx={endElevationHPx}
+               scale={scale}
+               CELL_M={CELL_M}
+               PX_PER_M={PX_PER_M}
+               WALL_H_M={WALL_H_M}
+               slotOffsets={{ 1: slotOffset1X, 2: slotOffset2X, 3: slotOffset3X }}
+               slotScales={{ 1: slotScale1X }}
                labelMap={labelMapX}
-            />
+             />
           </div>
           <HorizontalElevation 
             layers={wElevation} 
