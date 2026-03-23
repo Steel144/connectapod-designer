@@ -122,16 +122,16 @@ export default function PrintableElevationsSheet({ walls = [], placedModules = [
       </button>
 
       <style>{`
-        @page { margin: 0; size: A4 landscape; }
-        @media print {
-          body { margin: 0; padding: 0; }
-          img { max-width: 100%; height: auto; }
-          .pavilion-page { page-break-after: always; }
-        }
+      @page { margin: 0.25in; size: A4 landscape; }
+      @media print {
+        body { margin: 0; padding: 0; }
+        img { max-width: 100%; height: auto; }
+        .pavilion-page { page-break-after: always; margin: 0; padding: 0.25in; }
+      }
       `}</style>
 
       {pavilions.map((pav) => (
-        <div key={pav.pavilionNum} className="pavilion-page p-8 min-h-screen flex flex-col">
+        <div key={pav.pavilionNum} className="pavilion-page p-4 min-h-screen flex flex-col">
           <div className="flex items-center justify-between px-6 pt-4 pb-4 border-b border-[#F15A22] mb-6">
             <img src="https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/1a43e85d2_Connectapod-01.png" alt="connectapod" style={{ height: "25px", width: "auto" }} />
             <h2 className="text-lg font-bold text-gray-800">{getPavilionLabel(pav.pavilionNum)}</h2>
@@ -158,7 +158,7 @@ export default function PrintableElevationsSheet({ walls = [], placedModules = [
                   <div className="flex items-end pb-2" style={{ gap: "0px" }}>
                     {row.zWall?.elevationImage && (
                       <div className="flex flex-col items-center gap-0">
-                        <div className="bg-white border border-gray-300 flex items-center justify-center" style={{ height: "220px", width: `${Math.max(60, 0.31 * pxPerMeter)}px` }}>
+                        <div className="bg-white flex items-center justify-center" style={{ height: "220px", width: `${Math.max(60, 0.31 * pxPerMeter)}px` }}>
                           <img src={row.zWall.elevationImage} alt="Z" style={{ height: "100%", width: "100%", objectFit: "contain", pointerEvents: "none" }} />
                         </div>
                       </div>
@@ -170,7 +170,7 @@ export default function PrintableElevationsSheet({ walls = [], placedModules = [
                       return (
                         wall.elevationImage && (
                           <div key={wall.id} className="flex items-center" style={{ marginRight: "0px" }}>
-                            <div className="bg-white border border-gray-300 flex items-center justify-center" style={{ height: "220px", width: `${wallWidth}px`, marginRight: "0px" }}>
+                            <div className="bg-white flex items-center justify-center" style={{ height: "220px", width: `${wallWidth}px`, marginRight: "0px" }}>
                               <img src={wall.elevationImage} alt={wall.type} style={{ height: "100%", width: "100%", objectFit: "contain", pointerEvents: "none" }} />
                             </div>
                           </div>
@@ -179,12 +179,12 @@ export default function PrintableElevationsSheet({ walls = [], placedModules = [
                     })}
 
                     {row.xWall?.elevationImage && (
-                      <div className="flex flex-col items-center gap-0">
-                        <div className="bg-white border border-gray-300 flex items-center justify-center" style={{ height: "220px", width: `${Math.max(60, 0.31 * pxPerMeter)}px` }}>
-                          <img src={row.xWall.elevationImage} alt="X" style={{ height: "100%", width: "100%", objectFit: "contain", pointerEvents: "none" }} />
-                        </div>
-                      </div>
-                    )}
+                       <div className="flex flex-col items-center gap-0">
+                         <div className="bg-white flex items-center justify-center" style={{ height: "220px", width: `${Math.max(60, 0.31 * pxPerMeter)}px` }}>
+                           <img src={row.xWall.elevationImage} alt="X" style={{ height: "100%", width: "100%", objectFit: "contain", pointerEvents: "none" }} />
+                         </div>
+                       </div>
+                     )}
                   </div>
                 </div>
               );
