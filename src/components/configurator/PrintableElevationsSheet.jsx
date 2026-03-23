@@ -84,13 +84,11 @@ export default function PrintableElevationsSheet({ walls = [], placedModules = [
           const modsAtY = yRows[yPos].sort((a, b) => a.x - b.x);
 
           const yFaceWalls = modsAtY.map(mod => findWall(mod, "Y") || makePlaceholder(mod, "Y"));
-          const wFaceWalls = modsAtY.map(mod => findWall(mod, "W") || makePlaceholder(mod, "W"));
 
           const zWall = walls.find(w => w.face === "Z" && modsAtY.some(mod => Math.abs(w.y - mod.y) < 0.5 && Math.abs(w.x - mod.x) < 0.5)) || null;
           const xWall = walls.find(w => w.face === "X" && modsAtY.some(mod => Math.abs(w.y - mod.y) < 0.5 && Math.abs(w.x - (mod.x + mod.w - 0.31)) < 0.5)) || null;
 
-          rows.push({ type: "Y", yPos, zWall, midWalls: yFaceWalls, xWall });
-          rows.push({ type: "W", yPos, zWall, midWalls: wFaceWalls, xWall });
+          rows.push({ yPos, zWall, midWalls: yFaceWalls, xWall });
         });
 
       return { pavilionNum: pavNum, rows };
