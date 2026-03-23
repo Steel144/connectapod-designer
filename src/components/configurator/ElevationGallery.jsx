@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef } from "react";
+import React, { useState, useMemo, useRef, useEffect } from "react";
 import { ZoomIn, ZoomOut, Maximize2 } from "lucide-react";
 
 const GRID_ROWS = 40;
