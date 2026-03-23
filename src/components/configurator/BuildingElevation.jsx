@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { ZoomIn, ZoomOut } from "lucide-react";
 import { useElevationGeometry } from "@/hooks/useElevationGeometry";
 import HorizontalElevation from "./HorizontalElevation";
