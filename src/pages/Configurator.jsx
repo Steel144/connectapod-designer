@@ -695,7 +695,7 @@ export default function Configurator() {
   }
 
   return (
-    <div className="w-screen h-screen bg-[#F0EFEd] overflow-hidden relative flex flex-col">
+    <div className={`w-screen bg-[#F0EFEd] relative flex flex-col ${viewMode === "building" ? "min-h-screen overflow-y-auto" : "h-screen overflow-hidden"}`}>
 
       {/* ── DESKTOP TOP BAR ── */}
       {!isMobile && (
