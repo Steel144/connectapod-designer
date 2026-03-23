@@ -257,7 +257,7 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
         style={{ flex: 1, overflowX: "auto", overflowY: "auto", background: "#f9fafb", minWidth: 0, paddingTop: "56px" }}
         ref={containerRef}
       >
-        <div ref={contentRef} style={{ display: "inline-block", padding: "40px", paddingRight: "800px" }}>
+        <div ref={contentRef} style={{ display: "inline-block", padding: "40px", paddingRight: "1000px" }}>
           <div className="flex flex-col" style={{ gap: `${Math.round((zoom / 100) * 48)}px` }}>
             {pavilions.filter(Boolean).map((pav) => (
               <div key={pav.pavilionNum} className="flex flex-col" style={{ gap: `${Math.round((zoom / 100) * 64)}px` }}>
