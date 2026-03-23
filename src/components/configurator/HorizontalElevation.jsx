@@ -18,7 +18,7 @@ const HorizontalElevation = memo(function HorizontalElevation({
       <div style={{ fontSize: "14px", fontWeight: "bold", color: "black", textTransform: "uppercase", letterSpacing: "0.05em", backgroundColor: "#fed7aa", padding: "8px 12px", borderRadius: "4px", width: "fit-content", marginLeft: "4px" }}>
         {label}
       </div>
-      <div style={{ position: "relative", width: totalWidthPx, height: wallHPx, backgroundColor: "#f9fafb", overflow: "hidden" }}>
+      <div style={{ position: "relative", width: totalWidthPx, height: wallHPx, backgroundColor: "#f9fafb", overflow: "hidden", overflowX: "auto" }} data-elevation-scroll>
          {layers.map((layer, li) => {
            let moduleNum = 0;
            return layer.slots.map((slot, si) => {
