@@ -14,6 +14,7 @@ export default function QuoteGenerator({ placedModules, walls, open, onClose }) 
   const [address, setAddress] = useState("");
   const [city, setCity] = useState("");
   const [postalCode, setPostalCode] = useState("");
+  const [siteAddress, setSiteAddress] = useState("");
   const [generating, setGenerating] = useState(false);
 
   const totalSqm = placedModules.reduce((s, m) => s + (m.sqm || 0), 0);
@@ -81,7 +82,7 @@ export default function QuoteGenerator({ placedModules, walls, open, onClose }) 
     y += 10;
 
     // Client info
-    if (clientName || projectName || address || clientPhone || clientEmail) {
+    if (clientName || projectName || address || clientPhone || clientEmail || siteAddress) {
       const infoLines = [];
       if (clientName) infoLines.push(`Client: ${clientName}`);
       if (clientPhone) infoLines.push(`Phone: ${clientPhone}`);
@@ -90,6 +91,7 @@ export default function QuoteGenerator({ placedModules, walls, open, onClose }) 
         const addressStr = [address, city, postalCode].filter(Boolean).join(", ");
         if (addressStr) infoLines.push(`Address: ${addressStr}`);
       }
+      if (siteAddress) infoLines.push(`Building Site: ${siteAddress}`);
       
       const boxHeight = 8 + infoLines.length * 5;
       doc.setFillColor(248, 248, 248);
@@ -299,6 +301,10 @@ export default function QuoteGenerator({ placedModules, walls, open, onClose }) 
                <Label className="text-xs text-gray-600">Postal Code</Label>
                <Input value={postalCode} onChange={e => setPostalCode(e.target.value)} placeholder="e.g. 1010" className="mt-1 rounded-none text-sm h-9" />
              </div>
+           </div>
+           <div>
+             <Label className="text-xs text-gray-600">Building Site Address</Label>
+             <Input value={siteAddress} onChange={e => setSiteAddress(e.target.value)} placeholder="e.g. 456 Beach Road, Piha" className="mt-1 rounded-none text-sm h-9" />
            </div>
            <div>
              <Label className="text-xs text-gray-600">Project Name</Label>
