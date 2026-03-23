@@ -73,9 +73,10 @@ export default function BuildingElevation({ walls = [], placedModules = [], stic
           </button>
         </div>
       </div>
+      )}
 
       {/* Spacer so content starts below the fixed zoom bar */}
-      <div style={{ height: stickyTop + zoomBarHeight }} />
+      {showHeader && <div style={{ height: stickyTop + zoomBarHeight }} />}
 
       <div
         className="relative select-none bg-gray-50"
