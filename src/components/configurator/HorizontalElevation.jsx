@@ -20,26 +20,24 @@ const HorizontalElevation = memo(function HorizontalElevation({
       </div>
       <div style={{ position: "relative", width: totalWidthPx, height: wallHPx, backgroundColor: "#f9fafb", overflow: "hidden", overflowX: "auto" }} data-elevation-scroll>
          {layers.map((layer, li) => {
-              let moduleNum = 0;
-              return layer.slots.map((slot, si) => {
-                moduleNum++;
-                const leftPx = Math.round(scale * slot.xOffsetCells * CELL_M * PX_PER_M);
-                const widthPx = Math.round(scale * slot.widthCells * CELL_M * PX_PER_M);
-                const isDarkened = li > 0;
-                return (
-                  <ElevationSlot
-                    key={`${li}-${si}`}
-                    slot={slot}
-                    leftPx={leftPx}
-                    widthPx={widthPx}
-                    heightPx={wallHPx}
-                    objectFit="cover"
-                    showLabel={false}
-                    isDarkened={isDarkened}
-                  />
-                );
-              });
-            })}
+           let moduleNum = 0;
+           return layer.slots.map((slot, si) => {
+             moduleNum++;
+             const leftPx = Math.round(scale * slot.xOffsetCells * CELL_M * PX_PER_M);
+             const widthPx = Math.round(scale * slot.widthCells * CELL_M * PX_PER_M);
+             return (
+               <ElevationSlot
+                 key={`${li}-${si}`}
+                 slot={slot}
+                 leftPx={leftPx}
+                 widthPx={widthPx}
+                 heightPx={wallHPx}
+                 objectFit="cover"
+                 showLabel={false}
+               />
+             );
+           });
+         })}
         <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 2, backgroundColor: "#374151" }} />
       </div>
     </div>
