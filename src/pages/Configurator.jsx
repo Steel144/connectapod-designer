@@ -746,6 +746,17 @@ export default function Configurator() {
               <FolderOpen size={13} /> My Designs
               {designs.length > 0 && <span className={`ml-0.5 rounded-full px-1.5 text-[10px] font-bold ${showSaved ? "bg-white/30 text-white" : "bg-gray-100 text-gray-600"}`}>{designs.length}</span>}
             </button>
+            <div className="flex border border-gray-200 overflow-hidden">
+              <button onClick={() => setGridZoom(z => Math.max(25, z - 10))} title="Zoom out" className="px-2.5 py-1.5 text-xs text-gray-600 hover:text-[#F15A22] transition-all">
+                <ZoomOut size={13} />
+              </button>
+              <button onClick={() => setGridZoom(100)} title="Reset zoom" className="px-2 py-1.5 text-xs font-semibold text-gray-600 hover:text-[#F15A22] transition-all min-w-12">
+                {gridZoom}%
+              </button>
+              <button onClick={() => setGridZoom(z => Math.min(300, z + 10))} title="Zoom in" className="px-2.5 py-1.5 text-xs text-gray-600 hover:text-[#F15A22] transition-all">
+                <ZoomIn size={13} />
+              </button>
+            </div>
             <button onClick={() => setSaveModalOpen(true)} disabled={placedModules.length === 0 || saveMutation.isPending} className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-[#F15A22] text-white hover:bg-[#d94e1a] disabled:opacity-40 transition-all">
               <Save size={13} /> {saveMutation.isPending ? "Saving…" : "Save Design"}
             </button>
