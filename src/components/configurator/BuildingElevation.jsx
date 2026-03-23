@@ -13,6 +13,7 @@ export default function BuildingElevation({ walls = [], placedModules = [], stic
   const containerRef = useRef(null);
   const contentRef = useRef(null);
   const centeredRef = useRef(false);
+  const isScrollingRef = useRef(false);
 
   useEffect(() => {
     if (!centeredRef.current && containerRef.current && contentRef.current) {
@@ -24,6 +25,21 @@ export default function BuildingElevation({ walls = [], placedModules = [], stic
       }, 0);
     }
   }, []);
+
+  const handleScroll = (e) => {
+    if (isScrollingRef.current) return;
+    
+    isScrollingRef.current = true;
+    const scrollLeft = e.target.scrollLeft;
+    
+    // Update scroll position for all child elevation containers
+    const elevationContainers = containerRef.current?.querySelectorAll('[data-elevation-scroll]');
+    elevationContainers?.forEach(el => {
+      el.scrollLeft = scrollLeft;
+    });
+    
+    isScrollingRef.current = false;
+  };
 
 
   const zoomLevels = [20, 25, 37, 50, 62, 75, 100, 125, 150, 200];
