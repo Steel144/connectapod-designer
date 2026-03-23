@@ -149,7 +149,7 @@ export default function ElevationGallery({ walls = [], placedModules = [], onWal
       <div className={`flex flex-col items-center ${tight ? "gap-0" : "gap-2"} shrink-0`} style={{ margin: tight ? "-1px 0" : "0" }}>
         <div
           className={`overflow-hidden ${tight ? "" : "bg-white border border-gray-200 cursor-pointer"}`}
-          style={{ height: `${imgHeight}px`, width: wall.elevationImage ? "auto" : `${wallWidthPx}px` }}
+          style={{ height: `${Math.round(imgHeight * sizeMultiplier)}px`, width: wall.elevationImage ? "auto" : `${wallWidthPx}px` }}
           onMouseEnter={() => onWallSelect(wall)}
           onMouseLeave={() => onWallSelect(null)}
           onClick={() => onWallSelect(wall)}
