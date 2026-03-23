@@ -809,7 +809,7 @@ export default function Configurator() {
             <ElevationGallery walls={walls} placedModules={placedModules} onWallSelect={setSelectedWall} customWalls={customWalls} />
           </div>
         ) : viewMode === "building" ? (
-          <div style={{ flex: 1, minWidth: 0, zIndex: 10, paddingTop: isMobile ? "56px" : "65px", paddingBottom: isMobile ? "64px" : "0px" }}>
+          <div style={{ flex: 1, minWidth: 0, zIndex: 10, paddingBottom: isMobile ? "64px" : "0px" }}>
             <BuildingElevation walls={walls} placedModules={placedModules} />
           </div>
         ) : (
