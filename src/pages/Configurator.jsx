@@ -784,11 +784,10 @@ export default function Configurator() {
                   <Image size={14} />
                 </button>
                 <button onClick={() => setViewMode("building")} className={`px-2.5 py-1.5 text-xs transition-all ${viewMode === "building" ? "bg-[#F15A22] text-white" : "bg-white text-gray-600"}`}>
-                  <Box size={14} />
-                </button>
-              </div>
-              {/* Zoom controls for 2D view */}
-              {viewMode === "2d" && (
+                    <Box size={14} />
+                  </button>
+                </div>
+                {/* Zoom controls */}
                 <div className="flex border border-gray-200 overflow-hidden ml-1">
                   <button onClick={() => setGridZoom(z => Math.max(25, z - 10))} title="Zoom out" className="px-2.5 py-1.5 text-xs text-gray-600 hover:text-[#F15A22] transition-all">
                     <ZoomOut size={14} />
@@ -800,8 +799,7 @@ export default function Configurator() {
                     <ZoomIn size={14} />
                   </button>
                 </div>
-              )}
-            <div className="ml-auto flex items-center gap-2">
+                <div className="ml-auto flex items-center gap-2">
               <button onClick={() => setSaveModalOpen(true)} disabled={placedModules.length === 0 || saveMutation.isPending} className="px-3 py-1.5 text-xs bg-[#F15A22] text-white disabled:opacity-40 transition-all rounded-sm">
                 <Save size={14} />
               </button>
