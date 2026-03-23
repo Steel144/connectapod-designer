@@ -10,10 +10,7 @@ const WALL_H_M = 4.2;
 
 export default function BuildingElevation({ walls = [], placedModules = [] }) {
   const [zoom, setZoom] = useState(50);
-  const [pan, setPan] = useState({ x: 0, y: 0 });
-  const isPanning = useRef(false);
-  const panStart = useRef({ x: 0, y: 0 });
-  const panOrigin = useRef({ x: 0, y: 0 });
+
 
   const zoomLevels = [20, 25, 37, 50, 62, 75, 100, 125, 150, 200];
 
