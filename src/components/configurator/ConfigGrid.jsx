@@ -958,13 +958,15 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                  setDragging({ mod: item, offsetX, offsetY, cursorX: e.clientX, cursorY: e.clientY, isPlaced: true, selectedIds: new Set([item.id]), isFurniture: true });
                }}
              >
-               {item.image ? (
-                 <img src={item.image} alt={item.label} className="w-full h-full object-contain p-1" />
-               ) : (
-                 <div className="w-full h-full flex items-center justify-center text-[7px] font-semibold text-orange-600">
-                   {item.label}
-                 </div>
-               )}
+               <div className="w-full h-full overflow-hidden">
+                 {item.image ? (
+                   <img src={item.image} alt={item.label} className="w-full h-full object-contain p-1" />
+                 ) : (
+                   <div className="w-full h-full flex items-center justify-center text-[7px] font-semibold text-orange-600">
+                     {item.label}
+                   </div>
+                 )}
+               </div>
                <div className="absolute opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1" style={{ top: '-26px', left: '50%', transform: 'translateX(-50%)', whiteSpace: 'nowrap' }}>
                  <button
                    onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); onRotateFurniture?.(item.id); }}
