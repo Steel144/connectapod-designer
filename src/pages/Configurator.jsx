@@ -702,6 +702,7 @@ export default function Configurator() {
       name,
       grid: gridToSave,
       walls: wallsToSave,
+      furniture,
       totalSqm,
       estimatedPrice,
       moduleCount: placedModules.length,
