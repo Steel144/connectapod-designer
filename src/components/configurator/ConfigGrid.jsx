@@ -1056,6 +1056,40 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
 
 
         </div>
+
+        {/* Face menu popup */}
+        {faceMenuOpen && (
+          <div 
+            className="fixed bg-white border border-gray-200 rounded shadow-lg z-50"
+            style={{ left: `${faceMenuOpen.x + 8}px`, top: `${faceMenuOpen.y + 8}px` }}
+            onMouseLeave={() => setFaceMenuOpen(null)}
+          >
+            <div className="py-1">
+              {wallTypes
+                .filter(w => {
+                  const isHorizontal = faceMenuOpen.face === "W" || faceMenuOpen.face === "Y";
+                  const isVertical = faceMenuOpen.face === "Z" || faceMenuOpen.face === "X";
+                  const orientMatch = (isHorizontal && w.orientation === "horizontal") || (isVertical && w.orientation === "vertical");
+                  return orientMatch;
+                })
+                .map(wt => (
+                  <button
+                    key={wt.type}
+                    onClick={() => {
+                      onModuleSelect?.(faceMenuOpen.module);
+                      handlePlaceWallOnFace?.(wt, faceMenuOpen.module, faceMenuOpen.face);
+                      setFaceMenuOpen(null);
+                    }}
+                    className="w-full text-left px-3 py-2 text-xs hover:bg-[#F15A22] hover:text-white transition-colors whitespace-nowrap"
+                  >
+                    <div className="font-semibold">{wt.label}</div>
+                    <div className="text-[9px] opacity-70">${(wt.price || 0).toLocaleString()}</div>
+                  </button>
+                ))}
+            </div>
+          </div>
+        )}
+
         <p className="text-xs text-slate-400 mt-1 text-center">
           Grid: {GRID_COLS}×{GRID_ROWS} cells · Snap: 600mm
         </p>
