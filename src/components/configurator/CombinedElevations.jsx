@@ -22,7 +22,8 @@ const getModulePavilion = (mod) => {
   return null;
 };
 
-export default function CombinedElevations({ walls = [], placedModules = [], stickyTop = 0, navBarHeight = 0, showHeader = true, onWallSelect, selectedWall = null }) {
+export default function CombinedElevations({ walls = [], placedModules = [], stickyTop = 0, navBarHeight = 0, showHeader = true, onWallSelect, selectedWall = null, wallTypes = [], onWallReplace }) {
+  const [replaceOpen, setReplaceOpen] = React.useState(false);
   const [zoom, setZoom] = useState(50);
   const containerRef = useRef(null);
   const contentRef = useRef(null);
@@ -108,12 +109,47 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
     const wallWidthPx = Math.round((zoom / 100) * wallWidthM * 100);
     const isSelected = selectedWall?.id === wall.id;
     return (
-      <div className="flex flex-col items-center gap-2 shrink-0">
+      <div className="flex flex-col items-center gap-2 shrink-0 relative">
         <div
-          className={`overflow-hidden bg-white border transition-colors ${isSelected ? "border-blue-500 shadow-md" : (isPavilion ? "border-[#F15A22] hover:border-orange-600 cursor-pointer hover:shadow-md" : "border-gray-200 cursor-pointer hover:border-[#F15A22]")}`}
+          className={`overflow-hidden bg-white border transition-colors relative ${isSelected ? "border-blue-500 shadow-md" : (isPavilion ? "border-[#F15A22] hover:border-orange-600 cursor-pointer hover:shadow-md" : "border-gray-200 cursor-pointer hover:border-[#F15A22]")}`}
           style={{ height: `${imgHeight}px`, width: wall.elevationImage ? "auto" : `${wallWidthPx}px` }}
           onClick={() => onWallSelect?.(wall)}
         >
+          {isSelected && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setReplaceOpen(wall.id);
+              }}
+              className="absolute top-2 right-2 bg-blue-500 text-white p-1.5 rounded hover:bg-blue-600 transition-colors"
+              title="Replace wall"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+            </button>
+          )}
+          {replaceOpen === wall.id && (
+            <div className="absolute inset-0 bg-black/50 flex items-center justify-center p-2">
+              <div className="bg-white rounded shadow-lg p-3 max-h-48 overflow-y-auto w-full">
+                <p className="text-xs font-bold text-gray-700 mb-2">Select new wall type:</p>
+                {wallTypes.map((wt) => (
+                  <button
+                    key={wt.type}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onWallReplace?.(wall.id, wt);
+                      setReplaceOpen(null);
+                    }}
+                    className="w-full text-left px-2 py-1.5 text-xs text-gray-700 hover:bg-blue-100 rounded transition-colors"
+                  >
+                    {wt.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
           {wall.elevationImage ? (
             <img
               src={wall.elevationImage}
