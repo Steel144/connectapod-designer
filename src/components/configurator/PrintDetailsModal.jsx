@@ -122,8 +122,13 @@ export default function PrintDetailsModal({ open, onClose, onConfirm, printMode 
   const handleConfirm = () => {
    const details = { projectName, clientName, address, email, phone };
    localStorage.setItem(STORAGE_KEY, JSON.stringify(details));
-   // Format address for printing with line breaks after commas
-   const formattedAddress = address ? address.split(", ").join(",\n") : "";
+   // Format address for printing: number+street on line 1, region+postcode on line 2
+   const formattedAddress = address ? (() => {
+     const parts = address.split(", ");
+     const firstLine = parts.slice(0, 2).join(", ");
+     const secondLine = parts.slice(2).filter(p => p !== "New Zealand").join(", ");
+     return `${firstLine}\n${secondLine}`;
+   })() : "";
    onConfirm({ ...details, address: formattedAddress });
   };
 
@@ -148,7 +153,12 @@ export default function PrintDetailsModal({ open, onClose, onConfirm, printMode 
             <AddressAutocomplete value={address} onChange={setAddress} />
             {address && (
               <div className="mt-1 p-2 bg-gray-50 border border-gray-200 text-sm text-gray-700 whitespace-pre-wrap break-words">
-                {address.split(", ").join(",\n")}
+                {(() => {
+                  const parts = address.split(", ");
+                  const firstLine = parts.slice(0, 2).join(", ");
+                  const secondLine = parts.slice(2).filter(p => p !== "New Zealand").join(", ");
+                  return `${firstLine}\n${secondLine}`;
+                })()}
               </div>
             )}
           </div>

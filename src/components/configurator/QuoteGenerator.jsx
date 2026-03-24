@@ -392,7 +392,12 @@ export default function QuoteGenerator({ placedModules, walls, open, onClose }) 
              <AddressAutocomplete value={address} onChange={setAddress} />
              {address && (
                <div className="mt-1 p-2 bg-gray-50 border border-gray-200 text-sm text-gray-700 whitespace-pre-wrap break-words">
-                 {address.split(", ").join(",\n")}
+                 {(() => {
+                   const parts = address.split(", ");
+                   const firstLine = parts.slice(0, 2).join(", ");
+                   const secondLine = parts.slice(2).filter(p => p !== "New Zealand").join(", ");
+                   return `${firstLine}\n${secondLine}`;
+                 })()}
                </div>
              )}
            </div>
