@@ -22,8 +22,9 @@ const getModulePavilion = (mod) => {
   return null;
 };
 
-export default function CombinedElevations({ walls = [], placedModules = [], stickyTop = 0, navBarHeight = 0, showHeader = true, onWallSelect, selectedWall = null, wallTypes = [], onWallReplace, onOpenWallsMenu, zoom = 50, onZoomChange }) {
+export default function CombinedElevations({ walls = [], placedModules = [], stickyTop = 0, navBarHeight = 0, showHeader = true, onWallSelect, selectedWall = null, wallTypes = [], onWallReplace, onOpenWallsMenu }) {
    const [replaceOpen, setReplaceOpen] = React.useState(false);
+  const [zoom, setZoom] = useState(50);
   const containerRef = useRef(null);
   const contentRef = useRef(null);
   const centeredRef = useRef(false);
@@ -44,10 +45,10 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
   const adjustZoom = (delta) => {
     if (delta > 0) {
       const next = zoomLevels.find(z => z > zoom);
-      if (next !== undefined) onZoomChange?.(next);
+      if (next) setZoom(next);
     } else {
       const prev = [...zoomLevels].reverse().find(z => z < zoom);
-      if (prev !== undefined) onZoomChange?.(prev);
+      if (prev) setZoom(prev);
     }
   };
 
@@ -163,7 +164,7 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
             <button onClick={() => adjustZoom(-1)} disabled={zoom <= zoomLevels[0]} className="p-1.5 rounded hover:bg-white hover:shadow-sm transition-all text-gray-500 hover:text-gray-800 disabled:opacity-30 disabled:cursor-not-allowed">
               <ZoomOut size={15} />
             </button>
-            <button onClick={() => { onZoomChange?.(50); }} className="min-w-[52px] text-center text-xs font-semibold text-gray-600 hover:text-[#F15A22] py-1 px-2 rounded hover:bg-white transition-all">
+            <button onClick={() => { setZoom(50); }} className="min-w-[52px] text-center text-xs font-semibold text-gray-600 hover:text-[#F15A22] py-1 px-2 rounded hover:bg-white transition-all">
               {zoom}%
             </button>
             <button onClick={() => adjustZoom(1)} disabled={zoom >= zoomLevels[zoomLevels.length - 1]} className="p-1.5 rounded hover:bg-white hover:shadow-sm transition-all text-gray-500 hover:text-gray-800 disabled:opacity-30 disabled:cursor-not-allowed">
@@ -180,7 +181,7 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
         style={{ minHeight: "500px" }}
         ref={containerRef}
       >
-        <div ref={contentRef} style={{ padding: "40px", paddingLeft: "2400px", paddingRight: "1800px", display: "inline-block", minWidth: "max-content", transform: `scale(${zoom / 100})`, transformOrigin: "top left" }}>
+        <div ref={contentRef} style={{ padding: "40px", paddingLeft: "2400px", paddingRight: "1800px", display: "inline-block", minWidth: "max-content" }}>
           
           {/* Building Elevations Section */}
           <div style={{ display: "block", marginBottom: "60px" }}>

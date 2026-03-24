@@ -922,7 +922,8 @@ export default function Configurator() {
       {/* ── WORKSPACE ── */}
       <div className={`flex-1 relative overflow-auto ${isMobile ? "pt-12" : "pt-16"}`}>
         {viewMode === "elevations" ? (
-          <CombinedElevations 
+          <div style={{ transform: `scale(${elevationZoom / 100})`, transformOrigin: "top center", display: "inline-block", width: "100%" }}>
+            <CombinedElevations 
               walls={walls} 
               placedModules={placedModules} 
               stickyTop={navBarHeight} 
@@ -930,8 +931,6 @@ export default function Configurator() {
               onWallSelect={setSelectedWall} 
               selectedWall={selectedWall}
               wallTypes={availableWallTypes}
-              zoom={elevationZoom}
-              onZoomChange={setElevationZoom}
               onWallReplace={(wallId, newWallType) => {
                 pushHistory(placedModules, walls);
                 setWalls(prev => prev.map(w => 
@@ -947,6 +946,7 @@ export default function Configurator() {
                 setMobileDrawerOpen(true);
               }}
             />
+          </div>
         ) : (
           <div style={{ display: "flex", height: "100%" }}>
             <ConfigGrid
