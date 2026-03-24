@@ -49,25 +49,63 @@ const Footer = ({ sheet, pageNum, totalPages }) => (
   </div>
 );
 
-const PrintPage = ({ children, header, footer, isLast }) => (
-  <div style={{
-    background: "white",
-    display: "flex",
-    flexDirection: "column",
-    width: "420mm",
-    height: "297mm",
-    pageBreakAfter: isLast ? "avoid" : "always",
-    breakAfter: isLast ? "avoid" : "page",
-    overflow: "hidden",
-    boxSizing: "border-box",
-  }}>
-    {header}
-    <div style={{ flex: 1, overflow: "hidden", padding: "12px 24px" }}>
-      {children}
+const PrintPage = ({ children, header, footer, isLast }) => {
+  const contentRef = useRef(null);
+  const innerRef = useRef(null);
+
+  useEffect(() => {
+    const container = contentRef.current;
+    const inner = innerRef.current;
+    if (!container || !inner) return;
+
+    const fit = () => {
+      inner.style.transform = "none";
+      inner.style.transformOrigin = "top left";
+      const cw = container.clientWidth;
+      const ch = container.clientHeight;
+      const iw = inner.scrollWidth;
+      const ih = inner.scrollHeight;
+      if (iw > cw || ih > ch) {
+        const scaleX = cw / iw;
+        const scaleY = ch / ih;
+        const s = Math.min(scaleX, scaleY, 1);
+        inner.style.transform = `scale(${s})`;
+      }
+    };
+
+    // Run after images load
+    const imgs = inner.querySelectorAll("img");
+    let loaded = 0;
+    if (imgs.length === 0) { fit(); return; }
+    imgs.forEach(img => {
+      if (img.complete) { loaded++; if (loaded === imgs.length) fit(); }
+      else img.addEventListener("load", () => { loaded++; if (loaded === imgs.length) fit(); }, { once: true });
+    });
+    fit();
+  }, []);
+
+  return (
+    <div style={{
+      background: "white",
+      display: "flex",
+      flexDirection: "column",
+      width: "420mm",
+      height: "297mm",
+      pageBreakAfter: isLast ? "avoid" : "always",
+      breakAfter: isLast ? "avoid" : "page",
+      overflow: "hidden",
+      boxSizing: "border-box",
+    }}>
+      {header}
+      <div ref={contentRef} style={{ flex: 1, overflow: "hidden", padding: "12px 24px", position: "relative" }}>
+        <div ref={innerRef} style={{ display: "inline-block", transformOrigin: "top left" }}>
+          {children}
+        </div>
+      </div>
+      {footer}
     </div>
-    {footer}
-  </div>
-);
+  );
+};
 
 export default function PrintableElevationsSheet({ walls = [], placedModules = [], onClose }) {
   useEffect(() => {
