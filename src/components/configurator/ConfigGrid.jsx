@@ -261,7 +261,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
           const wall = walls.find(w => w.id === wallId);
           if (!wall) return;
 
-          const SNAP_THRESHOLD = 1.5; // cells
+          const SNAP_THRESHOLD = 0.8; // cells — tighter snapping
           let snapped = null;
           const cursorCellX = cursorX / scaledCellW;
           const cursorCellY = cursorY / scaledCellH;
