@@ -938,7 +938,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
            return (
              <div
                key={item.id}
-               className="absolute group cursor-grab active:cursor-grabbing overflow-hidden"
+               className="absolute group cursor-grab active:cursor-grabbing"
                style={{
                  left: item.x * scaledCellW,
                  top: item.y * scaledCellH,
