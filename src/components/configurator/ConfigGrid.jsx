@@ -964,15 +964,15 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                  }, 0);
                }}
              >
-               <div className="w-full h-full overflow-visible relative flex items-center justify-center">
+               <div className="w-full h-full overflow-visible relative">
                  {item.image ? (
-                   <img src={item.image} alt={item.label} className="object-contain p-1" loading="eager" style={{ width: item.id.startsWith('bed_') ? '108%' : '100%', height: item.id.startsWith('bed_') ? '108%' : '100%' }} />
+                   <img src={item.image} alt={item.label} className="absolute object-contain" loading="eager" style={{ width: item.id.startsWith('bed_') ? '108%' : '100%', height: item.id.startsWith('bed_') ? '108%' : '100%', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }} />
                  ) : (
                    <div className="w-full h-full flex items-center justify-center text-[7px] font-semibold text-gray-400">
                      {item.label}
                    </div>
                  )}
-                 <span className="absolute text-center text-[7px] font-semibold text-gray-500 pointer-events-none" style={{ top: '50%', left: '50%', transform: 'translate(-50%, -50%)', whiteSpace: 'nowrap' }}>
+                 <span className="absolute text-center text-[7px] font-semibold text-gray-500 pointer-events-none" style={{ top: '50%', left: '50%', transform: 'translate(-50%, -50%)', whiteSpace: 'nowrap', zIndex: 10 }}>
                    {item.label}<br />{(item.width || 1.4).toFixed(1)}m × {(item.depth || 2.0).toFixed(1)}m
                  </span>
                </div>
