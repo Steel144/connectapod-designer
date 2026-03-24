@@ -236,7 +236,7 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
                 Pavilion Elevations
               </div>
               
-              <div style={{ display: "flex", gap: "40px", flexWrap: "wrap" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "60px" }}>
                 {[3, 2, 1].map(pavNum => {
                   const mods = pavilionModules[pavNum];
                   if (!mods || mods.length === 0) return null;
