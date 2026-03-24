@@ -503,11 +503,14 @@ export default function Configurator() {
   const handlePlaceFurniture = (furnitureItem, x, y) => {
     pushHistory(placedModules, walls);
     const newFurniture = {
-      ...furnitureItem,
       id: generateId(),
+      type: furnitureItem.type || furnitureItem.id,
+      label: furnitureItem.label || furnitureItem.type || furnitureItem.id,
       x,
       y,
       rotation: 0,
+      width: 1.4,
+      depth: 2.0,
     };
     setFurniture((prev) => [...prev, newFurniture]);
   };
