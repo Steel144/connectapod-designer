@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { useElevationGeometry } from "@/hooks/useElevationGeometry";
 import HorizontalElevation from "./HorizontalElevation";
 import VerticalElevation from "./VerticalElevation";
