@@ -168,6 +168,7 @@ export default function PrintablePlansSheet({ placedModules, onClose, printDetai
               <div className="border-r p-2" style={{ borderColor: "#F15A22" }}>
                 <p className="uppercase font-bold" style={{ color: "#F15A22" }}>Project</p>
                 <p className="mt-0.5 text-gray-800 font-semibold">{printDetails.projectName || "—"}</p>
+                <p className="mt-1" style={{ color: "#F15A22", fontSize: "8px" }}>connectapod.com · hello@connectapod.com</p>
               </div>
               <div className="border-r p-2" style={{ borderColor: "#F15A22" }}>
                 <p className="uppercase font-bold" style={{ color: "#F15A22" }}>Client</p>
@@ -184,11 +185,8 @@ export default function PrintablePlansSheet({ placedModules, onClose, printDetai
               <div className="p-2">
                 <p className="uppercase font-bold" style={{ color: "#F15A22" }}>Scale</p>
                 <p className="mt-0.5 text-gray-600">1:100</p>
+                <p className="mt-1 text-gray-400" style={{ fontSize: "8px" }}>© {new Date().getFullYear()} Connectapod Ltd.</p>
               </div>
-            </div>
-            <div style={{ background: "#F15A22", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "3px 12px" }}>
-              <span style={{ color: "white", fontSize: "8px", fontWeight: "600" }}>connectapod · hello@connectapod.com · www.connectapod.com</span>
-              <span style={{ color: "rgba(255,255,255,0.8)", fontSize: "8px" }}>© {new Date().getFullYear()} Connectapod Ltd. All rights reserved.</span>
             </div>
           </div>
       </div>
