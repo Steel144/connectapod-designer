@@ -1077,7 +1077,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                     key={wt.type}
                     onClick={() => {
                       onModuleSelect?.(faceMenuOpen.module);
-                      handlePlaceWallOnFace?.(wt, faceMenuOpen.module, faceMenuOpen.face);
+                      onPlaceWallOnFace?.(wt, faceMenuOpen.module, faceMenuOpen.face);
                       setFaceMenuOpen(null);
                     }}
                     className="w-full text-left px-2 py-2 hover:bg-[#F15A22] hover:text-white transition-colors border-b border-gray-100 last:border-b-0 flex gap-2 items-start"
