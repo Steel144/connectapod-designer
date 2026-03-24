@@ -490,10 +490,18 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
   };
 
   const handleDrop = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
+   e.preventDefault();
+   e.stopPropagation();
 
-    const modType = e.dataTransfer.getData("moduleType");
+   const furnitureType = e.dataTransfer.getData("furnitureType");
+   if (furnitureType && gridRef.current) {
+     const { x, y } = getCellFromClient(e.clientX, e.clientY);
+     const furnitureItem = { id: furnitureType, type: furnitureType };
+     onPlaceFurniture?.(furnitureItem, x, y);
+     return;
+   }
+
+   const modType = e.dataTransfer.getData("moduleType");
     const moduleImage = e.dataTransfer.getData("moduleImage");
     if (modType) {
       let mod = MODULE_TYPES.find((m) => m.type === modType);
