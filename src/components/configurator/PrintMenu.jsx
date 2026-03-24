@@ -35,6 +35,7 @@ export default function PrintMenu({ placedModules, walls, onPrint }) {
 
   if (placedModules.length > 0) {
     options.push({ label: "Floor Plans", value: "plans" });
+    options.push({ label: "Elevations", value: "all-elevations" });
   }
 
   if (options.length === 0) return null;

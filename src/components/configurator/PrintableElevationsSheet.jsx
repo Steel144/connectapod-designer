@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useElevationGeometry } from "@/hooks/useElevationGeometry";
 import HorizontalElevation from "./HorizontalElevation";
 import VerticalElevation from "./VerticalElevation";
@@ -16,7 +16,7 @@ const getModulePavilion = (mod) => {
 };
 
 export default function PrintableElevationsSheet({ walls = [], placedModules = [], onClose }) {
-  React.useEffect(() => {
+  useEffect(() => {
     const timer = setTimeout(() => {
       window.print();
       const handleAfterPrint = () => onClose?.();
