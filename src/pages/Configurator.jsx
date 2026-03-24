@@ -62,6 +62,7 @@ export default function Configurator() {
   const [lastSavedName, setLastSavedName] = useState(() => {
     try { return localStorage.getItem("configurator_last_saved_name") || ""; } catch { return ""; }
   });
+  const [elevationZoom, setElevationZoom] = useState(100);
 
   const isMobile = useIsMobile();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
