@@ -87,14 +87,25 @@ export default function SaveDesignModal({ open, onClose, onConfirm, isSaving, la
             </div>
           )}
 
-          <div className="flex gap-2 justify-end">
-            <Button variant="outline" onClick={onClose} className="rounded-xl">Cancel</Button>
+          <div className="flex gap-2 justify-between">
+            <div className="flex gap-2">
+              <Button variant="outline" onClick={onClose} className="rounded-xl">Cancel</Button>
+              {originalName && !isSaveAs && (
+                <Button
+                  variant="outline"
+                  onClick={() => setIsSaveAs(true)}
+                  className="rounded-xl text-slate-600"
+                >
+                  Save As...
+                </Button>
+              )}
+            </div>
             <Button
               onClick={() => handleConfirm(saveToCatalogue)}
               disabled={!name.trim() || isSaving}
               className="rounded-xl bg-slate-900 hover:bg-slate-700 text-white"
             >
-              {isSaving ? "Saving..." : "Save"}
+              {isSaving ? "Saving..." : isSaveAs ? "Save As" : "Update"}
             </Button>
           </div>
         </div>
