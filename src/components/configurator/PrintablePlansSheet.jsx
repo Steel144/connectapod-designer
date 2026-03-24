@@ -2,7 +2,7 @@ import React from "react";
 
 const CELL_SIZE = 40; // pixels per grid cell in print
 
-export default function PrintablePlansSheet({ placedModules, onClose }) {
+export default function PrintablePlansSheet({ placedModules, onClose, printDetails = {} }) {
   React.useEffect(() => {
     const timer = setTimeout(() => {
       window.print();
