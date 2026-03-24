@@ -297,6 +297,9 @@ export default function Configurator() {
   useEffect(() => {
     localStorage.setItem("configurator_walls", JSON.stringify(walls));
   }, [walls]);
+  useEffect(() => {
+    localStorage.setItem("configurator_furniture", JSON.stringify(furniture));
+  }, [furniture]);
 
 
 
