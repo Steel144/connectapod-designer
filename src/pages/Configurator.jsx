@@ -1016,6 +1016,11 @@ export default function Configurator() {
                 onModuleSelect={setSelectedModule}
                 onFaceSelect={setSelectedFace}
                 onPlaceWallOnFace={handlePlaceWallOnFace}
+                furniture={furniture}
+                onPlaceFurniture={handlePlaceFurniture}
+                onRemoveFurniture={handleRemoveFurniture}
+                onMoveFurniture={handleMoveFurniture}
+                onRotateFurniture={handleRotateFurniture}
                 customModules={customModules}
                 floorPlanImages={floorPlanImages}
                 wallImages={wallImages}
