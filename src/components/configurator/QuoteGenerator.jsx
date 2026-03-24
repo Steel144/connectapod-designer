@@ -97,8 +97,6 @@ export default function QuoteGenerator({ placedModules, walls, open, onClose }) 
   const [clientPhone, setClientPhone] = useState(saved.phone || "");
   const [projectName, setProjectName] = useState(saved.projectName || "");
   const [address, setAddress] = useState(saved.address || "");
-  const [city, setCity] = useState(saved.city || "");
-  const [postalCode, setPostalCode] = useState(saved.postalCode || "");
   const [generating, setGenerating] = useState(false);
 
   // Re-populate from storage whenever modal opens
@@ -110,8 +108,6 @@ export default function QuoteGenerator({ placedModules, walls, open, onClose }) 
       setClientPhone(s.phone || "");
       setProjectName(s.projectName || "");
       setAddress(s.address || "");
-      setCity(s.city || "");
-      setPostalCode(s.postalCode || "");
     }
   }, [open]);
 
@@ -122,7 +118,7 @@ export default function QuoteGenerator({ placedModules, walls, open, onClose }) 
 
   const generatePDF = async () => {
     // Save to shared storage
-    const details = { projectName, clientName, address, city, postalCode, email: clientEmail, phone: clientPhone };
+    const details = { projectName, clientName, address, email: clientEmail, phone: clientPhone };
     localStorage.setItem("connectapod_print_details", JSON.stringify(details));
     setGenerating(true);
     const doc = new jsPDF();
@@ -391,16 +387,6 @@ export default function QuoteGenerator({ placedModules, walls, open, onClose }) 
            <div>
              <Label className="text-xs text-gray-600">Street Address</Label>
              <AddressAutocomplete value={address} onChange={setAddress} />
-           </div>
-           <div className="grid grid-cols-2 gap-2">
-             <div>
-               <Label className="text-xs text-gray-600">City</Label>
-               <Input value={city} onChange={e => setCity(e.target.value)} placeholder="e.g. Auckland" className="mt-1 rounded-none text-sm h-9" />
-             </div>
-             <div>
-               <Label className="text-xs text-gray-600">Postal Code</Label>
-               <Input value={postalCode} onChange={e => setPostalCode(e.target.value)} placeholder="e.g. 1010" className="mt-1 rounded-none text-sm h-9" />
-             </div>
            </div>
            <div>
              <Label className="text-xs text-gray-600">Project Name</Label>

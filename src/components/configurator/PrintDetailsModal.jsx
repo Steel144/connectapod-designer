@@ -104,8 +104,6 @@ export default function PrintDetailsModal({ open, onClose, onConfirm, printMode 
   const [projectName, setProjectName] = useState(saved.projectName || "");
   const [clientName, setClientName] = useState(saved.clientName || "");
   const [address, setAddress] = useState(saved.address || "");
-  const [city, setCity] = useState(saved.city || "");
-  const [postalCode, setPostalCode] = useState(saved.postalCode || "");
   const [email, setEmail] = useState(saved.email || "");
   const [phone, setPhone] = useState(saved.phone || "");
 
@@ -116,15 +114,13 @@ export default function PrintDetailsModal({ open, onClose, onConfirm, printMode 
       setProjectName(s.projectName || "");
       setClientName(s.clientName || "");
       setAddress(s.address || "");
-      setCity(s.city || "");
-      setPostalCode(s.postalCode || "");
       setEmail(s.email || "");
       setPhone(s.phone || "");
     }
   }, [open]);
 
   const handleConfirm = () => {
-    const details = { projectName, clientName, address, city, postalCode, email, phone };
+    const details = { projectName, clientName, address, email, phone };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(details));
     onConfirm(details);
   };
@@ -148,16 +144,6 @@ export default function PrintDetailsModal({ open, onClose, onConfirm, printMode 
           <div>
             <Label className="text-xs text-gray-600">Site Address</Label>
             <AddressAutocomplete value={address} onChange={setAddress} />
-          </div>
-          <div className="grid grid-cols-2 gap-2">
-            <div>
-              <Label className="text-xs text-gray-600">City</Label>
-              <Input value={city} onChange={e => setCity(e.target.value)} placeholder="e.g. Auckland" className="mt-1 rounded-none text-sm h-9" />
-            </div>
-            <div>
-              <Label className="text-xs text-gray-600">Postal Code</Label>
-              <Input value={postalCode} onChange={e => setPostalCode(e.target.value)} placeholder="e.g. 1010" className="mt-1 rounded-none text-sm h-9" />
-            </div>
           </div>
           <div>
             <Label className="text-xs text-gray-600">Client Email</Label>
