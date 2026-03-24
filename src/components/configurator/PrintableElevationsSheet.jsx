@@ -73,12 +73,9 @@ export default function PrintableElevationsSheet({ walls = [], placedModules = [
   useEffect(() => {
     const timer = setTimeout(() => {
       window.print();
-      const handleAfterPrint = () => onClose?.();
-      window.addEventListener("afterprint", handleAfterPrint);
-      return () => window.removeEventListener("afterprint", handleAfterPrint);
     }, 1800);
     return () => clearTimeout(timer);
-  }, [onClose]);
+  }, []);
 
   const scale = PRINT_SCALE;
   const wallHPx = Math.round(scale * WALL_H_M * PX_PER_M);
