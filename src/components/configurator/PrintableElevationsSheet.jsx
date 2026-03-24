@@ -186,7 +186,7 @@ export default function PrintableElevationsSheet({ walls = [], placedModules = [
   };
 
   return (
-    <div className="bg-white relative" style={{ overflow: "hidden" }}>
+    <div className="bg-white relative">
       <div className="fixed top-4 right-4 z-50 flex gap-2 print:hidden">
         <button
           onClick={() => { setTimeout(() => window.print(), 300); }}
