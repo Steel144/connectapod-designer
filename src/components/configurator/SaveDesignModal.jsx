@@ -14,12 +14,20 @@ export default function SaveDesignModal({ open, onClose, onConfirm, isSaving, la
 
   useEffect(() => {
     if (open && !isSaveAs) {
-      // Use lastSavedName if available, otherwise use projectName, otherwise empty
+      // Use lastSavedName if available, otherwise use projectName from estimate form, otherwise empty
       const initialName = lastSavedName || projectName || "";
       setName(initialName);
       setOriginalName(initialName);
     }
   }, [open, lastSavedName, projectName, isSaveAs]);
+
+  useEffect(() => {
+    // Update name when projectName prop changes and modal is open (live sync from estimate form)
+    if (open && projectName && !isSaveAs && name !== projectName) {
+      setName(projectName);
+      setOriginalName(projectName);
+    }
+  }, [projectName, open, isSaveAs, name]);
 
   useEffect(() => {
     if (!open) {
