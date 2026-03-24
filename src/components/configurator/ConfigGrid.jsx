@@ -877,8 +877,10 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
              <div key={wall.id} className="group absolute" style={{ left: wall.x * scaledCellW, top: wall.y * scaledCellH, width: wallW, height: wallH }} onMouseEnter={() => setHoveredWallId(wall.id)} onMouseLeave={() => setHoveredWallId(null)}>
                <div
                   onMouseDown={(e) => {
+                    e.stopPropagation();
                     if (e.target.closest("button")) return;
                     if (selected.size === 0) {
+                      e.preventDefault();
                       setSelectedWallIds(new Set([wall.id]));
                       return;
                     }
