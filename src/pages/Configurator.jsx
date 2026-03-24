@@ -1075,17 +1075,13 @@ export default function Configurator() {
                            <p className="text-xs font-semibold text-gray-900 break-words">{selectedModule.label}</p>
                            <p className="text-[10px] text-gray-500">{selectedModule.type}</p>
                          </div>
-                         <div className="flex-1 bg-gray-50 rounded overflow-hidden flex items-center justify-center relative group">
-                           <img src={selectedModule.floorPlanImage} alt={selectedModule.label} className="w-full h-full object-contain cursor-pointer" style={{ transform: `rotate(${selectedModule.rotation || 0}deg) ${selectedModule.flipped ? 'scaleX(-1)' : ''}` }} />
-                           {/* Face selector overlay - always visible when module selected */}
-                           <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-black/30 backdrop-blur-sm">
-                             <div className="grid grid-cols-2 gap-2">
-                               <button onClick={() => setSelectedFace("W")} className="px-3 py-2 bg-white text-gray-900 text-sm font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-md">W</button>
-                               <button onClick={() => setSelectedFace("X")} className="px-3 py-2 bg-white text-gray-900 text-sm font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-md">X</button>
-                               <button onClick={() => setSelectedFace("Y")} className="px-3 py-2 bg-white text-gray-900 text-sm font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-md">Y</button>
-                               <button onClick={() => setSelectedFace("Z")} className="px-3 py-2 bg-white text-gray-900 text-sm font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-md">Z</button>
-                             </div>
-                           </div>
+                         <div className="flex-1 bg-gray-50 rounded overflow-hidden flex items-center justify-center relative">
+                           <img src={selectedModule.floorPlanImage} alt={selectedModule.label} className="w-full h-full object-contain" style={{ transform: `rotate(${selectedModule.rotation || 0}deg) ${selectedModule.flipped ? 'scaleX(-1)' : ''}` }} />
+                           {/* Face labels on edges */}
+                           <button onClick={() => setSelectedFace("W")} className="absolute top-1 left-1/2 -translate-x-1/2 px-2 py-1 bg-white text-gray-900 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-md">W</button>
+                           <button onClick={() => setSelectedFace("X")} className="absolute right-1 top-1/2 -translate-y-1/2 px-2 py-1 bg-white text-gray-900 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-md">X</button>
+                           <button onClick={() => setSelectedFace("Y")} className="absolute bottom-1 left-1/2 -translate-x-1/2 px-2 py-1 bg-white text-gray-900 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-md">Y</button>
+                           <button onClick={() => setSelectedFace("Z")} className="absolute left-1 top-1/2 -translate-y-1/2 px-2 py-1 bg-white text-gray-900 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-md">Z</button>
                          </div>
                          <div className="flex justify-between items-center text-xs border-t border-gray-200 pt-2">
                            <span className="text-gray-600">{selectedModule.sqm?.toFixed(1)} m²</span>
