@@ -525,6 +525,16 @@ export default function Catalogue() {
                          ) : (
                            <>
                              <button
+                               onClick={() => {
+                                 setTrainingModule(mod);
+                                 setTrainingModuleOpen(true);
+                               }}
+                               className="text-gray-300 hover:text-purple-500 transition-colors"
+                               title="Set wall compatibility"
+                             >
+                               🎓
+                             </button>
+                             <button
                                onClick={() => handleDuplicateModule(mod, cat.category)}
                                className="text-gray-300 hover:text-blue-500 transition-colors"
                                title="Duplicate module"
