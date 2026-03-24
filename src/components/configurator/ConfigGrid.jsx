@@ -515,6 +515,9 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
       const wallTemplate = wallTypes.find((w) => w.type === wallType);
       if (!wallTemplate || !gridRef.current) return;
 
+      // Only allow wall placement if a module is selected
+      if (selected.size === 0) return;
+
       // If a wall is selected, snap new wall to match its position/orientation
       if (selectedWallIds.size > 0) {
         const selectedWallId = Array.from(selectedWallIds)[0];
@@ -525,9 +528,6 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
           return;
         }
       }
-
-      // Only allow wall placement if a module is selected
-      if (selected.size === 0) return;
 
       const rect = gridRef.current.getBoundingClientRect();
       const exactX = (e.clientX - rect.left) / scaledCellW;
