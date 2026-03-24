@@ -999,6 +999,7 @@ export default function Configurator() {
                     onDragEnd={handleDragEnd}
                     selectedWall={selectedWall}
                     selectedModule={selectedModule}
+                    selectedFace={selectedFace}
                     placedModules={placedModules}
                     onModuleImageUpdate={handleModuleImageUpdate}
                     onWallImageUpdate={handleWallImageUpdate}
