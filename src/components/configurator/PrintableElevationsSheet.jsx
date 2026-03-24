@@ -19,8 +19,12 @@ const PAV_LABELS = { 3: "Pavilion 1", 2: "Connection", 1: "Pavilion 2" };
 
 const Header = ({ title }) => (
   <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 24px 8px", borderBottom: "2px solid #F15A22", flexShrink: 0 }}>
-    <img src="https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/201470147_ConnectapodArchLogo-01.png" alt="connectapod" style={{ height: "40px", width: "auto" }} />
-    <span style={{ color: "#666", fontSize: "12pt" }}>{title}</span>
+    <img src="https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/201470147_ConnectapodArchLogo-01.png" alt="connectapod" style={{ height: "48px", width: "auto" }} />
+    <div style={{ textAlign: "center" }}>
+      <div style={{ color: "#F15A22", fontSize: "9px", fontWeight: "600" }}>connectapod.com</div>
+      <div style={{ color: "#888", fontSize: "8px" }}>hello@connectapod.com · www.connectapod.com</div>
+    </div>
+    <span style={{ color: "#111", fontSize: "20pt", fontWeight: "700" }}>{title}</span>
   </div>
 );
 
