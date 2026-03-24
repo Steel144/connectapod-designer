@@ -113,8 +113,6 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
           className={`overflow-hidden bg-white border transition-colors ${isSelected ? "border-blue-500 shadow-md" : (isPavilion ? "border-[#F15A22] hover:border-orange-600 cursor-pointer hover:shadow-md" : "border-gray-200 cursor-pointer hover:border-[#F15A22]")}`}
           style={{ height: `${imgHeight}px`, width: wall.elevationImage ? "auto" : `${wallWidthPx}px` }}
           onClick={() => onWallSelect?.(wall)}
-          onMouseEnter={() => onWallSelect?.(wall)}
-          onMouseLeave={() => onWallSelect?.(null)}
         >
           {wall.elevationImage ? (
             <img
