@@ -865,18 +865,20 @@ export default function Configurator() {
                     <Box size={14} />
                   </button>
                 </div>
-                {/* Zoom controls */}
-                <div className="flex border border-gray-200 overflow-hidden ml-1">
-                  <button onClick={() => viewMode === "building" ? setGridZoom(z => Math.max(25, z - 10)) : setElevationZoom(z => Math.max(25, z - 10))} title="Zoom out" className="px-2.5 py-1.5 text-xs text-gray-600 hover:text-[#F15A22] transition-all">
-                    <ZoomOut size={14} />
-                  </button>
-                  <button onClick={() => viewMode === "building" ? setGridZoom(100) : setElevationZoom(100)} title="Reset zoom" className="px-2 py-1.5 text-xs font-semibold text-gray-600 hover:text-[#F15A22] transition-all min-w-10">
-                    {viewMode === "building" ? gridZoom : elevationZoom}%
-                  </button>
-                  <button onClick={() => viewMode === "building" ? setGridZoom(z => Math.min(300, z + 10)) : setElevationZoom(z => Math.min(300, z + 10))} title="Zoom in" className="px-2.5 py-1.5 text-xs text-gray-600 hover:text-[#F15A22] transition-all">
-                    <ZoomIn size={14} />
-                  </button>
-                </div>
+                {/* Zoom controls - only for 2D/building view */}
+                {viewMode !== "elevations" && (
+                  <div className="flex border border-gray-200 overflow-hidden ml-1">
+                    <button onClick={() => setGridZoom(z => Math.max(25, z - 10))} title="Zoom out" className="px-2.5 py-1.5 text-xs text-gray-600 hover:text-[#F15A22] transition-all">
+                      <ZoomOut size={14} />
+                    </button>
+                    <button onClick={() => setGridZoom(100)} title="Reset zoom" className="px-2 py-1.5 text-xs font-semibold text-gray-600 hover:text-[#F15A22] transition-all min-w-10">
+                      {gridZoom}%
+                    </button>
+                    <button onClick={() => setGridZoom(z => Math.min(300, z + 10))} title="Zoom in" className="px-2.5 py-1.5 text-xs text-gray-600 hover:text-[#F15A22] transition-all">
+                      <ZoomIn size={14} />
+                    </button>
+                  </div>
+                )}
                 <div className="ml-auto flex items-center gap-2">
               <button onClick={() => setSaveModalOpen(true)} disabled={placedModules.length === 0 || saveMutation.isPending} className="px-3 py-1.5 text-xs bg-[#F15A22] text-white disabled:opacity-40 transition-all rounded-sm">
                 <Save size={14} />
