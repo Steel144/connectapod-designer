@@ -363,7 +363,6 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
 
     const context = selectedWall ? `Face ${face}` : `${chassis} module`;
     const reason = `${context} · ${faceWidthM.toFixed(1)}m wide · ${filtered.length} wall${filtered.length !== 1 ? "s" : ""}`;
-    console.log(`[ModulePanel] Filter: isEnd=${isEnd}, isConnection=${isConnection}, face=${face}, faceWidthM=${faceWidthM}, allWalls=${allWalls.length}, filtered=${filtered.length}`, filtered);
     return { compatibleWalls: filtered, filterReason: reason };
   }, [selectedWall, selectedModule, placedModules, customWallTypes]);
 
