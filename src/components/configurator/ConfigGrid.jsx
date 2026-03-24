@@ -848,7 +848,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                 const deltaY = (dragging.cursorY - rect.top - item.y * scaledCellH - dragging.offsetY) / scaledCellH;
                 return (
                   <div
-                    className="absolute pointer-events-none overflow-hidden"
+                    className="absolute pointer-events-none overflow-hidden flex flex-col items-center justify-center"
                     style={{
                       left: (item.x + deltaX) * scaledCellW,
                       top: (item.y + deltaY) * scaledCellH,
@@ -860,13 +860,12 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                       transformOrigin: "center",
                     }}
                   >
-                    {item.image ? (
+                    {item.image && (
                       <img src={item.image} alt={item.label} className="w-full h-full object-contain p-1" />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-[7px] font-semibold text-gray-400">
-                        {item.label}
-                      </div>
                     )}
+                    <span className="absolute text-[8px] font-semibold text-gray-700 bg-white/80 px-1 py-0.5 rounded bottom-1">
+                      {item.label}
+                    </span>
                   </div>
                 );
               })()
