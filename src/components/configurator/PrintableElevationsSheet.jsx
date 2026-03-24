@@ -49,67 +49,22 @@ const Footer = ({ sheet, pageNum, totalPages }) => (
   </div>
 );
 
-// Wraps a page and auto-scales content to fill the available area
-const ScaledPage = ({ children }) => {
-  const containerRef = useRef(null);
-  const contentRef = useRef(null);
-
-  useLayoutEffect(() => {
-    const container = containerRef.current;
-    const content = contentRef.current;
-    if (!container || !content) return;
-
-    // Reset scale to measure natural size
-    content.style.transform = "scale(1)";
-    content.style.transformOrigin = "top left";
-
-    // Use rAF to ensure layout is complete before measuring
-    requestAnimationFrame(() => {
-      const availW = container.clientWidth;
-      const availH = container.clientHeight;
-      const naturalW = content.offsetWidth;
-      const naturalH = content.offsetHeight;
-
-      if (naturalW > 0 && naturalH > 0 && (naturalW > availW || naturalH > availH)) {
-        const scaleX = availW / naturalW;
-        const scaleY = availH / naturalH;
-        const s = Math.min(scaleX, scaleY);
-        content.style.transform = `scale(${s})`;
-      }
-    });
-  });
-
-  return (
-    <div
-      ref={containerRef}
-      style={{ flex: 1, overflow: "hidden", position: "relative", padding: "20px" }}
-    >
-      <div ref={contentRef} style={{ display: "inline-block", transformOrigin: "top left" }}>
-        {children}
-      </div>
-    </div>
-  );
-};
-
-// A3 landscape: 420mm × 297mm @ 96dpi = 1587px × 1123px
-const A3_W = 1587;
-const A3_H = 1123;
-
 const PrintPage = ({ children, header, footer, isLast }) => (
   <div style={{
     background: "white",
     display: "flex",
     flexDirection: "column",
-    width: `${A3_W}px`,
-    height: `${A3_H}px`,
+    width: "420mm",
+    height: "297mm",
     pageBreakAfter: isLast ? "avoid" : "always",
     breakAfter: isLast ? "avoid" : "page",
     overflow: "hidden",
+    boxSizing: "border-box",
   }}>
     {header}
-    <ScaledPage isLast={isLast}>
+    <div style={{ flex: 1, overflow: "hidden", padding: "12px 24px" }}>
       {children}
-    </ScaledPage>
+    </div>
     {footer}
   </div>
 );
