@@ -1025,6 +1025,35 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
         Grid: {GRID_COLS}×{GRID_ROWS} cells · Snap: 600mm
       </p>
       </div>
+      
+      {/* Preview window below grid */}
+      {(selectedModule || selectedWall) && (
+        <div className="flex gap-4 mt-4 p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
+          {selectedModule && (
+            <div className="flex flex-col gap-2 min-w-0">
+              <div className="text-xs font-semibold text-gray-700">
+                <span>{selectedModule.sqm?.toFixed(1)} m²</span>
+                <span className="ml-2 text-gray-500">${(selectedModule.price || 0).toLocaleString()}</span>
+              </div>
+              <div className="flex gap-2 text-xs text-gray-600">
+                <span>W: {selectedModule.w} cells</span>
+                <span>H: {selectedModule.h} cells</span>
+              </div>
+            </div>
+          )}
+          {selectedWall && (
+            <div className="flex flex-col gap-2 min-w-0">
+              <div className="text-xs font-semibold text-gray-700">
+                <span>${(selectedWall.price || 0).toLocaleString()}</span>
+              </div>
+              <div className="flex gap-2 text-xs text-gray-600">
+                <span>{selectedWall.orientation}</span>
+                <span>Length: {selectedWall.length} cells</span>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
       </div>
       );
       }
