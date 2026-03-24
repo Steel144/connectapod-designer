@@ -839,11 +839,7 @@ export default function Configurator() {
                 <ZoomIn size={13} />
               </button>
             </div>
-            {placedModules.length > 0 && (
-              <button onClick={handleClear} className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-gray-500 bg-white border border-gray-200 hover:border-red-300 hover:text-red-500 transition-all">
-                <Trash2 size={13} /> Clear
-              </button>
-            )}
+
           </div>
         </div>
       )}
@@ -910,11 +906,7 @@ export default function Configurator() {
                 <Link to={createPageUrl("WallCatalogue")} onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 border border-gray-200 rounded-sm bg-white">
                   <BookOpen size={14} /> Wall Cat.
                 </Link>
-                {placedModules.length > 0 && (
-                  <button onClick={() => { handleClear(); setMobileMenuOpen(false); }} className="flex items-center gap-2 px-3 py-2 text-sm text-red-500 border border-red-200 rounded-sm bg-white">
-                    <Trash2 size={14} /> Clear
-                  </button>
-                )}
+
               </div>
             </div>
           )}
