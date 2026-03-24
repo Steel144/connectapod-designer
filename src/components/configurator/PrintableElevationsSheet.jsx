@@ -91,12 +91,17 @@ const ScaledPage = ({ children }) => {
   );
 };
 
+// A3 landscape: 420mm × 297mm @ 96dpi = 1587px × 1123px
+const A3_W = 1587;
+const A3_H = 1123;
+
 const PrintPage = ({ children, header, footer, isLast }) => (
   <div style={{
     background: "white",
     display: "flex",
     flexDirection: "column",
-    height: "100vh",
+    width: `${A3_W}px`,
+    height: `${A3_H}px`,
     pageBreakAfter: isLast ? "avoid" : "always",
     breakAfter: isLast ? "avoid" : "page",
     overflow: "hidden",
