@@ -103,13 +103,13 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
 
   const imgHeight = Math.round((zoom / 100) * 480);
 
-  const ElevationImage = ({ wall, label, face }) => {
+  const ElevationImage = ({ wall, label, face, isPavilion = false }) => {
     const wallWidthM = wall.width ?? (wall.length ? wall.length * CELL_M : CELL_M);
     const wallWidthPx = Math.round((zoom / 100) * wallWidthM * 100);
     return (
       <div className="flex flex-col items-center gap-2 shrink-0">
         <div
-          className="overflow-hidden bg-white border border-gray-200 cursor-pointer hover:border-[#F15A22] transition-colors"
+          className={`overflow-hidden bg-white border transition-colors ${isPavilion ? "border-[#F15A22] hover:border-orange-600 cursor-pointer hover:shadow-md" : "border-gray-200 cursor-pointer hover:border-[#F15A22]"}`}
           style={{ height: `${imgHeight}px`, width: wall.elevationImage ? "auto" : `${wallWidthPx}px` }}
           onClick={() => onWallSelect?.(wall)}
           onMouseEnter={() => onWallSelect?.(wall)}
