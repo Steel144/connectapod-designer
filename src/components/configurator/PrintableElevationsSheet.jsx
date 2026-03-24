@@ -6,7 +6,7 @@ import VerticalElevation from "./VerticalElevation";
 const CELL_M = 0.6;
 const PX_PER_M = 100;
 const WALL_H_M = 4.2;
-const PRINT_SCALE = 0.35;
+const PRINT_SCALE = 0.55;
 
 const getModulePavilion = (mod) => {
   if (mod.y < 13 && mod.y + mod.h > 9) return 3;
