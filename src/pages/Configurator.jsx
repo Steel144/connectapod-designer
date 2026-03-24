@@ -936,16 +936,29 @@ export default function Configurator() {
               </div>
               <div className="flex-1 overflow-y-auto p-3">
                 <ModulePanel
-                  onDragStart={handleDragStart}
-                  onDragEnd={handleDragEnd}
-                  selectedWall={selectedWall}
-                  selectedModule={selectedModule}
-                  placedModules={placedModules}
-                  onModuleImageUpdate={handleModuleImageUpdate}
-                  onWallImageUpdate={handleWallImageUpdate}
-                  floorPlanImages={floorPlanImages}
-                  wallImages={wallImages}
-                />
+                    onDragStart={handleDragStart}
+                    onDragEnd={handleDragEnd}
+                    selectedWall={selectedWall}
+                    selectedModule={selectedModule}
+                    placedModules={placedModules}
+                    onModuleImageUpdate={handleModuleImageUpdate}
+                    onWallImageUpdate={handleWallImageUpdate}
+                    floorPlanImages={floorPlanImages}
+                    wallImages={wallImages}
+                    highlightWallType={wallToReplace?.type}
+                    onWallSelected={(wallType) => {
+                      if (wallToReplace) {
+                        pushHistory(placedModules, walls);
+                        setWalls(prev => prev.map(w => 
+                          w.id === wallToReplace.id 
+                            ? { ...w, type: wallType.type, label: wallType.label, elevationImage: wallImages[wallType.type] || null, price: wallType.price || 0 }
+                            : w
+                        ));
+                        setSelectedWall(null);
+                        setWallToReplace(null);
+                      }
+                    }}
+                  />
               </div>
             </div>
             <button
