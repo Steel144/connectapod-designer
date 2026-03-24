@@ -12,6 +12,16 @@ export default function SaveDesignModal({ open, onClose, onConfirm, isSaving, la
   const [tags, setTags] = useState("");
   const [isSaveAs, setIsSaveAs] = useState(false);
 
+  React.useEffect(() => {
+    if (open && lastSavedName && !isSaveAs) {
+      setName(lastSavedName);
+      setOriginalName(lastSavedName);
+    } else {
+      setName("");
+      setOriginalName("");
+    }
+  }, [open, lastSavedName, isSaveAs]);
+
   const handleConfirm = (asCatalogue) => {
     if (!name.trim()) return;
     const extra = asCatalogue
@@ -22,6 +32,7 @@ export default function SaveDesignModal({ open, onClose, onConfirm, isSaving, la
     setDescription("");
     setTags("");
     setSaveToCatalogue(false);
+    setIsSaveAs(false);
   };
 
   return (
