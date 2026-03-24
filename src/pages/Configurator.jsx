@@ -31,6 +31,7 @@ import CombinedElevations from "@/components/configurator/CombinedElevations";
 import QuoteGenerator from "@/components/configurator/QuoteGenerator";
 import PrintRouter from "@/components/configurator/PrintRouter";
 import PrintMenu from "@/components/configurator/PrintMenu";
+import PrintDetailsModal from "@/components/configurator/PrintDetailsModal";
 import { ZoomIn, ZoomOut } from "lucide-react";
 
 const generateId = () => `mod-${Math.random().toString(36).substr(2, 9)}`;
