@@ -59,6 +59,9 @@ export default function Configurator() {
   const [draggingMod, setDraggingMod] = useState(null);
   const [saveModalOpen, setSaveModalOpen] = useState(false);
   const [showSaved, setShowSaved] = useState(false);
+  const [lastSavedName, setLastSavedName] = useState(() => {
+    try { return localStorage.getItem("configurator_last_saved_name") || ""; } catch { return ""; }
+  });
 
   const isMobile = useIsMobile();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
