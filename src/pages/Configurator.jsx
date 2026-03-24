@@ -883,6 +883,7 @@ export default function Configurator() {
                 setSelectedWall(null);
               }}
               onOpenWallsMenu={(wall) => {
+                setWallToReplace(wall);
                 setSelectedWall(wall);
                 setMobileDrawerOpen(true);
               }}
