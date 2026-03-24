@@ -1036,22 +1036,64 @@ export default function Configurator() {
                   </button>
                 </div>
                 {!summaryCollapsed && (
-                  <div className="p-4 h-[320px] overflow-y-auto">
-                    {selectedModule && selectedModule.floorPlanImage ? (
-                      <div className="flex flex-col h-full gap-2">
-                        <div>
-                          <p className="text-xs font-semibold text-gray-900 break-words">{selectedModule.label}</p>
-                          <p className="text-[10px] text-gray-500">{selectedModule.type}</p>
-                        </div>
-                        <div className="flex-1 bg-gray-50 rounded overflow-hidden flex items-center justify-center">
-                          <img src={selectedModule.floorPlanImage} alt={selectedModule.label} className="w-full h-full object-contain" style={{ transform: `rotate(${selectedModule.rotation || 0}deg) ${selectedModule.flipped ? 'scaleX(-1)' : ''}` }} />
-                        </div>
-                        <div className="flex justify-between items-center text-xs border-t border-gray-200 pt-2">
-                          <span className="text-gray-600">{selectedModule.sqm?.toFixed(1)} m²</span>
-                          <span className="font-semibold text-gray-800">${(selectedModule.price || 0).toLocaleString()}</span>
-                        </div>
-                      </div>
-                    ) : selectedWall ? (
+                   <div className="p-4 h-[320px] overflow-y-auto">
+                     {selectedModule && selectedFace ? (
+                       // Face selection + wall picker
+                       <div className="flex flex-col h-full gap-3">
+                         <div>
+                           <p className="text-xs font-semibold text-gray-900">{selectedModule.label}</p>
+                           <p className="text-[10px] text-gray-500 mb-2">{selectedModule.type}</p>
+                           <p className="text-[10px] font-bold text-[#F15A22]">Face {selectedFace}</p>
+                         </div>
+                         <div className="flex-1 overflow-y-auto">
+                           <p className="text-[10px] text-gray-500 mb-2">Compatible walls:</p>
+                           <div className="space-y-1">
+                             {availableWallTypes
+                               .filter(w => {
+                                 // Filter by face and orientation
+                                 const isHorizontal = selectedFace === "W" || selectedFace === "Y";
+                                 const isVertical = selectedFace === "Z" || selectedFace === "X";
+                                 const orientMatch = (isHorizontal && w.orientation === "horizontal") || (isVertical && w.orientation === "vertical");
+                                 const faceMatch = !w.face || w.face === selectedFace;
+                                 return orientMatch && faceMatch;
+                               })
+                               .map(wt => (
+                                 <button
+                                   key={wt.type}
+                                   onClick={() => handlePlaceWallOnFace(wt, selectedModule, selectedFace)}
+                                   className="w-full text-left px-2 py-1.5 text-xs bg-white border border-gray-200 rounded hover:bg-[#F15A22] hover:text-white hover:border-[#F15A22] transition-colors"
+                                 >
+                                   <div className="font-semibold">{wt.label}</div>
+                                   <div className="text-[9px] opacity-70">${(wt.price || 0).toLocaleString()}</div>
+                                 </button>
+                               ))}
+                           </div>
+                         </div>
+                       </div>
+                     ) : selectedModule && selectedModule.floorPlanImage ? (
+                       <div className="flex flex-col h-full gap-2">
+                         <div>
+                           <p className="text-xs font-semibold text-gray-900 break-words">{selectedModule.label}</p>
+                           <p className="text-[10px] text-gray-500">{selectedModule.type}</p>
+                         </div>
+                         <div className="flex-1 bg-gray-50 rounded overflow-hidden flex items-center justify-center relative">
+                           <img src={selectedModule.floorPlanImage} alt={selectedModule.label} className="w-full h-full object-contain" style={{ transform: `rotate(${selectedModule.rotation || 0}deg) ${selectedModule.flipped ? 'scaleX(-1)' : ''}` }} />
+                           {/* Face selector overlay */}
+                           <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 opacity-0 hover:opacity-100 transition-opacity bg-black/10 backdrop-blur-sm">
+                             <div className="grid grid-cols-2 gap-2">
+                               <button onClick={() => setSelectedFace("W")} className="px-2 py-1 bg-white text-gray-800 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors">W</button>
+                               <button onClick={() => setSelectedFace("X")} className="px-2 py-1 bg-white text-gray-800 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors">X</button>
+                               <button onClick={() => setSelectedFace("Y")} className="px-2 py-1 bg-white text-gray-800 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors">Y</button>
+                               <button onClick={() => setSelectedFace("Z")} className="px-2 py-1 bg-white text-gray-800 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors">Z</button>
+                             </div>
+                           </div>
+                         </div>
+                         <div className="flex justify-between items-center text-xs border-t border-gray-200 pt-2">
+                           <span className="text-gray-600">{selectedModule.sqm?.toFixed(1)} m²</span>
+                           <span className="font-semibold text-gray-800">${(selectedModule.price || 0).toLocaleString()}</span>
+                         </div>
+                       </div>
+                     ) : selectedWall ? (
                        <div className="flex flex-col h-full gap-2">
                          <div>
                            <p className="text-xs font-semibold text-gray-900 break-words">{selectedWall.label}</p>
