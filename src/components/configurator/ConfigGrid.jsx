@@ -596,8 +596,12 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
          const wallWithFace = { ...wallTemplate, length: snapped.length, face: snapped.face };
          if (onPlaceWall) onPlaceWall(wallWithFace, snapped.x, snapped.y)
        } else {
-         // Allow freeform placement if no snap
-         if (onPlaceWall) onPlaceWall(wallTemplate, exactX, exactY);
+         // Allow freeform placement centered on cursor
+         const wallHalfLengthX = wallTemplate.orientation === "horizontal" ? wallTemplate.length / 2 : wallTemplate.thickness / 2;
+         const wallHalfLengthY = wallTemplate.orientation === "vertical" ? wallTemplate.length / 2 : wallTemplate.thickness / 2;
+         const centerX = Math.max(0, Math.min(exactX - wallHalfLengthX, GRID_COLS - 1));
+         const centerY = Math.max(0, Math.min(exactY - wallHalfLengthY, GRID_ROWS - 1));
+         if (onPlaceWall) onPlaceWall(wallTemplate, centerX, centerY);
        }
       return;
     }
