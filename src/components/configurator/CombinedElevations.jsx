@@ -159,7 +159,7 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
       {showHeader && <div style={{ height: stickyTop + zoomBarHeight }} />}
 
       <div
-        className="relative select-none bg-gray-50 overflow-x-auto overflow-y-hidden"
+        className="relative select-none bg-white overflow-x-auto overflow-y-hidden"
         style={{ minHeight: "500px" }}
         ref={containerRef}
       >
