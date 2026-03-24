@@ -34,7 +34,7 @@ const Footer = ({ sheet, pageNum, totalPages, printDetails = {} }) => (
       <div style={{ borderRight: "1px solid #F15A22", padding: "6px 16px" }}>
         <p style={{ fontWeight: "bold", textTransform: "uppercase", color: "#F15A22" }}>Project</p>
         <p style={{ marginTop: "2px", color: "#333", fontWeight: "600" }}>{printDetails.projectName || "—"}</p>
-        <p style={{ marginTop: "4px", color: "#F15A22", fontSize: "8px" }}>connectapod.com · hello@connectapod.com</p>
+
       </div>
       <div style={{ borderRight: "1px solid #F15A22", padding: "6px 16px" }}>
         <p style={{ fontWeight: "bold", textTransform: "uppercase", color: "#F15A22" }}>Client</p>

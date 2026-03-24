@@ -172,7 +172,7 @@ export default function PrintablePlansSheet({ placedModules, onClose, printDetai
               <div className="border-r p-2" style={{ borderColor: "#F15A22" }}>
                 <p className="uppercase font-bold" style={{ color: "#F15A22" }}>Project</p>
                 <p className="mt-0.5 text-gray-800 font-semibold">{printDetails.projectName || "—"}</p>
-                <p className="mt-1" style={{ color: "#F15A22", fontSize: "8px" }}>connectapod.com · hello@connectapod.com</p>
+
               </div>
               <div className="border-r p-2" style={{ borderColor: "#F15A22" }}>
                 <p className="uppercase font-bold" style={{ color: "#F15A22" }}>Client</p>
