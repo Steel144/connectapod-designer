@@ -926,8 +926,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
         {/* Furniture */}
          {furniture.map((item) => {
            const furnitureShapes = {
-             bed: (w, h) => `<rect x="0" y="0" width="${w}" height="${h}" fill="#FFF5E6" stroke="none"/>
-                              <rect x="10%" y="10%" width="80%" height="80%" fill="none" stroke="#E8956E" stroke-width="2"/>`,
+             bed: (w, h) => `<rect x="0" y="0" width="${w}" height="${h}" fill="#FFF5E6" stroke="none"/><rect x="20%" y="15%" width="60%" height="25%" fill="none" stroke="#E8956E" stroke-width="2.5"/><rect x="20%" y="50%" width="60%" height="40%" fill="none" stroke="#E8956E" stroke-width="2.5"/>`,
              sofa: (w, h) => `<rect x="0" y="0" width="${w}" height="${h}" fill="#FFF5E6" stroke="none"/>
                                <rect x="5%" y="20%" width="90%" height="60%" fill="none" stroke="#E8956E" stroke-width="2" rx="3"/>`,
              table: (w, h) => `<rect x="0" y="0" width="${w}" height="${h}" fill="#FFF5E6" stroke="none"/>
