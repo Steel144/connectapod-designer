@@ -558,40 +558,35 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
       const rect = gridRef.current.getBoundingClientRect();
       const exactX = (e.clientX - rect.left) / scaledCellW;
       const exactY = (e.clientY - rect.top) / scaledCellH;
-      const SNAP_THRESHOLD = 0.8; // cells — tight enough to avoid adjacent modules
+      const SNAP_THRESHOLD = 0.8; // cells
+      const CELL_M = 0.6;
       
       let snapped = null;
-
-      // Snap to nearest module face — find single closest position
-      const CELL_M = 0.6;
       const candidates = [];
 
       if (wallTemplate.orientation === "horizontal") {
         for (const mod of placedModules) {
-          const isCM = isConnectionModule(mod);
-          if (isCM) continue;
+          if (isConnectionModule(mod)) continue;
 
-          const modLengthM = mod.w * CELL_M;
+          const modWidthM = mod.w * CELL_M;
           const wallLengthM = wallTemplate.length;
-          if (Math.abs(modLengthM - wallLengthM) > 0.1) continue;
+          if (Math.abs(modWidthM - wallLengthM) > 0.1) continue;
 
-          // Y face (below module) — snap flush to bottom
-          const distToYFace = Math.abs(exactY - (mod.y + mod.h));
-          if (distToYFace <= SNAP_THRESHOLD) {
-            candidates.push({ dist: distToYFace, x: mod.x, y: mod.y + mod.h, length: mod.w, face: "Y" });
+          // Y face (below) — wall sits directly below module
+          const distY = Math.abs(exactY - (mod.y + mod.h));
+          if (distY <= SNAP_THRESHOLD) {
+            candidates.push({ dist: distY, x: mod.x, y: mod.y + mod.h, face: "Y" });
           }
 
-          // W face (above module) — snap flush to top, accounting for wall thickness
-          const distToWFace = Math.abs(exactY - mod.y);
-          if (distToWFace <= SNAP_THRESHOLD) {
-            // Wall should sit above module, so Y = mod.y - wall.thickness
-            candidates.push({ dist: distToWFace, x: mod.x, y: mod.y - wallTemplate.thickness, length: mod.w, face: "W" });
+          // W face (above) — wall sits directly above module
+          const distW = Math.abs(exactY - mod.y);
+          if (distW <= SNAP_THRESHOLD) {
+            candidates.push({ dist: distW, x: mod.x, y: mod.y - wallTemplate.thickness, face: "W" });
           }
         }
       } else {
-        // Vertical walls — snap to end modules only
+        // Vertical walls
         const isEndWall = wallTemplate.face === "Z" || wallTemplate.face === "X";
-
         for (const mod of placedModules) {
           const isEnd = mod.chassis === "EF" || mod.chassis === "ER" || mod.chassis === "LF" || mod.chassis === "RF" || mod.chassis === "End";
           if (isEndWall && !isEnd) continue;
@@ -600,37 +595,33 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
           const wallLengthM = wallTemplate.length;
           if (Math.abs(modHeightM - wallLengthM) > 0.1) continue;
 
-          // Z face (left side) — snap flush to left
-          const distToZFace = Math.abs(exactX - mod.x);
-          if (distToZFace <= SNAP_THRESHOLD) {
-            candidates.push({ dist: distToZFace, x: mod.x, y: mod.y, length: mod.h, face: "Z" });
+          // Z face (left)
+          const distZ = Math.abs(exactX - mod.x);
+          if (distZ <= SNAP_THRESHOLD) {
+            candidates.push({ dist: distZ, x: mod.x, y: mod.y, face: "Z" });
           }
 
-          // X face (right side) — snap flush to right
-          const distToXFace = Math.abs(exactX - (mod.x + mod.w));
-          if (distToXFace <= SNAP_THRESHOLD) {
-            candidates.push({ dist: distToXFace, x: mod.x + mod.w - wallTemplate.thickness, y: mod.y, length: mod.h, face: "X" });
+          // X face (right)
+          const distX = Math.abs(exactX - (mod.x + mod.w));
+          if (distX <= SNAP_THRESHOLD) {
+            candidates.push({ dist: distX, x: mod.x + mod.w - wallTemplate.thickness, y: mod.y, face: "X" });
           }
         }
       }
 
-      // Pick the single nearest candidate
+      // Pick nearest candidate
       if (candidates.length > 0) {
         const nearest = candidates.reduce((a, b) => a.dist < b.dist ? a : b);
-        snapped = { x: nearest.x, y: nearest.y, length: nearest.length, face: nearest.face };
+        const wallWithFace = { ...wallTemplate, face: nearest.face };
+        if (onPlaceWall) onPlaceWall(wallWithFace, nearest.x, nearest.y);
+      } else {
+        // Freeform placement centered on cursor
+        const halfLenX = wallTemplate.orientation === "horizontal" ? wallTemplate.length / 2 : wallTemplate.thickness / 2;
+        const halfLenY = wallTemplate.orientation === "vertical" ? wallTemplate.length / 2 : wallTemplate.thickness / 2;
+        const centerX = Math.max(0, Math.min(exactX - halfLenX, GRID_COLS - 1));
+        const centerY = Math.max(0, Math.min(exactY - halfLenY, GRID_ROWS - 1));
+        if (onPlaceWall) onPlaceWall(wallTemplate, centerX, centerY);
       }
-
-      if (snapped) {
-         const wallWithFace = { ...wallTemplate, length: snapped.length, face: snapped.face };
-         if (onPlaceWall) onPlaceWall(wallWithFace, snapped.x, snapped.y)
-       } else {
-         // Allow freeform placement centered on cursor
-         const wallHalfLengthX = wallTemplate.orientation === "horizontal" ? wallTemplate.length / 2 : wallTemplate.thickness / 2;
-         const wallHalfLengthY = wallTemplate.orientation === "vertical" ? wallTemplate.length / 2 : wallTemplate.thickness / 2;
-         const centerX = Math.max(0, Math.min(exactX - wallHalfLengthX, GRID_COLS - 1));
-         const centerY = Math.max(0, Math.min(exactY - wallHalfLengthY, GRID_ROWS - 1));
-         if (onPlaceWall) onPlaceWall(wallTemplate, centerX, centerY);
-       }
       return;
     }
   };
