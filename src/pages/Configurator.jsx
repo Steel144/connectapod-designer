@@ -73,6 +73,8 @@ export default function Configurator() {
   const [selectedWall, setSelectedWall] = useState(null);
   const [selectedModule, setSelectedModule] = useState(null);
   const [printMode, setPrintMode] = useState(null);
+  const [pendingPrintMode, setPendingPrintMode] = useState(null);
+  const [printDetails, setPrintDetails] = useState(null);
   const [quoteOpen, setQuoteOpen] = useState(false);
   const [viewMode, setViewMode] = useState("2d");
   const [loadCounter, setLoadCounter] = useState(0);
