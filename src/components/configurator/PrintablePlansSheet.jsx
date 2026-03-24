@@ -188,7 +188,7 @@ export default function PrintablePlansSheet({ placedModules, onClose, printDetai
       <style>{`
          @page { margin: 0; size: A4 landscape; }
          @media print {
-           body { margin: 0; padding: 0; }
+           body { margin: 0; padding: 0; overflow: hidden; }
            img { max-width: 100%; height: auto; }
          }
        `}</style>
