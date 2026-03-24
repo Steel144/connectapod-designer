@@ -946,8 +946,8 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                  height: height * scaledCellH,
                  transform: `rotate(${item.rotation || 0}deg)`,
                  transformOrigin: "center",
-                 backgroundColor: "#FFF5E6",
-                 border: "1px solid #E8956E",
+                 backgroundColor: "transparent",
+                 border: "none",
                }}
                onMouseDown={(e) => {
                  e.preventDefault();
