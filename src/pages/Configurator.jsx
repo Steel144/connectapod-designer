@@ -881,6 +881,10 @@ export default function Configurator() {
                 ));
                 setSelectedWall(null);
               }}
+              onOpenWallsMenu={(wall) => {
+                setSelectedWall(wall);
+                setMobileDrawerOpen(true);
+              }}
             />
           </div>
         ) : (
