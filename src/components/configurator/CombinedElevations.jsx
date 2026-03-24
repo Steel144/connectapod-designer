@@ -109,8 +109,11 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
     return (
       <div className="flex flex-col items-center gap-2 shrink-0">
         <div
-          className="overflow-hidden bg-white border border-gray-200 cursor-pointer"
+          className="overflow-hidden bg-white border border-gray-200 cursor-pointer hover:border-[#F15A22] transition-colors"
           style={{ height: `${imgHeight}px`, width: wall.elevationImage ? "auto" : `${wallWidthPx}px` }}
+          onClick={() => onWallSelect?.(wall)}
+          onMouseEnter={() => onWallSelect?.(wall)}
+          onMouseLeave={() => onWallSelect?.(null)}
         >
           {wall.elevationImage ? (
             <img
