@@ -120,16 +120,9 @@ export default function PrintDetailsModal({ open, onClose, onConfirm, printMode 
   }, [open]);
 
   const handleConfirm = () => {
-   const details = { projectName, clientName, address, email, phone };
-   localStorage.setItem(STORAGE_KEY, JSON.stringify(details));
-   // Format address for printing: number+street on line 1, region+postcode on line 2
-   const formattedAddress = address ? (() => {
-     const parts = address.split(", ");
-     const firstLine = parts.slice(0, 2).join(", ");
-     const secondLine = parts.slice(2).filter(p => p !== "New Zealand").join(", ");
-     return `${firstLine}\n${secondLine}`;
-   })() : "";
-   onConfirm({ ...details, address: formattedAddress });
+    const details = { projectName, clientName, address, email, phone };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(details));
+    onConfirm(details);
   };
 
   return (
@@ -151,16 +144,6 @@ export default function PrintDetailsModal({ open, onClose, onConfirm, printMode 
           <div>
             <Label className="text-xs text-gray-600">Site Address</Label>
             <AddressAutocomplete value={address} onChange={setAddress} />
-            {address && (
-              <div className="mt-1 p-2 bg-gray-50 border border-gray-200 text-sm text-gray-700 whitespace-pre-wrap break-words">
-                {(() => {
-                  const parts = address.split(", ");
-                  const firstLine = parts.slice(0, 2).join(", ");
-                  const secondLine = parts.slice(2).filter(p => p !== "New Zealand").join(", ");
-                  return `${firstLine}\n${secondLine}`;
-                })()}
-              </div>
-            )}
           </div>
           <div>
             <Label className="text-xs text-gray-600">Client Email</Label>

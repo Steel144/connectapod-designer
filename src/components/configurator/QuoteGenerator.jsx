@@ -180,16 +180,16 @@ export default function QuoteGenerator({ placedModules, walls, open, onClose }) 
 
     // Client info
     if (clientName || projectName || address || clientPhone || clientEmail) {
-    const infoLines = [];
-    if (clientName) infoLines.push(`Client: ${clientName}`);
-    if (clientPhone) infoLines.push(`Phone: ${clientPhone}`);
-    if (clientEmail) infoLines.push(`Email: ${clientEmail}`);
-    if (address) {
-      const addressParts = address.split(", ");
-      infoLines.push(`Address: ${addressParts.join(",\n")}`);
-    }
+      const infoLines = [];
+      if (clientName) infoLines.push(`Client: ${clientName}`);
+      if (clientPhone) infoLines.push(`Phone: ${clientPhone}`);
+      if (clientEmail) infoLines.push(`Email: ${clientEmail}`);
+      if (address || city || postalCode) {
+        const addressStr = [address, city, postalCode].filter(Boolean).join(", ");
+        if (addressStr) infoLines.push(`Address: ${addressStr}`);
+      }
       
-      const boxHeight = 8 + infoLines.reduce((h, line) => h + (line.split("\n").length * 5), 0);
+      const boxHeight = 8 + infoLines.length * 5;
       doc.setFillColor(248, 248, 248);
       doc.rect(col1, y, pageW - 2 * margin, boxHeight, "F");
       doc.setTextColor(30, 30, 30);
@@ -198,11 +198,8 @@ export default function QuoteGenerator({ placedModules, walls, open, onClose }) 
       
       let infoY = y + 5;
       infoLines.forEach(line => {
-        const lines = line.split("\n");
-        lines.forEach(subline => {
-          doc.text(subline, col1 + 4, infoY);
-          infoY += 5;
-        });
+        doc.text(line, col1 + 4, infoY);
+        infoY += 5;
       });
       
       if (projectName) {
@@ -390,16 +387,6 @@ export default function QuoteGenerator({ placedModules, walls, open, onClose }) 
            <div>
              <Label className="text-xs text-gray-600">Street Address</Label>
              <AddressAutocomplete value={address} onChange={setAddress} />
-             {address && (
-               <div className="mt-1 p-2 bg-gray-50 border border-gray-200 text-sm text-gray-700 whitespace-pre-wrap break-words">
-                 {(() => {
-                   const parts = address.split(", ");
-                   const firstLine = parts.slice(0, 2).join(", ");
-                   const secondLine = parts.slice(2).filter(p => p !== "New Zealand").join(", ");
-                   return `${firstLine}\n${secondLine}`;
-                 })()}
-               </div>
-             )}
            </div>
            <div>
              <Label className="text-xs text-gray-600">Project Name</Label>
