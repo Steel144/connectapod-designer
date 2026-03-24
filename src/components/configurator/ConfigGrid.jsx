@@ -175,8 +175,12 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
     setSelectedWallIds(newWallSelection);
     setSelectedModId(null);
     const rect = gridRef.current.getBoundingClientRect();
-    // Store wall position in cells at start of drag
-    setDraggingWall({ wall, startCellX: wall.x, startCellY: wall.y, cursorX: e.clientX, cursorY: e.clientY, selectedIds: newWallSelection });
+    // Offset from center of wall, not top-left
+    const wallCenterX = wall.x * scaledCellW + (wall.orientation === "horizontal" ? wall.length * scaledCellW / 2 : wall.thickness * scaledCellW / 2);
+    const wallCenterY = wall.y * scaledCellH + (wall.orientation === "vertical" ? wall.length * scaledCellH / 2 : wall.thickness * scaledCellH / 2);
+    const offsetX = e.clientX - rect.left - wallCenterX;
+    const offsetY = e.clientY - rect.top - wallCenterY;
+    setDraggingWall({ wall, offsetX, offsetY, cursorX: e.clientX, cursorY: e.clientY, selectedIds: newWallSelection });
   };
 
   const onMouseMove = useCallback((e) => {
@@ -245,13 +249,14 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
       const rect = gridRef.current.getBoundingClientRect();
       const cursorX = draggingWall.cursorX - rect.left;
       const cursorY = draggingWall.cursorY - rect.top;
-      // Convert cursor position directly to cell coordinates
-      const cursorCellX = cursorX / scaledCellW;
-      const cursorCellY = cursorY / scaledCellH;
+      const rawX = cursorX - draggingWall.offsetX;
+      const rawY = cursorY - draggingWall.offsetY;
+      const exactX = rawX / scaledCellW;
+      const exactY = rawY / scaledCellH;
 
       // Only snap if the wall moved significantly (more than 0.1 cells)
-      const movedX = Math.abs(cursorCellX - draggingWall.startCellX);
-      const movedY = Math.abs(cursorCellY - draggingWall.startCellY);
+      const movedX = Math.abs(exactX - draggingWall.wall.x);
+      const movedY = Math.abs(exactY - draggingWall.wall.y);
       const hasMoved = movedX > 0.1 || movedY > 0.1;
 
       if (hasMoved) {
@@ -259,8 +264,13 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
           const wall = walls.find(w => w.id === wallId);
           if (!wall) return;
 
-          const SNAP_THRESHOLD = 0.6; // cells
+          const SNAP_THRESHOLD = 0.5; // cells — very tight snapping for accuracy
           let snapped = null;
+          // Calculate cursor position as cells, accounting for wall center
+          const wallCenterOffsetX = draggingWall.wall.orientation === "horizontal" ? draggingWall.wall.length * scaledCellW / 2 : draggingWall.wall.thickness * scaledCellW / 2;
+          const wallCenterOffsetY = draggingWall.wall.orientation === "vertical" ? draggingWall.wall.length * scaledCellH / 2 : draggingWall.wall.thickness * scaledCellH / 2;
+          const cursorCellX = (cursorX - draggingWall.offsetX - wallCenterOffsetX / 2) / scaledCellW;
+          const cursorCellY = (cursorY - draggingWall.offsetY - wallCenterOffsetY / 2) / scaledCellH;
 
           if (wall.orientation === "horizontal") {
             // Find ALL valid snap positions and pick the single nearest one
@@ -621,36 +631,6 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
       onMouseLeave={onMouseUp}
     >
       <div style={{ paddingLeft: SCROLL_BUFFER, display: "inline-block" }}>
-      
-      {/* Preview window above grid */}
-      <div className={`flex gap-4 mb-4 p-4 bg-white border border-gray-200 rounded-lg shadow-sm min-h-[140px] ${!(selectedModObj || selectedWall) && 'invisible'}`}>
-          {selectedModObj && (
-            <div className="flex flex-col gap-2 min-w-0">
-              <p className="text-xs font-semibold text-gray-700">{selectedModObj.label}</p>
-              <div className="w-40 h-32 bg-gray-50 rounded overflow-hidden flex items-center justify-center border border-gray-200">
-                {selectedModObj.floorPlanImage ? (
-                  <img src={selectedModObj.floorPlanImage} alt={selectedModObj.label} className="w-full h-full object-contain" style={{ transform: `rotate(${selectedModObj.rotation || 0}deg) ${selectedModObj.flipped ? 'scaleX(-1)' : ''}` }} />
-                ) : (
-                  <div className="text-xs text-gray-400 text-center">No image</div>
-                )}
-              </div>
-            </div>
-          )}
-          {selectedWall && (
-            <div className="flex flex-col gap-2 min-w-0">
-              <p className="text-xs font-semibold text-gray-700">{selectedWall.label} {selectedWall.face && `(${selectedWall.face})`}</p>
-              <div className="w-40 h-32 bg-gray-50 rounded overflow-hidden flex items-center justify-center border border-gray-200">
-                {selectedWall.elevationImage ? (
-                  <img src={selectedWall.elevationImage} alt={selectedWall.label} className="w-full h-full object-contain" style={{ transform: selectedWall.flipped ? 'scaleX(-1)' : undefined }} />
-                ) : (
-                  <div className="text-xs text-gray-400 text-center">No image</div>
-                )}
-              </div>
-            </div>
-          )}
-        </div>
-      )}
-
       <div
         ref={gridRef}
         className="relative select-none"
@@ -805,18 +785,20 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
            const wallW = wall.orientation === "horizontal" ? wall.length * scaledCellW : wall.thickness * scaledCellW;
            const wallH = wall.orientation === "vertical" ? wall.length * scaledCellH : wall.thickness * scaledCellH;
 
-           // Ghost position while dragging
+           // Ghost position while dragging — round to cell grid
            let ghostLeft = wall.x * scaledCellW;
            let ghostTop = wall.y * scaledCellH;
            if (isBeingDragged && gridRef.current) {
              const rect = gridRef.current.getBoundingClientRect();
              const cursorX = draggingWall.cursorX - rect.left;
              const cursorY = draggingWall.cursorY - rect.top;
-             // Round cursor to nearest cell
-             const cellX = Math.round(cursorX / scaledCellW * 2) / 2;
-             const cellY = Math.round(cursorY / scaledCellH * 2) / 2;
-             ghostLeft = cellX * scaledCellW;
-             ghostTop = cellY * scaledCellH;
+             const rawCellX = (cursorX - draggingWall.offsetX) / scaledCellW;
+             const rawCellY = (cursorY - draggingWall.offsetY) / scaledCellH;
+             // Round to nearest cell for smooth snapping
+             const snappedCellX = Math.round(rawCellX * 2) / 2;
+             const snappedCellY = Math.round(rawCellY * 2) / 2;
+             ghostLeft = snappedCellX * scaledCellW;
+             ghostTop = snappedCellY * scaledCellH;
            }
 
            return (
@@ -1024,33 +1006,6 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
         Grid: {GRID_COLS}×{GRID_ROWS} cells · Snap: 600mm
       </p>
       </div>
-      
-      {/* Preview window below grid */}
-      <div className={`flex gap-4 mt-4 p-4 bg-white border border-gray-200 rounded-lg shadow-sm min-h-[80px] ${!(selectedModObj || selectedWall) && 'invisible'}`}>
-          {selectedModObj && (
-            <div className="flex flex-col gap-2 min-w-0">
-              <div className="text-xs font-semibold text-gray-700">
-                <span>{selectedModObj.sqm?.toFixed(1)} m²</span>
-                <span className="ml-2 text-gray-500">${(selectedModObj.price || 0).toLocaleString()}</span>
-              </div>
-              <div className="flex gap-2 text-xs text-gray-600">
-                <span>W: {selectedModObj.w} cells</span>
-                <span>H: {selectedModObj.h} cells</span>
-              </div>
-            </div>
-          )}
-          {selectedWall && (
-            <div className="flex flex-col gap-2 min-w-0">
-              <div className="text-xs font-semibold text-gray-700">
-                <span>${(selectedWall.price || 0).toLocaleString()}</span>
-              </div>
-              <div className="flex gap-2 text-xs text-gray-600">
-                <span>{selectedWall.orientation}</span>
-                <span>Length: {selectedWall.length} cells</span>
-              </div>
-            </div>
-          )}
-        </div>
       </div>
       );
       }

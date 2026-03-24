@@ -363,6 +363,7 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
 
     const context = selectedWall ? `Face ${face}` : `${chassis} module`;
     const reason = `${context} · ${faceWidthM.toFixed(1)}m wide · ${filtered.length} wall${filtered.length !== 1 ? "s" : ""}`;
+    console.log(`[ModulePanel] Filter: isEnd=${isEnd}, isConnection=${isConnection}, face=${face}, faceWidthM=${faceWidthM}, allWalls=${allWalls.length}, filtered=${filtered.length}`, filtered);
     return { compatibleWalls: filtered, filterReason: reason };
   }, [selectedWall, selectedModule, placedModules, customWallTypes]);
 
@@ -420,7 +421,7 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
                          onDragStart(e, mod);
                        }}
                        onDragEnd={onDragEnd}
-                       onMouseEnter={() => setHoveredModule({ ...mod, floorPlanImage: floorPlanImages[mod.type] || floorPlanImages[item.originalCode] })}
+                       onMouseEnter={() => setHoveredModule({ ...mod, floorPlanImage: floorPlanImages[mod.type] })}
                        onMouseLeave={() => setHoveredModule(null)}
                        className="flex items-center gap-3 px-3 py-2 cursor-grab active:cursor-grabbing hover:bg-orange-50 border-b border-gray-50 last:border-0 transition-colors"
                      >
