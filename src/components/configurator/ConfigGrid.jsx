@@ -314,13 +314,13 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
              const isEnd = mod.chassis === "EF" || mod.chassis === "ER" || mod.chassis === "LF" || mod.chassis === "RF" || mod.chassis === "End";
              if (isEndWall && !isEnd) continue;
 
-             // Z face (left side of module)
+             // Z face (left side of module) — snap X to left edge and Y to module's top
              const distToZFace = Math.abs(cursorCellX - mod.x);
              if (distToZFace <= SNAP_THRESHOLD) {
                candidates.push({ dist: distToZFace, x: mod.x, y: mod.y, length: mod.h, face: "Z" });
              }
 
-             // X face (right side of module)
+             // X face (right side of module) — snap X to right edge and Y to module's top
              const distToXFace = Math.abs(cursorCellX - (mod.x + mod.w));
              if (distToXFace <= SNAP_THRESHOLD) {
                candidates.push({ dist: distToXFace, x: mod.x + mod.w - wall.thickness, y: mod.y, length: mod.h, face: "X" });
