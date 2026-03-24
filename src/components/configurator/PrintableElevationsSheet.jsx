@@ -103,8 +103,8 @@ const PrintPage = ({ children, header, footer, isLast }) => {
       height: "297mm",
       pageBreakAfter: isLast ? "avoid" : "always",
       breakAfter: isLast ? "avoid" : "page",
-      overflow: "hidden",
       boxSizing: "border-box",
+      overflow: "visible",
     }}>
       {header}
       <div ref={contentRef} style={{ flex: 1, overflow: "hidden", padding: "12px 24px", position: "relative" }}>
