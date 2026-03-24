@@ -35,8 +35,9 @@ const Footer = ({ sheet, pageNum, totalPages, printDetails = {} }) => (
         <p style={{ fontWeight: "bold", textTransform: "uppercase", color: "#F15A22" }}>Client</p>
         <p style={{ marginTop: "2px", color: "#333" }}>{printDetails.clientName || "—"}</p>
         {printDetails.address && <p style={{ marginTop: "1px", color: "#666", fontSize: "9px" }}>{printDetails.address}</p>}
-        {printDetails.email && <p style={{ marginTop: "1px", color: "#888", fontSize: "9px" }}>{printDetails.email}</p>}
-        {printDetails.phone && <p style={{ marginTop: "1px", color: "#888", fontSize: "9px" }}>{printDetails.phone}</p>}
+        {(printDetails.email || printDetails.phone) && (
+          <p style={{ marginTop: "1px", color: "#888", fontSize: "9px" }}>{[printDetails.email, printDetails.phone].filter(Boolean).join(" · ")}</p>
+        )}
       </div>
       <div style={{ borderRight: "1px solid #F15A22", padding: "6px 16px" }}>
         <p style={{ fontWeight: "bold", textTransform: "uppercase", color: "#F15A22" }}>Sheet</p>
