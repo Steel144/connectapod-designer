@@ -80,6 +80,8 @@ export default function PrintDetailsModal({ open, onClose, onConfirm, printMode 
   const [projectName, setProjectName] = useState("");
   const [clientName, setClientName] = useState("");
   const [address, setAddress] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
 
   const handleConfirm = () => {
     onConfirm({ projectName, clientName, address });
