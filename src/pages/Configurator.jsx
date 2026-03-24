@@ -963,29 +963,59 @@ export default function Configurator() {
                         </div>
                       </div>
                     ) : selectedWall ? (
-                      <div className="flex flex-col h-full gap-2">
-                        <div>
-                          <p className="text-xs font-semibold text-gray-900 break-words">{selectedWall.label}</p>
-                          <p className="text-[10px] text-gray-500">{selectedWall.type}</p>
-                          {selectedWall.face && <span className="text-[10px] font-bold text-[#F15A22]">Face {selectedWall.face}</span>}
-                        </div>
-                        <div className="flex-1 bg-gray-50 rounded overflow-hidden flex items-center justify-center">
-                          {selectedWall.elevationImage ? (
-                            <img src={selectedWall.elevationImage} alt={selectedWall.label} className="w-full h-full object-contain" style={{ transform: selectedWall.flipped ? 'scaleX(-1)' : undefined }} />
-                          ) : (
-                            <div className="flex flex-col items-center gap-2 text-gray-400">
-                              <div className="w-16 h-24 border-2 border-gray-300 rounded flex items-center justify-center">
-                                <span className="text-2xl font-bold text-gray-300">{selectedWall.face || "W"}</span>
-                              </div>
-                              <p className="text-[10px] text-center">No elevation image</p>
-                            </div>
-                          )}
-                        </div>
-                        <div className="text-xs border-t border-gray-200 pt-2 text-right">
-                          <span className="font-semibold text-gray-800">${(selectedWall.price || 0).toLocaleString()}</span>
-                        </div>
-                      </div>
-                    ) : (
+                       <div className="flex flex-col h-full gap-2">
+                         <div>
+                           <p className="text-xs font-semibold text-gray-900 break-words">{selectedWall.label}</p>
+                           <p className="text-[10px] text-gray-500">{selectedWall.type}</p>
+                           {selectedWall.face && <span className="text-[10px] font-bold text-[#F15A22]">Face {selectedWall.face}</span>}
+                         </div>
+                         <div className="flex-1 bg-gray-50 rounded overflow-hidden flex items-center justify-center">
+                           {selectedWall.elevationImage ? (
+                             <img src={selectedWall.elevationImage} alt={selectedWall.label} className="w-full h-full object-contain" style={{ transform: selectedWall.flipped ? 'scaleX(-1)' : undefined }} />
+                           ) : (
+                             <div className="flex flex-col items-center gap-2 text-gray-400">
+                               <div className="w-16 h-24 border-2 border-gray-300 rounded flex items-center justify-center">
+                                 <span className="text-2xl font-bold text-gray-300">{selectedWall.face || "W"}</span>
+                               </div>
+                               <p className="text-[10px] text-center">No elevation image</p>
+                             </div>
+                           )}
+                         </div>
+                         <div className="flex gap-1">
+                           <select
+                             value={selectedWall.type || ""}
+                             onChange={(e) => {
+                               const newType = e.target.value;
+                               const wallEntry = availableWallTypes.find(w => w.type === newType);
+                               setWalls(prev => prev.map(w => 
+                                 w.id === selectedWall.id 
+                                   ? { ...w, type: newType, label: wallEntry?.label || newType, elevationImage: wallImages[newType] || null, price: wallEntry?.price || 0 }
+                                   : w
+                               ));
+                               setSelectedWall(prev => prev ? { ...prev, type: newType, label: wallEntry?.label || newType, elevationImage: wallImages[newType] || null, price: wallEntry?.price || 0 } : null);
+                             }}
+                             className="flex-1 text-xs px-2 py-1 border border-gray-200 rounded bg-white"
+                           >
+                             {availableWallTypes.map(wt => (
+                               <option key={wt.type} value={wt.type}>{wt.label}</option>
+                             ))}
+                           </select>
+                           <button
+                             onClick={() => {
+                               setWalls(prev => prev.map(w => w.id === selectedWall.id ? { ...w, flipped: !w.flipped } : w));
+                               setSelectedWall(prev => prev ? { ...prev, flipped: !prev.flipped } : null);
+                             }}
+                             className="px-2 py-1 text-xs bg-gray-100 border border-gray-200 rounded hover:bg-gray-200 transition-colors"
+                             title="Flip"
+                           >
+                             ↔
+                           </button>
+                         </div>
+                         <div className="text-xs border-t border-gray-200 pt-2 text-right">
+                           <span className="font-semibold text-gray-800">${(selectedWall.price || 0).toLocaleString()}</span>
+                         </div>
+                       </div>
+                     ) : (
                       <DesignSummary
                         placedModules={placedModules}
                         walls={walls}
