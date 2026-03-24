@@ -8,7 +8,6 @@ import AddModuleModal from "@/components/catalogue/AddModuleModal";
 import EditModuleModal from "@/components/catalogue/EditModuleModal";
 import PrintableCatalogue from "@/components/catalogue/PrintableCatalogue";
 import BulkUploadModal from "@/components/catalogue/BulkUploadModal";
-import WallCompatibilityTrainer from "@/components/catalogue/WallCompatibilityTrainer";
 
 // Category structure for organizing custom modules — all built-in modules hidden
 const CATALOGUE = [
@@ -42,8 +41,6 @@ export default function Catalogue() {
   const [editingModule, setEditingModule] = useState(null);
   const [printMode, setPrintMode] = useState(false);
   const [bulkUploadOpen, setBulkUploadOpen] = useState(false);
-  const [trainingModuleOpen, setTrainingModuleOpen] = useState(false);
-  const [trainingModule, setTrainingModule] = useState(null);
   const queryClient = useQueryClient();
   const fileInputRef = useRef(null);
   const [pendingUploadCode, setPendingUploadCode] = useState(null);
@@ -187,11 +184,6 @@ export default function Catalogue() {
       const images = await base44.entities.FloorPlanImage.list();
       return Object.fromEntries(images.map(img => [img.moduleType, img.imageUrl]));
     },
-  });
-
-  const { data: wallTypes = [] } = useQuery({
-    queryKey: ["wallTypes"],
-    queryFn: () => base44.entities.WallEntry.list(),
   });
 
   const handleUploadClick = (code) => {
@@ -482,18 +474,6 @@ export default function Catalogue() {
           />
         )}
 
-        {trainingModuleOpen && (
-          <WallCompatibilityTrainer
-            open={trainingModuleOpen}
-            onClose={() => {
-              setTrainingModuleOpen(false);
-              setTrainingModule(null);
-            }}
-            module={trainingModule}
-            wallTypes={wallTypes}
-          />
-        )}
-
         {/* Catalogue Sections */}
         <div className="space-y-10">
           {filtered.map(cat => (
@@ -536,16 +516,6 @@ export default function Catalogue() {
                            </>
                          ) : (
                            <>
-                             <button
-                               onClick={() => {
-                                 setTrainingModule(mod);
-                                 setTrainingModuleOpen(true);
-                               }}
-                               className="text-gray-300 hover:text-purple-500 transition-colors"
-                               title="Set wall compatibility"
-                             >
-                               🎓
-                             </button>
                              <button
                                onClick={() => handleDuplicateModule(mod, cat.category)}
                                className="text-gray-300 hover:text-blue-500 transition-colors"
