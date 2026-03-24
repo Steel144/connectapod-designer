@@ -881,16 +881,15 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                   <div
                     className="absolute pointer-events-none"
                     style={{
-                      left: (item.x + deltaX) * scaledCellW,
-                      top: (item.y + deltaY) * scaledCellH,
-                      width: width * scaledCellW,
-                      height: height * scaledCellH,
-                      border: "2px solid #F15A22",
-                      opacity: 0.75,
-                      boxShadow: "0 4px 12px rgba(241, 90, 34, 0.3)",
-                      transform: `rotate(${item.rotation || 0}deg)`,
-                      transformOrigin: "center",
-                    }}
+                       left: (item.x + deltaX) * scaledCellW,
+                       top: (item.y + deltaY) * scaledCellH,
+                       width: width * scaledCellW,
+                       height: height * scaledCellH,
+                       opacity: 0.75,
+                       boxShadow: "0 4px 12px rgba(241, 90, 34, 0.3)",
+                       transform: `rotate(${item.rotation || 0}deg)`,
+                       transformOrigin: "center",
+                     }}
                   >
                     <svg viewBox="0 0 100 100" className="w-full h-full" dangerouslySetInnerHTML={{ __html: svgContent }} />
                   </div>
@@ -952,7 +951,6 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                  top: item.y * scaledCellH,
                  width: width * scaledCellW,
                  height: height * scaledCellH,
-                 border: "2px solid #F15A22",
                  transform: `rotate(${item.rotation || 0}deg)`,
                  transformOrigin: "center",
                }}
