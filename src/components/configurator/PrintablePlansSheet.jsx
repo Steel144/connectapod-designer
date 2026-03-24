@@ -53,8 +53,12 @@ export default function PrintablePlansSheet({ placedModules, onClose, printDetai
 
          {/* Header with logo */}
            <div className="flex items-center justify-between px-6 pt-4 pb-2 border-b" style={{ borderColor: "#F15A22" }}>
-             <img src="https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/201470147_ConnectapodArchLogo-01.png" alt="connectapod" style={{ height: "40px", width: "auto" }} />
-             <span style={{ color: "#666", fontSize: "12pt" }}>Floor Plan</span>
+             <img src="https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/201470147_ConnectapodArchLogo-01.png" alt="connectapod" style={{ height: "48px", width: "auto" }} />
+             <div style={{ textAlign: "center" }}>
+               <div style={{ color: "#F15A22", fontSize: "9px", fontWeight: "600" }}>connectapod.com</div>
+               <div style={{ color: "#888", fontSize: "8px" }}>hello@connectapod.com · www.connectapod.com</div>
+             </div>
+             <span style={{ color: "#111", fontSize: "20pt", fontWeight: "700" }}>Floor Plan</span>
            </div>
 
          {/* Main content */}
