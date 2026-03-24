@@ -251,31 +251,24 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
                       </div>
 
                       <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
-                        {/* Y Face */}
-                        <div>
-                          <div style={{ fontSize: "10px", color: "#666", marginBottom: "12px", fontWeight: "500" }}>Y Face (Outside/Top)</div>
-                          <div style={{ display: "flex", gap: "2px", minWidth: "max-content" }}>
-                            {mods.map((mod, idx) => {
-                              const wall = findWall(mod, "Y");
-                              return wall ? (
-                                <ElevationImage key={`${pavNum}-y-${idx}`} wall={wall} label={`Y${idx + 1}`} face="Y" />
-                              ) : null;
-                            })}
-                          </div>
-                        </div>
-
-                        {/* W Face */}
-                        <div>
-                          <div style={{ fontSize: "10px", color: "#666", marginBottom: "12px", fontWeight: "500" }}>W Face (Outside/Bottom)</div>
-                          <div style={{ display: "flex", gap: "2px", minWidth: "max-content" }}>
-                            {mods.map((mod, idx) => {
-                              const wall = findWall(mod, "W");
-                              return wall ? (
-                                <ElevationImage key={`${pavNum}-w-${idx}`} wall={wall} label={`W${idx + 1}`} face="W" />
-                              ) : null;
-                            })}
-                          </div>
-                        </div>
+                        {(pavNum === 2 ? ["Z", "X"] : ["Y", "W"]).map(face => {
+                          const faceLabels = { Y: "Y Face (Outside/Top)", W: "W Face (Outside/Bottom)", Z: "Z Face (West)", X: "X Face (East)" };
+                          const hasAny = mods.some(mod => findWall(mod, face));
+                          if (!hasAny) return null;
+                          return (
+                            <div key={face}>
+                              <div style={{ fontSize: "10px", color: "#666", marginBottom: "12px", fontWeight: "500" }}>{faceLabels[face]}</div>
+                              <div style={{ display: "flex", gap: "2px", minWidth: "max-content" }}>
+                                {mods.map((mod, idx) => {
+                                  const wall = findWall(mod, face);
+                                  return wall ? (
+                                    <ElevationImage key={`${pavNum}-${face}-${idx}`} wall={wall} label={`${face}${idx + 1}`} face={face} />
+                                  ) : null;
+                                })}
+                              </div>
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
                   );
