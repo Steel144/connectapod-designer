@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef, useLayoutEffect } from "react";
 import { useElevationGeometry } from "@/hooks/useElevationGeometry";
 import HorizontalElevation from "./HorizontalElevation";
 import VerticalElevation from "./VerticalElevation";
@@ -18,14 +18,14 @@ const getModulePavilion = (mod) => {
 const PAV_LABELS = { 3: "Pavilion 1", 2: "Connection", 1: "Pavilion 2" };
 
 const Header = ({ title }) => (
-  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 24px 8px", borderBottom: "2px solid #F15A22" }}>
+  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 24px 8px", borderBottom: "2px solid #F15A22", flexShrink: 0 }}>
     <img src="https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/201470147_ConnectapodArchLogo-01.png" alt="connectapod" style={{ height: "40px", width: "auto" }} />
     <span style={{ color: "#666", fontSize: "12pt" }}>{title}</span>
   </div>
 );
 
 const Footer = ({ sheet, pageNum, totalPages }) => (
-  <div style={{ borderTop: "4px solid #F15A22", display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr 1fr", fontSize: "10px" }}>
+  <div style={{ borderTop: "4px solid #F15A22", display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr 1fr", fontSize: "10px", flexShrink: 0 }}>
     <div style={{ borderRight: "1px solid #F15A22", padding: "12px 16px" }}>
       <p style={{ fontWeight: "bold", textTransform: "uppercase", color: "#F15A22" }}>Project</p>
       <p style={{ marginTop: "4px", color: "#666" }}>connectapod Design</p>
@@ -49,6 +49,44 @@ const Footer = ({ sheet, pageNum, totalPages }) => (
   </div>
 );
 
+// Wraps a page and auto-scales content to fill the available area
+const ScaledPage = ({ children, isLast }) => {
+  const containerRef = useRef(null);
+  const contentRef = useRef(null);
+
+  useLayoutEffect(() => {
+    const container = containerRef.current;
+    const content = contentRef.current;
+    if (!container || !content) return;
+
+    // Reset scale first to measure natural size
+    content.style.transform = "";
+    const availW = container.clientWidth;
+    const availH = container.clientHeight;
+    const naturalW = content.scrollWidth;
+    const naturalH = content.scrollHeight;
+
+    if (naturalW > 0 && naturalH > 0) {
+      const scaleX = availW / naturalW;
+      const scaleY = availH / naturalH;
+      const scale = Math.min(scaleX, scaleY, 1); // never upscale
+      content.style.transform = `scale(${scale})`;
+      content.style.transformOrigin = "top left";
+    }
+  });
+
+  return (
+    <div
+      ref={containerRef}
+      style={{ flex: 1, overflow: "hidden", position: "relative", padding: "20px" }}
+    >
+      <div ref={contentRef} style={{ display: "inline-block", transformOrigin: "top left" }}>
+        {children}
+      </div>
+    </div>
+  );
+};
+
 const PrintPage = ({ children, header, footer, isLast }) => (
   <div style={{
     background: "white",
@@ -60,11 +98,9 @@ const PrintPage = ({ children, header, footer, isLast }) => (
     overflow: "hidden",
   }}>
     {header}
-    <div style={{ flex: 1, padding: "24px", overflow: "hidden", display: "flex", alignItems: "flex-start" }}>
-      <div className="print-content" style={{ transformOrigin: "top left", overflow: "visible" }}>
-        {children}
-      </div>
-    </div>
+    <ScaledPage isLast={isLast}>
+      {children}
+    </ScaledPage>
     {footer}
   </div>
 );
@@ -76,7 +112,7 @@ export default function PrintableElevationsSheet({ walls = [], placedModules = [
       const handleAfterPrint = () => onClose?.();
       window.addEventListener("afterprint", handleAfterPrint);
       return () => window.removeEventListener("afterprint", handleAfterPrint);
-    }, 1000);
+    }, 1200);
     return () => clearTimeout(timer);
   }, [onClose]);
 
@@ -114,7 +150,6 @@ export default function PrintableElevationsSheet({ walls = [], placedModules = [
     3: placedModules.filter(m => getModulePavilion(m) === 3),
   };
 
-  // Pages: [building elevations, then each pavilion that has modules] — order: P1(3), Connection(2), P2(1)
   const pavilionPages = [3, 2, 1].filter(p => pavilionModules[p]?.length > 0);
   const totalPages = 1 + pavilionPages.length;
 
@@ -257,10 +292,6 @@ export default function PrintableElevationsSheet({ walls = [], placedModules = [
         @media print {
           body { margin: 0; padding: 0; }
           img { max-width: 100%; height: auto; }
-          .print-content {
-            transform-origin: top left;
-            zoom: 1;
-          }
         }
       `}</style>
     </div>
