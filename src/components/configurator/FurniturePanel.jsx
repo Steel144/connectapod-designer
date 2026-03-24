@@ -4,7 +4,7 @@ import { ChevronDown, ChevronRight } from "lucide-react";
 const FURNITURE_ITEMS = [
   { id: "bed", label: "Bed", icon: "🛏️", width: 1.4, depth: 2.0 },
   { id: "sofa", label: "Sofa", icon: "🛋️", width: 2.5, depth: 1.0 },
-  { id: "table", label: Table", icon: "🪑", width: 1.2, depth: 1.2 },
+  { id: "table", label: "Table", icon: "🪑", width: 1.2, depth: 1.2 },
   { id: "chair", label: "Chair", icon: "🪑", width: 0.8, depth: 0.8 },
   { id: "desk", label: "Desk", icon: "🖥️", width: 1.5, depth: 0.8 },
 ];
