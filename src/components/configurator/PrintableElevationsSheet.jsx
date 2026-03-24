@@ -15,6 +15,58 @@ const getModulePavilion = (mod) => {
   return null;
 };
 
+const PAV_LABELS = { 3: "Pavilion 1", 2: "Connection", 1: "Pavilion 2" };
+
+const Header = ({ title }) => (
+  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 24px 8px", borderBottom: "2px solid #F15A22" }}>
+    <img src="https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/201470147_ConnectapodArchLogo-01.png" alt="connectapod" style={{ height: "40px", width: "auto" }} />
+    <span style={{ color: "#666", fontSize: "12pt" }}>{title}</span>
+  </div>
+);
+
+const Footer = ({ sheet, pageNum, totalPages }) => (
+  <div style={{ borderTop: "4px solid #F15A22", display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr 1fr", fontSize: "10px" }}>
+    <div style={{ borderRight: "1px solid #F15A22", padding: "12px 16px" }}>
+      <p style={{ fontWeight: "bold", textTransform: "uppercase", color: "#F15A22" }}>Project</p>
+      <p style={{ marginTop: "4px", color: "#666" }}>connectapod Design</p>
+    </div>
+    <div style={{ borderRight: "1px solid #F15A22", padding: "12px 16px" }}>
+      <p style={{ fontWeight: "bold", textTransform: "uppercase", color: "#F15A22" }}>Sheet</p>
+      <p style={{ marginTop: "4px", color: "#666" }}>{sheet}</p>
+    </div>
+    <div style={{ borderRight: "1px solid #F15A22", padding: "12px 16px" }}>
+      <p style={{ fontWeight: "bold", textTransform: "uppercase", color: "#F15A22" }}>Date</p>
+      <p style={{ marginTop: "4px", color: "#666" }}>{new Date().toLocaleDateString()}</p>
+    </div>
+    <div style={{ borderRight: "1px solid #F15A22", padding: "12px 16px" }}>
+      <p style={{ fontWeight: "bold", textTransform: "uppercase", color: "#F15A22" }}>Scale</p>
+      <p style={{ marginTop: "4px", color: "#666" }}>1:100</p>
+    </div>
+    <div style={{ padding: "12px 16px" }}>
+      <p style={{ fontWeight: "bold", textTransform: "uppercase", color: "#F15A22" }}>Page</p>
+      <p style={{ marginTop: "4px", color: "#666" }}>{pageNum} / {totalPages}</p>
+    </div>
+  </div>
+);
+
+const PrintPage = ({ children, header, footer, isLast }) => (
+  <div style={{
+    background: "white",
+    display: "flex",
+    flexDirection: "column",
+    height: "100vh",
+    pageBreakAfter: isLast ? "avoid" : "always",
+    breakAfter: isLast ? "avoid" : "page",
+    overflow: "hidden",
+  }}>
+    {header}
+    <div style={{ flex: 1, padding: "24px", overflow: "hidden" }}>
+      {children}
+    </div>
+    {footer}
+  </div>
+);
+
 export default function PrintableElevationsSheet({ walls = [], placedModules = [], onClose }) {
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -59,7 +111,10 @@ export default function PrintableElevationsSheet({ walls = [], placedModules = [
     2: placedModules.filter(m => getModulePavilion(m) === 2),
     3: placedModules.filter(m => getModulePavilion(m) === 3),
   };
-  const hasPavilions = Object.values(pavilionModules).some(arr => arr.length > 0);
+
+  // Pages: [building elevations, then each pavilion that has modules] — order: P1(3), Connection(2), P2(1)
+  const pavilionPages = [3, 2, 1].filter(p => pavilionModules[p]?.length > 0);
+  const totalPages = 1 + pavilionPages.length;
 
   const imgHeight = Math.round(scale * 480);
 
@@ -93,138 +148,106 @@ export default function PrintableElevationsSheet({ walls = [], placedModules = [
         Close
       </button>
 
-      <div style={{ background: "white", display: "flex", flexDirection: "column", minHeight: "100vh", padding: 0 }}>
-        {/* Header */}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 24px 8px", borderBottom: "2px solid #F15A22" }}>
-          <img src="https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/201470147_ConnectapodArchLogo-01.png" alt="connectapod" style={{ height: "40px", width: "auto" }} />
-          <span style={{ color: "#666", fontSize: "12pt" }}>Elevations</span>
+      {/* Page 1 — Building Elevations */}
+      <PrintPage
+        isLast={totalPages === 1}
+        header={<Header title="Elevations — Building" />}
+        footer={<Footer sheet="Building Elevations" pageNum={1} totalPages={totalPages} />}
+      >
+        <div style={{ fontSize: "10px", fontWeight: "bold", color: "#666", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "16px" }}>
+          Building Elevations
         </div>
-
-        {/* Content */}
-        <div style={{ flex: 1, padding: "24px", overflow: "hidden" }}>
-
-          {/* Building Elevations */}
-          <div style={{ marginBottom: "32px" }}>
-            <div style={{ fontSize: "10px", fontWeight: "bold", color: "#666", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "12px" }}>
-              Building Elevations
-            </div>
-
-            <div style={{ display: "flex", gap: "16px", flexWrap: "wrap", alignItems: "flex-start" }}>
-              <VerticalElevation
-                layers={zElevation}
-                label="Z — West Elevation"
-                color="#f59e0b"
-                totalDepthCells={totalDepthCells}
-                endElevationHPx={endElevationHPx}
-                scale={scale}
-                CELL_M={CELL_M}
-                PX_PER_M={PX_PER_M}
-                WALL_H_M={WALL_H_M}
-                slotOffsets={{ 1: slotOffset1Z, 2: slotOffset2Z, 3: slotOffset3Z }}
-                labelMap={labelMapZ}
-              />
-              <VerticalElevation
-                layers={xElevation}
-                label="X — East Elevation"
-                color="#ef4444"
-                totalDepthCells={totalDepthCells}
-                endElevationHPx={endElevationHPx}
-                scale={scale}
-                CELL_M={CELL_M}
-                PX_PER_M={PX_PER_M}
-                WALL_H_M={WALL_H_M}
-                slotOffsets={{ 1: slotOffset1X, 2: slotOffset2X, 3: slotOffset3X }}
-                slotScales={{ 3: slotScale3X }}
-                labelMap={labelMapX}
-              />
-              <div>
-                <HorizontalElevation
-                  layers={wElevation}
-                  label="W — North Elevation"
-                  color="#22c55e"
-                  totalWidthPx={totalWidthPx}
-                  wallHPx={wallHPx}
-                  scale={scale}
-                  CELL_M={CELL_M}
-                  PX_PER_M={PX_PER_M}
-                />
-                <HorizontalElevation
-                  layers={yElevation}
-                  label="Y — South Elevation"
-                  color="#3b82f6"
-                  totalWidthPx={totalWidthPx}
-                  wallHPx={wallHPx}
-                  scale={scale}
-                  CELL_M={CELL_M}
-                  PX_PER_M={PX_PER_M}
-                />
-              </div>
-            </div>
+        <div style={{ display: "flex", gap: "16px", flexWrap: "wrap", alignItems: "flex-start" }}>
+          <VerticalElevation
+            layers={zElevation}
+            label="Z — West Elevation"
+            color="#f59e0b"
+            totalDepthCells={totalDepthCells}
+            endElevationHPx={endElevationHPx}
+            scale={scale}
+            CELL_M={CELL_M}
+            PX_PER_M={PX_PER_M}
+            WALL_H_M={WALL_H_M}
+            slotOffsets={{ 1: slotOffset1Z, 2: slotOffset2Z, 3: slotOffset3Z }}
+            labelMap={labelMapZ}
+          />
+          <VerticalElevation
+            layers={xElevation}
+            label="X — East Elevation"
+            color="#ef4444"
+            totalDepthCells={totalDepthCells}
+            endElevationHPx={endElevationHPx}
+            scale={scale}
+            CELL_M={CELL_M}
+            PX_PER_M={PX_PER_M}
+            WALL_H_M={WALL_H_M}
+            slotOffsets={{ 1: slotOffset1X, 2: slotOffset2X, 3: slotOffset3X }}
+            slotScales={{ 3: slotScale3X }}
+            labelMap={labelMapX}
+          />
+          <div>
+            <HorizontalElevation
+              layers={wElevation}
+              label="W — North Elevation"
+              color="#22c55e"
+              totalWidthPx={totalWidthPx}
+              wallHPx={wallHPx}
+              scale={scale}
+              CELL_M={CELL_M}
+              PX_PER_M={PX_PER_M}
+            />
+            <HorizontalElevation
+              layers={yElevation}
+              label="Y — South Elevation"
+              color="#3b82f6"
+              totalWidthPx={totalWidthPx}
+              wallHPx={wallHPx}
+              scale={scale}
+              CELL_M={CELL_M}
+              PX_PER_M={PX_PER_M}
+            />
           </div>
+        </div>
+      </PrintPage>
 
-          {/* Pavilion Elevations */}
-          {hasPavilions && (
-            <div>
-              <div style={{ fontSize: "10px", fontWeight: "bold", color: "#666", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "12px" }}>
-                Pavilion Elevations
-              </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
-                {[3, 2, 1].map(pavNum => {
-                  const mods = pavilionModules[pavNum];
-                  if (!mods || mods.length === 0) return null;
-                  const pavLabels = { 3: "Pavilion 1", 2: "Connection", 1: "Pavilion 2" };
-                  return (
-                    <div key={pavNum}>
-                      <div style={{ fontSize: "9px", fontWeight: "bold", backgroundColor: "#fed7aa", padding: "4px 8px", borderRadius: "3px", marginBottom: "8px", display: "inline-block" }}>
-                        {pavLabels[pavNum]}
-                      </div>
-                      <div style={{ display: "flex", gap: "24px", flexWrap: "wrap" }}>
-                        {["Y", "W"].map(face => {
-                          const faceWalls = mods.map(mod => findWall(mod, face)).filter(Boolean);
-                          if (faceWalls.length === 0) return null;
-                          return (
-                            <div key={face}>
-                              <div style={{ fontSize: "8px", color: "#666", marginBottom: "6px", fontWeight: "500" }}>
-                                {face === "Y" ? "Y Face (Outside/Top)" : "W Face (Outside/Bottom)"}
-                              </div>
-                              <div style={{ display: "flex", gap: "2px" }}>
-                                {mods.map((mod, idx) => {
-                                  const wall = findWall(mod, face);
-                                  return wall ? <ElevationImage key={idx} wall={wall} label={`${face}${idx + 1}`} face={face} /> : null;
-                                })}
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
+      {/* One page per pavilion */}
+      {pavilionPages.map((pavNum, idx) => {
+        const mods = pavilionModules[pavNum];
+        const pageNum = idx + 2;
+        const isLast = pageNum === totalPages;
+        const label = PAV_LABELS[pavNum];
+        return (
+          <PrintPage
+            key={pavNum}
+            isLast={isLast}
+            header={<Header title={`Elevations — ${label}`} />}
+            footer={<Footer sheet={label} pageNum={pageNum} totalPages={totalPages} />}
+          >
+            <div style={{ fontSize: "10px", fontWeight: "bold", color: "#666", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "16px" }}>
+              {label}
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
+              {["Y", "W"].map(face => {
+                const hasAny = mods.some(mod => findWall(mod, face));
+                if (!hasAny) return null;
+                return (
+                  <div key={face}>
+                    <div style={{ fontSize: "9px", color: "#888", marginBottom: "10px", fontWeight: "600", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                      {face === "Y" ? "Y Face (Outside / Top)" : "W Face (Outside / Bottom)"}
                     </div>
-                  );
-                })}
-              </div>
+                    <div style={{ display: "flex", gap: "4px", flexWrap: "wrap" }}>
+                      {mods.map((mod, i) => {
+                        const wall = findWall(mod, face);
+                        return wall ? <ElevationImage key={i} wall={wall} label={`${face}${i + 1}`} face={face} /> : null;
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
-          )}
-        </div>
-
-        {/* Footer title block */}
-        <div style={{ borderTop: "4px solid #F15A22", display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", fontSize: "10px" }}>
-          <div style={{ borderRight: "1px solid #F15A22", padding: "12px 16px" }}>
-            <p style={{ fontWeight: "bold", textTransform: "uppercase", color: "#F15A22" }}>Project</p>
-            <p style={{ marginTop: "4px", color: "#666" }}>connectapod Design</p>
-          </div>
-          <div style={{ borderRight: "1px solid #F15A22", padding: "12px 16px" }}>
-            <p style={{ fontWeight: "bold", textTransform: "uppercase", color: "#F15A22" }}>Sheet</p>
-            <p style={{ marginTop: "4px", color: "#666" }}>Elevations</p>
-          </div>
-          <div style={{ borderRight: "1px solid #F15A22", padding: "12px 16px" }}>
-            <p style={{ fontWeight: "bold", textTransform: "uppercase", color: "#F15A22" }}>Date</p>
-            <p style={{ marginTop: "4px", color: "#666" }}>{new Date().toLocaleDateString()}</p>
-          </div>
-          <div style={{ padding: "12px 16px" }}>
-            <p style={{ fontWeight: "bold", textTransform: "uppercase", color: "#F15A22" }}>Scale</p>
-            <p style={{ marginTop: "4px", color: "#666" }}>1:100</p>
-          </div>
-        </div>
-      </div>
+          </PrintPage>
+        );
+      })}
 
       <style>{`
         @page { margin: 0; size: A3 landscape; }
