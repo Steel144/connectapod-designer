@@ -854,8 +854,8 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                     style={{
                       left: (item.x + deltaX) * scaledCellW,
                       top: (item.y + deltaY) * scaledCellH,
-                      width: width * scaledCellW,
-                      height: height * scaledCellH,
+                      width: width * 1.15 * scaledCellW,
+                      height: height * 1.15 * scaledCellH,
                       opacity: 0.75,
                       boxShadow: "0 4px 12px rgba(241, 90, 34, 0.3)",
                       transform: `rotate(${item.rotation || 0}deg)`,
