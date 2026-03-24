@@ -494,8 +494,41 @@ export default function Configurator() {
     pushHistory(placedModules, walls);
     setPlacedModules([]);
     setWalls([]);
+    setFurniture([]);
     localStorage.removeItem("configurator_modules");
     localStorage.removeItem("configurator_walls");
+    localStorage.removeItem("configurator_furniture");
+  };
+
+  const handlePlaceFurniture = (furnitureItem, x, y) => {
+    pushHistory(placedModules, walls);
+    const newFurniture = {
+      ...furnitureItem,
+      id: generateId(),
+      x,
+      y,
+      rotation: 0,
+    };
+    setFurniture((prev) => [...prev, newFurniture]);
+  };
+
+  const handleRemoveFurniture = (id) => {
+    pushHistory(placedModules, walls);
+    setFurniture((prev) => prev.filter((f) => f.id !== id));
+  };
+
+  const handleMoveFurniture = (id, x, y) => {
+    pushHistory(placedModules, walls);
+    setFurniture((prev) =>
+      prev.map((f) => (f.id === id ? { ...f, x, y } : f))
+    );
+  };
+
+  const handleRotateFurniture = (id) => {
+    pushHistory(placedModules, walls);
+    setFurniture((prev) =>
+      prev.map((f) => (f.id === id ? { ...f, rotation: (f.rotation || 0) + 90 } : f))
+    );
   };
 
   const handlePlaceWall = (wallData, x, y) => {
