@@ -130,22 +130,28 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
             </button>
           )}
           {replaceOpen === wall.id && (
-            <div className="absolute inset-0 bg-black/50 flex items-center justify-center p-2">
-              <div className="bg-white rounded shadow-lg p-3 max-h-48 overflow-y-auto w-full">
-                <p className="text-xs font-bold text-gray-700 mb-2">Select new wall type:</p>
-                {wallTypes.map((wt) => (
-                  <button
-                    key={wt.type}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onWallReplace?.(wall.id, wt);
-                      setReplaceOpen(null);
-                    }}
-                    className="w-full text-left px-2 py-1.5 text-xs text-gray-700 hover:bg-blue-100 rounded transition-colors"
-                  >
-                    {wt.label}
-                  </button>
-                ))}
+            <div className="absolute inset-0 bg-black/50 flex items-center justify-center p-2 z-50" onClick={(e) => e.stopPropagation()}>
+              <div className="bg-white rounded-lg shadow-xl p-4 max-h-96 overflow-y-auto w-80">
+                <div className="flex items-center justify-between mb-3">
+                  <p className="text-xs font-bold text-gray-800">Select Wall Type</p>
+                  <button onClick={() => setReplaceOpen(null)} className="text-gray-400 hover:text-gray-600 text-lg">×</button>
+                </div>
+                <div className="space-y-2">
+                  {wallTypes.map((wt) => (
+                    <button
+                      key={wt.type}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onWallReplace?.(wall.id, wt);
+                        setReplaceOpen(null);
+                      }}
+                      className="w-full text-left px-3 py-2.5 text-xs border border-gray-200 rounded hover:border-blue-400 hover:bg-blue-50 transition-colors group"
+                    >
+                      <p className="font-medium text-gray-800 group-hover:text-blue-600">{wt.label}</p>
+                      <p className="text-[10px] text-gray-500">{wt.type}</p>
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
           )}
