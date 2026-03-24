@@ -281,8 +281,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
               // Skip connection modules
               const isCM = isConnectionModule(mod);
               if (isCM) continue;
-              // Only snap if wall X is aligned with module X
-              if (Math.abs(wall.x - mod.x) > 0.5) continue;
+              // Wall can snap to any module with matching width — remove X alignment check
 
               // Y face (bottom of module)
               const distToYFace = Math.abs(cursorCellY - (mod.y + mod.h));
