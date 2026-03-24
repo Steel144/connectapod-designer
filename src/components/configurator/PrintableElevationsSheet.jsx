@@ -50,7 +50,7 @@ const Footer = ({ sheet, pageNum, totalPages }) => (
 );
 
 // Wraps a page and auto-scales content to fill the available area
-const ScaledPage = ({ children, isLast }) => {
+const ScaledPage = ({ children }) => {
   const containerRef = useRef(null);
   const contentRef = useRef(null);
 
@@ -59,20 +59,24 @@ const ScaledPage = ({ children, isLast }) => {
     const content = contentRef.current;
     if (!container || !content) return;
 
-    // Reset scale first to measure natural size
-    content.style.transform = "";
-    const availW = container.clientWidth;
-    const availH = container.clientHeight;
-    const naturalW = content.scrollWidth;
-    const naturalH = content.scrollHeight;
+    // Reset scale to measure natural size
+    content.style.transform = "scale(1)";
+    content.style.transformOrigin = "top left";
 
-    if (naturalW > 0 && naturalH > 0) {
-      const scaleX = availW / naturalW;
-      const scaleY = availH / naturalH;
-      const scale = Math.min(scaleX, scaleY, 1); // never upscale
-      content.style.transform = `scale(${scale})`;
-      content.style.transformOrigin = "top left";
-    }
+    // Use rAF to ensure layout is complete before measuring
+    requestAnimationFrame(() => {
+      const availW = container.clientWidth - 40; // subtract padding
+      const availH = container.clientHeight - 40;
+      const naturalW = content.offsetWidth;
+      const naturalH = content.offsetHeight;
+
+      if (naturalW > 0 && naturalH > 0 && (naturalW > availW || naturalH > availH)) {
+        const scaleX = availW / naturalW;
+        const scaleY = availH / naturalH;
+        const s = Math.min(scaleX, scaleY);
+        content.style.transform = `scale(${s})`;
+      }
+    });
   });
 
   return (
