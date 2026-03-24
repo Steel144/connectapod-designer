@@ -517,10 +517,11 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
 
       // If a wall is selected, snap new wall to match its position/orientation
       if (selectedWallIds.size > 0) {
-        const selectedWall = Array.from(selectedWallIds)[0];
-        const matchingWall = walls.find(w => w.id === selectedWall);
-        if (matchingWall && matchingWall.orientation === wallTemplate.orientation) {
-          if (onPlaceWall) onPlaceWall(wallTemplate, matchingWall.x, matchingWall.y);
+        const selectedWallId = Array.from(selectedWallIds)[0];
+        const selectedWall = walls.find(w => w.id === selectedWallId);
+        if (selectedWall && selectedWall.orientation === wallTemplate.orientation) {
+          // Stick to selected wall regardless of length match
+          if (onPlaceWall) onPlaceWall(wallTemplate, selectedWall.x, selectedWall.y);
           return;
         }
       }
