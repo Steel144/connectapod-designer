@@ -773,13 +773,13 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                 </button>
               </div>
 
-              {/* Face labels - clickable when module is selected */}
+              {/* Face labels - clickable when module is selected, overlaid on edges */}
               {isSelected && (
                 <>
-                  <button onClick={() => { onModuleSelect?.(mod); window.dispatchEvent(new CustomEvent('selectFace', { detail: { face: 'W' } })); }} className="absolute -top-6 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-white text-gray-900 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-sm z-20">W</button>
-                  <button onClick={() => { onModuleSelect?.(mod); window.dispatchEvent(new CustomEvent('selectFace', { detail: { face: 'X' } })); }} className="absolute -right-6 top-1/2 -translate-y-1/2 px-2 py-0.5 bg-white text-gray-900 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-sm z-20">X</button>
-                  <button onClick={() => { onModuleSelect?.(mod); window.dispatchEvent(new CustomEvent('selectFace', { detail: { face: 'Y' } })); }} className="absolute -bottom-6 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-white text-gray-900 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-sm z-20">Y</button>
-                  <button onClick={() => { onModuleSelect?.(mod); window.dispatchEvent(new CustomEvent('selectFace', { detail: { face: 'Z' } })); }} className="absolute -left-6 top-1/2 -translate-y-1/2 px-2 py-0.5 bg-white text-gray-900 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-sm z-20">Z</button>
+                  <button onClick={() => { onModuleSelect?.(mod); window.dispatchEvent(new CustomEvent('selectFace', { detail: { face: 'W' } })); }} className="absolute top-1 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-white text-gray-900 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-sm z-20">W</button>
+                  <button onClick={() => { onModuleSelect?.(mod); window.dispatchEvent(new CustomEvent('selectFace', { detail: { face: 'X' } })); }} className="absolute right-1 top-1/2 -translate-y-1/2 px-2 py-0.5 bg-white text-gray-900 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-sm z-20">X</button>
+                  <button onClick={() => { onModuleSelect?.(mod); window.dispatchEvent(new CustomEvent('selectFace', { detail: { face: 'Y' } })); }} className="absolute bottom-1 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-white text-gray-900 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-sm z-20">Y</button>
+                  <button onClick={() => { onModuleSelect?.(mod); window.dispatchEvent(new CustomEvent('selectFace', { detail: { face: 'Z' } })); }} className="absolute left-1 top-1/2 -translate-y-1/2 px-2 py-0.5 bg-white text-gray-900 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-sm z-20">Z</button>
                 </>
               )}
               </div>
