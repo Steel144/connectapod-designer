@@ -1092,14 +1092,8 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                   const moduleSize = isHorizontal ? faceMenuOpen.module.w * 0.6 : faceMenuOpen.module.h * 0.6;
                   const wallSize = w.length || 0;
                   const sizeMatch = Math.abs(wallSize - moduleSize) < 0.1;
-                  if (!sizeMatch) return false;
-
-                  // Match wall variants to module variants
-                  const modVariants = (faceMenuOpen.module.description || "").toLowerCase();
-                  const wallVariants = (w.variants || []).map(v => v.toLowerCase());
-                  const variantMatch = wallVariants.length === 0 || wallVariants.some(v => modVariants.includes(v));
                   
-                  return variantMatch;
+                  return sizeMatch;
                 })
                 .map(wt => (
                   <button
