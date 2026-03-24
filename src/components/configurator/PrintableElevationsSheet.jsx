@@ -197,7 +197,7 @@ export default function PrintableElevationsSheet({ walls = [], placedModules = [
       <PrintPage
         isLast={totalPages === 1}
         header={<Header title="Elevations — Building" />}
-        footer={<Footer sheet="Building Elevations" pageNum={1} totalPages={totalPages} />}
+        footer={<Footer sheet="Building Elevations" pageNum={1} totalPages={totalPages} printDetails={printDetails} />}
       >
         <div style={{ fontSize: "10px", fontWeight: "bold", color: "#666", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "16px" }}>
           Building Elevations
