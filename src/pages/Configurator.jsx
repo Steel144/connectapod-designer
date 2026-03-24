@@ -808,13 +808,13 @@ export default function Configurator() {
                 </div>
                 {/* Zoom controls */}
                 <div className="flex border border-gray-200 overflow-hidden ml-1">
-                  <button onClick={() => setGridZoom(z => Math.max(25, z - 10))} title="Zoom out" className="px-2.5 py-1.5 text-xs text-gray-600 hover:text-[#F15A22] transition-all">
+                  <button onClick={() => viewMode === "building" ? setGridZoom(z => Math.max(25, z - 10)) : setElevationZoom(z => Math.max(25, z - 10))} title="Zoom out" className="px-2.5 py-1.5 text-xs text-gray-600 hover:text-[#F15A22] transition-all">
                     <ZoomOut size={14} />
                   </button>
-                  <button onClick={() => setGridZoom(100)} title="Reset zoom" className="px-2 py-1.5 text-xs font-semibold text-gray-600 hover:text-[#F15A22] transition-all min-w-10">
-                    {gridZoom}%
+                  <button onClick={() => viewMode === "building" ? setGridZoom(100) : setElevationZoom(100)} title="Reset zoom" className="px-2 py-1.5 text-xs font-semibold text-gray-600 hover:text-[#F15A22] transition-all min-w-10">
+                    {viewMode === "building" ? gridZoom : elevationZoom}%
                   </button>
-                  <button onClick={() => setGridZoom(z => Math.min(300, z + 10))} title="Zoom in" className="px-2.5 py-1.5 text-xs text-gray-600 hover:text-[#F15A22] transition-all">
+                  <button onClick={() => viewMode === "building" ? setGridZoom(z => Math.min(300, z + 10)) : setElevationZoom(z => Math.min(300, z + 10))} title="Zoom in" className="px-2.5 py-1.5 text-xs text-gray-600 hover:text-[#F15A22] transition-all">
                     <ZoomIn size={14} />
                   </button>
                 </div>
