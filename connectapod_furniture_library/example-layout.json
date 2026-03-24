@@ -1,0 +1,54 @@
+{
+  "items": [
+    {
+      "id": "sofa_2_seater",
+      "src": "svg/sofa_2_seater.svg",
+      "x": 0,
+      "y": 0,
+      "rotation": 0,
+      "width_mm": 1800,
+      "depth_mm": 850,
+      "snap": false
+    },
+    {
+      "id": "sofa_3_seater",
+      "src": "svg/sofa_3_seater.svg",
+      "x": 0,
+      "y": 0,
+      "rotation": 0,
+      "width_mm": 2200,
+      "depth_mm": 900,
+      "snap": false
+    },
+    {
+      "id": "sofa_1_seater",
+      "src": "svg/sofa_1_seater.svg",
+      "x": 0,
+      "y": 0,
+      "rotation": 0,
+      "width_mm": 1400,
+      "depth_mm": 800,
+      "snap": false
+    },
+    {
+      "id": "sofa_chaise_left",
+      "src": "svg/sofa_chaise_left.svg",
+      "x": 0,
+      "y": 0,
+      "rotation": 0,
+      "width_mm": 2200,
+      "depth_mm": 900,
+      "snap": false
+    },
+    {
+      "id": "sofa_chaise_right",
+      "src": "svg/sofa_chaise_right.svg",
+      "x": 0,
+      "y": 0,
+      "rotation": 0,
+      "width_mm": 2200,
+      "depth_mm": 900,
+      "snap": false
+    }
+  ]
+}
