@@ -836,6 +836,41 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
         {/* Live drag preview — modules and furniture */}
         {dragging && (
           <>
+            {/* Furniture drag preview */}
+            {dragging.isFurniture && (
+              (() => {
+                const item = dragging.mod;
+                const rect = gridRef.current?.getBoundingClientRect();
+                if (!rect) return null;
+                const width = (item.width || 1.4) / 0.6;
+                const height = (item.depth || 2.0) / 0.6;
+                const deltaX = (dragging.cursorX - rect.left - item.x * scaledCellW - dragging.offsetX) / scaledCellW;
+                const deltaY = (dragging.cursorY - rect.top - item.y * scaledCellH - dragging.offsetY) / scaledCellH;
+                return (
+                  <div
+                    className="absolute pointer-events-none overflow-hidden"
+                    style={{
+                      left: (item.x + deltaX) * scaledCellW,
+                      top: (item.y + deltaY) * scaledCellH,
+                      width: width * scaledCellW,
+                      height: height * scaledCellH,
+                      opacity: 0.75,
+                      boxShadow: "0 4px 12px rgba(241, 90, 34, 0.3)",
+                      transform: `rotate(${item.rotation || 0}deg)`,
+                      transformOrigin: "center",
+                    }}
+                  >
+                    {item.image ? (
+                      <img src={item.image} alt={item.label} className="w-full h-full object-contain p-1" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-[7px] font-semibold text-gray-400">
+                        {item.label}
+                      </div>
+                    )}
+                  </div>
+                );
+              })()
+            )}
             {/* Modules drag preview */}
             {dragging.isPlaced && !dragging.isFurniture && Array.from(dragging.selectedIds).map((id) => {
               const mod = placedModules.find((m) => m.id === id);
