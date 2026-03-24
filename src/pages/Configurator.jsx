@@ -220,9 +220,11 @@ export default function Configurator() {
 
   const saveMutation = useMutation({
     mutationFn: (data) => base44.entities.HomeDesign.create(data),
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["homeDesigns"] });
       toast.success("Design saved!");
+      setLastSavedName(data.name);
+      localStorage.setItem("configurator_last_saved_name", data.name);
       setSaveModalOpen(false);
     },
   });
