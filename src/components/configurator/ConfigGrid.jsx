@@ -462,16 +462,22 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
     e.stopPropagation();
     e.dataTransfer.dropEffect = "copy";
 
-    const wallType = e.dataTransfer.types.includes("wallType") ? e.dataTransfer.getData("wallType") : null;
-    if (wallType && gridRef.current && selectedWallIds.size > 0) {
-      const wallTemplate = wallTypes.find((w) => w.type === wallType);
-      const selectedWallId = Array.from(selectedWallIds)[0];
-      const selectedWall = walls.find(w => w.id === selectedWallId);
+    try {
+      const wallType = e.dataTransfer.getData("wallType");
+      if (wallType && selectedWallIds.size > 0) {
+        const wallTemplate = wallTypes.find((w) => w.type === wallType);
+        const selectedWallId = Array.from(selectedWallIds)[0];
+        const selectedWall = walls.find(w => w.id === selectedWallId);
 
-      if (wallTemplate && selectedWall && selectedWall.orientation === wallTemplate.orientation) {
-        setDragPreview({ x: selectedWall.x, y: selectedWall.y, wallTemplate });
+        if (wallTemplate && selectedWall && selectedWall.orientation === wallTemplate.orientation) {
+          setDragPreview({ x: selectedWall.x, y: selectedWall.y, wallTemplate });
+        } else {
+          setDragPreview(null);
+        }
+      } else {
+        setDragPreview(null);
       }
-    } else {
+    } catch {
       setDragPreview(null);
     }
   };
