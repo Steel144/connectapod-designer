@@ -265,7 +265,7 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
                                 {mods.map((mod, idx) => {
                                   const wall = findWall(mod, face);
                                   return wall ? (
-                                    <ElevationImage key={`${pavNum}-${face}-${idx}`} wall={wall} label={`${face}${idx + 1}`} face={face} />
+                                    <ElevationImage key={`${pavNum}-${face}-${idx}`} wall={wall} label={`${face}${idx + 1}`} face={face} isPavilion={true} />
                                   ) : null;
                                 })}
                               </div>
