@@ -967,6 +967,7 @@ export default function Configurator() {
                 onWallSelect={setSelectedWall}
                 onModuleSelect={setSelectedModule}
                 onFaceSelect={setSelectedFace}
+                onPlaceWallOnFace={handlePlaceWallOnFace}
                 customModules={customModules}
                 floorPlanImages={floorPlanImages}
                 wallImages={wallImages}
