@@ -12,17 +12,25 @@ export default function SaveDesignModal({ open, onClose, onConfirm, isSaving, la
   const [tags, setTags] = useState("");
   const [isSaveAs, setIsSaveAs] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (open && !isSaveAs) {
       // Use lastSavedName if available, otherwise use projectName, otherwise empty
       const initialName = lastSavedName || projectName || "";
       setName(initialName);
       setOriginalName(initialName);
-    } else {
-      setName("");
-      setOriginalName("");
     }
   }, [open, lastSavedName, projectName, isSaveAs]);
+
+  useEffect(() => {
+    if (!open) {
+      setName("");
+      setOriginalName("");
+      setIsSaveAs(false);
+      setSaveToCatalogue(false);
+      setDescription("");
+      setTags("");
+    }
+  }, [open]);
 
   const handleConfirm = (asCatalogue) => {
     if (!name.trim()) return;
