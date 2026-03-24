@@ -149,7 +149,6 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
               </div>
             </div>
           )}
-        </div>
           {wall.elevationImage ? (
             <img
               src={wall.elevationImage}
