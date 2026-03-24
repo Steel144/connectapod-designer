@@ -257,6 +257,10 @@ export default function PrintableElevationsSheet({ walls = [], placedModules = [
         @media print {
           body { margin: 0; padding: 0; }
           img { max-width: 100%; height: auto; }
+          .print-content {
+            transform-origin: top left;
+            zoom: 1;
+          }
         }
       `}</style>
     </div>
