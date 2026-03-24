@@ -31,6 +31,7 @@ import CombinedElevations from "@/components/configurator/CombinedElevations";
 import PrintRouter from "@/components/configurator/PrintRouter";
 import PrintMenu from "@/components/configurator/PrintMenu";
 import ProjectDetailsModal from "@/components/configurator/ProjectDetailsModal";
+import FurniturePanel from "@/components/configurator/FurniturePanel";
 import { ZoomIn, ZoomOut } from "lucide-react";
 
 const generateId = () => `mod-${Math.random().toString(36).substr(2, 9)}`;
