@@ -461,7 +461,6 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
 
     const modType = e.dataTransfer.getData("moduleType");
     const moduleImage = e.dataTransfer.getData("moduleImage");
-    console.log("modType:", modType, "image:", moduleImage);
     if (modType) {
       let mod = MODULE_TYPES.find((m) => m.type === modType);
 
@@ -473,7 +472,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
           const isEnd = variants.some(v => v.includes("end"));
           const isConnection = variants.some(v => v.includes("connection"));
           const chassis = isConnection ? "C" : isEnd ? "LF" : "SF";
-          
+
           mod = {
             type: customMod.code,
             label: customMod.name,
@@ -493,11 +492,11 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
       if (!mod || !gridRef.current) return;
       if (moduleImage) mod.floorPlanImage = moduleImage;
       let { x, y } = getCellFromClient(e.clientX, e.clientY);
-      
+
       // Clamp to grid bounds
       x = Math.max(0, Math.min(x, GRID_COLS - mod.w));
       y = Math.max(0, Math.min(y, GRID_ROWS - mod.h));
-      
+
       // Try to snap to nearby modules, otherwise place as-is
       const snapped = magnetSnap(mod, x, y);
       onPlace(mod, snapped.snapX, snapped.snapY);
@@ -505,11 +504,10 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
     }
 
     const wallType = e.dataTransfer.getData("wallType");
-    console.log("wallType:", wallType);
     if (wallType) {
       const wallTemplate = wallTypes.find((w) => w.type === wallType);
       if (!wallTemplate || !gridRef.current) return;
-      
+
       // If a wall is selected, snap new wall to match its position/orientation
       if (selectedWallIds.size > 0) {
         const selectedWall = Array.from(selectedWallIds)[0];
@@ -519,10 +517,10 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
           return;
         }
       }
-      
+
       // Only allow wall placement if a module is selected
       if (selected.size === 0) return;
-      
+
       const rect = gridRef.current.getBoundingClientRect();
       const exactX = (e.clientX - rect.left) / scaledCellW;
       const exactY = (e.clientY - rect.top) / scaledCellH;
