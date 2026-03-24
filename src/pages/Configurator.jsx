@@ -1292,7 +1292,7 @@ export default function Configurator() {
         projectName={(() => {
           try {
             const saved = JSON.parse(localStorage.getItem("connectapod_print_details")) || {};
-            return saved.projectName || "";
+            return saved.projectName?.trim() || "";
           } catch {
             return "";
           }
