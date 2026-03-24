@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { ChevronDown, ChevronRight } from "lucide-react";
 
 const FURNITURE_ITEMS = [
-  { id: "bed", label: "Bed", width: 1.4, depth: 2.0 },
+  { id: "bed", label: "Bed", width: 1.6, depth: 1.8 },
   { id: "sofa", label: "Sofa", width: 2.5, depth: 1.0 },
   { id: "table", label: "Table", width: 1.2, depth: 1.2 },
   { id: "chair", label: "Chair", width: 0.8, depth: 0.8 },
