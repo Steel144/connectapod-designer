@@ -309,8 +309,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
            for (const mod of placedModules) {
              // Only snap if wall length matches module height
              if (Math.abs(wall.length - mod.h) > 0.1) continue;
-             // Only snap if wall Y is aligned with module Y
-             if (Math.abs(wall.y - mod.y) > 0.5) continue;
+             // Wall can snap to any module with matching height — remove Y alignment check
 
              const isEnd = mod.chassis === "EF" || mod.chassis === "ER" || mod.chassis === "LF" || mod.chassis === "RF" || mod.chassis === "End";
              if (isEndWall && !isEnd) continue;
