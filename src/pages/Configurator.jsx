@@ -922,8 +922,7 @@ export default function Configurator() {
       {/* ── WORKSPACE ── */}
       <div className={`flex-1 relative overflow-auto ${isMobile ? "pt-12" : "pt-16"}`}>
         {viewMode === "elevations" ? (
-          <div style={{ transform: `scale(${elevationZoom / 100})`, transformOrigin: "top center", display: "inline-block", width: "100%" }}>
-            <CombinedElevations 
+          <CombinedElevations 
               walls={walls} 
               placedModules={placedModules} 
               stickyTop={navBarHeight} 
