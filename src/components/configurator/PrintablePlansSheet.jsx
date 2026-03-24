@@ -58,7 +58,7 @@ export default function PrintablePlansSheet({ placedModules, onClose, printDetai
                <div style={{ color: "#F15A22", fontSize: "9px", fontWeight: "600" }}>www.connectapod.co.nz</div>
                <div style={{ color: "#888", fontSize: "8px" }}>hello@connectapod.com · 022 396 2657</div>
              </div>
-             <span style={{ color: "#111", fontSize: "20pt", fontWeight: "700" }}>Floor Plan</span>
+             <span style={{ color: "#888", fontSize: "20pt", fontWeight: "700" }}>Floor Plan</span>
            </div>
 
          {/* Main content */}
