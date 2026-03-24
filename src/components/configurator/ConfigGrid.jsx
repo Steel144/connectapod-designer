@@ -869,7 +869,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                     }}
                   >
                     {item.image && (
-                      <img src={item.image} alt={item.label} className="absolute object-contain" style={{ width: item.id.startsWith('bed_') ? '109%' : '100%', height: item.id.startsWith('bed_') ? '109%' : '100%', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }} />
+                      <img src={item.image} alt={item.label} className="absolute object-contain" style={{ width: item.id.startsWith('bed_') || item.id.startsWith('dining_') ? '190%' : '100%', height: item.id.startsWith('bed_') || item.id.startsWith('dining_') ? '190%' : '100%', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }} />
                     )}
                     <span className="absolute text-[8px] font-semibold text-gray-700 bg-white/80 px-1 py-0.5 rounded bottom-1">
                       {item.label}
@@ -983,7 +983,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
              >
                <div className="w-full h-full overflow-visible relative">
                  {item.image ? (
-                   <img src={item.image} alt={item.label} className="absolute object-contain" loading="eager" style={{ width: item.id.startsWith('bed_') ? '109%' : '100%', height: item.id.startsWith('bed_') ? '109%' : '100%', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }} />
+                   <img src={item.image} alt={item.label} className="absolute object-contain" loading="eager" style={{ width: item.id.startsWith('bed_') || item.id.startsWith('dining_') ? '190%' : '100%', height: item.id.startsWith('bed_') || item.id.startsWith('dining_') ? '190%' : '100%', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }} />
                  ) : (
                    <div className="w-full h-full flex items-center justify-center text-[7px] font-semibold text-gray-400">
                      {item.label}
