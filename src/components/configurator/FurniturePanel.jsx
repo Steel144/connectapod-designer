@@ -83,6 +83,7 @@ export default function FurniturePanel({ onDragStart, onDragEnd }) {
               onDragStart={(e) => {
                 e.dataTransfer.effectAllowed = "copy";
                 e.dataTransfer.setData("furnitureType", item.id);
+                e.dataTransfer.setData("furnitureData", JSON.stringify(item));
                 onDragStart?.(e, item);
               }}
               onDragEnd={onDragEnd}
