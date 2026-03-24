@@ -1092,7 +1092,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
 
                   // Match wall size to module size
                   const moduleSize = isHorizontal ? faceMenuOpen.module.w * 0.6 : faceMenuOpen.module.h * 0.6;
-                  const wallSize = w.length || 0;
+                  const wallSize = w.width || 0;
                   const sizeMatch = Math.abs(wallSize - moduleSize) < 0.1;
                   
                   return sizeMatch;
