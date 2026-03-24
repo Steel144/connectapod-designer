@@ -390,6 +390,11 @@ export default function QuoteGenerator({ placedModules, walls, open, onClose }) 
            <div>
              <Label className="text-xs text-gray-600">Street Address</Label>
              <AddressAutocomplete value={address} onChange={setAddress} />
+             {address && (
+               <div className="mt-1 p-2 bg-gray-50 border border-gray-200 text-sm text-gray-700 whitespace-pre-wrap break-words">
+                 {address.split(", ").join(",\n")}
+               </div>
+             )}
            </div>
            <div>
              <Label className="text-xs text-gray-600">Project Name</Label>
