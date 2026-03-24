@@ -189,6 +189,11 @@ export default function Catalogue() {
     },
   });
 
+  const { data: wallTypes = [] } = useQuery({
+    queryKey: ["wallTypes"],
+    queryFn: () => base44.entities.WallEntry.list(),
+  });
+
   const handleUploadClick = (code) => {
     setPendingUploadCode(code);
     fileInputRef.current.click();
