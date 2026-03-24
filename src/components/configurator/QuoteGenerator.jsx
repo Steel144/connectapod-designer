@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { jsPDF } from "jspdf";
 import { FileText, Download, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
