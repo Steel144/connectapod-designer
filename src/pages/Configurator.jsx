@@ -808,20 +808,9 @@ export default function Configurator() {
               <button onClick={() => setViewMode("2d")} className={`flex items-center gap-1.5 px-3 py-1.5 text-xs transition-all ${viewMode === "2d" ? "bg-[#F15A22] text-white" : "bg-white text-gray-600 hover:text-[#F15A22]"}`} style={{ clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 50%, calc(100% - 6px) 100%, 0 100%)" }}>
                 <Grid2X2 size={13} /> 2D
               </button>
-              <div className="flex border border-gray-200 overflow-hidden">
-                <button onClick={() => setViewMode("elevations")} className={`flex items-center gap-1.5 px-3 py-1.5 text-xs transition-all ${viewMode === "elevations" ? "bg-[#F15A22] text-white" : "bg-white text-gray-600 hover:text-[#F15A22]"}`} style={{ clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 50%, calc(100% - 6px) 100%, 0 100%)" }}>
-                  <Image size={13} /> Elevations
-                </button>
-                <button onClick={() => setElevationZoom(z => Math.max(25, z - 10))} title="Zoom out" className="px-2.5 py-1.5 text-xs text-gray-600 hover:text-[#F15A22] transition-all">
-                  <ZoomOut size={13} />
-                </button>
-                <button onClick={() => setElevationZoom(100)} title="Reset zoom" className="px-2 py-1.5 text-xs font-semibold text-gray-600 hover:text-[#F15A22] transition-all min-w-12">
-                  {elevationZoom}%
-                </button>
-                <button onClick={() => setElevationZoom(z => Math.min(300, z + 10))} title="Zoom in" className="px-2.5 py-1.5 text-xs text-gray-600 hover:text-[#F15A22] transition-all">
-                  <ZoomIn size={13} />
-                </button>
-              </div>
+              <button onClick={() => setViewMode("elevations")} className={`flex items-center gap-1.5 px-3 py-1.5 text-xs transition-all ${viewMode === "elevations" ? "bg-[#F15A22] text-white" : "bg-white text-gray-600 hover:text-[#F15A22]"}`} style={{ clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 50%, calc(100% - 6px) 100%, 0 100%)" }}>
+                <Image size={13} /> Elevations
+              </button>
               <button onClick={() => setSaveModalOpen(true)} disabled={placedModules.length === 0 || saveMutation.isPending} className={`flex items-center gap-1.5 px-3 py-1.5 text-xs transition-all ${placedModules.length === 0 || saveMutation.isPending ? "bg-white text-gray-400 opacity-40" : "bg-white text-gray-600 border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22]"}`} style={{ clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 50%, calc(100% - 6px) 100%, 0 100%)" }}>
                  <Save size={13} /> {saveMutation.isPending ? "Saving…" : "Save"}
                </button>
