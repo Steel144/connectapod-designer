@@ -180,16 +180,16 @@ export default function QuoteGenerator({ placedModules, walls, open, onClose }) 
 
     // Client info
     if (clientName || projectName || address || clientPhone || clientEmail) {
-      const infoLines = [];
-      if (clientName) infoLines.push(`Client: ${clientName}`);
-      if (clientPhone) infoLines.push(`Phone: ${clientPhone}`);
-      if (clientEmail) infoLines.push(`Email: ${clientEmail}`);
-      if (address || city || postalCode) {
-        const addressStr = [address, city, postalCode].filter(Boolean).join(", ");
-        if (addressStr) infoLines.push(`Address: ${addressStr}`);
-      }
+    const infoLines = [];
+    if (clientName) infoLines.push(`Client: ${clientName}`);
+    if (clientPhone) infoLines.push(`Phone: ${clientPhone}`);
+    if (clientEmail) infoLines.push(`Email: ${clientEmail}`);
+    if (address) {
+      const addressParts = address.split(", ");
+      infoLines.push(`Address: ${addressParts.join(",\n")}`);
+    }
       
-      const boxHeight = 8 + infoLines.length * 5;
+      const boxHeight = 8 + infoLines.reduce((h, line) => h + (line.split("\n").length * 5), 0);
       doc.setFillColor(248, 248, 248);
       doc.rect(col1, y, pageW - 2 * margin, boxHeight, "F");
       doc.setTextColor(30, 30, 30);
@@ -198,8 +198,11 @@ export default function QuoteGenerator({ placedModules, walls, open, onClose }) 
       
       let infoY = y + 5;
       infoLines.forEach(line => {
-        doc.text(line, col1 + 4, infoY);
-        infoY += 5;
+        const lines = line.split("\n");
+        lines.forEach(subline => {
+          doc.text(subline, col1 + 4, infoY);
+          infoY += 5;
+        });
       });
       
       if (projectName) {
