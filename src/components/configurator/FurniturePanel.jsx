@@ -4,7 +4,7 @@ import { ChevronDown, ChevronRight } from "lucide-react";
 const FURNITURE_ITEMS = [
   { id: "bed", label: "Bed", width: 1.6, depth: 1.8 },
   { id: "sofa", label: "Sofa", width: 2.5, depth: 1.0 },
-  { id: "table", label: "Table", width: 1.2, depth: 1.2 },
+  { id: "table", label: "Table", width: 0.9, depth: 0.9 },
   { id: "chair", label: "Chair", width: 0.8, depth: 0.8 },
   { id: "desk", label: "Desk", width: 1.5, depth: 0.8 },
 ];
@@ -25,9 +25,8 @@ function getFurnitureIcon(id, size = 18) {
       </svg>
     ),
     table: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="#F15A22" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" width={s} height={s}>
-        <rect x="3" y="5" width="18" height="3" rx="0.5"/><line x1="6" y1="8" x2="6" y2="18"/>
-        <line x1="18" y1="8" x2="18" y2="18"/><line x1="6" y1="18" x2="18" y2="18" strokeWidth="2"/>
+      <svg viewBox="0 0 24 24" fill="none" stroke="#F15A22" strokeWidth="1.8" width={s} height={s}>
+        <circle cx="12" cy="12" r="9"/>
       </svg>
     ),
     chair: (
