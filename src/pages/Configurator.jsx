@@ -52,6 +52,9 @@ export default function Configurator() {
       });
     } catch { return []; }
   });
+  const [furniture, setFurniture] = useState(() => {
+    try { return JSON.parse(localStorage.getItem("configurator_furniture") || "[]"); } catch { return []; }
+  });
 
   const pushHistory = useCallback((modules, w) => {
     setHistory((prev) => [...prev.slice(-MAX_HISTORY + 1), { placedModules: modules, walls: w }]);
