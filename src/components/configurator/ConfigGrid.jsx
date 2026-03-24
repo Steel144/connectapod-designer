@@ -76,11 +76,15 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
           }
           return new Set();
         });
+        if (selectedFurnitureId) {
+          onRemoveFurniture?.(selectedFurnitureId);
+          setSelectedFurnitureId(null);
+        }
       }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [onRemove, onRemoveWall]);
+  }, [onRemove, onRemoveWall, onRemoveFurniture, selectedFurnitureId]);
 
   const getCellFromClient = (clientX, clientY) => {
     const rect = gridRef.current.getBoundingClientRect();
