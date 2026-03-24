@@ -506,11 +506,12 @@ export default function Configurator() {
       id: generateId(),
       type: furnitureItem.type || furnitureItem.id,
       label: furnitureItem.label || furnitureItem.type || furnitureItem.id,
+      image: furnitureItem.image || null,
       x,
       y,
       rotation: 0,
-      width: 1.4,
-      depth: 2.0,
+      width: furnitureItem.width || 1.4,
+      depth: furnitureItem.depth || 2.0,
     };
     setFurniture((prev) => [...prev, newFurniture]);
   };
