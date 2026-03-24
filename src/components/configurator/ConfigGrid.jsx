@@ -1026,8 +1026,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
       </div>
       
       {/* Preview window below grid */}
-      {(selectedModObj || selectedWall) && (
-        <div className="flex gap-4 mt-4 p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
+      <div className={`flex gap-4 mt-4 p-4 bg-white border border-gray-200 rounded-lg shadow-sm min-h-[80px] ${!(selectedModObj || selectedWall) && 'invisible'}`}>
           {selectedModObj && (
             <div className="flex flex-col gap-2 min-w-0">
               <div className="text-xs font-semibold text-gray-700">
