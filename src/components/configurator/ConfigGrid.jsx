@@ -825,28 +825,79 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
               );
               })}
 
-        {/* Live drag ghost — snapped to grid, no shadow */}
-        {dragging && dragSnap && (
-          Array.from(dragging.selectedIds).map((id) => {
-            const mod = placedModules.find((m) => m.id === id);
-            if (!mod) return null;
-            const deltaX = Math.round((dragging.cursorX - (gridRef.current.getBoundingClientRect().left + dragging.mod.x * scaledCellW + dragging.offsetX)) / scaledCellW);
-            const deltaY = Math.round((dragging.cursorY - (gridRef.current.getBoundingClientRect().top + dragging.mod.y * scaledCellH + dragging.offsetY)) / scaledCellH);
-            return (
-              <div
-                key={id}
-                className="absolute pointer-events-none opacity-60"
-                style={{
-                  left: (mod.x + deltaX) * scaledCellW,
-                  top: (mod.y + deltaY) * scaledCellH,
-                  width: mod.w * scaledCellW,
-                  height: mod.h * scaledCellH,
-                }}
-              >
-                <FloorPlanSVG code={mod.type} className="w-full h-full" />
-              </div>
-            );
-          })
+        {/* Live drag preview — modules and furniture */}
+        {dragging && (
+          <>
+            {/* Modules drag preview */}
+            {dragging.isPlaced && !dragging.isFurniture && Array.from(dragging.selectedIds).map((id) => {
+              const mod = placedModules.find((m) => m.id === id);
+              if (!mod) return null;
+              const rect = gridRef.current?.getBoundingClientRect();
+              if (!rect) return null;
+              const deltaX = (dragging.cursorX - rect.left - dragging.mod.x * scaledCellW - dragging.offsetX) / scaledCellW;
+              const deltaY = (dragging.cursorY - rect.top - dragging.mod.y * scaledCellH - dragging.offsetY) / scaledCellH;
+              return (
+                <div
+                  key={id}
+                  className="absolute pointer-events-none"
+                  style={{
+                    left: (mod.x + deltaX) * scaledCellW,
+                    top: (mod.y + deltaY) * scaledCellH,
+                    width: mod.w * scaledCellW,
+                    height: mod.h * scaledCellH,
+                    opacity: 0.65,
+                    border: "2px solid #4F46E5",
+                    boxShadow: "0 4px 12px rgba(79, 70, 229, 0.3)",
+                  }}
+                >
+                  {(mod.floorPlanImage || floorPlanImages[mod.type] || floorPlanImages[mod.type?.toLowerCase()]) ? (
+                    <img src={mod.floorPlanImage || floorPlanImages[mod.type] || floorPlanImages[mod.type?.toLowerCase()]} alt={mod.label} className="w-full h-full object-cover" />
+                  ) : (
+                    <FloorPlanSVG code={mod.type} className="w-full h-full" />
+                  )}
+                </div>
+              );
+            })}
+            {/* Furniture drag preview */}
+            {dragging.isFurniture && (
+              (() => {
+                const item = dragging.mod;
+                const rect = gridRef.current?.getBoundingClientRect();
+                if (!rect) return null;
+                const width = (item.width || 1.4) / 0.6;
+                const height = (item.depth || 2.0) / 0.6;
+                const deltaX = (dragging.cursorX - rect.left - item.x * scaledCellW - dragging.offsetX) / scaledCellW;
+                const deltaY = (dragging.cursorY - rect.top - item.y * scaledCellH - dragging.offsetY) / scaledCellH;
+                const furnitureShapes = {
+                  bed: (w, h) => `<rect x="0" y="0" width="${w}" height="${h}" fill="#FFF5E6" stroke="none"/><rect x="10%" y="10%" width="80%" height="80%" fill="none" stroke="#E8956E" stroke-width="2"/>`,
+                  sofa: (w, h) => `<rect x="0" y="0" width="${w}" height="${h}" fill="#FFF5E6" stroke="none"/><rect x="5%" y="20%" width="90%" height="60%" fill="none" stroke="#E8956E" stroke-width="2" rx="3"/>`,
+                  table: (w, h) => `<rect x="0" y="0" width="${w}" height="${h}" fill="#FFF5E6" stroke="none"/><circle cx="${w/2}" cy="${h/2}" r="${Math.min(w,h)*0.35}" fill="none" stroke="#E8956E" stroke-width="2"/>`,
+                  chair: (w, h) => `<rect x="0" y="0" width="${w}" height="${h}" fill="#FFF5E6" stroke="none"/><rect x="25%" y="25%" width="50%" height="50%" fill="none" stroke="#E8956E" stroke-width="2"/>`,
+                  desk: (w, h) => `<rect x="0" y="0" width="${w}" height="${h}" fill="#FFF5E6" stroke="none"/><line x1="10%" y1="40%" x2="90%" y2="40%" stroke="#E8956E" stroke-width="2"/><line x1="20%" y1="40%" x2="20%" y2="85%" stroke="#E8956E" stroke-width="1.5"/><line x1="80%" y1="40%" x2="80%" y2="85%" stroke="#E8956E" stroke-width="1.5"/>`,
+                };
+                const furnitureType = item.type || item.id;
+                const svgContent = (furnitureShapes[furnitureType] || furnitureShapes.table)?.(100, 100);
+                return (
+                  <div
+                    className="absolute pointer-events-none"
+                    style={{
+                      left: (item.x + deltaX) * scaledCellW,
+                      top: (item.y + deltaY) * scaledCellH,
+                      width: width * scaledCellW,
+                      height: height * scaledCellH,
+                      border: "2px solid #F15A22",
+                      opacity: 0.75,
+                      boxShadow: "0 4px 12px rgba(241, 90, 34, 0.3)",
+                      transform: `rotate(${item.rotation || 0}deg)`,
+                      transformOrigin: "center",
+                    }}
+                  >
+                    <svg viewBox="0 0 100 100" className="w-full h-full" dangerouslySetInnerHTML={{ __html: svgContent }} />
+                  </div>
+                );
+              })()
+            )}
+          </>
         )}
 
         {/* Drag preview for new walls */}
