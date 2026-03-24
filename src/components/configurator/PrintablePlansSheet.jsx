@@ -39,7 +39,7 @@ export default function PrintablePlansSheet({ placedModules, onClose, printDetai
   const canvasHeight = gridHeight * CELL_SIZE;
 
   return (
-    <div className="bg-white relative">
+    <div className="bg-white relative" style={{ overflow: "hidden" }}>
       <button
         onClick={() => onClose?.()}
         className="fixed top-4 right-4 z-50 bg-red-500 text-white px-4 py-2 rounded text-sm font-bold print:hidden"
