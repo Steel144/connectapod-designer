@@ -22,7 +22,7 @@ const getModulePavilion = (mod) => {
   return null;
 };
 
-export default function CombinedElevations({ walls = [], placedModules = [], stickyTop = 0, navBarHeight = 0, showHeader = true }) {
+export default function CombinedElevations({ walls = [], placedModules = [], stickyTop = 0, navBarHeight = 0, showHeader = true, onWallSelect }) {
   const [zoom, setZoom] = useState(50);
   const containerRef = useRef(null);
   const contentRef = useRef(null);
