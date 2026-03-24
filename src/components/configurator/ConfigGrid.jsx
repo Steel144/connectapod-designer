@@ -246,6 +246,20 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
   };
 
   const onMouseUp = useCallback((e) => {
+    // Handle furniture drag
+    if (dragging?.isFurniture) {
+      const rect = gridRef.current.getBoundingClientRect();
+      const cursorX = dragging.cursorX - rect.left;
+      const cursorY = dragging.cursorY - rect.top;
+      const exactX = (cursorX - dragging.offsetX) / scaledCellW;
+      const exactY = (cursorY - dragging.offsetY) / scaledCellH;
+      const newX = Math.max(0, Math.min(exactX, GRID_COLS - 1));
+      const newY = Math.max(0, Math.min(exactY, GRID_ROWS - 1));
+      onMoveFurniture?.(dragging.mod.id, newX, newY);
+      setDragging(null);
+      return;
+    }
+
     // Handle wall drag
     if (draggingWall) {
       const rect = gridRef.current.getBoundingClientRect();
