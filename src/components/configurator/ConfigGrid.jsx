@@ -858,8 +858,61 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
           })()
         )}
 
+        {/* Furniture */}
+         {furniture.map((item) => {
+           const furnitureEmojis = {
+             bed: "🛏️",
+             sofa: "🛋️",
+             table: "🪑",
+             chair: "🪑",
+             desk: "🖥️",
+           };
+           const emoji = furnitureEmojis[item.id] || "📦";
+
+           return (
+             <div
+               key={item.id}
+               className="absolute group cursor-grab active:cursor-grabbing"
+               style={{
+                 left: item.x * scaledCellW,
+                 top: item.y * scaledCellH,
+                 width: (item.width || 1.4) * scaledCellW / 0.6,
+                 height: (item.depth || 2.0) * scaledCellH / 0.6,
+               }}
+               onMouseDown={(e) => {
+                 e.preventDefault();
+                 e.stopPropagation();
+                 const rect = gridRef.current.getBoundingClientRect();
+                 const offsetX = e.clientX - rect.left - item.x * scaledCellW;
+                 const offsetY = e.clientY - rect.top - item.y * scaledCellH;
+                 setDragging({ mod: item, offsetX, offsetY, cursorX: e.clientX, cursorY: e.clientY, isPlaced: true, selectedIds: new Set([item.id]), isFurniture: true });
+               }}
+             >
+               <div className="absolute inset-0 bg-white/80 border-2 border-dashed border-orange-300 rounded flex items-center justify-center text-2xl hover:bg-orange-50">
+                 {emoji}
+               </div>
+               <div className="absolute opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1" style={{ top: '-26px', left: '50%', transform: 'translateX(-50%)', whiteSpace: 'nowrap' }}>
+                 <button
+                   onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); onRotateFurniture?.(item.id); }}
+                   className="bg-white rounded-full p-1 shadow-sm hover:bg-orange-50 z-10"
+                   title="Rotate"
+                 >
+                   <RotateCw size={10} className="text-[#F15A22]" />
+                 </button>
+                 <button
+                   onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); onRemoveFurniture?.(item.id); }}
+                   className="bg-white rounded-full p-1 shadow-sm hover:bg-red-50 z-10"
+                   title="Delete"
+                 >
+                   <X size={10} className="text-red-400" />
+                 </button>
+               </div>
+             </div>
+           );
+         })}
+
         {/* Walls */}
-        {walls.map((wall) => {
+         {walls.map((wall) => {
            const isBeingDragged = draggingWall?.wall.id === wall.id;
            const isSelected = selectedWallIds.has(wall.id);
            const wallW = wall.orientation === "horizontal" ? wall.length * scaledCellW : wall.thickness * scaledCellW;
