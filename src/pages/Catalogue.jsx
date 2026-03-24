@@ -482,6 +482,18 @@ export default function Catalogue() {
           />
         )}
 
+        {trainingModuleOpen && (
+          <WallCompatibilityTrainer
+            open={trainingModuleOpen}
+            onClose={() => {
+              setTrainingModuleOpen(false);
+              setTrainingModule(null);
+            }}
+            module={trainingModule}
+            wallTypes={wallTypes}
+          />
+        )}
+
         {/* Catalogue Sections */}
         <div className="space-y-10">
           {filtered.map(cat => (
