@@ -581,9 +581,10 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
             candidates.push({ dist: distToYFace, x: mod.x, y: mod.y + mod.h, length: mod.w, face: "Y" });
           }
 
-          // W face (above module) — snap flush to top
+          // W face (above module) — snap flush to top, accounting for wall thickness
           const distToWFace = Math.abs(exactY - mod.y);
           if (distToWFace <= SNAP_THRESHOLD) {
+            // Wall should sit above module, so Y = mod.y - wall.thickness
             candidates.push({ dist: distToWFace, x: mod.x, y: mod.y - wallTemplate.thickness, length: mod.w, face: "W" });
           }
         }
