@@ -177,7 +177,9 @@ export default function PrintablePlansSheet({ placedModules, onClose, printDetai
               <div className="border-r p-2" style={{ borderColor: "#F15A22" }}>
                 <p className="uppercase font-bold" style={{ color: "#F15A22" }}>Client</p>
                 <p className="mt-0.5 text-gray-700">{printDetails.clientName || "—"}</p>
-                {printDetails.address && <p className="text-gray-500">{printDetails.address}</p>}
+                {printDetails.address && (
+                  <p className="text-gray-500 whitespace-pre-wrap" style={{ fontSize: "10px", lineHeight: "1.2", marginTop: "2px" }}>{printDetails.address}</p>
+                )}
                 {(printDetails.email || printDetails.phone) && (
                   <p className="text-gray-400">{[printDetails.email, printDetails.phone].filter(Boolean).join(" · ")}</p>
                 )}
