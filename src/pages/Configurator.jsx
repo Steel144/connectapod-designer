@@ -1090,6 +1090,18 @@ export default function Configurator() {
                 onWallImageUpdate={handleWallImageUpdate}
                 floorPlanImages={floorPlanImages}
                 wallImages={wallImages}
+                onWallSelected={(wallType) => {
+                  if (wallToReplace) {
+                    pushHistory(placedModules, walls);
+                    setWalls(prev => prev.map(w => 
+                      w.id === wallToReplace.id 
+                        ? { ...w, type: wallType.type, label: wallType.label, elevationImage: wallImages[wallType.type] || null, price: wallType.price || 0 }
+                        : w
+                    ));
+                    setSelectedWall(null);
+                    setWallToReplace(null);
+                  }
+                }}
               />
             </div>
           )}
