@@ -6,12 +6,7 @@ export default function PrintablePlansSheet({ placedModules, onClose, printDetai
   React.useEffect(() => {
     const timer = setTimeout(() => {
       window.print();
-      const handleAfterPrint = () => {
-        onClose?.();
-      };
-      window.addEventListener("afterprint", handleAfterPrint);
-      return () => window.removeEventListener("afterprint", handleAfterPrint);
-    }, 1000);
+    }, 1200);
 
     return () => clearTimeout(timer);
   }, [onClose]);
