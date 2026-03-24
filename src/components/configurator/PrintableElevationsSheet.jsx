@@ -116,7 +116,7 @@ export default function PrintableElevationsSheet({ walls = [], placedModules = [
       const handleAfterPrint = () => onClose?.();
       window.addEventListener("afterprint", handleAfterPrint);
       return () => window.removeEventListener("afterprint", handleAfterPrint);
-    }, 1200);
+    }, 1800);
     return () => clearTimeout(timer);
   }, [onClose]);
 
