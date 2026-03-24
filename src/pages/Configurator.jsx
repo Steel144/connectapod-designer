@@ -76,6 +76,7 @@ export default function Configurator() {
   const [summaryCollapsed, setSummaryCollapsed] = useState(false);
   const [selectedWall, setSelectedWall] = useState(null);
   const [selectedModule, setSelectedModule] = useState(null);
+  const [selectedFace, setSelectedFace] = useState(null);
   const [printMode, setPrintMode] = useState(null);
   const [pendingPrintMode, setPendingPrintMode] = useState(null);
   const [printDetails, setPrintDetails] = useState(null);
