@@ -60,8 +60,10 @@ const PrintPage = ({ children, header, footer, isLast }) => (
     overflow: "hidden",
   }}>
     {header}
-    <div style={{ flex: 1, padding: "24px", overflow: "hidden" }}>
-      {children}
+    <div style={{ flex: 1, padding: "24px", overflow: "hidden", display: "flex", alignItems: "flex-start" }}>
+      <div className="print-content" style={{ transformOrigin: "top left", overflow: "visible" }}>
+        {children}
+      </div>
     </div>
     {footer}
   </div>
