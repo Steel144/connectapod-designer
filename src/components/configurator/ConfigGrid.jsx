@@ -939,6 +939,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
          {furniture.map((item) => {
            const width = (item.width || 1.4) / 0.6;
            const height = (item.depth || 2.0) / 0.6;
+           const isSelected = selectedFurnitureId === item.id;
 
            return (
              <div
@@ -952,11 +953,15 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                  transform: `rotate(${item.rotation || 0}deg)`,
                  transformOrigin: "center",
                  backgroundColor: "transparent",
-                 border: "none",
+                 border: isSelected ? "3px solid #4F46E5" : "none",
                }}
                onMouseDown={(e) => {
                  e.preventDefault();
                  e.stopPropagation();
+                 setSelectedFurnitureId(item.id);
+                 setSelected(new Set());
+                 setSelectedModId(null);
+                 setSelectedWallIds(new Set());
                  const rect = gridRef.current.getBoundingClientRect();
                  const offsetX = e.clientX - rect.left - item.x * scaledCellW;
                  const offsetY = e.clientY - rect.top - item.y * scaledCellH;
