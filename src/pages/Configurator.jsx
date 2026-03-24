@@ -1002,6 +1002,9 @@ export default function Configurator() {
                     floorPlanImages={floorPlanImages}
                     wallImages={wallImages}
                     highlightWallType={wallToReplace?.type}
+                    onWallHover={(wall) => {
+                      if (wall) setSummaryCollapsed(false);
+                    }}
                     onWallSelected={(wallType) => {
                       if (wallToReplace) {
                         pushHistory(placedModules, walls);

@@ -138,7 +138,7 @@ const WALL_TYPES = [];
 
 export { MODULE_TYPES, GROUP_ICONS, WALL_TYPES };
 
-export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, selectedModule, placedModules = [], onModuleImageUpdate, onWallImageUpdate, onWallTypesLoaded, floorPlanImages = {}, wallImages = {}, onWallSelected, highlightWallType }) {
+export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, selectedModule, placedModules = [], onModuleImageUpdate, onWallImageUpdate, onWallTypesLoaded, floorPlanImages = {}, wallImages = {}, onWallSelected, highlightWallType, onWallHover }) {
    const [openGroup, setOpenGroup] = useState(null);
    const [hoveredModule, setHoveredModule] = useState(null);
    const [hoveredWall, setHoveredWall] = useState(null);
@@ -489,8 +489,14 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
                     onDragStart(e, wall);
                   }}
                   onDragEnd={onDragEnd}
-                  onMouseEnter={() => setHoveredWall({ ...wall, elevationImage: localWallImages[wall.type] })}
-                  onMouseLeave={() => setHoveredWall(null)}
+                  onMouseEnter={() => {
+                    setHoveredWall({ ...wall, elevationImage: localWallImages[wall.type] });
+                    onWallHover?.(wall);
+                  }}
+                  onMouseLeave={() => {
+                    setHoveredWall(null);
+                    onWallHover?.(null);
+                  }}
                   onClick={() => onWallSelected?.(wall)}
                   className={`flex items-center gap-3 px-3 py-2 cursor-grab active:cursor-grabbing border-b border-gray-50 last:border-0 transition-colors ${highlightWallType === wall.type ? "bg-blue-100 border-blue-200" : "hover:bg-orange-50"}`}
                 >
