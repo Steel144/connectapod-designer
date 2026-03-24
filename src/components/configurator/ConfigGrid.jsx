@@ -779,7 +779,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                 <button onClick={() => { onModuleSelect?.(mod); onFaceSelect?.('X'); }} className="absolute right-1 top-1/2 -translate-y-1/2 px-2 py-0.5 bg-white text-gray-900 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-sm z-20">X</button>
                 <button onClick={() => { onModuleSelect?.(mod); onFaceSelect?.('Y'); }} className="absolute bottom-1 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-white text-gray-900 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-sm z-20">Y</button>
                 <button onClick={() => { onModuleSelect?.(mod); onFaceSelect?.('Z'); }} className="absolute left-1 top-1/2 -translate-y-1/2 px-2 py-0.5 bg-white text-gray-900 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-sm z-20">Z</button>
-              />
+              </>
               </div>
               );
               })}
