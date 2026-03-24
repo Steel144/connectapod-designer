@@ -930,6 +930,8 @@ export default function Configurator() {
               onWallSelect={setSelectedWall} 
               selectedWall={selectedWall}
               wallTypes={availableWallTypes}
+              zoom={elevationZoom}
+              onZoomChange={setElevationZoom}
               onWallReplace={(wallId, newWallType) => {
                 pushHistory(placedModules, walls);
                 setWalls(prev => prev.map(w => 
