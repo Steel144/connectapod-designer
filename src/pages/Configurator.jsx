@@ -28,10 +28,9 @@ const useIsMobile = () => {
 };
 
 import CombinedElevations from "@/components/configurator/CombinedElevations";
-import QuoteGenerator from "@/components/configurator/QuoteGenerator";
 import PrintRouter from "@/components/configurator/PrintRouter";
 import PrintMenu from "@/components/configurator/PrintMenu";
-import PrintDetailsModal from "@/components/configurator/PrintDetailsModal";
+import ProjectDetailsModal from "@/components/configurator/ProjectDetailsModal";
 import { ZoomIn, ZoomOut } from "lucide-react";
 
 const generateId = () => `mod-${Math.random().toString(36).substr(2, 9)}`;
@@ -81,7 +80,7 @@ export default function Configurator() {
   const [printMode, setPrintMode] = useState(null);
   const [pendingPrintMode, setPendingPrintMode] = useState(null);
   const [printDetails, setPrintDetails] = useState(null);
-  const [quoteOpen, setQuoteOpen] = useState(false);
+  const [detailsModalMode, setDetailsModalMode] = useState(null); // 'estimate' or 'print'
   const [viewMode, setViewMode] = useState("2d");
   const [loadCounter, setLoadCounter] = useState(0);
   const [wallToReplace, setWallToReplace] = useState(null);
@@ -827,9 +826,9 @@ export default function Configurator() {
               <button onClick={() => setSaveModalOpen(true)} disabled={placedModules.length === 0 || saveMutation.isPending} className={`flex items-center gap-1.5 px-3 py-1.5 text-xs transition-all ${placedModules.length === 0 || saveMutation.isPending ? "bg-white text-gray-400 opacity-40" : "bg-white text-gray-600 border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22]"}`} style={{ clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 50%, calc(100% - 6px) 100%, 0 100%)" }}>
                  <Save size={13} /> {saveMutation.isPending ? "Saving…" : "Save"}
                </button>
-               <button onClick={() => setQuoteOpen(true)} disabled={placedModules.length === 0} className={`flex items-center gap-1.5 px-3 py-1.5 text-xs transition-all ${placedModules.length === 0 ? "bg-white text-gray-400 opacity-40" : "bg-white text-gray-600 border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22]"}`} style={{ clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 50%, calc(100% - 6px) 100%, 0 100%)" }}>
-                 Get Estimate
-               </button>
+               <button onClick={() => setDetailsModalMode('estimate')} disabled={placedModules.length === 0} className={`flex items-center gap-1.5 px-3 py-1.5 text-xs transition-all ${placedModules.length === 0 ? "bg-white text-gray-400 opacity-40" : "bg-white text-gray-600 border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22]"}`} style={{ clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 50%, calc(100% - 6px) 100%, 0 100%)" }}>
+                  Get Estimate
+                </button>
                <PrintMenu placedModules={placedModules} walls={walls} onPrint={(mode) => setPendingPrintMode(mode)} />
             </div>
             <button onClick={handleUndo} disabled={history.length === 0} title="Undo (Ctrl+Z)" className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-gray-600 bg-white border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22] disabled:opacity-30 transition-all" style={{ clipPath: "polygon(0 0, calc(100% - 8px) 0, 100% 50%, calc(100% - 8px) 100%, 0 100%)" }}>
@@ -1196,7 +1195,7 @@ export default function Configurator() {
                         onSave={() => setSaveModalOpen(true)}
                         onClear={handleClear}
                         isSaving={saveMutation.isPending}
-                        onQuote={() => setQuoteOpen(true)}
+                        onQuote={() => setDetailsModalMode('estimate')}
                       />
                     )}
                   </div>
@@ -1300,21 +1299,20 @@ export default function Configurator() {
         })()}
       />
 
-      <QuoteGenerator
-        open={quoteOpen}
-        onClose={() => setQuoteOpen(false)}
+      <ProjectDetailsModal
+        open={!!detailsModalMode}
+        mode={detailsModalMode}
+        onClose={() => setDetailsModalMode(null)}
         placedModules={placedModules}
         walls={walls}
-      />
-
-      <PrintDetailsModal
-        open={!!pendingPrintMode}
         printMode={pendingPrintMode}
-        onClose={() => setPendingPrintMode(null)}
         onConfirm={(details) => {
-          setPrintDetails(details);
-          setPrintMode(pendingPrintMode);
-          setPendingPrintMode(null);
+          if (detailsModalMode === 'print') {
+            setPrintDetails(details);
+            setPrintMode(pendingPrintMode);
+            setPendingPrintMode(null);
+            setDetailsModalMode(null);
+          }
         }}
       />
 
