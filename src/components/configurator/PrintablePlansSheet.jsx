@@ -160,20 +160,21 @@ export default function PrintablePlansSheet({ placedModules, onClose, printDetai
           </div>
 
           {/* Title block footer */}
-          <div className="border-t-4 grid grid-cols-4 text-[10px]" style={{ borderColor: "#F15A22" }}>
-            <div className="border-r p-4" style={{ borderColor: "#F15A22" }}>
+          <div className="border-t-4 grid text-[10px]" style={{ borderColor: "#F15A22", gridTemplateColumns: "2fr 2fr 1.5fr 1fr" }}>
+            <div className="border-r p-3" style={{ borderColor: "#F15A22" }}>
               <p className="uppercase font-bold" style={{ color: "#F15A22" }}>Project</p>
-              <p className="mt-1 text-gray-600">connectapod Design</p>
+              <p className="mt-1 text-gray-800 font-semibold">{printDetails.projectName || "—"}</p>
             </div>
-            <div className="border-r p-4" style={{ borderColor: "#F15A22" }}>
-              <p className="uppercase font-bold" style={{ color: "#F15A22" }}>Sheet</p>
-              <p className="mt-1 text-gray-600">Floor Plan</p>
+            <div className="border-r p-3" style={{ borderColor: "#F15A22" }}>
+              <p className="uppercase font-bold" style={{ color: "#F15A22" }}>Client</p>
+              <p className="mt-1 text-gray-700">{printDetails.clientName || "—"}</p>
+              {printDetails.address && <p className="text-gray-400" style={{ fontSize: "9px" }}>{printDetails.address}</p>}
             </div>
-            <div className="border-r p-4" style={{ borderColor: "#F15A22" }}>
+            <div className="border-r p-3" style={{ borderColor: "#F15A22" }}>
               <p className="uppercase font-bold" style={{ color: "#F15A22" }}>Date</p>
               <p className="mt-1 text-gray-600">{new Date().toLocaleDateString()}</p>
             </div>
-            <div className="p-4">
+            <div className="p-3">
               <p className="uppercase font-bold" style={{ color: "#F15A22" }}>Scale</p>
               <p className="mt-1 text-gray-600">1:100</p>
             </div>
