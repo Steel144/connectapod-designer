@@ -623,14 +623,14 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
       <div style={{ paddingLeft: SCROLL_BUFFER, display: "inline-block" }}>
       
       {/* Preview window above grid */}
-      {(selectedModule || selectedWall) && (
+      {(selectedModObj || selectedWall) && (
         <div className="flex gap-4 mb-4 p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
-          {selectedModule && (
+          {selectedModObj && (
             <div className="flex flex-col gap-2 min-w-0">
-              <p className="text-xs font-semibold text-gray-700">{selectedModule.label}</p>
+              <p className="text-xs font-semibold text-gray-700">{selectedModObj.label}</p>
               <div className="w-40 h-32 bg-gray-50 rounded overflow-hidden flex items-center justify-center border border-gray-200">
-                {selectedModule.floorPlanImage ? (
-                  <img src={selectedModule.floorPlanImage} alt={selectedModule.label} className="w-full h-full object-contain" style={{ transform: `rotate(${selectedModule.rotation || 0}deg) ${selectedModule.flipped ? 'scaleX(-1)' : ''}` }} />
+                {selectedModObj.floorPlanImage ? (
+                  <img src={selectedModObj.floorPlanImage} alt={selectedModObj.label} className="w-full h-full object-contain" style={{ transform: `rotate(${selectedModObj.rotation || 0}deg) ${selectedModObj.flipped ? 'scaleX(-1)' : ''}` }} />
                 ) : (
                   <div className="text-xs text-gray-400 text-center">No image</div>
                 )}
