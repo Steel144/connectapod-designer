@@ -1101,6 +1101,7 @@ export default function Configurator() {
                     ));
                     setSelectedWall(null);
                     setWallToReplace(null);
+                    setMobileDrawerOpen(false);
                   }
                 }}
               />
