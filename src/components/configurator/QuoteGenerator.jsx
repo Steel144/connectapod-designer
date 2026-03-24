@@ -7,14 +7,35 @@ import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 export default function QuoteGenerator({ placedModules, walls, open, onClose }) {
-  const [clientName, setClientName] = useState("");
-  const [clientEmail, setClientEmail] = useState("");
-  const [clientPhone, setClientPhone] = useState("");
-  const [projectName, setProjectName] = useState("");
-  const [address, setAddress] = useState("");
+  const loadSavedQuoteDetails = () => {
+    try {
+      return JSON.parse(localStorage.getItem("connectapod_print_details")) || {};
+    } catch {
+      return {};
+    }
+  };
+
+  const saved = loadSavedQuoteDetails();
+  const [clientName, setClientName] = useState(saved.clientName || "");
+  const [clientEmail, setClientEmail] = useState(saved.email || "");
+  const [clientPhone, setClientPhone] = useState(saved.phone || "");
+  const [projectName, setProjectName] = useState(saved.projectName || "");
+  const [address, setAddress] = useState(saved.address || "");
   const [city, setCity] = useState("");
   const [postalCode, setPostalCode] = useState("");
   const [generating, setGenerating] = useState(false);
+
+  // Re-populate from storage whenever modal opens
+  useEffect(() => {
+    if (open) {
+      const s = loadSavedQuoteDetails();
+      setClientName(s.clientName || "");
+      setClientEmail(s.email || "");
+      setClientPhone(s.phone || "");
+      setProjectName(s.projectName || "");
+      setAddress(s.address || "");
+    }
+  }, [open]);
 
   const totalSqm = placedModules.reduce((s, m) => s + (m.sqm || 0), 0);
   const modulesTotal = placedModules.reduce((s, m) => s + (m.price || 0), 0);
@@ -22,6 +43,9 @@ export default function QuoteGenerator({ placedModules, walls, open, onClose }) 
   const grandTotal = modulesTotal + wallsTotal;
 
   const generatePDF = async () => {
+    // Save to shared storage
+    const details = { projectName, clientName, address, email: clientEmail, phone: clientPhone };
+    localStorage.setItem("connectapod_print_details", JSON.stringify(details));
     setGenerating(true);
     const doc = new jsPDF();
     const pageW = doc.internal.pageSize.getWidth();

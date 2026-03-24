@@ -92,7 +92,15 @@ function AddressAutocomplete({ value, onChange }) {
 }
 
 export default function PrintDetailsModal({ open, onClose, onConfirm, printMode }) {
-  const saved = loadSaved();
+  const loadPrintDetails = () => {
+    try {
+      return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+    } catch {
+      return {};
+    }
+  };
+
+  const saved = loadPrintDetails();
   const [projectName, setProjectName] = useState(saved.projectName || "");
   const [clientName, setClientName] = useState(saved.clientName || "");
   const [address, setAddress] = useState(saved.address || "");
@@ -102,7 +110,7 @@ export default function PrintDetailsModal({ open, onClose, onConfirm, printMode 
   // Re-populate from storage whenever modal opens
   useEffect(() => {
     if (open) {
-      const s = loadSaved();
+      const s = loadPrintDetails();
       setProjectName(s.projectName || "");
       setClientName(s.clientName || "");
       setAddress(s.address || "");
