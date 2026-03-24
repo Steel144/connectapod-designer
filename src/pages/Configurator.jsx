@@ -77,6 +77,7 @@ export default function Configurator() {
   const [selectedWall, setSelectedWall] = useState(null);
   const [selectedModule, setSelectedModule] = useState(null);
   const [selectedFace, setSelectedFace] = useState(null);
+  const [hoveredWall, setHoveredWall] = useState(null);
   const [printMode, setPrintMode] = useState(null);
   const [pendingPrintMode, setPendingPrintMode] = useState(null);
   const [printDetails, setPrintDetails] = useState(null);
@@ -1003,6 +1004,7 @@ export default function Configurator() {
                     wallImages={wallImages}
                     highlightWallType={wallToReplace?.type}
                     onWallHover={(wall) => {
+                      setHoveredWall(wall);
                       if (wall) setSummaryCollapsed(false);
                     }}
                     onWallSelected={(wallType) => {
@@ -1037,7 +1039,7 @@ export default function Configurator() {
             >
               <div className="bg-white border border-gray-200 shadow-xl overflow-hidden" onMouseDown={handleSummaryMouseDown}>
                 <div className="px-4 py-3 border-b border-gray-100 cursor-grab active:cursor-grabbing flex items-center justify-between">
-                   <p className="text-xs font-semibold text-gray-800">{selectedWall ? `Wall: ${selectedWall.face || selectedWall.type || "Preview"}` : selectedModule && selectedFace ? `${selectedModule.label} — Face ${selectedFace}` : selectedModule ? `Module: ${selectedModule.label}` : "Design Summary"}</p>
+                    <p className="text-xs font-semibold text-gray-800">{selectedWall ? `Wall: ${selectedWall.face || selectedWall.type || "Preview"}` : hoveredWall ? `Wall: ${hoveredWall.label}` : selectedModule && selectedFace ? `${selectedModule.label} — Face ${selectedFace}` : selectedModule ? `Module: ${selectedModule.label}` : "Design Summary"}</p>
                   <button onMouseDown={e => e.stopPropagation()} onClick={() => setSummaryCollapsed(c => !c)} className="text-gray-400 hover:text-[#F15A22] transition-colors text-xs leading-none">
                     {summaryCollapsed ? "▲" : "▼"}
                   </button>
@@ -1094,6 +1096,32 @@ export default function Configurator() {
                          <div className="flex justify-between items-center text-xs border-t border-gray-200 pt-2">
                            <span className="text-gray-600">{selectedModule.sqm?.toFixed(1)} m²</span>
                            <span className="font-semibold text-gray-800">${(selectedModule.price || 0).toLocaleString()}</span>
+                         </div>
+                       </div>
+                     ) : hoveredWall ? (
+                       <div className="flex flex-col h-full gap-2">
+                         <div>
+                           <p className="text-xs font-semibold text-gray-900 break-words">{hoveredWall.label}</p>
+                           <p className="text-[10px] text-gray-500">{hoveredWall.type}</p>
+                           {hoveredWall.description && <p className="text-[10px] text-gray-500 mt-1">{hoveredWall.description}</p>}
+                         </div>
+                         <div className="flex-1 bg-gray-50 rounded overflow-hidden flex items-center justify-center">
+                           {hoveredWall.elevationImage ? (
+                             <img src={hoveredWall.elevationImage} alt={hoveredWall.label} className="w-full h-full object-contain" />
+                           ) : (
+                             <div className="flex flex-col items-center gap-2 text-gray-400">
+                               <div className="w-16 h-24 border-2 border-gray-300 rounded flex items-center justify-center">
+                                 <span className="text-2xl font-bold text-gray-300">{hoveredWall.orientation === "horizontal" ? "━" : "┃"}</span>
+                               </div>
+                               <p className="text-[10px] text-center">No elevation image</p>
+                             </div>
+                           )}
+                         </div>
+                         <div className="text-xs border-t border-gray-200 pt-2">
+                           <div className="flex justify-between">
+                             <span className="text-gray-600">{hoveredWall.width?.toFixed ? hoveredWall.width.toFixed(1) : hoveredWall.width}m wide</span>
+                             <span className="font-semibold text-gray-800">${(hoveredWall.price || 0).toLocaleString()}</span>
+                           </div>
                          </div>
                        </div>
                      ) : selectedWall ? (
