@@ -164,7 +164,7 @@ export default function PrintableElevationsSheet({ walls = [], placedModules = [
   const pavilionPages = [3, 2, 1].filter(p => pavilionModules[p]?.length > 0);
   const totalPages = 1 + pavilionPages.length;
 
-  const imgHeight = Math.round(wallHPx * 1.2);
+  const imgHeight = Math.round(scale * 480);
 
   const ElevationImage = ({ wall, label, face }) => {
     const wallWidthM = wall.width ?? (wall.length ? wall.length * CELL_M : CELL_M);
