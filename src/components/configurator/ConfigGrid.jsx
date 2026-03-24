@@ -958,6 +958,12 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                onMouseDown={(e) => {
                  e.preventDefault();
                  e.stopPropagation();
+                 const isAlreadySelected = selectedFurnitureId === item.id;
+                 if (isAlreadySelected) {
+                   setSelectedFurnitureId(null);
+                   setDragging(null);
+                   return;
+                 }
                  setSelectedFurnitureId(item.id);
                  setSelected(new Set());
                  setSelectedModId(null);
