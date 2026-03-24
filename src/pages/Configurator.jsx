@@ -572,7 +572,6 @@ export default function Configurator() {
 
   const handlePlaceWallOnFace = (wallTemplate, module, face) => {
     pushHistory(placedModules, walls);
-    const CELL_M = 0.6;
     const wallThickness = wallTemplate.thickness || 0.31;
 
     let x, y;
@@ -595,7 +594,7 @@ export default function Configurator() {
     }
 
     const wallWithFace = { ...wallTemplate, face };
-    if (onPlaceWall) onPlaceWall(wallWithFace, x, y);
+    handlePlaceWall(wallWithFace, x, y);
     setSelectedFace(null);
     setSelectedModule(null);
   };
