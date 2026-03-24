@@ -180,7 +180,7 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
         style={{ minHeight: "500px" }}
         ref={containerRef}
       >
-        <div ref={contentRef} style={{ padding: "40px", paddingLeft: "2400px", paddingRight: "1800px", display: "inline-block", minWidth: "max-content" }}>
+        <div ref={contentRef} style={{ padding: "40px", paddingLeft: "2400px", paddingRight: "1800px", display: "inline-block", minWidth: "max-content", transform: `scale(${zoom / 100})`, transformOrigin: "top left" }}>
           
           {/* Building Elevations Section */}
           <div style={{ display: "block", marginBottom: "60px" }}>
