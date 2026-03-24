@@ -1290,14 +1290,14 @@ export default function Configurator() {
         onConfirm={handleSave}
         isSaving={saveMutation.isPending}
         lastSavedName={lastSavedName}
-        projectName={() => {
+        projectName={(() => {
           try {
             const saved = JSON.parse(localStorage.getItem("connectapod_print_details")) || {};
             return saved.projectName || "";
           } catch {
             return "";
           }
-        }()}
+        })()}
       />
 
       <QuoteGenerator
