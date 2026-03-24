@@ -778,11 +778,12 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
               {(() => {
                 const isConnection = mod.chassis === "C" || isConnectionModule(mod);
                 const isLeftEnd = mod.chassis === "LF" || mod.chassis === "ER";
+                const isRightEnd = mod.chassis === "RF" || mod.chassis === "LR";
                 const isDeck = mod.description && mod.description.includes("Deck");
                 
-                // Standard: W, Y | Left end: W, Z, Y | Deck: W, Y | Connection: Z, X
+                // Standard: W, Y | Left end: W, Z, Y | Right end: W, X, Y | Deck: W, Y | Connection: Z, X
                 const showW = !isConnection;
-                const showX = isConnection;
+                const showX = isConnection || isRightEnd;
                 const showY = !isConnection;
                 const showZ = (isLeftEnd || isConnection);
                 
