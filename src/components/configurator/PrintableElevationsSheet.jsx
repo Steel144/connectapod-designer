@@ -306,9 +306,8 @@ export default function PrintableElevationsSheet({ walls = [], placedModules = [
       <style>{`
         @page { margin: 0; size: A3 landscape; }
         @media print {
-          body { margin: 0; padding: 0; overflow: hidden; }
-          img { max-width: 100%; height: auto; }
-          html { overflow: hidden; }
+          html, body { margin: 0 !important; padding: 0 !important; overflow: hidden !important; width: 100% !important; height: 100% !important; }
+          * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
         }
       `}</style>
     </div>
