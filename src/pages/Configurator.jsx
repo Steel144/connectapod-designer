@@ -1012,6 +1012,7 @@ export default function Configurator() {
                         ));
                         setSelectedWall(null);
                         setWallToReplace(null);
+                        setSummaryCollapsed(false);
                       }
                     }}
                   />
@@ -1200,18 +1201,18 @@ export default function Configurator() {
                 wallImages={wallImages}
                 highlightWallType={wallToReplace?.type}
                 onWallSelected={(wallType) => {
-                  if (wallToReplace) {
-                    pushHistory(placedModules, walls);
-                    setWalls(prev => prev.map(w => 
-                      w.id === wallToReplace.id 
-                        ? { ...w, type: wallType.type, label: wallType.label, elevationImage: wallImages[wallType.type] || null, price: wallType.price || 0 }
-                        : w
-                    ));
-                    setSelectedWall(null);
-                    setWallToReplace(null);
-                    setMobileDrawerOpen(false);
-                  }
-                }}
+                   if (wallToReplace) {
+                     pushHistory(placedModules, walls);
+                     setWalls(prev => prev.map(w => 
+                       w.id === wallToReplace.id 
+                         ? { ...w, type: wallType.type, label: wallType.label, elevationImage: wallImages[wallType.type] || null, price: wallType.price || 0 }
+                         : w
+                     ));
+                     setSelectedWall(null);
+                     setWallToReplace(null);
+                     setMobileDrawerOpen(false);
+                   }
+                 }}
               />
             </div>
           )}
