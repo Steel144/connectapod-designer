@@ -39,9 +39,16 @@ export default function SaveDesignModal({ open, onClose, onConfirm, isSaving, la
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-sm rounded-2xl">
         <DialogHeader>
-          <DialogTitle className="text-lg font-semibold text-slate-800">Save Design</DialogTitle>
+          <DialogTitle className="text-lg font-semibold text-slate-800">
+            {isSaveAs ? "Save Design As" : originalName ? "Update Design" : "Save Design"}
+          </DialogTitle>
         </DialogHeader>
         <div className="mt-2 space-y-3">
+          {originalName && !isSaveAs && (
+            <div className="text-xs text-slate-600 bg-slate-50 p-2 rounded-lg border border-slate-200">
+              Saving as: <span className="font-semibold text-slate-800">"{originalName}"</span>
+            </div>
+          )}
           <Input
             placeholder="e.g. My Dream Home"
             value={name}
