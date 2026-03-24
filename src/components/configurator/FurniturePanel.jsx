@@ -2,11 +2,21 @@ import React, { useState } from "react";
 import { ChevronDown, ChevronRight } from "lucide-react";
 
 const FURNITURE_ITEMS = [
-  { id: "bed", label: "Bed", width: 1.6, depth: 1.8 },
-  { id: "sofa", label: "Sofa", width: 2.5, depth: 1.0 },
-  { id: "table", label: "Table", width: 0.9, depth: 0.9 },
-  { id: "chair", label: "Chair", width: 0.8, depth: 0.8 },
-  { id: "desk", label: "Desk", width: 1.5, depth: 0.8 },
+  { id: "bed_king", label: "King Bed", width: 1.67, depth: 2.03, image: "https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/6bd723cbe_bed_king.png" },
+  { id: "bed_queen", label: "Queen Bed", width: 1.6, depth: 2.0, image: "https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/482865291_bed_queen.png" },
+  { id: "sofa_1", label: "1-Seater Sofa", width: 0.9, depth: 0.9, image: "https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/5534b8119_sofa_1_seater.png" },
+  { id: "sofa_2", label: "2-Seater Sofa", width: 1.6, depth: 0.9, image: "https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/2d25663fc_sofa_2_seater.png" },
+  { id: "sofa_3", label: "3-Seater Sofa", width: 2.5, depth: 0.9, image: "https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/50d1084f1_sofa_3_seater.png" },
+  { id: "dining_4", label: "Dining Table (4-Seater)", width: 1.2, depth: 1.2, image: "https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/a2527031a_dining_4_seater.png" },
+  { id: "couch_1", label: "2-Seater Couch", width: 2.0, depth: 0.9, image: "https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/c290e2922_couch_1.png" },
+  { id: "couch_2", label: "3-Seater Couch", width: 2.8, depth: 0.9, image: "https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/b2370d879_couch_2.png" },
+  { id: "couch_3", label: "2-Seater Couch Compact", width: 1.8, depth: 0.85, image: "https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/8a57ed025_couch_3.png" },
+  { id: "couch_4", label: "3-Seater L-Shaped", width: 2.5, depth: 2.0, image: "https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/9c3da5784_couch_4.png" },
+  { id: "couch_5", label: "U-Shaped Sectional", width: 3.0, depth: 2.5, image: "https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/7b2377810_couch_5.png" },
+  { id: "couch_6", label: "Chaise Lounge", width: 2.2, depth: 1.2, image: "https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/f9aa6aed7_couch_6.png" },
+  { id: "couch_7", label: "Curved Couch", width: 2.4, depth: 2.2, image: "https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/812bc0914_couch_7.png" },
+  { id: "couch_8", label: "2-Seater with Coffee Table", width: 2.0, depth: 1.5, image: "https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/9854b70c0_couch_8.png" },
+  { id: "couch_9", label: "Modular Sectional", width: 2.8, depth: 2.0, image: "https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/9d18dd3aa_couch_9.png" },
 ];
 
 function getFurnitureIcon(id, size = 18) {
@@ -43,7 +53,7 @@ function getFurnitureIcon(id, size = 18) {
       </svg>
     ),
   };
-  return icons[id] || icons.chair;
+  return icons[id] || icons.sofa;
 }
 
 export default function FurniturePanel({ onDragStart, onDragEnd }) {
@@ -56,7 +66,7 @@ export default function FurniturePanel({ onDragStart, onDragEnd }) {
         onClick={() => setIsOpen(!isOpen)}
       >
         <span className="flex items-center justify-center w-5 h-5 shrink-0">
-          {getFurnitureIcon("chair", 18)}
+          {getFurnitureIcon("sofa", 18)}
         </span>
         <span className="flex-1 text-sm font-semibold text-gray-800">Furniture</span>
         <span className="text-gray-400 shrink-0">
@@ -65,7 +75,7 @@ export default function FurniturePanel({ onDragStart, onDragEnd }) {
       </button>
 
       {isOpen && (
-        <div className="border-t border-gray-100 max-h-48 overflow-y-auto p-2 space-y-1">
+        <div className="border-t border-gray-100 max-h-64 overflow-y-auto p-2 space-y-1">
           {FURNITURE_ITEMS.map((item) => (
             <div
               key={item.id}
@@ -78,10 +88,17 @@ export default function FurniturePanel({ onDragStart, onDragEnd }) {
               onDragEnd={onDragEnd}
               className="flex items-center gap-3 px-3 py-2 cursor-grab active:cursor-grabbing hover:bg-orange-50 border border-gray-200 rounded transition-colors text-sm"
             >
-              <span className="flex items-center justify-center w-5 h-5 shrink-0">
-                {getFurnitureIcon(item.id, 16)}
-              </span>
-              <span className="text-gray-700 font-medium">{item.label}</span>
+              <div className="w-12 h-12 shrink-0 bg-gray-100 rounded border border-gray-200 flex items-center justify-center overflow-hidden">
+                {item.image ? (
+                  <img src={item.image} alt={item.label} className="w-full h-full object-contain" />
+                ) : (
+                  getFurnitureIcon(item.id, 16)
+                )}
+              </div>
+              <div className="min-w-0">
+                <p className="text-gray-700 font-medium text-xs leading-tight">{item.label}</p>
+                <p className="text-[10px] text-gray-400">{item.width.toFixed(2)}×{item.depth.toFixed(2)}m</p>
+              </div>
             </div>
           ))}
         </div>
