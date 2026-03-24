@@ -548,6 +548,27 @@ export default function Configurator() {
     );
   };
 
+  const handleUpdateWall = (id, wallTemplate) => {
+    pushHistory(placedModules, walls);
+    setWalls((prev) =>
+      prev.map((w) => {
+        if (w.id !== id) return w;
+        const wallType = wallTemplate.type || wallTemplate.mpCode || wallTemplate.label;
+        return {
+          ...w,
+          type: wallType,
+          label: wallTemplate.label,
+          mpCode: wallTemplate.mpCode,
+          length: wallTemplate.length,
+          thickness: wallTemplate.thickness,
+          price: wallTemplate.price || 0,
+          variants: wallTemplate.variants,
+          elevationImage: wallImages[wallType] || null,
+        };
+      })
+    );
+  };
+
   const handleSave = (name, extra = {}) => {
     const totalSqm = placedModules.reduce((s, m) => s + (m.sqm || 0), 0);
     const estimatedPrice = placedModules.reduce((s, m) => s + (m.price || 0), 0) + walls.reduce((s, w) => s + (w.price || 0), 0);
