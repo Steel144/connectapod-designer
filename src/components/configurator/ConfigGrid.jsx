@@ -781,13 +781,20 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
            const wallW = wall.orientation === "horizontal" ? wall.length * scaledCellW : wall.thickness * scaledCellW;
            const wallH = wall.orientation === "vertical" ? wall.length * scaledCellH : wall.thickness * scaledCellH;
 
-           // Ghost position while dragging
+           // Ghost position while dragging — round to cell grid
            let ghostLeft = wall.x * scaledCellW;
            let ghostTop = wall.y * scaledCellH;
            if (isBeingDragged && gridRef.current) {
              const rect = gridRef.current.getBoundingClientRect();
-             ghostLeft = Math.max(0, (draggingWall.cursorX - rect.left - draggingWall.offsetX));
-             ghostTop = Math.max(0, (draggingWall.cursorY - rect.top - draggingWall.offsetY));
+             const cursorX = draggingWall.cursorX - rect.left;
+             const cursorY = draggingWall.cursorY - rect.top;
+             const rawCellX = (cursorX - draggingWall.offsetX) / scaledCellW;
+             const rawCellY = (cursorY - draggingWall.offsetY) / scaledCellH;
+             // Round to nearest cell for smooth snapping
+             const snappedCellX = Math.round(rawCellX * 2) / 2;
+             const snappedCellY = Math.round(rawCellY * 2) / 2;
+             ghostLeft = snappedCellX * scaledCellW;
+             ghostTop = snappedCellY * scaledCellH;
            }
 
            return (
