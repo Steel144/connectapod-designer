@@ -57,6 +57,8 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
   const [selectedModId, setSelectedModId] = useState(null);
   const selectedModObj = hoveredModuleId ? placedModules.find(m => m.id === hoveredModuleId) : placedModules.find(m => m.id === selectedModId);
   React.useEffect(() => { onModuleSelect && onModuleSelect(selectedModObj || null); }, [hoveredModuleId, selectedModId, placedModules]);
+  
+  const [selectedFurnitureId, setSelectedFurnitureId] = useState(null);
   // { wall, offsetX, offsetY, cursorX, cursorY }
 
   useEffect(() => {
