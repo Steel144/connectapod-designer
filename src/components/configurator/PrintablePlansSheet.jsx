@@ -49,7 +49,7 @@ export default function PrintablePlansSheet({ placedModules, onClose, printDetai
           ← Back to Design
         </button>
       </div>
-      <div className="bg-white flex flex-col p-0 relative" style={{ height: "100vh", overflow: "hidden", boxSizing: "border-box" }}>
+      <div className="bg-white flex flex-col p-0 relative" style={{ height: "calc(210mm - 14mm)", overflow: "hidden", boxSizing: "border-box" }}>
 
          {/* Header with logo */}
            <div className="flex items-center justify-between px-6 pt-4 pb-2 border-b" style={{ borderColor: "#F15A22" }}>
