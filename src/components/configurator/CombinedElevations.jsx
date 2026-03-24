@@ -44,10 +44,10 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
   const adjustZoom = (delta) => {
     if (delta > 0) {
       const next = zoomLevels.find(z => z > zoom);
-      if (next !== undefined) setZoom(next);
+      if (next !== undefined) onZoomChange?.(next);
     } else {
       const prev = [...zoomLevels].reverse().find(z => z < zoom);
-      if (prev !== undefined) setZoom(prev);
+      if (prev !== undefined) onZoomChange?.(prev);
     }
   };
 
