@@ -276,8 +276,15 @@ export default function Configurator() {
         handleUndo();
       }
     };
+    const onSelectFace = (e) => {
+      setSelectedFace(e.detail.face);
+    };
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    window.addEventListener("selectFace", onSelectFace);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      window.removeEventListener("selectFace", onSelectFace);
+    };
   }, [handleUndo]);
 
   useEffect(() => {
