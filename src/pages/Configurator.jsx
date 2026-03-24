@@ -950,27 +950,28 @@ export default function Configurator() {
         ) : (
           <div style={{ display: "flex", height: "100%" }}>
             <ConfigGrid
-               placedModules={placedModules}
-               onPlace={handlePlace}
-               onRemove={handleRemove}
-               onMove={handleMove}
-               onRotate={handleRotate}
-               onFlip={handleFlip}
-               draggingMod={draggingMod}
-               walls={walls}
-               wallTypes={availableWallTypes}
-               onPlaceWall={handlePlaceWall}
-               onRemoveWall={handleRemoveWall}
-               onFlipWall={handleFlipWall}
-               onMoveWall={handleMoveWall}
-               onUpdateWall={handleUpdateWall}
-               onWallSelect={setSelectedWall}
-               onModuleSelect={setSelectedModule}
-               customModules={customModules}
-               floorPlanImages={floorPlanImages}
-               wallImages={wallImages}
-               zoom={gridZoom}
-              />
+                placedModules={placedModules}
+                onPlace={handlePlace}
+                onRemove={handleRemove}
+                onMove={handleMove}
+                onRotate={handleRotate}
+                onFlip={handleFlip}
+                draggingMod={draggingMod}
+                walls={walls}
+                wallTypes={availableWallTypes}
+                onPlaceWall={handlePlaceWall}
+                onRemoveWall={handleRemoveWall}
+                onFlipWall={handleFlipWall}
+                onMoveWall={handleMoveWall}
+                onUpdateWall={handleUpdateWall}
+                onWallSelect={setSelectedWall}
+                onModuleSelect={setSelectedModule}
+                onFaceSelect={setSelectedFace}
+                customModules={customModules}
+                floorPlanImages={floorPlanImages}
+                wallImages={wallImages}
+                zoom={gridZoom}
+               />
           </div>
         )}
       </div>
