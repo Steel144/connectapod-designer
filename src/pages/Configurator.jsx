@@ -1090,6 +1090,7 @@ export default function Configurator() {
                 onWallImageUpdate={handleWallImageUpdate}
                 floorPlanImages={floorPlanImages}
                 wallImages={wallImages}
+                highlightWallType={wallToReplace?.type}
                 onWallSelected={(wallType) => {
                   if (wallToReplace) {
                     pushHistory(placedModules, walls);
