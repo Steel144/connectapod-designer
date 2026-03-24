@@ -947,7 +947,6 @@ export default function Configurator() {
                 setMobileDrawerOpen(true);
               }}
             />
-          </div>
         ) : (
           <div style={{ display: "flex", height: "100%" }}>
             <ConfigGrid
