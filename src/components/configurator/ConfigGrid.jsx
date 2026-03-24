@@ -966,7 +966,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
              >
                <div className="w-full h-full overflow-hidden relative">
                  {item.image ? (
-                   <img src={item.image} alt={item.label} className="w-full h-full object-contain p-1" loading="eager" />
+                   <img src={item.image} alt={item.label} className="w-full h-full object-contain p-1" loading="eager" style={{ transform: item.id.startsWith('bed_') ? 'scale(1.04)' : 'scale(1)' }} />
                  ) : (
                    <div className="w-full h-full flex items-center justify-center text-[7px] font-semibold text-gray-400">
                      {item.label}
