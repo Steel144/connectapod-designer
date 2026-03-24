@@ -189,7 +189,7 @@ export default function PrintablePlansSheet({ placedModules, onClose, printDetai
               <div className="p-2">
                 <p className="uppercase font-bold" style={{ color: "#F15A22" }}>Scale</p>
                 <p className="mt-0.5 text-gray-600">1:100</p>
-                <p className="mt-1 text-gray-400" style={{ fontSize: "8px" }}>© {new Date().getFullYear()} Connectapod Ltd.</p>
+                <p className="mt-1" style={{ fontSize: "9px", color: "#000", fontWeight: "600" }}>© {new Date().getFullYear()} Connectapod Ltd.</p>
               </div>
             </div>
           </div>

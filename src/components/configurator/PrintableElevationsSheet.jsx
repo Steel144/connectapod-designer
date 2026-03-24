@@ -55,7 +55,7 @@ const Footer = ({ sheet, pageNum, totalPages, printDetails = {} }) => (
       <div style={{ padding: "6px 16px" }}>
         <p style={{ fontWeight: "bold", textTransform: "uppercase", color: "#F15A22" }}>Page</p>
         <p style={{ marginTop: "2px", color: "#666" }}>{pageNum} / {totalPages}</p>
-        <p style={{ marginTop: "4px", color: "#aaa", fontSize: "8px" }}>© {new Date().getFullYear()} Connectapod Ltd.</p>
+        <p style={{ marginTop: "4px", color: "#000", fontSize: "9px", fontWeight: "600" }}>© {new Date().getFullYear()} Connectapod Ltd.</p>
       </div>
     </div>
   </div>
