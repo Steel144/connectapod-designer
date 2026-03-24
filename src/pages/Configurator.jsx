@@ -1067,6 +1067,7 @@ export default function Configurator() {
         onClose={() => setSaveModalOpen(false)}
         onConfirm={handleSave}
         isSaving={saveMutation.isPending}
+        lastSavedName={lastSavedName}
       />
 
       <QuoteGenerator
