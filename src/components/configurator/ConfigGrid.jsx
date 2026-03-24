@@ -508,9 +508,18 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
    e.stopPropagation();
 
    const furnitureType = e.dataTransfer.getData("furnitureType");
+   const furnitureDataStr = e.dataTransfer.getData("furnitureData");
    if (furnitureType && gridRef.current) {
      const { x, y } = getCellFromClient(e.clientX, e.clientY);
-     const furnitureItem = { id: furnitureType, type: furnitureType };
+     let furnitureItem = { id: furnitureType, type: furnitureType };
+     if (furnitureDataStr) {
+       try {
+         const furnitureData = JSON.parse(furnitureDataStr);
+         furnitureItem = { ...furnitureData, id: furnitureDataStr.id || furnitureType };
+       } catch (err) {
+         // Fallback to simple item if parsing fails
+       }
+     }
      onPlaceFurniture?.(furnitureItem, x, y);
      return;
    }
