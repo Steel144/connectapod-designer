@@ -669,8 +669,9 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
           border: "1.5px solid #D1D5DB",
         }}
         onDrop={handleDrop}
-        onDragOver={handleDragOver}
-        onMouseDown={startSelectionBox}
+          onDragOver={handleDragOver}
+          onDragLeave={() => setDragPreview(null)}
+          onMouseDown={startSelectionBox}
       >
         {/* Colour stripes — fixed absolute Y bands */}
         <>
