@@ -492,7 +492,8 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
                   onDragEnd={onDragEnd}
                   onMouseEnter={() => setHoveredWall({ ...wall, elevationImage: localWallImages[wall.type] })}
                   onMouseLeave={() => setHoveredWall(null)}
-                  className="flex items-center gap-3 px-3 py-2 cursor-grab active:cursor-grabbing hover:bg-orange-50 border-b border-gray-50 last:border-0 transition-colors"
+                  onClick={() => onWallSelected?.(wall)}
+                  className={`flex items-center gap-3 px-3 py-2 cursor-grab active:cursor-grabbing border-b border-gray-50 last:border-0 transition-colors ${highlightedWallType === wall.type ? "bg-blue-100 border-blue-200" : "hover:bg-orange-50"}`}
                 >
                   <div className="shrink-0 bg-gray-50 flex items-center justify-center relative border border-gray-200" style={{ height: "76px", width: "76px" }}>
                     {localWallImages[wall.type] ? (
