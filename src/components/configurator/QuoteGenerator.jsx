@@ -12,6 +12,7 @@ function AddressAutocomplete({ value, onChange }) {
   const [open, setOpen] = useState(false);
   const debounceRef = useRef(null);
   const containerRef = useRef(null);
+  const textareaRef = useRef(null);
 
   useEffect(() => {
     setQuery(value || "");
@@ -58,11 +59,12 @@ function AddressAutocomplete({ value, onChange }) {
 
   return (
     <div ref={containerRef} className="relative">
-      <Input
+      <textarea
+        ref={textareaRef}
         value={query}
         onChange={handleInput}
         placeholder="e.g. 123 Main St, Auckland"
-        className="mt-1 rounded-none text-sm h-9"
+        className="mt-1 rounded-none text-sm w-full px-3 py-2 border border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-none min-h-[60px]"
         autoComplete="off"
       />
       {open && (
