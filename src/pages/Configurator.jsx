@@ -647,6 +647,18 @@ export default function Configurator() {
         height: dbWall?.height || w.height,
       };
     });
+    // Sync project name to print details storage
+    localStorage.setItem("connectapod_print_details", JSON.stringify({
+      projectName: name,
+      ...(() => {
+        try {
+          const saved = JSON.parse(localStorage.getItem("connectapod_print_details")) || {};
+          return { clientName: saved.clientName || "", address: saved.address || "", email: saved.email || "", phone: saved.phone || "" };
+        } catch {
+          return { clientName: "", address: "", email: "", phone: "" };
+        }
+      })(),
+    }));
     saveMutation.mutate({
       name,
       grid: gridToSave,
@@ -1278,6 +1290,14 @@ export default function Configurator() {
         onConfirm={handleSave}
         isSaving={saveMutation.isPending}
         lastSavedName={lastSavedName}
+        projectName={() => {
+          try {
+            const saved = JSON.parse(localStorage.getItem("connectapod_print_details")) || {};
+            return saved.projectName || "";
+          } catch {
+            return "";
+          }
+        }()}
       />
 
       <QuoteGenerator
