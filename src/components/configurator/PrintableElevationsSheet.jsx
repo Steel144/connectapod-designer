@@ -30,6 +30,7 @@ const Footer = ({ sheet, pageNum, totalPages, printDetails = {} }) => (
       <div style={{ borderRight: "1px solid #F15A22", padding: "6px 16px" }}>
         <p style={{ fontWeight: "bold", textTransform: "uppercase", color: "#F15A22" }}>Project</p>
         <p style={{ marginTop: "2px", color: "#333", fontWeight: "600" }}>{printDetails.projectName || "—"}</p>
+        <p style={{ marginTop: "4px", color: "#F15A22", fontSize: "8px" }}>connectapod.com · hello@connectapod.com</p>
       </div>
       <div style={{ borderRight: "1px solid #F15A22", padding: "6px 16px" }}>
         <p style={{ fontWeight: "bold", textTransform: "uppercase", color: "#F15A22" }}>Client</p>
@@ -50,11 +51,8 @@ const Footer = ({ sheet, pageNum, totalPages, printDetails = {} }) => (
       <div style={{ padding: "6px 16px" }}>
         <p style={{ fontWeight: "bold", textTransform: "uppercase", color: "#F15A22" }}>Page</p>
         <p style={{ marginTop: "2px", color: "#666" }}>{pageNum} / {totalPages}</p>
+        <p style={{ marginTop: "4px", color: "#aaa", fontSize: "8px" }}>© {new Date().getFullYear()} Connectapod Ltd.</p>
       </div>
-    </div>
-    <div style={{ background: "#F15A22", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "3px 16px" }}>
-      <span style={{ color: "white", fontSize: "8px", fontWeight: "600" }}>connectapod · hello@connectapod.com · www.connectapod.com</span>
-      <span style={{ color: "rgba(255,255,255,0.8)", fontSize: "8px" }}>© {new Date().getFullYear()} Connectapod Ltd. All rights reserved.</span>
     </div>
   </div>
 );
