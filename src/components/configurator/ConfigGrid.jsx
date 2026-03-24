@@ -879,12 +879,10 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                   onMouseDown={(e) => {
                     e.stopPropagation();
                     if (e.target.closest("button")) return;
-                    if (selected.size === 0) {
-                      e.preventDefault();
-                      setSelectedWallIds(new Set([wall.id]));
-                      return;
-                    }
-                    startDragWall(e, wall);
+                    e.preventDefault();
+                    setSelected(new Set());
+                    setSelectedModId(null);
+                    setSelectedWallIds(new Set([wall.id]));
                   }}
                   className={`absolute flex items-center justify-center overflow-hidden w-full h-full cursor-grab active:cursor-grabbing`}
                   style={{
