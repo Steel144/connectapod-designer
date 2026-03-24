@@ -22,8 +22,8 @@ const getModulePavilion = (mod) => {
   return null;
 };
 
-export default function CombinedElevations({ walls = [], placedModules = [], stickyTop = 0, navBarHeight = 0, showHeader = true, onWallSelect, selectedWall = null, wallTypes = [], onWallReplace }) {
-  const [replaceOpen, setReplaceOpen] = React.useState(false);
+export default function CombinedElevations({ walls = [], placedModules = [], stickyTop = 0, navBarHeight = 0, showHeader = true, onWallSelect, selectedWall = null, wallTypes = [], onWallReplace, onOpenWallsMenu }) {
+   const [replaceOpen, setReplaceOpen] = React.useState(false);
   const [zoom, setZoom] = useState(50);
   const containerRef = useRef(null);
   const contentRef = useRef(null);
