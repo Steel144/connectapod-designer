@@ -160,25 +160,31 @@ export default function PrintablePlansSheet({ placedModules, onClose, printDetai
           </div>
 
           {/* Title block footer */}
-          <div className="border-t-4 grid shrink-0" style={{ borderColor: "#F15A22", gridTemplateColumns: "2fr 2fr 1.5fr 1fr", fontSize: "9px", lineHeight: "1.3" }}>
-            <div className="border-r p-2" style={{ borderColor: "#F15A22" }}>
-              <p className="uppercase font-bold" style={{ color: "#F15A22" }}>Project</p>
-              <p className="mt-0.5 text-gray-800 font-semibold">{printDetails.projectName || "—"}</p>
+          <div className="shrink-0">
+            <div className="border-t-4 grid" style={{ borderColor: "#F15A22", gridTemplateColumns: "2fr 2fr 1.5fr 1fr", fontSize: "9px", lineHeight: "1.3" }}>
+              <div className="border-r p-2" style={{ borderColor: "#F15A22" }}>
+                <p className="uppercase font-bold" style={{ color: "#F15A22" }}>Project</p>
+                <p className="mt-0.5 text-gray-800 font-semibold">{printDetails.projectName || "—"}</p>
+              </div>
+              <div className="border-r p-2" style={{ borderColor: "#F15A22" }}>
+                <p className="uppercase font-bold" style={{ color: "#F15A22" }}>Client</p>
+                <p className="mt-0.5 text-gray-700">{printDetails.clientName || "—"}</p>
+                {printDetails.address && <p className="text-gray-500">{printDetails.address}</p>}
+                {printDetails.email && <p className="text-gray-400">{printDetails.email}</p>}
+                {printDetails.phone && <p className="text-gray-400">{printDetails.phone}</p>}
+              </div>
+              <div className="border-r p-2" style={{ borderColor: "#F15A22" }}>
+                <p className="uppercase font-bold" style={{ color: "#F15A22" }}>Date</p>
+                <p className="mt-0.5 text-gray-600">{new Date().toLocaleDateString()}</p>
+              </div>
+              <div className="p-2">
+                <p className="uppercase font-bold" style={{ color: "#F15A22" }}>Scale</p>
+                <p className="mt-0.5 text-gray-600">1:100</p>
+              </div>
             </div>
-            <div className="border-r p-2" style={{ borderColor: "#F15A22" }}>
-              <p className="uppercase font-bold" style={{ color: "#F15A22" }}>Client</p>
-              <p className="mt-0.5 text-gray-700">{printDetails.clientName || "—"}</p>
-              {printDetails.address && <p className="text-gray-500">{printDetails.address}</p>}
-              {printDetails.email && <p className="text-gray-400">{printDetails.email}</p>}
-              {printDetails.phone && <p className="text-gray-400">{printDetails.phone}</p>}
-            </div>
-            <div className="border-r p-2" style={{ borderColor: "#F15A22" }}>
-              <p className="uppercase font-bold" style={{ color: "#F15A22" }}>Date</p>
-              <p className="mt-0.5 text-gray-600">{new Date().toLocaleDateString()}</p>
-            </div>
-            <div className="p-2">
-              <p className="uppercase font-bold" style={{ color: "#F15A22" }}>Scale</p>
-              <p className="mt-0.5 text-gray-600">1:100</p>
+            <div style={{ background: "#F15A22", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "3px 12px" }}>
+              <span style={{ color: "white", fontSize: "8px", fontWeight: "600" }}>connectapod · hello@connectapod.com · www.connectapod.com</span>
+              <span style={{ color: "rgba(255,255,255,0.8)", fontSize: "8px" }}>© {new Date().getFullYear()} Connectapod Ltd. All rights reserved.</span>
             </div>
           </div>
       </div>
