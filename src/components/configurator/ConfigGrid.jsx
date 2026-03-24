@@ -303,8 +303,8 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
               snapped = { x: nearest.x, y: nearest.y, length: nearest.length, face: nearest.face };
             }
           } else {
-           // Vertical walls - pick nearest of Z or X face
-           let bestDist = Infinity;
+           // Vertical walls - find nearest of Z or X face
+           const candidates = [];
            const isEndWall = wall.face === "Z" || wall.face === "X";
 
            for (const mod of placedModules) {
@@ -314,25 +314,25 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
              if (Math.abs(wall.y - mod.y) > 0.5) continue;
 
              const isEnd = mod.chassis === "EF" || mod.chassis === "ER" || mod.chassis === "LF" || mod.chassis === "RF" || mod.chassis === "End";
-
-             // Only snap W/X walls to end modules
              if (isEndWall && !isEnd) continue;
 
+             // Z face (left side of module)
              const distToZFace = Math.abs(cursorCellX - mod.x);
-             const distToXFace = Math.abs(cursorCellX - (mod.x + mod.w));
-
-             // Pick the nearer of the two faces
-             if (distToZFace < distToXFace && distToZFace <= SNAP_THRESHOLD) {
-               if (distToZFace < bestDist) {
-                 bestDist = distToZFace;
-                 snapped = { x: mod.x, y: mod.y, length: mod.h, face: "Z" };
-               }
-             } else if (distToXFace <= SNAP_THRESHOLD) {
-               if (distToXFace < bestDist) {
-                 bestDist = distToXFace;
-                 snapped = { x: mod.x + mod.w - wall.thickness, y: mod.y, length: mod.h, face: "X" };
-               }
+             if (distToZFace <= SNAP_THRESHOLD) {
+               candidates.push({ dist: distToZFace, x: mod.x, y: mod.y, length: mod.h, face: "Z" });
              }
+
+             // X face (right side of module)
+             const distToXFace = Math.abs(cursorCellX - (mod.x + mod.w));
+             if (distToXFace <= SNAP_THRESHOLD) {
+               candidates.push({ dist: distToXFace, x: mod.x + mod.w - wall.thickness, y: mod.y, length: mod.h, face: "X" });
+             }
+           }
+
+           // Pick the single nearest candidate
+           if (candidates.length > 0) {
+             const nearest = candidates.reduce((a, b) => a.dist < b.dist ? a : b);
+             snapped = { x: nearest.x, y: nearest.y, length: nearest.length, face: nearest.face };
            }
           }
 
