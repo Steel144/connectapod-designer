@@ -35,12 +35,6 @@ export default function PrintMenu({ placedModules, walls, onPrint }) {
 
   if (placedModules.length > 0) {
     options.push({ label: "Floor Plans", value: "plans" });
-    options.push({ label: "Building Elevations", value: "building-elevations" });
-    options.push({ label: "Elevation Gallery", value: "elevation-gallery" });
-  }
-
-  if (walls.some(w => w.elevationImage)) {
-    options.push({ label: "Elevations Sheet", value: "elevations" });
   }
 
   if (options.length === 0) return null;
