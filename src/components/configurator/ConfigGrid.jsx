@@ -245,14 +245,13 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
       const rect = gridRef.current.getBoundingClientRect();
       const cursorX = draggingWall.cursorX - rect.left;
       const cursorY = draggingWall.cursorY - rect.top;
-      const rawX = cursorX - draggingWall.offsetX;
-      const rawY = cursorY - draggingWall.offsetY;
-      const exactX = rawX / scaledCellW;
-      const exactY = rawY / scaledCellH;
+      // Convert cursor position directly to cell coordinates
+      const cursorCellX = cursorX / scaledCellW;
+      const cursorCellY = cursorY / scaledCellH;
 
       // Only snap if the wall moved significantly (more than 0.1 cells)
-      const movedX = Math.abs(exactX - draggingWall.wall.x);
-      const movedY = Math.abs(exactY - draggingWall.wall.y);
+      const movedX = Math.abs(cursorCellX - draggingWall.startCellX);
+      const movedY = Math.abs(cursorCellY - draggingWall.startCellY);
       const hasMoved = movedX > 0.1 || movedY > 0.1;
 
       if (hasMoved) {
@@ -260,13 +259,8 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
           const wall = walls.find(w => w.id === wallId);
           if (!wall) return;
 
-          const SNAP_THRESHOLD = 0.5; // cells — very tight snapping for accuracy
+          const SNAP_THRESHOLD = 0.6; // cells
           let snapped = null;
-          // Calculate cursor position as cells, accounting for wall center
-          const wallCenterOffsetX = draggingWall.wall.orientation === "horizontal" ? draggingWall.wall.length * scaledCellW / 2 : draggingWall.wall.thickness * scaledCellW / 2;
-          const wallCenterOffsetY = draggingWall.wall.orientation === "vertical" ? draggingWall.wall.length * scaledCellH / 2 : draggingWall.wall.thickness * scaledCellH / 2;
-          const cursorCellX = (cursorX - draggingWall.offsetX - wallCenterOffsetX / 2) / scaledCellW;
-          const cursorCellY = (cursorY - draggingWall.offsetY - wallCenterOffsetY / 2) / scaledCellH;
 
           if (wall.orientation === "horizontal") {
             // Find ALL valid snap positions and pick the single nearest one
