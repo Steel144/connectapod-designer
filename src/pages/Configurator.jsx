@@ -1071,6 +1071,17 @@ export default function Configurator() {
         walls={walls}
       />
 
+      <PrintDetailsModal
+        open={!!pendingPrintMode}
+        printMode={pendingPrintMode}
+        onClose={() => setPendingPrintMode(null)}
+        onConfirm={(details) => {
+          setPrintDetails(details);
+          setPrintMode(pendingPrintMode);
+          setPendingPrintMode(null);
+        }}
+      />
+
       {/* Copyright footer */}
       {!isMobile && (
         <div className="fixed bottom-0 left-0 right-0 z-10 text-center py-1 text-[10px] text-gray-400 bg-white/70 backdrop-blur pointer-events-none select-none">
