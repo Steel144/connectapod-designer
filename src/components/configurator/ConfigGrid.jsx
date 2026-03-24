@@ -955,7 +955,14 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                  const rect = gridRef.current.getBoundingClientRect();
                  const offsetX = e.clientX - rect.left - item.x * scaledCellW;
                  const offsetY = e.clientY - rect.top - item.y * scaledCellH;
-                 setDragging({ mod: item, offsetX, offsetY, cursorX: e.clientX, cursorY: e.clientY, isPlaced: true, selectedIds: new Set([item.id]), isFurniture: true });
+                 setDragging({ mod: item, offsetX, offsetY, cursorX: e.clientX, cursorY: e.clientY, isPlaced: true, selectedIds: new Set([item.id]), isFurniture: true, dragImage: true });
+                 // Set empty drag image on next frame to hide browser icon
+                 setTimeout(() => {
+                   if (e.dataTransfer) {
+                     const emptyImage = new Image();
+                     e.dataTransfer?.setDragImage?.(emptyImage, 0, 0);
+                   }
+                 }, 0);
                }}
              >
                <div className="w-full h-full overflow-hidden bg-gray-100">
