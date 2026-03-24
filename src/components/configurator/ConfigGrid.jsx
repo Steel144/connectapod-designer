@@ -541,8 +541,8 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
       const wallTemplate = wallTypes.find((w) => w.type === wallType);
       if (!wallTemplate || !gridRef.current) return;
 
-      // Only allow wall placement if a module is selected
-      if (selected.size === 0) return;
+      // Allow wall placement if a module is selected OR a wall is selected (for wall swapping)
+      if (selected.size === 0 && selectedWallIds.size === 0) return;
 
       // If a wall is selected, snap new wall to match its position/orientation
       if (selectedWallIds.size > 0) {
