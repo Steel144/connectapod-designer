@@ -65,8 +65,8 @@ const ScaledPage = ({ children }) => {
 
     // Use rAF to ensure layout is complete before measuring
     requestAnimationFrame(() => {
-      const availW = container.clientWidth - 40; // subtract padding
-      const availH = container.clientHeight - 40;
+      const availW = container.clientWidth;
+      const availH = container.clientHeight;
       const naturalW = content.offsetWidth;
       const naturalH = content.offsetHeight;
 
