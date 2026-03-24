@@ -802,6 +802,29 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
           })
         )}
 
+        {/* Drag preview for new walls */}
+        {dragPreview && (
+          (() => {
+            const { x, y, wallTemplate } = dragPreview;
+            const wallW = wallTemplate.orientation === "horizontal" ? wallTemplate.length * scaledCellW : wallTemplate.thickness * scaledCellW;
+            const wallH = wallTemplate.orientation === "vertical" ? wallTemplate.length * scaledCellH : wallTemplate.thickness * scaledCellH;
+            return (
+              <div
+                className="absolute pointer-events-none"
+                style={{
+                  left: x * scaledCellW,
+                  top: y * scaledCellH,
+                  width: wallW,
+                  height: wallH,
+                  backgroundColor: "#22c55e",
+                  opacity: 0.4,
+                  border: "2px dashed #16a34a",
+                }}
+              />
+            );
+          })()
+        )}
+
         {/* Walls */}
         {walls.map((wall) => {
            const isBeingDragged = draggingWall?.wall.id === wall.id;
