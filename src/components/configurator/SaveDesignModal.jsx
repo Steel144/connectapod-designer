@@ -4,11 +4,13 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { LayoutTemplate } from "lucide-react";
 
-export default function SaveDesignModal({ open, onClose, onConfirm, isSaving }) {
+export default function SaveDesignModal({ open, onClose, onConfirm, isSaving, lastSavedName = "" }) {
   const [name, setName] = useState("");
+  const [originalName, setOriginalName] = useState("");
   const [saveToCatalogue, setSaveToCatalogue] = useState(false);
   const [description, setDescription] = useState("");
   const [tags, setTags] = useState("");
+  const [isSaveAs, setIsSaveAs] = useState(false);
 
   const handleConfirm = (asCatalogue) => {
     if (!name.trim()) return;
