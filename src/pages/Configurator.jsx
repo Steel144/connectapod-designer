@@ -1030,7 +1030,7 @@ export default function Configurator() {
             >
               <div className="bg-white border border-gray-200 shadow-xl overflow-hidden" onMouseDown={handleSummaryMouseDown}>
                 <div className="px-4 py-3 border-b border-gray-100 cursor-grab active:cursor-grabbing flex items-center justify-between">
-                  <p className="text-xs font-semibold text-gray-800">{selectedModule || selectedWall ? (selectedWall ? `Wall: ${selectedWall.face || selectedWall.type || "Preview"}` : "Preview") : "Design Summary"}</p>
+                   <p className="text-xs font-semibold text-gray-800">{selectedWall ? `Wall: ${selectedWall.face || selectedWall.type || "Preview"}` : selectedModule && selectedFace ? `${selectedModule.label} — Face ${selectedFace}` : selectedModule ? `Module: ${selectedModule.label}` : "Design Summary"}</p>
                   <button onMouseDown={e => e.stopPropagation()} onClick={() => setSummaryCollapsed(c => !c)} className="text-gray-400 hover:text-[#F15A22] transition-colors text-xs leading-none">
                     {summaryCollapsed ? "▲" : "▼"}
                   </button>
