@@ -926,6 +926,7 @@ export default function Configurator() {
                onRemoveWall={handleRemoveWall}
                onFlipWall={handleFlipWall}
                onMoveWall={handleMoveWall}
+               onUpdateWall={handleUpdateWall}
                onWallSelect={setSelectedWall}
                onModuleSelect={setSelectedModule}
                customModules={customModules}
