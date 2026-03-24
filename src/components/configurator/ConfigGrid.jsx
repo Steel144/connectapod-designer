@@ -928,7 +928,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
              bed: (w, h) => `<rect x="0" y="0" width="${w}" height="${h}" fill="#FFF5E6" stroke="none"/><rect x="20%" y="15%" width="60%" height="25%" fill="none" stroke="#E8956E" stroke-width="4"/><rect x="20%" y="50%" width="60%" height="40%" fill="none" stroke="#E8956E" stroke-width="4"/>`,
              sofa: (w, h) => `<rect x="0" y="0" width="${w}" height="${h}" fill="#FFF5E6" stroke="none"/>
                                <rect x="5%" y="20%" width="90%" height="60%" fill="none" stroke="#E8956E" stroke-width="3.5" rx="3"/>`,
-             table: (w, h) => `<circle cx="${w/2}" cy="${h/2}" r="${w/2}" fill="none" stroke="#E8956E" stroke-width="3.5"/>`,
+             table: (w, h) => `<circle cx="50" cy="50" r="30" fill="none" stroke="#E8956E" stroke-width="3.5"/>`,
              chair: (w, h) => `<rect x="0" y="0" width="${w}" height="${h}" fill="#FFF5E6" stroke="none"/>
                                 <rect x="25%" y="25%" width="50%" height="50%" fill="none" stroke="#E8956E" stroke-width="3.5"/>`,
              desk: (w, h) => `<rect x="0" y="0" width="${w}" height="${h}" fill="#FFF5E6" stroke="none"/>
