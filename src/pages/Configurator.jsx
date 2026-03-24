@@ -864,7 +864,24 @@ export default function Configurator() {
       <div className={`flex-1 relative overflow-auto ${isMobile ? "pt-12" : "pt-16"}`}>
         {viewMode === "elevations" ? (
           <div style={{ transform: `scale(${elevationZoom / 100})`, transformOrigin: "top center", display: "inline-block", width: "100%" }}>
-            <CombinedElevations walls={walls} placedModules={placedModules} stickyTop={navBarHeight} showHeader={true} onWallSelect={setSelectedWall} selectedWall={selectedWall} />
+            <CombinedElevations 
+              walls={walls} 
+              placedModules={placedModules} 
+              stickyTop={navBarHeight} 
+              showHeader={true} 
+              onWallSelect={setSelectedWall} 
+              selectedWall={selectedWall}
+              wallTypes={availableWallTypes}
+              onWallReplace={(wallId, newWallType) => {
+                pushHistory(placedModules, walls);
+                setWalls(prev => prev.map(w => 
+                  w.id === wallId 
+                    ? { ...w, type: newWallType.type, label: newWallType.label, elevationImage: wallImages[newWallType.type] || null, price: newWallType.price || 0 }
+                    : w
+                ));
+                setSelectedWall(null);
+              }}
+            />
           </div>
         ) : (
           <div style={{ display: "flex", height: "100%" }}>
