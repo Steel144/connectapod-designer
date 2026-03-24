@@ -266,7 +266,7 @@ export default function PrintableElevationsSheet({ walls = [], placedModules = [
             key={pavNum}
             isLast={isLast}
             header={<Header title={`Elevations — ${label}`} />}
-            footer={<Footer sheet={label} pageNum={pageNum} totalPages={totalPages} />}
+            footer={<Footer sheet={label} pageNum={pageNum} totalPages={totalPages} printDetails={printDetails} />}
           >
             <div style={{ fontSize: "10px", fontWeight: "bold", color: "#666", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "16px" }}>
               {label}
