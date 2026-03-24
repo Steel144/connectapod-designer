@@ -120,9 +120,11 @@ export default function PrintDetailsModal({ open, onClose, onConfirm, printMode 
   }, [open]);
 
   const handleConfirm = () => {
-    const details = { projectName, clientName, address, email, phone };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(details));
-    onConfirm(details);
+   const details = { projectName, clientName, address, email, phone };
+   localStorage.setItem(STORAGE_KEY, JSON.stringify(details));
+   // Format address for printing with line breaks after commas
+   const formattedAddress = address ? address.split(", ").join(",\n") : "";
+   onConfirm({ ...details, address: formattedAddress });
   };
 
   return (
