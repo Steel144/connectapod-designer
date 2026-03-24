@@ -570,6 +570,36 @@ export default function Configurator() {
     );
   };
 
+  const handlePlaceWallOnFace = (wallTemplate, module, face) => {
+    pushHistory(placedModules, walls);
+    const CELL_M = 0.6;
+    const wallThickness = wallTemplate.thickness || 0.31;
+
+    let x, y;
+    if (face === "W") {
+      // Top face — horizontal wall above module
+      x = module.x;
+      y = module.y - wallThickness;
+    } else if (face === "Y") {
+      // Bottom face — horizontal wall below module
+      x = module.x;
+      y = module.y + module.h;
+    } else if (face === "Z") {
+      // Left face — vertical wall left of module
+      x = module.x;
+      y = module.y;
+    } else if (face === "X") {
+      // Right face — vertical wall right of module
+      x = module.x + module.w - wallThickness;
+      y = module.y;
+    }
+
+    const wallWithFace = { ...wallTemplate, face };
+    if (onPlaceWall) onPlaceWall(wallWithFace, x, y);
+    setSelectedFace(null);
+    setSelectedModule(null);
+  };
+
   const handleSave = (name, extra = {}) => {
     const totalSqm = placedModules.reduce((s, m) => s + (m.sqm || 0), 0);
     const estimatedPrice = placedModules.reduce((s, m) => s + (m.price || 0), 0) + walls.reduce((s, w) => s + (w.price || 0), 0);
