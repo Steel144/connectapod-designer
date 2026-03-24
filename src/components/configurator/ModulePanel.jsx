@@ -425,8 +425,12 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
                        onMouseLeave={() => setHoveredModule(null)}
                        className="flex items-center gap-3 px-3 py-2 cursor-grab active:cursor-grabbing hover:bg-orange-50 border-b border-gray-50 last:border-0 transition-colors"
                      >
-                       <div className="shrink-0 bg-white overflow-hidden relative flex items-center justify-center border-2 border-[#F15A22]" style={{ height: "56px", width: "56px" }}>
-                         <svg viewBox="0 0 100 100" className="w-full h-full" dangerouslySetInnerHTML={{ __html: `<rect x="0" y="0" width="100" height="100" fill="#FFF5E6" stroke="none"/><rect x="15%" y="15%" width="70%" height="70%" fill="none" stroke="#E8956E" stroke-width="2.5"/>` }} />
+                       <div className="shrink-0 bg-white overflow-hidden relative flex items-center justify-center border border-gray-200" style={{ height: "76px" }}>
+                         {floorPlanImages[mod.type] || floorPlanImages[item.originalCode] ? (
+                           <img src={floorPlanImages[mod.type] || floorPlanImages[item.originalCode]} alt={item.name} className="w-auto h-full object-contain" />
+                         ) : (
+                           <FloorPlanSVG code={item.code} className="h-full w-auto" />
+                         )}
                        </div>
                        <div className="min-w-0">
                          <p className="text-xs font-medium text-gray-700 leading-tight">{item.name}</p>
@@ -435,7 +439,7 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
                          <p className="text-[10px] text-gray-400">{item.width}×{item.depth}m · {item.sqm}m²</p>
                        </div>
                      </div>
-                     );
+                  );
                 })}
               </div>
             )}
