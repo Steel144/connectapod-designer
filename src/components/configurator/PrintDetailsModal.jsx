@@ -107,6 +107,14 @@ export default function PrintDetailsModal({ open, onClose, onConfirm, printMode 
             <Label className="text-xs text-gray-600">Site Address</Label>
             <AddressAutocomplete value={address} onChange={setAddress} />
           </div>
+          <div>
+            <Label className="text-xs text-gray-600">Client Email</Label>
+            <Input value={email} onChange={e => setEmail(e.target.value)} placeholder="e.g. jane@example.com" className="mt-1 rounded-none text-sm h-9" />
+          </div>
+          <div>
+            <Label className="text-xs text-gray-600">Client Phone</Label>
+            <Input value={phone} onChange={e => setPhone(e.target.value)} placeholder="e.g. 021 123 4567" className="mt-1 rounded-none text-sm h-9" />
+          </div>
         </div>
         <div className="flex gap-2 pt-1">
           <Button variant="outline" onClick={onClose} className="flex-1 rounded-none border-gray-200 text-gray-500 h-9">
