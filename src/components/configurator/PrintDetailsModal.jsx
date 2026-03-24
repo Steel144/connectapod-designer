@@ -5,12 +5,26 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Printer, X } from "lucide-react";
 
+const STORAGE_KEY = "connectapod_print_details";
+
+function loadSaved() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+  } catch {
+    return {};
+  }
+}
+
 function AddressAutocomplete({ value, onChange }) {
   const [query, setQuery] = useState(value || "");
   const [suggestions, setSuggestions] = useState([]);
   const [open, setOpen] = useState(false);
   const debounceRef = useRef(null);
   const containerRef = useRef(null);
+
+  useEffect(() => {
+    setQuery(value || "");
+  }, [value]);
 
   useEffect(() => {
     const handleClick = (e) => {
@@ -31,7 +45,7 @@ function AddressAutocomplete({ value, onChange }) {
     debounceRef.current = setTimeout(async () => {
       try {
         const res = await fetch(
-          `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(val)}&format=json&addressdetails=1&limit=5`,
+          `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(val)}&format=json&addressdetails=1&limit=5&countrycodes=nz`,
           { headers: { "Accept-Language": "en" } }
         );
         const data = await res.json();
@@ -44,8 +58,9 @@ function AddressAutocomplete({ value, onChange }) {
   };
 
   const handleSelect = (place) => {
-    setQuery(place.display_name);
-    onChange(place.display_name);
+    const display = place.display_name;
+    setQuery(display);
+    onChange(display);
     setSuggestions([]);
     setOpen(false);
   };
@@ -77,14 +92,29 @@ function AddressAutocomplete({ value, onChange }) {
 }
 
 export default function PrintDetailsModal({ open, onClose, onConfirm, printMode }) {
-  const [projectName, setProjectName] = useState("");
-  const [clientName, setClientName] = useState("");
-  const [address, setAddress] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
+  const saved = loadSaved();
+  const [projectName, setProjectName] = useState(saved.projectName || "");
+  const [clientName, setClientName] = useState(saved.clientName || "");
+  const [address, setAddress] = useState(saved.address || "");
+  const [email, setEmail] = useState(saved.email || "");
+  const [phone, setPhone] = useState(saved.phone || "");
+
+  // Re-populate from storage whenever modal opens
+  useEffect(() => {
+    if (open) {
+      const s = loadSaved();
+      setProjectName(s.projectName || "");
+      setClientName(s.clientName || "");
+      setAddress(s.address || "");
+      setEmail(s.email || "");
+      setPhone(s.phone || "");
+    }
+  }, [open]);
 
   const handleConfirm = () => {
-    onConfirm({ projectName, clientName, address, email, phone });
+    const details = { projectName, clientName, address, email, phone };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(details));
+    onConfirm(details);
   };
 
   return (
