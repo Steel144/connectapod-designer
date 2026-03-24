@@ -84,7 +84,7 @@ export default function PrintDetailsModal({ open, onClose, onConfirm, printMode 
   const [phone, setPhone] = useState("");
 
   const handleConfirm = () => {
-    onConfirm({ projectName, clientName, address });
+    onConfirm({ projectName, clientName, address, email, phone });
   };
 
   return (
