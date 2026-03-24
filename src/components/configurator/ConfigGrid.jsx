@@ -965,7 +965,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                  }, 0);
                }}
              >
-               <div className="w-full h-full overflow-hidden bg-gray-100">
+               <div className="w-full h-full overflow-hidden">
                  {item.image ? (
                    <img src={item.image} alt={item.label} className="w-full h-full object-contain p-1" loading="eager" />
                  ) : (
