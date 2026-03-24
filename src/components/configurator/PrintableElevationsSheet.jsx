@@ -101,6 +101,7 @@ const PrintPage = ({ children, header, footer, isLast }) => {
       background: "white",
       display: "flex",
       flexDirection: "column",
+      justifyContent: "space-between",
       width: "calc(420mm - 14mm)",
       height: "calc(297mm - 14mm)",
       pageBreakAfter: isLast ? "avoid" : "always",
