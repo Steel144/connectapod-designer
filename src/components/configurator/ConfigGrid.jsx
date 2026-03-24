@@ -774,13 +774,15 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                 </button>
               </div>
 
-              {/* Face labels - always visible, open menu on click */}
-              <>
-                <button onClick={(e) => setFaceMenuOpen({ module: mod, face: 'W', x: e.clientX, y: e.clientY })} className="absolute top-1 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-white text-gray-900 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-sm z-20">W</button>
-                <button onClick={(e) => setFaceMenuOpen({ module: mod, face: 'X', x: e.clientX, y: e.clientY })} className="absolute right-1 top-1/2 -translate-y-1/2 px-2 py-0.5 bg-white text-gray-900 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-sm z-20">X</button>
-                <button onClick={(e) => setFaceMenuOpen({ module: mod, face: 'Y', x: e.clientX, y: e.clientY })} className="absolute bottom-1 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-white text-gray-900 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-sm z-20">Y</button>
-                <button onClick={(e) => setFaceMenuOpen({ module: mod, face: 'Z', x: e.clientX, y: e.clientY })} className="absolute left-1 top-1/2 -translate-y-1/2 px-2 py-0.5 bg-white text-gray-900 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-sm z-20">Z</button>
-              </>
+              {/* Face labels - only visible when selected */}
+              {isSelected && (
+                <>
+                  <button onClick={(e) => setFaceMenuOpen({ module: mod, face: 'W', x: e.clientX, y: e.clientY })} className="absolute top-1 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-white text-gray-900 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-sm z-20">W</button>
+                  <button onClick={(e) => setFaceMenuOpen({ module: mod, face: 'X', x: e.clientX, y: e.clientY })} className="absolute right-1 top-1/2 -translate-y-1/2 px-2 py-0.5 bg-white text-gray-900 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-sm z-20">X</button>
+                  <button onClick={(e) => setFaceMenuOpen({ module: mod, face: 'Y', x: e.clientX, y: e.clientY })} className="absolute bottom-1 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-white text-gray-900 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-sm z-20">Y</button>
+                  <button onClick={(e) => setFaceMenuOpen({ module: mod, face: 'Z', x: e.clientX, y: e.clientY })} className="absolute left-1 top-1/2 -translate-y-1/2 px-2 py-0.5 bg-white text-gray-900 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-sm z-20">Z</button>
+                </>
+              )}
             </div>
               );
               })}
