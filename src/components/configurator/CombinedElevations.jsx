@@ -166,7 +166,7 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
         <div ref={contentRef} style={{ padding: "40px", paddingLeft: "2400px", paddingRight: "1800px", display: "inline-block", minWidth: "max-content" }}>
           
           {/* Building Elevations Section */}
-          <div style={{ display: "inline-block", marginBottom: "60px", marginRight: "80px", verticalAlign: "top" }}>
+          <div style={{ display: "block", marginBottom: "60px" }}>
             <div style={{ fontSize: "12px", fontWeight: "bold", color: "#666", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "20px", paddingLeft: "4px" }}>
               Building Elevations
             </div>
@@ -231,54 +231,56 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
 
           {/* Pavilion Elevations Section */}
           {hasPavilions && (
-            <div style={{ display: "inline-block", verticalAlign: "top" }}>
+            <div style={{ display: "block" }}>
               <div style={{ fontSize: "12px", fontWeight: "bold", color: "#666", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "20px", paddingLeft: "4px" }}>
                 Pavilion Elevations
               </div>
               
-              {[3, 2, 1].map(pavNum => {
-                const mods = pavilionModules[pavNum];
-                if (!mods || mods.length === 0) return null;
+              <div style={{ display: "flex", gap: "40px", flexWrap: "wrap" }}>
+                {[3, 2, 1].map(pavNum => {
+                  const mods = pavilionModules[pavNum];
+                  if (!mods || mods.length === 0) return null;
 
-                const pavLabels = { 3: "Pavilion 1", 2: "Connection", 1: "Pavilion 2" };
-                const pavLabel = pavLabels[pavNum];
+                  const pavLabels = { 3: "Pavilion 1", 2: "Connection", 1: "Pavilion 2" };
+                  const pavLabel = pavLabels[pavNum];
 
-                return (
-                  <div key={pavNum} style={{ marginBottom: "60px", display: "inline-block", marginRight: "40px", verticalAlign: "top" }}>
-                    <div style={{ fontSize: "11px", fontWeight: "bold", backgroundColor: "#fed7aa", padding: "8px 12px", borderRadius: "4px", marginBottom: "16px", width: "fit-content" }}>
-                      {pavLabel}
-                    </div>
-
-                    <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
-                      {/* Y Face */}
-                      <div>
-                        <div style={{ fontSize: "10px", color: "#666", marginBottom: "12px", fontWeight: "500" }}>Y Face (Outside/Top)</div>
-                        <div style={{ display: "flex", gap: "2px", minWidth: "max-content" }}>
-                          {mods.map((mod, idx) => {
-                            const wall = findWall(mod, "Y");
-                            return wall ? (
-                              <ElevationImage key={`${pavNum}-y-${idx}`} wall={wall} label={`Y${idx + 1}`} face="Y" />
-                            ) : null;
-                          })}
-                        </div>
+                  return (
+                    <div key={pavNum} style={{ display: "inline-block", verticalAlign: "top" }}>
+                      <div style={{ fontSize: "11px", fontWeight: "bold", backgroundColor: "#fed7aa", padding: "8px 12px", borderRadius: "4px", marginBottom: "16px", width: "fit-content" }}>
+                        {pavLabel}
                       </div>
 
-                      {/* W Face */}
-                      <div>
-                        <div style={{ fontSize: "10px", color: "#666", marginBottom: "12px", fontWeight: "500" }}>W Face (Outside/Bottom)</div>
-                        <div style={{ display: "flex", gap: "2px", minWidth: "max-content" }}>
-                          {mods.map((mod, idx) => {
-                            const wall = findWall(mod, "W");
-                            return wall ? (
-                              <ElevationImage key={`${pavNum}-w-${idx}`} wall={wall} label={`W${idx + 1}`} face="W" />
-                            ) : null;
-                          })}
+                      <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+                        {/* Y Face */}
+                        <div>
+                          <div style={{ fontSize: "10px", color: "#666", marginBottom: "12px", fontWeight: "500" }}>Y Face (Outside/Top)</div>
+                          <div style={{ display: "flex", gap: "2px", minWidth: "max-content" }}>
+                            {mods.map((mod, idx) => {
+                              const wall = findWall(mod, "Y");
+                              return wall ? (
+                                <ElevationImage key={`${pavNum}-y-${idx}`} wall={wall} label={`Y${idx + 1}`} face="Y" />
+                              ) : null;
+                            })}
+                          </div>
+                        </div>
+
+                        {/* W Face */}
+                        <div>
+                          <div style={{ fontSize: "10px", color: "#666", marginBottom: "12px", fontWeight: "500" }}>W Face (Outside/Bottom)</div>
+                          <div style={{ display: "flex", gap: "2px", minWidth: "max-content" }}>
+                            {mods.map((mod, idx) => {
+                              const wall = findWall(mod, "W");
+                              return wall ? (
+                                <ElevationImage key={`${pavNum}-w-${idx}`} wall={wall} label={`W${idx + 1}`} face="W" />
+                              ) : null;
+                            })}
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
           )}
         </div>
