@@ -175,12 +175,8 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
     setSelectedWallIds(newWallSelection);
     setSelectedModId(null);
     const rect = gridRef.current.getBoundingClientRect();
-    // Offset from center of wall, not top-left
-    const wallCenterX = wall.x * scaledCellW + (wall.orientation === "horizontal" ? wall.length * scaledCellW / 2 : wall.thickness * scaledCellW / 2);
-    const wallCenterY = wall.y * scaledCellH + (wall.orientation === "vertical" ? wall.length * scaledCellH / 2 : wall.thickness * scaledCellH / 2);
-    const offsetX = e.clientX - rect.left - wallCenterX;
-    const offsetY = e.clientY - rect.top - wallCenterY;
-    setDraggingWall({ wall, offsetX, offsetY, cursorX: e.clientX, cursorY: e.clientY, selectedIds: newWallSelection });
+    // Store wall position in cells at start of drag
+    setDraggingWall({ wall, startCellX: wall.x, startCellY: wall.y, cursorX: e.clientX, cursorY: e.clientY, selectedIds: newWallSelection });
   };
 
   const onMouseMove = useCallback((e) => {
