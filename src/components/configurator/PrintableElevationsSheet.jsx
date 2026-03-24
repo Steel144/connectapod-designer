@@ -292,7 +292,7 @@ export default function PrintableElevationsSheet({ walls = [], placedModules = [
                     <div style={{ fontSize: "9px", color: "#888", marginBottom: "10px", fontWeight: "600", textTransform: "uppercase", letterSpacing: "0.05em" }}>
                       {faceLabels[face]}
                     </div>
-                    <div style={{ display: "flex", gap: "4px", flexWrap: "wrap" }}>
+                    <div style={{ display: "flex", gap: "4px", flexWrap: "nowrap" }}>
                       {mods.map((mod, i) => {
                         const wall = findWall(mod, face);
                         return wall ? <ElevationImage key={i} wall={wall} label={`${face}${i + 1}`} face={face} /> : null;
