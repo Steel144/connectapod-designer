@@ -773,11 +773,15 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                 </button>
               </div>
 
-              {/* WXYZ corner labels - larger, bold, 30% black */}
-              {!hasModAbove && <span className="absolute text-2xl font-bold" style={{ left: '50%', top: '-52px', transform: 'translateX(-50%)', color: 'rgba(0, 0, 0, 0.3)' }}>W</span>}
-              {!hasModRight && <span className="absolute text-2xl font-bold" style={{ right: '-48px', top: '50%', transform: 'translateY(-50%)', color: 'rgba(0, 0, 0, 0.3)' }}>X</span>}
-              {!hasModBelow && <span className="absolute text-2xl font-bold" style={{ left: '50%', bottom: '-52px', transform: 'translateX(-50%)', color: 'rgba(0, 0, 0, 0.3)' }}>Y</span>}
-              {!hasModLeft && <span className="absolute text-2xl font-bold" style={{ left: '-48px', top: '50%', transform: 'translateY(-50%)', color: 'rgba(0, 0, 0, 0.3)' }}>Z</span>}
+              {/* Face labels - clickable when module is selected */}
+              {isSelected && (
+                <>
+                  <button onClick={() => onModuleSelect?.(mod); setTimeout(() => window.dispatchEvent(new CustomEvent('selectFace', { detail: { face: 'W' } })), 0)} className="absolute -top-6 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-white text-gray-900 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-sm z-20">W</button>
+                  <button onClick={() => onModuleSelect?.(mod); setTimeout(() => window.dispatchEvent(new CustomEvent('selectFace', { detail: { face: 'X' } })), 0)} className="absolute -right-6 top-1/2 -translate-y-1/2 px-2 py-0.5 bg-white text-gray-900 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-sm z-20">X</button>
+                  <button onClick={() => onModuleSelect?.(mod); setTimeout(() => window.dispatchEvent(new CustomEvent('selectFace', { detail: { face: 'Y' } })), 0)} className="absolute -bottom-6 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-white text-gray-900 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-sm z-20">Y</button>
+                  <button onClick={() => onModuleSelect?.(mod); setTimeout(() => window.dispatchEvent(new CustomEvent('selectFace', { detail: { face: 'Z' } })), 0)} className="absolute -left-6 top-1/2 -translate-y-1/2 px-2 py-0.5 bg-white text-gray-900 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-sm z-20">Z</button>
+                </>
+              )}
               </div>
               );
               })}
