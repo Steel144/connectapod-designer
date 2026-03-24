@@ -8,6 +8,7 @@ import AddModuleModal from "@/components/catalogue/AddModuleModal";
 import EditModuleModal from "@/components/catalogue/EditModuleModal";
 import PrintableCatalogue from "@/components/catalogue/PrintableCatalogue";
 import BulkUploadModal from "@/components/catalogue/BulkUploadModal";
+import WallCompatibilityTrainer from "@/components/catalogue/WallCompatibilityTrainer";
 
 // Category structure for organizing custom modules — all built-in modules hidden
 const CATALOGUE = [
