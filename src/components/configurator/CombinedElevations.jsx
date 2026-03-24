@@ -119,7 +119,7 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                setReplaceOpen(wall.id);
+                onOpenWallsMenu?.(wall);
               }}
               className="absolute top-2 right-2 bg-blue-500 text-white p-1.5 rounded hover:bg-blue-600 transition-colors"
               title="Replace wall"
