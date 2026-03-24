@@ -21,8 +21,8 @@ export default function QuoteGenerator({ placedModules, walls, open, onClose }) 
   const [clientPhone, setClientPhone] = useState(saved.phone || "");
   const [projectName, setProjectName] = useState(saved.projectName || "");
   const [address, setAddress] = useState(saved.address || "");
-  const [city, setCity] = useState("");
-  const [postalCode, setPostalCode] = useState("");
+  const [city, setCity] = useState(saved.city || "");
+  const [postalCode, setPostalCode] = useState(saved.postalCode || "");
   const [generating, setGenerating] = useState(false);
 
   // Re-populate from storage whenever modal opens
@@ -34,6 +34,8 @@ export default function QuoteGenerator({ placedModules, walls, open, onClose }) 
       setClientPhone(s.phone || "");
       setProjectName(s.projectName || "");
       setAddress(s.address || "");
+      setCity(s.city || "");
+      setPostalCode(s.postalCode || "");
     }
   }, [open]);
 
@@ -44,7 +46,7 @@ export default function QuoteGenerator({ placedModules, walls, open, onClose }) 
 
   const generatePDF = async () => {
     // Save to shared storage
-    const details = { projectName, clientName, address, email: clientEmail, phone: clientPhone };
+    const details = { projectName, clientName, address, city, postalCode, email: clientEmail, phone: clientPhone };
     localStorage.setItem("connectapod_print_details", JSON.stringify(details));
     setGenerating(true);
     const doc = new jsPDF();
