@@ -535,58 +535,62 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
       
       let snapped = null;
 
-      // Snap to nearest module face — no selection required
-       if (wallTemplate.orientation === "horizontal") {
-         let bestDist = Infinity;
-         const CELL_M = 0.6; // 600mm per cell
-         for (const mod of placedModules) {
-           const isCM = isConnectionModule(mod);
-           const distToYFace = Math.abs(exactY - (mod.y + mod.h));
-           const distToWFace = Math.abs(exactY - mod.y);
-           const modLengthM = mod.w * CELL_M;
-           const wallLengthM = wallTemplate.length;
-           const lengthMatch = Math.abs(modLengthM - wallLengthM) < 0.1;
+      // Snap to nearest module face — find single closest position
+      const CELL_M = 0.6;
+      const candidates = [];
 
-           if (!isCM && lengthMatch && distToYFace < bestDist && exactX >= mod.x && exactX <= mod.x + mod.w) {
-             bestDist = distToYFace;
-             const snapY = mod.y + mod.h;
-             snapped = { x: exactX, y: snapY, length: mod.w, face: "Y" };
-           }
-           if (!isCM && lengthMatch && distToWFace < bestDist && exactX >= mod.x && exactX <= mod.x + mod.w) {
-             bestDist = distToWFace;
-             const snapY = mod.y - wallTemplate.thickness;
-             snapped = { x: exactX, y: snapY, length: mod.w, face: "W" };
-           }
-         }
-       } else {
-         // W and X walls snap to end modules only
-         let bestDist = Infinity;
-         const CELL_M = 0.6; // 600mm per cell
-         const isEndWall = wallTemplate.face === "Z" || wallTemplate.face === "X";
+      if (wallTemplate.orientation === "horizontal") {
+        for (const mod of placedModules) {
+          const isCM = isConnectionModule(mod);
+          if (isCM) continue;
 
-         for (const mod of placedModules) {
+          const modLengthM = mod.w * CELL_M;
+          const wallLengthM = wallTemplate.length;
+          if (Math.abs(modLengthM - wallLengthM) > 0.1) continue;
+
+          // Y face (below module)
+          const distToYFace = Math.abs(exactY - (mod.y + mod.h));
+          if (distToYFace <= SNAP_THRESHOLD && exactX >= mod.x && exactX <= mod.x + mod.w) {
+            candidates.push({ dist: distToYFace, x: mod.x, y: mod.y + mod.h, length: mod.w, face: "Y" });
+          }
+
+          // W face (above module)
+          const distToWFace = Math.abs(exactY - mod.y);
+          if (distToWFace <= SNAP_THRESHOLD && exactX >= mod.x && exactX <= mod.x + mod.w) {
+            candidates.push({ dist: distToWFace, x: mod.x, y: mod.y - wallTemplate.thickness, length: mod.w, face: "W" });
+          }
+        }
+      } else {
+        // Vertical walls — snap to end modules only
+        const isEndWall = wallTemplate.face === "Z" || wallTemplate.face === "X";
+
+        for (const mod of placedModules) {
           const isEnd = mod.chassis === "EF" || mod.chassis === "ER" || mod.chassis === "LF" || mod.chassis === "RF" || mod.chassis === "End";
-
-          // Only snap W/X walls to end modules
           if (isEndWall && !isEnd) continue;
 
           const modHeightM = mod.h * CELL_M;
           const wallLengthM = wallTemplate.length;
-          const lengthMatch = Math.abs(modHeightM - wallLengthM) < 0.1;
+          if (Math.abs(modHeightM - wallLengthM) > 0.1) continue;
 
+          // Z face (left side)
           const distToZFace = Math.abs(exactX - mod.x);
-          const distToXFace = Math.abs(exactX - (mod.x + mod.w));
+          if (distToZFace <= SNAP_THRESHOLD && exactY >= mod.y && exactY <= mod.y + mod.h) {
+            candidates.push({ dist: distToZFace, x: mod.x, y: mod.y, length: mod.h, face: "Z" });
+          }
 
-          if (lengthMatch && distToZFace < bestDist && exactY >= mod.y - SNAP_THRESHOLD && exactY <= mod.y + mod.h + SNAP_THRESHOLD) {
-            bestDist = distToZFace;
-            snapped = { x: mod.x, y: exactY, length: mod.h, face: "Z" };
+          // X face (right side)
+          const distToXFace = Math.abs(exactX - (mod.x + mod.w));
+          if (distToXFace <= SNAP_THRESHOLD && exactY >= mod.y && exactY <= mod.y + mod.h) {
+            candidates.push({ dist: distToXFace, x: mod.x + mod.w - wallTemplate.thickness, y: mod.y, length: mod.h, face: "X" });
           }
-          if (lengthMatch && distToXFace < bestDist && exactY >= mod.y - SNAP_THRESHOLD && exactY <= mod.y + mod.h + SNAP_THRESHOLD) {
-            bestDist = distToXFace;
-            snapped = { x: mod.x + mod.w - wallTemplate.thickness, y: exactY, length: mod.h, face: "X" };
-          }
-         }
-         }
+        }
+      }
+
+      // Pick the single nearest candidate
+      if (candidates.length > 0) {
+        const nearest = candidates.reduce((a, b) => a.dist < b.dist ? a : b);
+        snapped = { x: nearest.x, y: nearest.y, length: nearest.length, face: nearest.face };
+      }
 
       if (snapped) {
          const wallWithFace = { ...wallTemplate, length: snapped.length, face: snapped.face };
