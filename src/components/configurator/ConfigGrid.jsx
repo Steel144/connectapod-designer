@@ -889,9 +889,10 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                                <line x1="80%" y1="40%" x2="80%" y2="85%" stroke="#E8956E" stroke-width="1.5"/>`,
            };
 
+           const furnitureType = item.type || item.id;
            const width = (item.width || 1.4) / 0.6;
            const height = (item.depth || 2.0) / 0.6;
-           const svgContent = (furnitureShapes[item.id] || furnitureShapes.table)?.(100, 100);
+           const svgContent = (furnitureShapes[furnitureType] || furnitureShapes.table)?.(100, 100);
 
            return (
              <div
@@ -903,6 +904,8 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                  width: width * scaledCellW,
                  height: height * scaledCellH,
                  border: "2px solid #F15A22",
+                 transform: `rotate(${item.rotation || 0}deg)`,
+                 transformOrigin: "center",
                }}
                onMouseDown={(e) => {
                  e.preventDefault();
@@ -915,7 +918,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
              >
                <svg viewBox="0 0 100 100" className="w-full h-full" dangerouslySetInnerHTML={{ __html: svgContent }} />
                <span className="absolute text-[7px] font-semibold text-orange-600 text-center leading-tight px-0.5 pointer-events-none" style={{ top: '50%', left: '50%', transform: 'translate(-50%, -50%)', whiteSpace: 'nowrap', opacity: 0.5, textTransform: 'capitalize' }}>
-                 {item.id}
+                 {furnitureType}
                </span>
                <div className="absolute opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1" style={{ top: '-26px', left: '50%', transform: 'translateX(-50%)', whiteSpace: 'nowrap' }}>
                  <button
