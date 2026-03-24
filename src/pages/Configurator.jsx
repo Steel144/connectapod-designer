@@ -1076,15 +1076,15 @@ export default function Configurator() {
                            <p className="text-xs font-semibold text-gray-900 break-words">{selectedModule.label}</p>
                            <p className="text-[10px] text-gray-500">{selectedModule.type}</p>
                          </div>
-                         <div className="flex-1 bg-gray-50 rounded overflow-hidden flex items-center justify-center relative">
-                           <img src={selectedModule.floorPlanImage} alt={selectedModule.label} className="w-full h-full object-contain" style={{ transform: `rotate(${selectedModule.rotation || 0}deg) ${selectedModule.flipped ? 'scaleX(-1)' : ''}` }} />
-                           {/* Face selector overlay */}
-                           <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 opacity-0 hover:opacity-100 transition-opacity bg-black/10 backdrop-blur-sm">
+                         <div className="flex-1 bg-gray-50 rounded overflow-hidden flex items-center justify-center relative group">
+                           <img src={selectedModule.floorPlanImage} alt={selectedModule.label} className="w-full h-full object-contain cursor-pointer" style={{ transform: `rotate(${selectedModule.rotation || 0}deg) ${selectedModule.flipped ? 'scaleX(-1)' : ''}` }} />
+                           {/* Face selector overlay - always visible when module selected */}
+                           <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-black/30 backdrop-blur-sm">
                              <div className="grid grid-cols-2 gap-2">
-                               <button onClick={() => setSelectedFace("W")} className="px-2 py-1 bg-white text-gray-800 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors">W</button>
-                               <button onClick={() => setSelectedFace("X")} className="px-2 py-1 bg-white text-gray-800 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors">X</button>
-                               <button onClick={() => setSelectedFace("Y")} className="px-2 py-1 bg-white text-gray-800 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors">Y</button>
-                               <button onClick={() => setSelectedFace("Z")} className="px-2 py-1 bg-white text-gray-800 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors">Z</button>
+                               <button onClick={() => setSelectedFace("W")} className="px-3 py-2 bg-white text-gray-900 text-sm font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-md">W</button>
+                               <button onClick={() => setSelectedFace("X")} className="px-3 py-2 bg-white text-gray-900 text-sm font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-md">X</button>
+                               <button onClick={() => setSelectedFace("Y")} className="px-3 py-2 bg-white text-gray-900 text-sm font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-md">Y</button>
+                               <button onClick={() => setSelectedFace("Z")} className="px-3 py-2 bg-white text-gray-900 text-sm font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-md">Z</button>
                              </div>
                            </div>
                          </div>
