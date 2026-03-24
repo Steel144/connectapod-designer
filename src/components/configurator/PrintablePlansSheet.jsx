@@ -160,25 +160,25 @@ export default function PrintablePlansSheet({ placedModules, onClose, printDetai
           </div>
 
           {/* Title block footer */}
-          <div className="border-t-4 grid text-[10px]" style={{ borderColor: "#F15A22", gridTemplateColumns: "2fr 2fr 1.5fr 1fr" }}>
-            <div className="border-r p-3" style={{ borderColor: "#F15A22" }}>
+          <div className="border-t-4 grid shrink-0" style={{ borderColor: "#F15A22", gridTemplateColumns: "2fr 2fr 1.5fr 1fr", fontSize: "9px", lineHeight: "1.3" }}>
+            <div className="border-r p-2" style={{ borderColor: "#F15A22" }}>
               <p className="uppercase font-bold" style={{ color: "#F15A22" }}>Project</p>
-              <p className="mt-1 text-gray-800 font-semibold">{printDetails.projectName || "—"}</p>
+              <p className="mt-0.5 text-gray-800 font-semibold">{printDetails.projectName || "—"}</p>
             </div>
-            <div className="border-r p-3" style={{ borderColor: "#F15A22" }}>
+            <div className="border-r p-2" style={{ borderColor: "#F15A22" }}>
               <p className="uppercase font-bold" style={{ color: "#F15A22" }}>Client</p>
-              <p className="mt-1 text-gray-700">{printDetails.clientName || "—"}</p>
-              {printDetails.address && <p className="text-gray-500" style={{ fontSize: "9px" }}>{printDetails.address}</p>}
-              {printDetails.email && <p className="text-gray-400" style={{ fontSize: "9px" }}>{printDetails.email}</p>}
-              {printDetails.phone && <p className="text-gray-400" style={{ fontSize: "9px" }}>{printDetails.phone}</p>}
+              <p className="mt-0.5 text-gray-700">{printDetails.clientName || "—"}</p>
+              {printDetails.address && <p className="text-gray-500">{printDetails.address}</p>}
+              {printDetails.email && <p className="text-gray-400">{printDetails.email}</p>}
+              {printDetails.phone && <p className="text-gray-400">{printDetails.phone}</p>}
             </div>
-            <div className="border-r p-3" style={{ borderColor: "#F15A22" }}>
+            <div className="border-r p-2" style={{ borderColor: "#F15A22" }}>
               <p className="uppercase font-bold" style={{ color: "#F15A22" }}>Date</p>
-              <p className="mt-1 text-gray-600">{new Date().toLocaleDateString()}</p>
+              <p className="mt-0.5 text-gray-600">{new Date().toLocaleDateString()}</p>
             </div>
-            <div className="p-3">
+            <div className="p-2">
               <p className="uppercase font-bold" style={{ color: "#F15A22" }}>Scale</p>
-              <p className="mt-1 text-gray-600">1:100</p>
+              <p className="mt-0.5 text-gray-600">1:100</p>
             </div>
           </div>
       </div>
