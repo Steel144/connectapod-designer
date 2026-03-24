@@ -108,7 +108,7 @@ const PrintPage = ({ children, header, footer, isLast }) => {
   );
 };
 
-export default function PrintableElevationsSheet({ walls = [], placedModules = [], onClose }) {
+export default function PrintableElevationsSheet({ walls = [], placedModules = [], onClose, printDetails = {} }) {
   useEffect(() => {
     const timer = setTimeout(() => {
       window.print();
