@@ -1,125 +1,91 @@
-import React, { useMemo } from "react";
+import React from "react";
+import { useElevationGeometry } from "@/hooks/useElevationGeometry";
+import HorizontalElevation from "./HorizontalElevation";
+import VerticalElevation from "./VerticalElevation";
 
-const GRID_ROWS = 40;
-
-const getPavilion = (wallY) => {
-  if (wallY >= 9 && wallY < 13) return 3;
-  if (wallY >= 19 && wallY < 20) return 2;
-  if (wallY >= 26 && wallY < 30) return 1;
-  return null;
-};
-
-const modTouchesBand = (mod, bandStart, bandEnd) =>
-  mod.y < bandEnd && mod.y + mod.h > bandStart;
+const CELL_M = 0.6;
+const PX_PER_M = 100;
+const WALL_H_M = 4.2;
+const PRINT_SCALE = 0.35;
 
 const getModulePavilion = (mod) => {
-  if (modTouchesBand(mod, 9, 13)) return 3;
-  if (modTouchesBand(mod, 19, 20)) return 2;
-  if (modTouchesBand(mod, 26, 30)) return 1;
+  if (mod.y < 13 && mod.y + mod.h > 9) return 3;
+  if (mod.y < 20 && mod.y + mod.h > 19) return 2;
+  if (mod.y < 30 && mod.y + mod.h > 26) return 1;
   return null;
 };
 
-export default function PrintableElevationsSheet({ walls = [], placedModules = [], customWalls = [], onClose }) {
+export default function PrintableElevationsSheet({ walls = [], placedModules = [], onClose }) {
   React.useEffect(() => {
     const timer = setTimeout(() => {
       window.print();
-      const handleAfterPrint = () => {
-        onClose?.();
-      };
+      const handleAfterPrint = () => onClose?.();
       window.addEventListener("afterprint", handleAfterPrint);
       return () => window.removeEventListener("afterprint", handleAfterPrint);
     }, 1000);
-
     return () => clearTimeout(timer);
   }, [onClose]);
 
-  const { pavilions, hasAny } = useMemo(() => {
-    const modsByPavilion = { 1: [], 2: [], 3: [] };
-    placedModules.forEach(mod => {
-      const pav = getModulePavilion(mod);
-      if (pav && modsByPavilion[pav]) modsByPavilion[pav].push(mod);
-    });
+  const scale = PRINT_SCALE;
+  const wallHPx = Math.round(scale * WALL_H_M * PX_PER_M);
+  const endElevationHPx = wallHPx;
 
-    if (!Object.values(modsByPavilion).some(a => a.length > 0)) return { pavilions: [], hasAny: false };
+  const { minX, maxX, allMinY, allMaxY, wElevation, yElevation, zElevation, xElevation } = useElevationGeometry(placedModules, walls);
 
-    const findWall = (mod, face) => {
-      const WALL_OFFSET = 0.31;
-      return walls.find(w => {
-        if (w.face !== face) return false;
-        if (face === "Y") return Math.abs(w.x - mod.x) < 0.5 && Math.abs(w.y - (mod.y + mod.h)) < 0.5;
-        if (face === "W") return Math.abs(w.x - mod.x) < 0.5 && Math.abs(w.y - (mod.y - WALL_OFFSET)) < 0.5;
-        if (face === "Z") return Math.abs(w.y - mod.y) < 0.5 && Math.abs(w.x - mod.x) < 0.5;
-        if (face === "X") return Math.abs(w.y - mod.y) < 0.5 && Math.abs(w.x - (mod.x + mod.w - WALL_OFFSET)) < 0.5;
-        return false;
-      }) || null;
-    };
+  const totalWidthCells = maxX - minX;
+  const totalWidthPx = Math.round(scale * totalWidthCells * CELL_M * PX_PER_M);
+  const totalDepthCells = allMaxY - allMinY;
 
-    const makePlaceholder = (mod, face) => ({
-      id: `placeholder-${mod.id}-${face}`,
-      type: null,
-      face,
-      elevationImage: null,
-      width: mod.w * 0.6,
-      length: mod.w,
-      x: mod.x,
-      y: mod.y,
-    });
+  const slotOffset1Z = -0.02, slotOffset2Z = 0.14, slotOffset3Z = 0;
+  const slotOffset1X = -0.02, slotOffset2X = 0.15, slotOffset3X = 0;
+  const slotScale3X = 1.1;
+  const labelMapZ = { 1: "P1", 2: "C", 3: "P2" };
+  const labelMapX = { 1: "P2", 2: "C", 3: "P1" };
 
-    const pavilions = [3, 2, 1].map((pavNum) => {
-      const modsInPav = modsByPavilion[pavNum];
-      if (modsInPav.length === 0) return null;
-
-      const yRows = {};
-      modsInPav.forEach(mod => {
-        const yKey = mod.y;
-        if (!yRows[yKey]) yRows[yKey] = [];
-        yRows[yKey].push(mod);
-      });
-
-      const rows = [];
-       const isConnectionModule = pavNum === 2;
-       Object.keys(yRows)
-         .map(Number)
-         .sort((a, b) => a - b)
-         .forEach(yPos => {
-           const modsAtY = yRows[yPos].sort((a, b) => a.x - b.x);
-
-           const zWall = walls.find(w => w.face === "Z" && modsAtY.some(mod => Math.abs(w.y - mod.y) < 0.5 && Math.abs(w.x - mod.x) < 0.5)) || null;
-           const xWall = walls.find(w => w.face === "X" && modsAtY.some(mod => Math.abs(w.y - mod.y) < 0.5 && Math.abs(w.x - (mod.x + mod.w - 0.31)) < 0.5)) || null;
-
-           if (isConnectionModule) {
-             rows.push({ type: "Z", yPos, zWall, midWalls: [], xWall: null });
-             rows.push({ type: "X", yPos, zWall: null, midWalls: [], xWall });
-           } else {
-             const yFaceWalls = modsAtY.map(mod => findWall(mod, "Y") || makePlaceholder(mod, "Y"));
-             const wFaceWalls = modsAtY.map(mod => findWall(mod, "W") || makePlaceholder(mod, "W"));
-
-             rows.push({ type: "Y", yPos, zWall, midWalls: yFaceWalls, xWall });
-             rows.push({ type: "W", yPos, zWall, midWalls: wFaceWalls, xWall });
-           }
-         });
-
-      return { pavilionNum: pavNum, rows };
-    });
-
-    return { pavilions: pavilions.filter(Boolean), hasAny: true };
-  }, [walls, placedModules]);
-
-  const getPavilionLabel = (pavNum) => {
-    const labels = { 3: "Pavilion 1", 2: "Connection Module", 1: "Pavilion 2" };
-    return labels[pavNum] || `Pavilion ${pavNum}`;
+  const findWall = (mod, face) => {
+    const WALL_OFFSET = 0.31;
+    return walls.find(w => {
+      if (w.face !== face) return false;
+      if (face === "Y") return Math.abs(w.x - mod.x) < 0.5 && Math.abs(w.y - (mod.y + mod.h)) < 0.5;
+      if (face === "W") return Math.abs(w.x - mod.x) < 0.5 && Math.abs(w.y - (mod.y - WALL_OFFSET)) < 0.5;
+      if (face === "Z") return Math.abs(w.y - mod.y) < 0.5 && Math.abs(w.x - mod.x) < 0.5;
+      if (face === "X") return Math.abs(w.y - mod.y) < 0.5 && Math.abs(w.x - (mod.x + mod.w - WALL_OFFSET)) < 0.5;
+      return false;
+    }) || null;
   };
 
-  if (!hasAny) {
+  const pavilionModules = {
+    1: placedModules.filter(m => getModulePavilion(m) === 1),
+    2: placedModules.filter(m => getModulePavilion(m) === 2),
+    3: placedModules.filter(m => getModulePavilion(m) === 3),
+  };
+  const hasPavilions = Object.values(pavilionModules).some(arr => arr.length > 0);
+
+  const imgHeight = Math.round(scale * 480);
+
+  const ElevationImage = ({ wall, label, face }) => {
+    const wallWidthM = wall.width ?? (wall.length ? wall.length * CELL_M : CELL_M);
+    const wallWidthPx = Math.round(scale * wallWidthM * 100);
     return (
-      <div className="bg-white p-8 text-center">
-        <p className="text-gray-500">No modules in pavilion bands to display elevations.</p>
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "4px", flexShrink: 0 }}>
+        <div style={{ height: `${imgHeight}px`, width: wall.elevationImage ? "auto" : `${wallWidthPx}px`, overflow: "hidden", border: "1px solid #e5e7eb", background: "white" }}>
+          {wall.elevationImage ? (
+            <img src={wall.elevationImage} alt={label} style={{ height: "100%", width: "auto", display: "block", transform: wall.flipped ? "scaleX(-1)" : undefined }} />
+          ) : (
+            <div style={{ width: "100%", height: "100%", background: "repeating-linear-gradient(45deg,#f3f4f6,#f3f4f6 4px,#e5e7eb 4px,#e5e7eb 8px)", border: "1px dashed #d1d5db", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <span style={{ fontSize: "8px", color: "#9ca3af" }}>No wall</span>
+            </div>
+          )}
+        </div>
+        <div style={{ textAlign: "center" }}>
+          <span style={{ display: "inline-block", background: "#F15A22", color: "white", fontSize: "8px", fontWeight: "bold", padding: "1px 5px", borderRadius: "2px" }}>{face}</span>
+        </div>
       </div>
     );
-  }
+  };
 
   return (
-    <div className="bg-white w-full">
+    <div className="bg-white relative">
       <button
         onClick={() => onClose?.()}
         className="fixed top-4 right-4 z-50 bg-red-500 text-white px-4 py-2 rounded text-sm font-bold print:hidden"
@@ -127,87 +93,146 @@ export default function PrintableElevationsSheet({ walls = [], placedModules = [
         Close
       </button>
 
-      <style>{`
-      @page { margin: 0.25in; size: A4 landscape; }
-      @media print {
-        body { margin: 0; padding: 0; }
-        img { max-width: 100%; height: auto; }
-        .pavilion-page { page-break-after: always; margin: 0; padding: 0.25in; }
-      }
-      `}</style>
+      <div style={{ background: "white", display: "flex", flexDirection: "column", minHeight: "100vh", padding: 0 }}>
+        {/* Header */}
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 24px 8px", borderBottom: "2px solid #F15A22" }}>
+          <img src="https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/201470147_ConnectapodArchLogo-01.png" alt="connectapod" style={{ height: "40px", width: "auto" }} />
+          <span style={{ color: "#666", fontSize: "12pt" }}>Elevations</span>
+        </div>
 
-      {pavilions.map((pav) => (
-        <div key={pav.pavilionNum} className="pavilion-page p-4 min-h-screen flex flex-col">
-          <div className="flex items-center justify-between px-6 pt-4 pb-4 border-b border-[#F15A22] mb-6">
-            <img src="https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/1a43e85d2_Connectapod-01.png" alt="connectapod" style={{ height: "25px", width: "auto" }} />
-            <h2 className="text-lg font-bold text-gray-800">{getPavilionLabel(pav.pavilionNum)}</h2>
-            <span className="text-xs text-gray-500 uppercase tracking-widest">Elevations</span>
+        {/* Content */}
+        <div style={{ flex: 1, padding: "24px", overflow: "hidden" }}>
+
+          {/* Building Elevations */}
+          <div style={{ marginBottom: "32px" }}>
+            <div style={{ fontSize: "10px", fontWeight: "bold", color: "#666", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "12px" }}>
+              Building Elevations
+            </div>
+
+            <div style={{ display: "flex", gap: "16px", flexWrap: "wrap", alignItems: "flex-start" }}>
+              <VerticalElevation
+                layers={zElevation}
+                label="Z — West Elevation"
+                color="#f59e0b"
+                totalDepthCells={totalDepthCells}
+                endElevationHPx={endElevationHPx}
+                scale={scale}
+                CELL_M={CELL_M}
+                PX_PER_M={PX_PER_M}
+                WALL_H_M={WALL_H_M}
+                slotOffsets={{ 1: slotOffset1Z, 2: slotOffset2Z, 3: slotOffset3Z }}
+                labelMap={labelMapZ}
+              />
+              <VerticalElevation
+                layers={xElevation}
+                label="X — East Elevation"
+                color="#ef4444"
+                totalDepthCells={totalDepthCells}
+                endElevationHPx={endElevationHPx}
+                scale={scale}
+                CELL_M={CELL_M}
+                PX_PER_M={PX_PER_M}
+                WALL_H_M={WALL_H_M}
+                slotOffsets={{ 1: slotOffset1X, 2: slotOffset2X, 3: slotOffset3X }}
+                slotScales={{ 3: slotScale3X }}
+                labelMap={labelMapX}
+              />
+              <div>
+                <HorizontalElevation
+                  layers={wElevation}
+                  label="W — North Elevation"
+                  color="#22c55e"
+                  totalWidthPx={totalWidthPx}
+                  wallHPx={wallHPx}
+                  scale={scale}
+                  CELL_M={CELL_M}
+                  PX_PER_M={PX_PER_M}
+                />
+                <HorizontalElevation
+                  layers={yElevation}
+                  label="Y — South Elevation"
+                  color="#3b82f6"
+                  totalWidthPx={totalWidthPx}
+                  wallHPx={wallHPx}
+                  scale={scale}
+                  CELL_M={CELL_M}
+                  PX_PER_M={PX_PER_M}
+                />
+              </div>
+            </div>
           </div>
 
-          <div className="flex-1 flex flex-col gap-6">
-            {pav.rows.map((row, idx) => {
-              const hasContent = row.midWalls.some(w => w.elevationImage) || row.zWall?.elevationImage || row.xWall?.elevationImage;
-              if (!hasContent) return null;
-
-              // Calculate scale: find the module(s) for this row and get total width
-              const modsInRow = placedModules.filter(m => Math.abs(m.y - row.yPos) < 0.1 && getModulePavilion(m) === pav.pavilionNum).sort((a, b) => a.x - b.x);
-              const totalModWidth = modsInRow.reduce((sum, m) => sum + m.w, 0);
-              const pxPerMeter = totalModWidth > 0 ? 600 / totalModWidth : 100; // 600px for total row width
-              
-              return (
-                <div key={`${pav.pavilionNum}-${row.yPos}-${row.type}`}>
-                  <div className="flex items-center gap-3 mb-3">
-                     <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-                       {row.type === "Z" 
-                         ? `${getPavilionLabel(pav.pavilionNum)} - Z face (left end)` 
-                         : row.type === "X"
-                         ? `${getPavilionLabel(pav.pavilionNum)} - X face (right end)`
-                         : `${getPavilionLabel(pav.pavilionNum)} - ${row.type === "Y" ? "Y face (outside/top)" : "W face (outside/bottom)"}`}
-                     </span>
-                     <div className="flex-1 h-px bg-gray-200" />
-                   </div>
-
-                  <div className="flex items-end pb-2" style={{ gap: "0px" }}>
-                    {row.zWall?.elevationImage && (
-                      <div className="flex flex-col items-center gap-0" style={{ marginRight: "20px", marginTop: "5px" }}>
-                        <div className="bg-white flex items-center justify-center" style={{ height: "220px", width: `${(modsInRow[0]?.h || 4.8) * pxPerMeter * 1.1}px` }}>
-                          <img src={row.zWall.elevationImage} alt="Z" style={{ height: "100%", width: "100%", objectFit: "contain", pointerEvents: "none" }} />
-                        </div>
+          {/* Pavilion Elevations */}
+          {hasPavilions && (
+            <div>
+              <div style={{ fontSize: "10px", fontWeight: "bold", color: "#666", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "12px" }}>
+                Pavilion Elevations
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+                {[3, 2, 1].map(pavNum => {
+                  const mods = pavilionModules[pavNum];
+                  if (!mods || mods.length === 0) return null;
+                  const pavLabels = { 3: "Pavilion 1", 2: "Connection", 1: "Pavilion 2" };
+                  return (
+                    <div key={pavNum}>
+                      <div style={{ fontSize: "9px", fontWeight: "bold", backgroundColor: "#fed7aa", padding: "4px 8px", borderRadius: "3px", marginBottom: "8px", display: "inline-block" }}>
+                        {pavLabels[pavNum]}
                       </div>
-                    )}
-
-                    {row.midWalls.map((wall, widx) => {
-                      const modForWall = modsInRow[widx];
-                      const wallWidth = modForWall ? modForWall.w * pxPerMeter : 100;
-                      return (
-                        wall.elevationImage && (
-                          <div key={wall.id} className="flex items-center" style={{ marginRight: "0px" }}>
-                            <div className="bg-white flex items-center justify-center" style={{ height: "220px", width: `${wallWidth}px`, marginRight: "0px" }}>
-                              <img src={wall.elevationImage} alt={wall.type} style={{ height: "100%", width: "100%", objectFit: "contain", pointerEvents: "none" }} />
+                      <div style={{ display: "flex", gap: "24px", flexWrap: "wrap" }}>
+                        {["Y", "W"].map(face => {
+                          const faceWalls = mods.map(mod => findWall(mod, face)).filter(Boolean);
+                          if (faceWalls.length === 0) return null;
+                          return (
+                            <div key={face}>
+                              <div style={{ fontSize: "8px", color: "#666", marginBottom: "6px", fontWeight: "500" }}>
+                                {face === "Y" ? "Y Face (Outside/Top)" : "W Face (Outside/Bottom)"}
+                              </div>
+                              <div style={{ display: "flex", gap: "2px" }}>
+                                {mods.map((mod, idx) => {
+                                  const wall = findWall(mod, face);
+                                  return wall ? <ElevationImage key={idx} wall={wall} label={`${face}${idx + 1}`} face={face} /> : null;
+                                })}
+                              </div>
                             </div>
-                          </div>
-                        )
-                      );
-                    })}
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </div>
 
-                    {row.xWall?.elevationImage && (
-                       <div className="flex flex-col items-center gap-0" style={{ marginLeft: "20px", marginTop: "5px" }}>
-                         <div className="bg-white flex items-center justify-center" style={{ height: "220px", width: `${(modsInRow[0]?.h || 4.8) * pxPerMeter * 1.1}px` }}>
-                           <img src={row.xWall.elevationImage} alt="X" style={{ height: "100%", width: "100%", objectFit: "contain", pointerEvents: "none" }} />
-                         </div>
-                       </div>
-                     )}
-                  </div>
-                </div>
-              );
-            })}
+        {/* Footer title block */}
+        <div style={{ borderTop: "4px solid #F15A22", display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", fontSize: "10px" }}>
+          <div style={{ borderRight: "1px solid #F15A22", padding: "12px 16px" }}>
+            <p style={{ fontWeight: "bold", textTransform: "uppercase", color: "#F15A22" }}>Project</p>
+            <p style={{ marginTop: "4px", color: "#666" }}>connectapod Design</p>
           </div>
-
-          <div className="mt-auto pt-6 border-t border-gray-200 text-[9px] text-gray-500 text-right">
-            <p>{new Date().toLocaleDateString()}</p>
+          <div style={{ borderRight: "1px solid #F15A22", padding: "12px 16px" }}>
+            <p style={{ fontWeight: "bold", textTransform: "uppercase", color: "#F15A22" }}>Sheet</p>
+            <p style={{ marginTop: "4px", color: "#666" }}>Elevations</p>
+          </div>
+          <div style={{ borderRight: "1px solid #F15A22", padding: "12px 16px" }}>
+            <p style={{ fontWeight: "bold", textTransform: "uppercase", color: "#F15A22" }}>Date</p>
+            <p style={{ marginTop: "4px", color: "#666" }}>{new Date().toLocaleDateString()}</p>
+          </div>
+          <div style={{ padding: "12px 16px" }}>
+            <p style={{ fontWeight: "bold", textTransform: "uppercase", color: "#F15A22" }}>Scale</p>
+            <p style={{ marginTop: "4px", color: "#666" }}>1:100</p>
           </div>
         </div>
-      ))}
+      </div>
+
+      <style>{`
+        @page { margin: 0; size: A3 landscape; }
+        @media print {
+          body { margin: 0; padding: 0; }
+          img { max-width: 100%; height: auto; }
+        }
+      `}</style>
     </div>
   );
 }
