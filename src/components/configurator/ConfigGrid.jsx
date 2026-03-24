@@ -283,13 +283,13 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
               if (isCM) continue;
               // Wall can snap to any module with matching width — remove X alignment check
 
-              // Y face (bottom of module)
+              // Y face (bottom of module) — snap X to module's left edge and Y below
               const distToYFace = Math.abs(cursorCellY - (mod.y + mod.h));
               if (distToYFace <= SNAP_THRESHOLD) {
                 candidates.push({ dist: distToYFace, x: mod.x, y: mod.y + mod.h, length: mod.w, face: "Y" });
               }
 
-              // W face (top of module)
+              // W face (top of module) — snap X to module's left edge and Y above
               const distToWFace = Math.abs(cursorCellY - mod.y);
               if (distToWFace <= SNAP_THRESHOLD) {
                 candidates.push({ dist: distToWFace, x: mod.x, y: mod.y - wall.thickness, length: mod.w, face: "W" });
