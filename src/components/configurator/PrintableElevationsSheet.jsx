@@ -139,12 +139,20 @@ export default function PrintableElevationsSheet({ walls = [], placedModules = [
 
   return (
     <div className="bg-white relative">
-      <button
-        onClick={() => onClose?.()}
-        className="fixed top-4 right-4 z-50 bg-red-500 text-white px-4 py-2 rounded text-sm font-bold print:hidden"
-      >
-        Close
-      </button>
+      <div className="fixed top-4 right-4 z-50 flex gap-2 print:hidden">
+        <button
+          onClick={() => { window.print(); }}
+          className="bg-[#F15A22] text-white px-4 py-2 rounded text-sm font-bold"
+        >
+          Print Again
+        </button>
+        <button
+          onClick={() => onClose?.()}
+          className="bg-gray-700 text-white px-4 py-2 rounded text-sm font-bold"
+        >
+          ← Back to Design
+        </button>
+      </div>
 
       {/* Page 1 — Building Elevations */}
       <PrintPage
