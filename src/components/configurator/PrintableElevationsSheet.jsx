@@ -25,29 +25,35 @@ const Header = ({ title }) => (
 );
 
 const Footer = ({ sheet, pageNum, totalPages, printDetails = {} }) => (
-  <div style={{ borderTop: "4px solid #F15A22", display: "grid", gridTemplateColumns: "2fr 2fr 1.5fr 1fr 1fr", fontSize: "10px", flexShrink: 0 }}>
-    <div style={{ borderRight: "1px solid #F15A22", padding: "8px 16px" }}>
-      <p style={{ fontWeight: "bold", textTransform: "uppercase", color: "#F15A22" }}>Project</p>
-      <p style={{ marginTop: "2px", color: "#333", fontWeight: "600" }}>{printDetails.projectName || "—"}</p>
+  <div style={{ flexShrink: 0 }}>
+    <div style={{ borderTop: "4px solid #F15A22", display: "grid", gridTemplateColumns: "2fr 2fr 1.5fr 1fr 1fr", fontSize: "10px" }}>
+      <div style={{ borderRight: "1px solid #F15A22", padding: "6px 16px" }}>
+        <p style={{ fontWeight: "bold", textTransform: "uppercase", color: "#F15A22" }}>Project</p>
+        <p style={{ marginTop: "2px", color: "#333", fontWeight: "600" }}>{printDetails.projectName || "—"}</p>
+      </div>
+      <div style={{ borderRight: "1px solid #F15A22", padding: "6px 16px" }}>
+        <p style={{ fontWeight: "bold", textTransform: "uppercase", color: "#F15A22" }}>Client</p>
+        <p style={{ marginTop: "2px", color: "#333" }}>{printDetails.clientName || "—"}</p>
+        {printDetails.address && <p style={{ marginTop: "1px", color: "#666", fontSize: "9px" }}>{printDetails.address}</p>}
+        {printDetails.email && <p style={{ marginTop: "1px", color: "#888", fontSize: "9px" }}>{printDetails.email}</p>}
+        {printDetails.phone && <p style={{ marginTop: "1px", color: "#888", fontSize: "9px" }}>{printDetails.phone}</p>}
+      </div>
+      <div style={{ borderRight: "1px solid #F15A22", padding: "6px 16px" }}>
+        <p style={{ fontWeight: "bold", textTransform: "uppercase", color: "#F15A22" }}>Sheet</p>
+        <p style={{ marginTop: "2px", color: "#666" }}>{sheet}</p>
+      </div>
+      <div style={{ borderRight: "1px solid #F15A22", padding: "6px 16px" }}>
+        <p style={{ fontWeight: "bold", textTransform: "uppercase", color: "#F15A22" }}>Date</p>
+        <p style={{ marginTop: "2px", color: "#666" }}>{new Date().toLocaleDateString()}</p>
+      </div>
+      <div style={{ padding: "6px 16px" }}>
+        <p style={{ fontWeight: "bold", textTransform: "uppercase", color: "#F15A22" }}>Page</p>
+        <p style={{ marginTop: "2px", color: "#666" }}>{pageNum} / {totalPages}</p>
+      </div>
     </div>
-    <div style={{ borderRight: "1px solid #F15A22", padding: "8px 16px" }}>
-      <p style={{ fontWeight: "bold", textTransform: "uppercase", color: "#F15A22" }}>Client</p>
-      <p style={{ marginTop: "2px", color: "#333" }}>{printDetails.clientName || "—"}</p>
-      {printDetails.address && <p style={{ marginTop: "1px", color: "#666", fontSize: "9px" }}>{printDetails.address}</p>}
-      {printDetails.email && <p style={{ marginTop: "1px", color: "#888", fontSize: "9px" }}>{printDetails.email}</p>}
-      {printDetails.phone && <p style={{ marginTop: "1px", color: "#888", fontSize: "9px" }}>{printDetails.phone}</p>}
-    </div>
-    <div style={{ borderRight: "1px solid #F15A22", padding: "8px 16px" }}>
-      <p style={{ fontWeight: "bold", textTransform: "uppercase", color: "#F15A22" }}>Sheet</p>
-      <p style={{ marginTop: "2px", color: "#666" }}>{sheet}</p>
-    </div>
-    <div style={{ borderRight: "1px solid #F15A22", padding: "8px 16px" }}>
-      <p style={{ fontWeight: "bold", textTransform: "uppercase", color: "#F15A22" }}>Date</p>
-      <p style={{ marginTop: "2px", color: "#666" }}>{new Date().toLocaleDateString()}</p>
-    </div>
-    <div style={{ padding: "8px 16px" }}>
-      <p style={{ fontWeight: "bold", textTransform: "uppercase", color: "#F15A22" }}>Page</p>
-      <p style={{ marginTop: "2px", color: "#666" }}>{pageNum} / {totalPages}</p>
+    <div style={{ background: "#F15A22", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "3px 16px" }}>
+      <span style={{ color: "white", fontSize: "8px", fontWeight: "600" }}>connectapod · hello@connectapod.com · www.connectapod.com</span>
+      <span style={{ color: "rgba(255,255,255,0.8)", fontSize: "8px" }}>© {new Date().getFullYear()} Connectapod Ltd. All rights reserved.</span>
     </div>
   </div>
 );
