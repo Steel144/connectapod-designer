@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { ChevronDown, ChevronRight } from "lucide-react";
 
 const FURNITURE_ITEMS = [
-  { id: "bed_king", label: "King Bed", width: 1.74, depth: 2.11, image: "https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/6bd723cbe_bed_king.png" },
-  { id: "bed_queen", label: "Queen Bed", width: 1.66, depth: 2.08, image: "https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/482865291_bed_queen.png" },
+  { id: "bed_king", label: "King Bed", width: 1.67, depth: 2.03, image: "https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/6bd723cbe_bed_king.png" },
+  { id: "bed_queen", label: "Queen Bed", width: 1.6, depth: 2.0, image: "https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/482865291_bed_queen.png" },
   { id: "sofa_1", label: "1-Seater Sofa", width: 0.9, depth: 0.9, image: "https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/5534b8119_sofa_1_seater.png" },
   { id: "sofa_2", label: "2-Seater Sofa", width: 1.6, depth: 0.9, image: "https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/2d25663fc_sofa_2_seater.png" },
   { id: "sofa_3", label: "3-Seater Sofa", width: 2.5, depth: 0.9, image: "https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/50d1084f1_sofa_3_seater.png" },
