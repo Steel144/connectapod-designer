@@ -623,8 +623,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
       <div style={{ paddingLeft: SCROLL_BUFFER, display: "inline-block" }}>
       
       {/* Preview window above grid */}
-      {(selectedModObj || selectedWall) && (
-        <div className="flex gap-4 mb-4 p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
+      <div className={`flex gap-4 mb-4 p-4 bg-white border border-gray-200 rounded-lg shadow-sm ${(selectedModObj || selectedWall) ? '' : 'invisible'}`}>
           {selectedModObj && (
             <div className="flex flex-col gap-2 min-w-0">
               <p className="text-xs font-semibold text-gray-700">{selectedModObj.label}</p>
