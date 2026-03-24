@@ -47,7 +47,7 @@ export default function SaveDesignModal({ open, onClose, onConfirm, isSaving, la
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-sm rounded-2xl">
+      <DialogContent className="sm:max-w-sm rounded-lg z-[9999]">
         <DialogHeader>
           <DialogTitle className="text-lg font-semibold text-slate-800">
             {isSaveAs ? "Save Design As" : originalName ? "Update Design" : "Save Design"}
