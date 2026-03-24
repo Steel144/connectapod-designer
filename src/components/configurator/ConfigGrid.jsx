@@ -964,9 +964,9 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                  }, 0);
                }}
              >
-               <div className="w-full h-full overflow-hidden relative">
+               <div className="w-full h-full overflow-hidden relative flex items-center justify-center">
                  {item.image ? (
-                   <img src={item.image} alt={item.label} className="w-full h-full object-contain p-1" loading="eager" style={{ transform: item.id.startsWith('bed_') ? 'scale(1.04)' : 'scale(1)' }} />
+                   <img src={item.image} alt={item.label} className="object-contain p-1" loading="eager" style={{ width: item.id.startsWith('bed_') ? '104%' : '100%', height: item.id.startsWith('bed_') ? '104%' : '100%' }} />
                  ) : (
                    <div className="w-full h-full flex items-center justify-center text-[7px] font-semibold text-gray-400">
                      {item.label}
