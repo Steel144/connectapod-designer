@@ -464,12 +464,18 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
 
     try {
       const wallType = e.dataTransfer.getData("wallType");
-      if (wallType && selectedWallIds.size > 0) {
+      if (wallType && selectedWallIds.size > 0 && gridRef.current) {
         const wallTemplate = wallTypes.find((w) => w.type === wallType);
         const selectedWallId = Array.from(selectedWallIds)[0];
         const selectedWall = walls.find(w => w.id === selectedWallId);
 
         if (wallTemplate && selectedWall && selectedWall.orientation === wallTemplate.orientation) {
+          // Calculate cursor position in grid coordinates
+          const rect = gridRef.current.getBoundingClientRect();
+          const exactX = (e.clientX - rect.left) / scaledCellW;
+          const exactY = (e.clientY - rect.top) / scaledCellH;
+          
+          // Snap preview to selected wall's position (live drag preview)
           setDragPreview({ x: selectedWall.x, y: selectedWall.y, wallTemplate });
         } else {
           setDragPreview(null);
