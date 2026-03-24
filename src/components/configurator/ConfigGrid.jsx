@@ -1115,9 +1115,9 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="font-semibold text-xs truncate">{wt.label}</div>
+                      <div className="font-semibold text-xs leading-tight">{wt.label}</div>
                       <div className="text-[9px] text-gray-500">{wt.type || wt.mpCode}</div>
-                      {wt.description && <div className="text-[9px] text-gray-500">{wt.description}</div>}
+                      {wt.description && <div className="text-[9px] text-gray-500 leading-tight">{wt.description}</div>}
                       <div className="text-[9px] opacity-70 text-gray-600">${(wt.price || 0).toLocaleString()}</div>
                     </div>
                   </button>
