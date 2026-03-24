@@ -774,13 +774,27 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                 </button>
               </div>
 
-              {/* Face labels - only visible when selected */}
-              <>
-                <button onClick={(e) => { e.stopPropagation(); setFaceMenuOpen({ module: mod, face: 'W', x: e.clientX, y: e.clientY }); }} className={`absolute top-1 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-white text-gray-900 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-sm z-20 ${!isSelected ? 'opacity-0 pointer-events-none' : ''}`}>W</button>
-                <button onClick={(e) => { e.stopPropagation(); setFaceMenuOpen({ module: mod, face: 'X', x: e.clientX, y: e.clientY }); }} className={`absolute right-1 top-1/2 -translate-y-1/2 px-2 py-0.5 bg-white text-gray-900 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-sm z-20 ${!isSelected ? 'opacity-0 pointer-events-none' : ''}`}>X</button>
-                <button onClick={(e) => { e.stopPropagation(); setFaceMenuOpen({ module: mod, face: 'Y', x: e.clientX, y: e.clientY }); }} className={`absolute bottom-1 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-white text-gray-900 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-sm z-20 ${!isSelected ? 'opacity-0 pointer-events-none' : ''}`}>Y</button>
-                <button onClick={(e) => { e.stopPropagation(); setFaceMenuOpen({ module: mod, face: 'Z', x: e.clientX, y: e.clientY }); }} className={`absolute left-1 top-1/2 -translate-y-1/2 px-2 py-0.5 bg-white text-gray-900 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-sm z-20 ${!isSelected ? 'opacity-0 pointer-events-none' : ''}`}>Z</button>
-              </>
+              {/* Face labels - conditionally shown based on module type */}
+              {(() => {
+                const isConnection = mod.chassis === "C" || isConnectionModule(mod);
+                const isLeftEnd = mod.chassis === "LF" || mod.chassis === "ER";
+                const isDeck = mod.description && mod.description.includes("Deck");
+                
+                // Standard: W, Y | Left end: W, Z, Y | Deck: W, Y | Connection: Z, X
+                const showW = !isConnection;
+                const showX = isConnection;
+                const showY = !isConnection;
+                const showZ = (isLeftEnd || isConnection);
+                
+                return (
+                  <>
+                    {showW && <button onClick={(e) => { e.stopPropagation(); setFaceMenuOpen({ module: mod, face: 'W', x: e.clientX, y: e.clientY }); }} className={`absolute top-1 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-white text-gray-900 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-sm z-20 ${!isSelected ? 'opacity-0 pointer-events-none' : ''}`}>W</button>}
+                    {showX && <button onClick={(e) => { e.stopPropagation(); setFaceMenuOpen({ module: mod, face: 'X', x: e.clientX, y: e.clientY }); }} className={`absolute right-1 top-1/2 -translate-y-1/2 px-2 py-0.5 bg-white text-gray-900 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-sm z-20 ${!isSelected ? 'opacity-0 pointer-events-none' : ''}`}>X</button>}
+                    {showY && <button onClick={(e) => { e.stopPropagation(); setFaceMenuOpen({ module: mod, face: 'Y', x: e.clientX, y: e.clientY }); }} className={`absolute bottom-1 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-white text-gray-900 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-sm z-20 ${!isSelected ? 'opacity-0 pointer-events-none' : ''}`}>Y</button>}
+                    {showZ && <button onClick={(e) => { e.stopPropagation(); setFaceMenuOpen({ module: mod, face: 'Z', x: e.clientX, y: e.clientY }); }} className={`absolute left-1 top-1/2 -translate-y-1/2 px-2 py-0.5 bg-white text-gray-900 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-sm z-20 ${!isSelected ? 'opacity-0 pointer-events-none' : ''}`}>Z</button>}
+                  </>
+                );
+              })()}
             
             </div>
               );
