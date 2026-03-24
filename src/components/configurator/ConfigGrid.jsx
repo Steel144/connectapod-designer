@@ -264,10 +264,13 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
           const wall = walls.find(w => w.id === wallId);
           if (!wall) return;
 
-          const SNAP_THRESHOLD = 0.8; // cells — tighter snapping
+          const SNAP_THRESHOLD = 0.5; // cells — very tight snapping for accuracy
           let snapped = null;
-          const cursorCellX = cursorX / scaledCellW;
-          const cursorCellY = cursorY / scaledCellH;
+          // Calculate cursor position as cells, accounting for wall center
+          const wallCenterOffsetX = draggingWall.wall.orientation === "horizontal" ? draggingWall.wall.length * scaledCellW / 2 : draggingWall.wall.thickness * scaledCellW / 2;
+          const wallCenterOffsetY = draggingWall.wall.orientation === "vertical" ? draggingWall.wall.length * scaledCellH / 2 : draggingWall.wall.thickness * scaledCellH / 2;
+          const cursorCellX = (cursorX - draggingWall.offsetX - wallCenterOffsetX / 2) / scaledCellW;
+          const cursorCellY = (cursorY - draggingWall.offsetY - wallCenterOffsetY / 2) / scaledCellH;
 
           if (wall.orientation === "horizontal") {
             let bestDist = Infinity;
