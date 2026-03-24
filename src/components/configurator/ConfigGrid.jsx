@@ -860,14 +860,24 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
 
         {/* Furniture */}
          {furniture.map((item) => {
-           const furnitureEmojis = {
-             bed: "🛏️",
-             sofa: "🛋️",
-             table: "🪑",
-             chair: "🪑",
-             desk: "🖥️",
+           const furnitureShapes = {
+             bed: (w, h) => `<rect x="0" y="0" width="${w}" height="${h}" fill="#FFF5E6" stroke="none"/>
+                              <rect x="10%" y="10%" width="80%" height="80%" fill="none" stroke="#E8956E" stroke-width="2"/>`,
+             sofa: (w, h) => `<rect x="0" y="0" width="${w}" height="${h}" fill="#FFF5E6" stroke="none"/>
+                               <rect x="5%" y="20%" width="90%" height="60%" fill="none" stroke="#E8956E" stroke-width="2" rx="3"/>`,
+             table: (w, h) => `<rect x="0" y="0" width="${w}" height="${h}" fill="#FFF5E6" stroke="none"/>
+                                <circle cx="${w/2}" cy="${h/2}" r="${Math.min(w,h)*0.35}" fill="none" stroke="#E8956E" stroke-width="2"/>`,
+             chair: (w, h) => `<rect x="0" y="0" width="${w}" height="${h}" fill="#FFF5E6" stroke="none"/>
+                                <rect x="25%" y="25%" width="50%" height="50%" fill="none" stroke="#E8956E" stroke-width="2"/>`,
+             desk: (w, h) => `<rect x="0" y="0" width="${w}" height="${h}" fill="#FFF5E6" stroke="none"/>
+                               <line x1="10%" y1="40%" x2="90%" y2="40%" stroke="#E8956E" stroke-width="2"/>
+                               <line x1="20%" y1="40%" x2="20%" y2="85%" stroke="#E8956E" stroke-width="1.5"/>
+                               <line x1="80%" y1="40%" x2="80%" y2="85%" stroke="#E8956E" stroke-width="1.5"/>`,
            };
-           const emoji = furnitureEmojis[item.id] || "📦";
+
+           const width = (item.width || 1.4) / 0.6;
+           const height = (item.depth || 2.0) / 0.6;
+           const svgContent = (furnitureShapes[item.id] || furnitureShapes.table)?.(100, 100);
 
            return (
              <div
@@ -876,8 +886,9 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                style={{
                  left: item.x * scaledCellW,
                  top: item.y * scaledCellH,
-                 width: (item.width || 1.4) * scaledCellW / 0.6,
-                 height: (item.depth || 2.0) * scaledCellH / 0.6,
+                 width: width * scaledCellW,
+                 height: height * scaledCellH,
+                 border: "2px solid #F15A22",
                }}
                onMouseDown={(e) => {
                  e.preventDefault();
@@ -888,9 +899,10 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                  setDragging({ mod: item, offsetX, offsetY, cursorX: e.clientX, cursorY: e.clientY, isPlaced: true, selectedIds: new Set([item.id]), isFurniture: true });
                }}
              >
-               <div className="absolute inset-0 bg-white/80 border-2 border-dashed border-orange-300 rounded flex items-center justify-center text-2xl hover:bg-orange-50">
-                 {emoji}
-               </div>
+               <svg viewBox="0 0 100 100" className="w-full h-full" dangerouslySetInnerHTML={{ __html: svgContent }} />
+               <span className="absolute text-[7px] font-semibold text-orange-600 text-center leading-tight px-0.5 pointer-events-none" style={{ top: '50%', left: '50%', transform: 'translate(-50%, -50%)', whiteSpace: 'nowrap', opacity: 0.5, textTransform: 'capitalize' }}>
+                 {item.id}
+               </span>
                <div className="absolute opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1" style={{ top: '-26px', left: '50%', transform: 'translateX(-50%)', whiteSpace: 'nowrap' }}>
                  <button
                    onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); onRotateFurniture?.(item.id); }}
