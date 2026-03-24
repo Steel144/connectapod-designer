@@ -3,7 +3,7 @@ import { X, RotateCw, FlipHorizontal } from "lucide-react";
 import { MODULE_TYPES } from "./ModulePanel.jsx";
 import { FloorPlanSVG } from "./FloorPlanSVG.jsx";
 
-const CELL_SIZE = 4;
+const CELL_SIZE = 24;
 const CELL_W = CELL_SIZE;
 const CELL_H = CELL_SIZE;
 const GRID_COLS = 150;
@@ -1274,7 +1274,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
         )}
 
         <p className="text-xs text-slate-400 mt-1 text-center">
-          Grid: {GRID_COLS}×{GRID_ROWS} cells · Snap: 100mm
+          Grid: {GRID_COLS}×{GRID_ROWS} cells · Snap: 600mm
         </p>
       </div>
       </div>
