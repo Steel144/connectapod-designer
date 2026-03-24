@@ -33,7 +33,7 @@ const Footer = ({ sheet, pageNum, totalPages, printDetails = {} }) => (
     <div style={{ borderTop: "4px solid #F15A22", display: "grid", gridTemplateColumns: "2fr 2fr 1.5fr 1fr 1fr", fontSize: "10px" }}>
       <div style={{ borderRight: "1px solid #F15A22", padding: "6px 16px" }}>
         <p style={{ fontWeight: "bold", textTransform: "uppercase", color: "#F15A22" }}>Project</p>
-        <p style={{ marginTop: "2px", color: "#333", fontWeight: "600" }}>{printDetails.projectName || "—"}</p>
+        <p style={{ marginTop: "2px", color: "#333", fontWeight: "600", fontSize: "15px" }}>{printDetails.projectName || "—"}</p>
 
       </div>
       <div style={{ borderRight: "1px solid #F15A22", padding: "6px 16px" }}>

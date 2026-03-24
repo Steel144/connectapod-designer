@@ -171,7 +171,7 @@ export default function PrintablePlansSheet({ placedModules, onClose, printDetai
             <div className="border-t-4 grid" style={{ borderColor: "#F15A22", gridTemplateColumns: "2fr 2fr 1.5fr 1fr", fontSize: "9px", lineHeight: "1.3" }}>
               <div className="border-r p-2" style={{ borderColor: "#F15A22" }}>
                 <p className="uppercase font-bold" style={{ color: "#F15A22" }}>Project</p>
-                <p className="mt-0.5 text-gray-800 font-semibold">{printDetails.projectName || "—"}</p>
+                <p className="mt-0.5 text-gray-800 font-semibold" style={{ fontSize: "13.5px" }}>{printDetails.projectName || "—"}</p>
 
               </div>
               <div className="border-r p-2" style={{ borderColor: "#F15A22" }}>
