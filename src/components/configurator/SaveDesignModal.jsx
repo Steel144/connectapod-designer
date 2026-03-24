@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { LayoutTemplate } from "lucide-react";
 
-export default function SaveDesignModal({ open, onClose, onConfirm, isSaving, lastSavedName = "" }) {
+export default function SaveDesignModal({ open, onClose, onConfirm, isSaving, lastSavedName = "", projectName = "" }) {
   const [name, setName] = useState("");
   const [originalName, setOriginalName] = useState("");
   const [saveToCatalogue, setSaveToCatalogue] = useState(false);
@@ -13,14 +13,16 @@ export default function SaveDesignModal({ open, onClose, onConfirm, isSaving, la
   const [isSaveAs, setIsSaveAs] = useState(false);
 
   React.useEffect(() => {
-    if (open && lastSavedName && !isSaveAs) {
-      setName(lastSavedName);
-      setOriginalName(lastSavedName);
+    if (open && !isSaveAs) {
+      // Use lastSavedName if available, otherwise use projectName, otherwise empty
+      const initialName = lastSavedName || projectName || "";
+      setName(initialName);
+      setOriginalName(initialName);
     } else {
       setName("");
       setOriginalName("");
     }
-  }, [open, lastSavedName, isSaveAs]);
+  }, [open, lastSavedName, projectName, isSaveAs]);
 
   const handleConfirm = (asCatalogue) => {
     if (!name.trim()) return;
