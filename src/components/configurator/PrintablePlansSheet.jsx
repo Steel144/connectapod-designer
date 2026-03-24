@@ -40,12 +40,20 @@ export default function PrintablePlansSheet({ placedModules, onClose, printDetai
 
   return (
     <div className="bg-white relative" style={{ overflow: "hidden" }}>
-      <button
-        onClick={() => onClose?.()}
-        className="fixed top-4 right-4 z-50 bg-red-500 text-white px-4 py-2 rounded text-sm font-bold print:hidden"
-      >
-        Close
-      </button>
+      <div className="fixed top-4 right-4 z-50 flex gap-2 print:hidden">
+        <button
+          onClick={() => { setTimeout(() => window.print(), 300); }}
+          className="bg-[#F15A22] text-white px-4 py-2 rounded text-sm font-bold"
+        >
+          Print Again
+        </button>
+        <button
+          onClick={() => onClose?.()}
+          className="bg-gray-700 text-white px-4 py-2 rounded text-sm font-bold"
+        >
+          ← Back to Design
+        </button>
+      </div>
       <div className="bg-white flex flex-col p-0 relative" style={{ height: "100vh", overflow: "hidden", boxSizing: "border-box" }}>
 
          {/* Header with logo */}
