@@ -1083,8 +1083,8 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                     className="w-full text-left px-2 py-2 hover:bg-[#F15A22] hover:text-white transition-colors border-b border-gray-100 last:border-b-0 flex gap-2 items-start"
                   >
                     <div className="w-16 h-12 bg-gray-50 rounded flex-shrink-0 flex items-center justify-center overflow-hidden border border-gray-200">
-                      {wt.elevationImage ? (
-                        <img src={wt.elevationImage} alt={wt.label} className="w-full h-full object-cover" />
+                      {(wt.elevationImage || wallImages[wt.type]) ? (
+                        <img src={wt.elevationImage || wallImages[wt.type]} alt={wt.label} className="w-full h-full object-cover" />
                       ) : (
                         <div className="text-[10px] text-gray-400 font-bold">{wt.type}</div>
                       )}
