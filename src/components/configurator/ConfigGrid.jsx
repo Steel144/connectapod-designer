@@ -522,8 +522,15 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
       if (selectedWallIds.size > 0) {
         const selectedWallId = Array.from(selectedWallIds)[0];
         const selectedWall = walls.find(w => w.id === selectedWallId);
+        console.log('[ConfigGrid] Attempting wall stick:', {
+          selectedWallId,
+          selectedWall: selectedWall ? { id: selectedWall.id, x: selectedWall.x, y: selectedWall.y, orientation: selectedWall.orientation } : null,
+          wallTemplate: { type: wallTemplate.type, orientation: wallTemplate.orientation },
+          match: selectedWall && selectedWall.orientation === wallTemplate.orientation
+        });
         if (selectedWall && selectedWall.orientation === wallTemplate.orientation) {
           // Stick to selected wall regardless of length match
+          console.log('[ConfigGrid] Placing wall at selected wall position:', selectedWall.x, selectedWall.y);
           if (onPlaceWall) onPlaceWall(wallTemplate, selectedWall.x, selectedWall.y);
           return;
         }
