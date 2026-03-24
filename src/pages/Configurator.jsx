@@ -745,6 +745,7 @@ export default function Configurator() {
 
     setPlacedModules(grid);
     setWalls(loadedWalls);
+    setFurniture(design.furniture || []);
     setLoadCounter(c => c + 1);
     setShowSaved(false);
     toast.success(`Loaded "${design.name}"`);
