@@ -821,17 +821,17 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                  const isRightEnd = mod.chassis === "RF" || mod.chassis === "LR";
                  const isDeck = mod.description && mod.description.includes("Deck");
                  const rotation = mod.rotation || 0;
-                 const isRotated = rotation === 90 || rotation === 270;
+                 const isRotated180 = rotation === 180;
 
                  // Standard: W, Y | Left end: W, Z, Y | Right end: W, X, Y | Deck: W, Y | Connection: Z, X
-                 // When rotated 90°, end walls swap: Z↔X
+                 // When rotated 180°, end walls swap: Z↔X
                  const showW = !isConnection;
                  let showX = isConnection || isRightEnd;
                  let showY = !isConnection;
                  let showZ = (isLeftEnd || isConnection);
 
                  // Swap Z/X for rotated end modules
-                 if ((isLeftEnd || isRightEnd) && isRotated) {
+                 if ((isLeftEnd || isRightEnd) && isRotated180) {
                    [showZ, showX] = [showX, showZ];
                  }
                 
