@@ -298,10 +298,11 @@ export default function SiteMap() {
                   src={floorPlanOverlay} 
                   alt="Floor Plan"
                   style={{
-                    maxWidth: '80%',
-                    maxHeight: '80%',
+                    maxWidth: '90%',
+                    maxHeight: '90%',
                     objectFit: 'contain',
-                    transform: `scale(${Math.pow(2, mapZoom - 15)})`,
+                    // At zoom 18, ~200m visible width. Scale by zoom level relative to base.
+                    transform: `scale(${Math.pow(2, mapZoom - 18)})`,
                     transition: 'transform 0.1s ease-out'
                   }}
                 />
