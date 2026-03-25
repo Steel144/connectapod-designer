@@ -413,49 +413,8 @@ export default function SiteMap() {
               </div>
             </div>
             <div>
-              <label className="text-xs font-semibold text-gray-600 block mb-2">Position - Latitude</label>
-              <div className="flex items-center gap-2">
-                <input
-                  type="range"
-                  min="-0.01"
-                  max="0.01"
-                  step="0.001"
-                  value={positionOffset.lat}
-                  onChange={(e) => setPositionOffset(prev => ({ ...prev, lat: parseFloat(e.target.value) }))}
-                  className="flex-1"
-                />
-                <span className="text-xs text-gray-600 w-12 text-right">{positionOffset.lat.toFixed(4)}</span>
-              </div>
-            </div>
-            <div>
-              <label className="text-xs font-semibold text-gray-600 block mb-2">Position - Longitude</label>
-              <div className="flex items-center gap-2">
-                <input
-                  type="range"
-                  min="-0.01"
-                  max="0.01"
-                  step="0.001"
-                  value={positionOffset.lng}
-                  onChange={(e) => setPositionOffset(prev => ({ ...prev, lng: parseFloat(e.target.value) }))}
-                  className="flex-1"
-                />
-                <span className="text-xs text-gray-600 w-12 text-right">{positionOffset.lng.toFixed(4)}</span>
-              </div>
-            </div>
-            <div>
-              <label className="text-xs font-semibold text-gray-600 block mb-2">Map Zoom</label>
-              <div className="flex items-center gap-2">
-                <input
-                  type="range"
-                  min="15"
-                  max="22"
-                  step="1"
-                  value={mapZoom}
-                  onChange={(e) => setMapZoom(parseInt(e.target.value))}
-                  className="flex-1"
-                />
-                <span className="text-xs text-gray-600 w-8 text-right">{mapZoom}</span>
-              </div>
+              <label className="text-xs font-semibold text-gray-600 block">Current Map Zoom:</label>
+              <p className="text-sm font-bold text-[#F15A22]">{Math.round(mapZoom)}</p>
             </div>
           </div>
         </div>
