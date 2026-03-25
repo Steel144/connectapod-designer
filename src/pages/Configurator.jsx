@@ -855,6 +855,7 @@ export default function Configurator() {
   }
 
   return (
+    <TooltipProvider>
     <div className={`bg-white ${viewMode === "building" ? "fixed inset-0 overflow-auto" : "w-screen h-screen overflow-hidden relative"} flex flex-col`}>
 
       {/* ── DESKTOP TOP BAR ── */}
