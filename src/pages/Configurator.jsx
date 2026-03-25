@@ -902,6 +902,27 @@ export default function Configurator() {
             <Link to={createPageUrl("WallCatalogue")} className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-gray-600 hover:text-[#F15A22] border border-gray-200 bg-white hover:border-[#F15A22] transition-all">
               <BookOpen size={13} /> Wall Catalogue
             </Link>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-gray-600 hover:text-[#F15A22] border border-gray-200 bg-white hover:border-[#F15A22] transition-all">
+                  <Settings size={13} /> Settings
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-52">
+                <DropdownMenuItem onClick={() => setShowLabels(v => !v)} className="flex items-center justify-between cursor-pointer">
+                  <span className="flex items-center gap-2"><Eye size={13} /> Show Labels</span>
+                  {showLabels && <Check size={12} className="text-[#F15A22]" />}
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setShowFurniture(v => !v)} className="flex items-center justify-between cursor-pointer">
+                  <span className="flex items-center gap-2"><Eye size={13} /> Show Furniture</span>
+                  {showFurniture && <Check size={12} className="text-[#F15A22]" />}
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setShowPhotoImages(v => !v)} className="flex items-center justify-between cursor-pointer">
+                  <span className="flex items-center gap-2"><Image size={13} /> {showPhotoImages ? "Photo Images" : "Line Drawings"}</span>
+                  {showPhotoImages && <Check size={12} className="text-[#F15A22]" />}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
             <div className="flex border border-gray-200 overflow-hidden">
               <button onClick={() => viewMode === "elevations" ? setElevationZoom(z => Math.max(25, z - 10)) : setGridZoom(z => Math.max(25, z - 10))} title="Zoom out" className="px-2.5 py-1.5 text-xs text-gray-600 hover:text-[#F15A22] transition-all">
                 <ZoomOut size={13} />
