@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Info, Edit2 } from "lucide-react";
 import { useAuth } from "@/lib/AuthContext";
+import { base44 } from "@/api/base44Client";
 import EditTooltipModal from "./EditTooltipModal";
 
 export function getModuleTypeInfo(item) {
@@ -46,26 +47,51 @@ export function getModuleTypeInfo(item) {
 export function TypeTooltip({ type, children }) {
   const { user } = useAuth();
   const [editModalOpen, setEditModalOpen] = useState(false);
-  const [tooltipData, setTooltipData] = useState(null);
+  const [info, setInfo] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  let info;
-  if (type === "standard") {
-    info = {
+  const defaultInfo = {
+    standard: {
       key: "standard-module",
       type: "Standard Module",
       description: "Standard modules form the main building structure. They can be joined together in rows and columns to create various floor plan configurations.",
       color: "bg-green-50 border-green-200"
-    };
-  } else if (type === "end") {
-    info = {
+    },
+    end: {
       key: "end-module",
       type: "End Module",
       description: "End modules terminate the building structure. They attach to the ends of standard modules and feature enclosed sides. Used for creating complete building perimeters.",
       color: "bg-blue-50 border-blue-200"
+    }
+  };
+
+  useEffect(() => {
+    const loadTooltipData = async () => {
+      try {
+        const defaultData = defaultInfo[type];
+        if (!defaultData) {
+          setIsLoading(false);
+          return;
+        }
+
+        const records = await base44.entities.TooltipContent.filter({ key: defaultData.key });
+        if (records.length > 0) {
+          setInfo({ ...defaultData, ...records[0] });
+        } else {
+          setInfo(defaultData);
+        }
+      } catch (error) {
+        console.error("Error loading tooltip:", error);
+        setInfo(defaultInfo[type]);
+      } finally {
+        setIsLoading(false);
+      }
     };
-  } else {
-    return children;
-  }
+
+    loadTooltipData();
+  }, [type]);
+
+  if (!info || isLoading) return children;
   
   const isAdmin = user?.role === "admin";
 
@@ -85,10 +111,7 @@ export function TypeTooltip({ type, children }) {
                 </div>
                 {isAdmin && (
                   <button
-                    onClick={() => {
-                      setTooltipData(info);
-                      setEditModalOpen(true);
-                    }}
+                    onClick={() => setEditModalOpen(true)}
                     className="shrink-0 ml-1 p-1 hover:bg-gray-200 rounded transition-colors"
                   >
                     <Edit2 size={12} className="text-gray-600" />
@@ -104,10 +127,9 @@ export function TypeTooltip({ type, children }) {
       <EditTooltipModal 
         isOpen={editModalOpen} 
         onClose={() => setEditModalOpen(false)} 
-        type={tooltipData}
+        type={info}
         onSave={(newData) => {
-          info.type = newData.type;
-          info.description = newData.description;
+          setInfo({ ...info, ...newData });
         }}
       />
     </>

@@ -24,7 +24,7 @@ export default function EditTooltipModal({ isOpen, onClose, type, onSave }) {
 
     setIsLoading(true);
     try {
-      const key = type.key || type.type.toLowerCase().replace(/\s+/g, '-');
+      const key = type.key;
       
       // Try to find existing record
       const existing = await base44.entities.TooltipContent.filter({ key });
