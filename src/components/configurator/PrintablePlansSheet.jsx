@@ -109,7 +109,7 @@ export default function PrintablePlansSheet({ placedModules, furniture = [], wal
 
   const gridWidth = Math.max(maxX - minX, 0) + 2;
   const gridHeight = Math.max(maxY - minY, 0) + 2;
-  const CELL_SIZE = PRINT_SCALE * CELL_M * PX_PER_M;
+  const CELL_SIZE = scale * CELL_M * PX_PER_M;
   const canvasWidth = gridWidth * CELL_SIZE;
   const canvasHeight = gridHeight * CELL_SIZE;
 
