@@ -990,7 +990,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                    </div>
                  )}
                  <span className="absolute text-center text-[7px] font-semibold text-gray-500 pointer-events-none" style={{ top: '50%', left: '50%', transform: 'translate(-50%, -50%)', whiteSpace: 'nowrap', zIndex: 10 }}>
-                   {item.label}<br />{(item.width || 1.4).toFixed(1)}m × {(item.depth || 2.0).toFixed(1)}m
+                   {item.label}
                  </span>
                </div>
                <div className="absolute opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1" style={{ top: '-26px', left: '50%', transform: 'translateX(-50%)', whiteSpace: 'nowrap' }}>
