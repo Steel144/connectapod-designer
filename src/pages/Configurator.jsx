@@ -53,7 +53,14 @@ export default function Configurator() {
     } catch { return []; }
   });
   const [furniture, setFurniture] = useState(() => {
-    try { return JSON.parse(localStorage.getItem("configurator_furniture") || "[]"); } catch { return []; }
+    try {
+      const saved = JSON.parse(localStorage.getItem("configurator_furniture") || "[]");
+      return saved.map(f => {
+        if (f.image) return f;
+        const match = FURNITURE_ITEMS.find(fi => fi.id === f.type || fi.id === f.id);
+        return match ? { ...f, image: match.image } : f;
+      });
+    } catch { return []; }
   });
 
   const pushHistory = useCallback((modules, w) => {
