@@ -277,18 +277,6 @@ export default function PrintablePlansSheet({ placedModules, furniture = [], wal
                         preserveAspectRatio="xMidYMid slice"
                       />
                     )}
-                    {wall.face && (
-                      <text
-                        x={wx + wallW / 2}
-                        y={wy + wallH / 2 + 3}
-                        textAnchor="middle"
-                        fontSize="8"
-                        fontWeight="bold"
-                        fill="white"
-                      >
-                        {wall.face}
-                      </text>
-                    )}
                   </g>
                 );
               })}
