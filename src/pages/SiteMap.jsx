@@ -266,11 +266,20 @@ export default function SiteMap() {
 
             {/* Floor plan overlay at map scale */}
             {floorPlanOverlay && getOverlayBounds() && (
-              <ImageOverlay
-                url={floorPlanOverlay}
-                bounds={getOverlayBounds()}
-                opacity={0.8}
-              />
+              <div style={{
+                position: 'absolute',
+                width: '100%',
+                height: '100%',
+                pointerEvents: 'none',
+                transform: `rotate(${overlayRotation}deg)`,
+                transformOrigin: 'center'
+              }}>
+                <ImageOverlay
+                  url={floorPlanOverlay}
+                  bounds={getOverlayBounds()}
+                  opacity={0.8}
+                />
+              </div>
             )}
           </MapContainer>
         ) : (
@@ -285,6 +294,21 @@ export default function SiteMap() {
         <div className="absolute bottom-4 right-4 z-[9999] bg-white rounded-lg shadow-lg p-4 border border-gray-200 max-w-xs">
           <div className="space-y-3">
 
+            <div>
+              <label className="text-xs font-semibold text-gray-600 block mb-2">Rotation</label>
+              <div className="flex items-center gap-2">
+                <input
+                  type="range"
+                  min="0"
+                  max="360"
+                  step="1"
+                  value={overlayRotation}
+                  onChange={(e) => setOverlayRotation(parseInt(e.target.value))}
+                  className="flex-1"
+                />
+                <span className="text-xs text-gray-600 w-8 text-right">{overlayRotation}°</span>
+              </div>
+            </div>
             <div>
               <label className="text-xs font-semibold text-gray-600 block mb-2">Position - Latitude</label>
               <div className="flex items-center gap-2">
