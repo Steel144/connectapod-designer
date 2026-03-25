@@ -770,15 +770,17 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                   backgroundColor: mod.floorPlanImage ? "white" : "transparent",
                 }}
               >
-                {(mod.floorPlanImage || floorPlanImages[mod.type] || floorPlanImages[mod.type?.toLowerCase()]) ? (
-                   <img src={mod.floorPlanImage || floorPlanImages[mod.type] || floorPlanImages[mod.type?.toLowerCase()]} alt={mod.label} className="w-full h-full object-cover" style={{ transform: mod.flipped ? 'scaleX(-1)' : undefined }} />
-                 ) : (
-                   <FloorPlanSVG code={mod.type} className="w-full h-full" style={{ transform: mod.flipped ? 'scaleX(-1)' : undefined }} />
-                 )}
-              </div>
-              <span className="absolute text-[9px] font-semibold text-slate-700 text-center leading-tight px-0.5 py-0.5 pointer-events-none" style={{ top: '50%', left: '50%', transform: 'translate(-50%, -50%) rotate(-90deg)', whiteSpace: 'nowrap', opacity: 0.4 }}>
-                {mod.label}
-              </span>
+                {showPhotoImages && (mod.floorPlanImage || floorPlanImages[mod.type] || floorPlanImages[mod.type?.toLowerCase()]) ? (
+                  <img src={mod.floorPlanImage || floorPlanImages[mod.type] || floorPlanImages[mod.type?.toLowerCase()]} alt={mod.label} className="w-full h-full object-cover" style={{ transform: mod.flipped ? 'scaleX(-1)' : undefined }} />
+                ) : (
+                  <FloorPlanSVG code={mod.type} className="w-full h-full" style={{ transform: mod.flipped ? 'scaleX(-1)' : undefined }} />
+                )}
+                </div>
+                {showLabels && (
+                <span className="absolute text-[9px] font-semibold text-slate-700 text-center leading-tight px-0.5 py-0.5 pointer-events-none" style={{ top: '50%', left: '50%', transform: 'translate(-50%, -50%) rotate(-90deg)', whiteSpace: 'nowrap', opacity: 0.4 }}>
+                  {mod.label}
+                </span>
+                )}
               {getPavilion(mod.y) && (
                 <span className="absolute text-[8px] font-bold text-slate-500 pointer-events-none" style={{ bottom: '2px', right: '2px', opacity: 0.6 }}>
                   {(() => { const p = getPavilion(mod.y); const labels = { 3: "P1", 2: "CM", 1: "P2" }; return labels[p] || `P${p}`; })()}
