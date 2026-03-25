@@ -77,6 +77,8 @@ export default function PrintablePlansSheet({ placedModules, furniture = [], wal
   const modules = placedModules || [];
   const totalSqm = modules.reduce((sum, m) => sum + (m.sqm || 0), 0);
   const totalPrice = modules.reduce((sum, m) => sum + (m.price || 0), 0);
+  
+  const scale = paperSize === "a3" ? 1.5 : PRINT_SCALE;
 
   // Calculate grid bounds
   let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
