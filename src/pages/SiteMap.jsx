@@ -19,6 +19,8 @@ export default function SiteMap() {
   const [mapZoom, setMapZoom] = useState(21);
   const [siteBounds, setSiteBounds] = useState(null);
   const [boundaryInput, setBoundaryInput] = useState('');
+  const [overlayRotation, setOverlayRotation] = useState(0);
+  const [positionOffset, setPositionOffset] = useState({ lat: 0, lng: 0 });
 
   // Load address from print details on mount
   useEffect(() => {
@@ -163,7 +165,7 @@ export default function SiteMap() {
     setFloorPlanOverlay(canvas.toDataURL());
   }, [design]);
 
-  // Calculate overlay bounds based on design dimensions
+  // Calculate overlay bounds based on design dimensions and offset
   const getOverlayBounds = () => {
     if (!coordinates || !design) return null;
     const dims = getDesignDimensions();
@@ -174,8 +176,8 @@ export default function SiteMap() {
     const latDelta = (dims.height / 1000) / 111;
     const lngDelta = (dims.width / 1000) / 111;
     
-    const lat = coordinates[0];
-    const lng = coordinates[1];
+    const lat = coordinates[0] + positionOffset.lat;
+    const lng = coordinates[1] + positionOffset.lng;
     
     return [
       [lat + latDelta / 2, lng - lngDelta / 2],
@@ -264,11 +266,19 @@ export default function SiteMap() {
 
             {/* Floor plan overlay at map scale */}
             {floorPlanOverlay && getOverlayBounds() && (
-              <ImageOverlay
-                url={floorPlanOverlay}
-                bounds={getOverlayBounds()}
-                opacity={0.8}
-              />
+              <div style={{
+                position: 'absolute',
+                width: '100%',
+                height: '100%',
+                pointerEvents: 'none'
+              }}>
+                <ImageOverlay
+                  url={floorPlanOverlay}
+                  bounds={getOverlayBounds()}
+                  opacity={0.8}
+                  style={{ transform: `rotate(${overlayRotation}deg)`, transformOrigin: 'center' }}
+                />
+              </div>
             )}
           </MapContainer>
         ) : (
@@ -282,6 +292,51 @@ export default function SiteMap() {
       {design && (
         <div className="absolute bottom-4 right-4 z-[9999] bg-white rounded-lg shadow-lg p-4 border border-gray-200 max-w-xs">
           <div className="space-y-3">
+            <div>
+              <label className="text-xs font-semibold text-gray-600 block mb-2">Rotation</label>
+              <div className="flex items-center gap-2">
+                <input
+                  type="range"
+                  min="0"
+                  max="360"
+                  step="1"
+                  value={overlayRotation}
+                  onChange={(e) => setOverlayRotation(parseInt(e.target.value))}
+                  className="flex-1"
+                />
+                <span className="text-xs text-gray-600 w-8 text-right">{overlayRotation}°</span>
+              </div>
+            </div>
+            <div>
+              <label className="text-xs font-semibold text-gray-600 block mb-2">Position - Latitude</label>
+              <div className="flex items-center gap-2">
+                <input
+                  type="range"
+                  min="-0.01"
+                  max="0.01"
+                  step="0.001"
+                  value={positionOffset.lat}
+                  onChange={(e) => setPositionOffset(prev => ({ ...prev, lat: parseFloat(e.target.value) }))}
+                  className="flex-1"
+                />
+                <span className="text-xs text-gray-600 w-12 text-right">{positionOffset.lat.toFixed(4)}</span>
+              </div>
+            </div>
+            <div>
+              <label className="text-xs font-semibold text-gray-600 block mb-2">Position - Longitude</label>
+              <div className="flex items-center gap-2">
+                <input
+                  type="range"
+                  min="-0.01"
+                  max="0.01"
+                  step="0.001"
+                  value={positionOffset.lng}
+                  onChange={(e) => setPositionOffset(prev => ({ ...prev, lng: parseFloat(e.target.value) }))}
+                  className="flex-1"
+                />
+                <span className="text-xs text-gray-600 w-12 text-right">{positionOffset.lng.toFixed(4)}</span>
+              </div>
+            </div>
             <div>
               <label className="text-xs font-semibold text-gray-600 block mb-2">Map Zoom</label>
               <div className="flex items-center gap-2">
