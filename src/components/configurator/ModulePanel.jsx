@@ -6,6 +6,7 @@ import FloorPlanSVG from "./FloorPlanSVG.jsx";
 import WallSuggestions from "./WallSuggestions.jsx";
 import WallImageUpload from "./WallImageUpload.jsx";
 import FloorPlanUpload from "./FloorPlanUpload.jsx";
+import ModuleTooltip from "./ModuleTooltip.jsx";
 
 function getIcon(key, size = 18) {
   const s = size;
@@ -451,37 +452,38 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
                           };
                           const variants = item.description ? item.description.split(",").map(v => v.trim()) : [];
                           return (
-                            <div
-                              key={item.code}
-                              draggable
-                              onDragStart={(e) => {
-                                e.dataTransfer.effectAllowed = "copy";
-                                e.dataTransfer.setData("moduleType", mod.type);
-                                const imageUrl = floorPlanImages[mod.type] || floorPlanImages[item.originalCode];
-                                if (imageUrl) {
-                                  e.dataTransfer.setData("moduleImage", imageUrl);
-                                }
-                                onDragStart(e, mod);
-                              }}
-                              onDragEnd={onDragEnd}
-                              onMouseEnter={() => setHoveredModule({ ...mod, floorPlanImage: floorPlanImages[mod.type] })}
-                              onMouseLeave={() => setHoveredModule(null)}
-                              className="flex items-center gap-3 px-3 py-2 cursor-grab active:cursor-grabbing hover:bg-orange-50 border-b border-gray-50 last:border-0 transition-colors"
-                            >
-                              <div className="shrink-0 bg-white overflow-hidden relative flex items-center justify-center border border-gray-200" style={{ height: "60px", width: "60px" }}>
-                                {floorPlanImages[mod.type] || floorPlanImages[item.originalCode] ? (
-                                  <img src={floorPlanImages[mod.type] || floorPlanImages[item.originalCode]} alt={item.name} className="w-auto h-full object-contain" />
-                                ) : (
-                                  <FloorPlanSVG code={item.code} className="h-full w-auto" />
-                                )}
+                            <ModuleTooltip key={item.code} item={item}>
+                              <div
+                                draggable
+                                onDragStart={(e) => {
+                                  e.dataTransfer.effectAllowed = "copy";
+                                  e.dataTransfer.setData("moduleType", mod.type);
+                                  const imageUrl = floorPlanImages[mod.type] || floorPlanImages[item.originalCode];
+                                  if (imageUrl) {
+                                    e.dataTransfer.setData("moduleImage", imageUrl);
+                                  }
+                                  onDragStart(e, mod);
+                                }}
+                                onDragEnd={onDragEnd}
+                                onMouseEnter={() => setHoveredModule({ ...mod, floorPlanImage: floorPlanImages[mod.type] })}
+                                onMouseLeave={() => setHoveredModule(null)}
+                                className="flex items-center gap-3 px-3 py-2 cursor-grab active:cursor-grabbing hover:bg-orange-50 border-b border-gray-50 last:border-0 transition-colors"
+                              >
+                                <div className="shrink-0 bg-white overflow-hidden relative flex items-center justify-center border border-gray-200" style={{ height: "60px", width: "60px" }}>
+                                  {floorPlanImages[mod.type] || floorPlanImages[item.originalCode] ? (
+                                    <img src={floorPlanImages[mod.type] || floorPlanImages[item.originalCode]} alt={item.name} className="w-auto h-full object-contain" />
+                                  ) : (
+                                    <FloorPlanSVG code={item.code} className="h-full w-auto" />
+                                  )}
+                                </div>
+                                <div className="min-w-0 flex-1">
+                                  <p className="text-xs font-medium text-gray-700 leading-tight">{item.name}</p>
+                                  {variants.length > 0 && <p className="text-[9px] text-gray-500 mt-0.5">{variants.join(" · ")}</p>}
+                                  <p className="text-[10px] font-mono text-[#F15A22] mt-0.5" title={item.mpCode}>{item.mpCode}</p>
+                                  <p className="text-[10px] text-gray-400">{item.sqm}m²</p>
+                                </div>
                               </div>
-                              <div className="min-w-0 flex-1">
-                                <p className="text-xs font-medium text-gray-700 leading-tight">{item.name}</p>
-                                {variants.length > 0 && <p className="text-[9px] text-gray-500 mt-0.5">{variants.join(" · ")}</p>}
-                                <p className="text-[10px] font-mono text-[#F15A22] mt-0.5" title={item.mpCode}>{item.mpCode}</p>
-                                <p className="text-[10px] text-gray-400">{item.sqm}m²</p>
-                              </div>
-                            </div>
+                            </ModuleTooltip>
                           );
                         })}
                         </div>
