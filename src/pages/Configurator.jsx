@@ -540,39 +540,36 @@ export default function Configurator() {
       prev.map((w) => {
         const WALL_OFFSET = 0.308;
         
-        // W face: top side at modToFlip.y - WALL_OFFSET
-        if (Math.abs(w.x - modToFlip.x) < 0.5 && Math.abs(w.y - (modToFlip.y - WALL_OFFSET)) < 0.5) {
+        // Only transform walls attached to this module (check by face first)
+        if (w.face === 'W' && Math.abs(w.x - modToFlip.x) < 0.5 && Math.abs(w.y - (modToFlip.y - WALL_OFFSET)) < 0.5) {
           return {
             ...w,
             flipped: !w.flipped,
-            y: modToFlip.y + modToFlip.h,  // Move to bottom
+            y: modToFlip.y + modToFlip.h,
             face: 'Y'
           };
         }
-        // Y face: bottom side at modToFlip.y + modToFlip.h
-        if (Math.abs(w.x - modToFlip.x) < 0.5 && Math.abs(w.y - (modToFlip.y + modToFlip.h)) < 0.5) {
+        if (w.face === 'Y' && Math.abs(w.x - modToFlip.x) < 0.5 && Math.abs(w.y - (modToFlip.y + modToFlip.h)) < 0.5) {
           return {
             ...w,
             flipped: !w.flipped,
-            y: modToFlip.y - WALL_OFFSET,  // Move to top
+            y: modToFlip.y - WALL_OFFSET,
             face: 'W'
           };
         }
-        // Z face: left side
-        if (Math.abs(w.y - modToFlip.y) < 0.5 && Math.abs(w.x - modToFlip.x) < 0.5) {
+        if (w.face === 'Z' && Math.abs(w.y - modToFlip.y) < 0.5 && Math.abs(w.x - modToFlip.x) < 0.5) {
           return {
             ...w,
             flipped: !w.flipped,
-            x: modToFlip.x + modToFlip.w - WALL_OFFSET,  // Move to right side
+            x: modToFlip.x + modToFlip.w - WALL_OFFSET,
             face: 'X'
           };
         }
-        // X face: right side
-        if (Math.abs(w.y - modToFlip.y) < 0.5 && Math.abs(w.x - (modToFlip.x + modToFlip.w - WALL_OFFSET)) < 0.5) {
+        if (w.face === 'X' && Math.abs(w.y - modToFlip.y) < 0.5 && Math.abs(w.x - (modToFlip.x + modToFlip.w - WALL_OFFSET)) < 0.5) {
           return {
             ...w,
             flipped: !w.flipped,
-            x: modToFlip.x,  // Move to left side
+            x: modToFlip.x,
             face: 'Z'
           };
         }
