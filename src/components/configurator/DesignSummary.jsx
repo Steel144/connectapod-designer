@@ -12,7 +12,13 @@ export default function DesignSummary({ placedModules, walls = [], furniture = [
 
   return (
     <div className="bg-white border border-gray-200 p-4">
-      <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-4">Summary</p>
+      <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">Summary</p>
+
+      {placedModules.length > 0 && (
+        <div className="h-32 mb-4 border border-gray-100 bg-gray-50 overflow-hidden">
+          <DesignMiniPreview grid={placedModules} walls={walls} furniture={furniture} />
+        </div>
+      )}
       
       <div className="space-y-2 text-sm mb-5">
         <div className="flex justify-between items-center border-b border-gray-100 pb-2">
