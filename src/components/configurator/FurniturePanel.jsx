@@ -17,7 +17,7 @@ const FURNITURE_ITEMS = [
   { id: "coffee_table_rect", label: "Coffee Table .6 x 1.2m", width: 1.2, depth: 0.6, image: "https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/8d9041fd5_coffee_table_rect_1200x600-01.png" },
   { id: "coffee_table_round", label: "Coffee Table .9m", width: 0.9, depth: 0.9, image: "https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/732d1a4e2_coffee_table_round_900-01.png" },
   { id: "desk", label: "Desk .6 x 1.2m", width: 1.2, depth: 0.6, image: "https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/3419d3a54_desk_1200x600-01.png" },
-  { id: "ottoman", label: "Ottoman", width: 0.5, depth: 0.5, image: "https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/f9049e560_ottoman_500-01.png" },
+  { id: "ottoman", label: "Ottoman .5 x .5m", width: 0.5, depth: 0.5, image: "https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/f9049e560_ottoman_500-01.png" },
   { id: "side_table", label: "Side Table", width: 0.45, depth: 0.45, image: "https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/5d6bf96ae_side_table_450-01.png" },
   { id: "wardrobe_sq", label: "Wardrobe 0.6m", width: 0.6, depth: 0.6, image: "https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/73a3b1911_Wardrobe_600x600-01.png" },
   { id: "wardrobe_rect", label: "Wardrobe 1.8m", width: 1.8, depth: 0.6, image: "https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/df63759da_wardrobe_1800x600-01.png" },
