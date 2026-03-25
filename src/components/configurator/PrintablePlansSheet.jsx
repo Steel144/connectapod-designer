@@ -324,8 +324,8 @@ export default function PrintablePlansSheet({ placedModules, furniture = [], wal
                      />
                     {f.image && (
                       <image
-                        x={2}
-                        y={2}
+                        x={-fWidth / 2 + 2}
+                        y={-fDepth / 2 + 2}
                         width={fWidth - 4}
                         height={fDepth - 4}
                         href={f.image}
