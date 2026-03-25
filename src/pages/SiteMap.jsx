@@ -29,6 +29,9 @@ export default function SiteMap() {
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
 
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState(null);
+
   // Rotate position offset by negative rotation to account for map rotation
   const getAdjustedCenter = () => {
     if (!coordinates) return [0, 0];
@@ -148,6 +151,32 @@ export default function SiteMap() {
     } catch (err) {
       alert('Invalid bounds format');
     }
+  };
+
+  const handleMapMouseDown = (e) => {
+    setIsDragging(true);
+    setDragStart({ x: e.clientX, y: e.clientY });
+  };
+
+  const handleMapMouseMove = (e) => {
+    if (!isDragging || !dragStart) return;
+    
+    const deltaX = e.clientX - dragStart.x;
+    const deltaY = e.clientY - dragStart.y;
+    
+    // Convert pixels to lat/lng movement (rough approximation)
+    const movementScale = 0.0001;
+    setPositionOffset({
+      lat: positionOffset.lat - deltaY * movementScale,
+      lng: positionOffset.lng + deltaX * movementScale
+    });
+    
+    setDragStart({ x: e.clientX, y: e.clientY });
+  };
+
+  const handleMapMouseUp = () => {
+    setIsDragging(false);
+    setDragStart(null);
   };
 
 
@@ -319,7 +348,13 @@ export default function SiteMap() {
       </div>
 
       {/* Map and overlay */}
-      <div className="flex-1 relative overflow-hidden">
+      <div 
+        className="flex-1 relative overflow-hidden cursor-grab active:cursor-grabbing"
+        onMouseDown={handleMapMouseDown}
+        onMouseMove={handleMapMouseMove}
+        onMouseUp={handleMapMouseUp}
+        onMouseLeave={handleMapMouseUp}
+      >
         {coordinates ? (
           <>
             {/* Map behind - rotates and moves */}
