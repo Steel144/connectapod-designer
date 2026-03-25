@@ -856,24 +856,24 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                 const deltaY = (dragging.cursorY - rect.top - item.y * scaledCellH - dragging.offsetY) / scaledCellH;
                 return (
                   <div
-                    className="absolute pointer-events-none overflow-visible flex flex-col items-center justify-center"
-                    style={{
-                      left: (item.x + deltaX) * scaledCellW,
-                      top: (item.y + deltaY) * scaledCellH,
-                      width: width * scaledCellW,
-                      height: height * scaledCellH,
-                      opacity: 0.75,
-                      boxShadow: "0 4px 12px rgba(241, 90, 34, 0.3)",
-                      transform: `rotate(${item.rotation || 0}deg)`,
-                      transformOrigin: "center",
-                    }}
+                   className="absolute pointer-events-none overflow-visible flex flex-col items-center justify-center"
+                   style={{
+                     left: (item.x + deltaX) * scaledCellW,
+                     top: (item.y + deltaY) * scaledCellH,
+                     width: width * scaledCellW,
+                     height: height * scaledCellH,
+                     opacity: 0.75,
+                     boxShadow: "0 4px 12px rgba(241, 90, 34, 0.3)",
+                   }}
                   >
-                    {item.image && (
-                      <img src={item.image} alt={item.label} className="absolute object-contain" style={{ width: item.id.startsWith('bed_') || item.id.startsWith('dining_') ? '190%' : '100%', height: item.id.startsWith('bed_') || item.id.startsWith('dining_') ? '190%' : '100%', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }} />
-                    )}
-                    <span className="absolute text-[8px] font-semibold text-gray-700 bg-white/80 px-1 py-0.5 rounded bottom-1">
-                      {item.label}
-                    </span>
+                   <div className="w-full h-full overflow-visible relative" style={{ transform: `rotate(${item.rotation || 0}deg)`, transformOrigin: "center" }}>
+                     {item.image && (
+                       <img src={item.image} alt={item.label} className="absolute object-contain" style={{ width: item.id.startsWith('bed_') || item.id.startsWith('dining_') ? '190%' : '100%', height: item.id.startsWith('bed_') || item.id.startsWith('dining_') ? '190%' : '100%', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }} />
+                     )}
+                   </div>
+                   <span className="absolute text-[8px] font-semibold text-gray-700 bg-white/80 px-1 py-0.5 rounded bottom-1">
+                     {item.label}
+                   </span>
                   </div>
                 );
               })()
