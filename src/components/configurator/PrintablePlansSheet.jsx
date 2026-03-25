@@ -92,6 +92,12 @@ export default function PrintablePlansSheet({ placedModules, furniture = [], wal
     minY = Math.min(minY, f.y - fDepthGridUnits / 2);
     maxY = Math.max(maxY, f.y + fDepthGridUnits / 2);
   });
+  walls.forEach(w => {
+    minX = Math.min(minX, w.x);
+    maxX = Math.max(maxX, w.x + (w.orientation === "horizontal" ? w.length : w.thickness));
+    minY = Math.min(minY, w.y);
+    maxY = Math.max(maxY, w.y + (w.orientation === "vertical" ? w.length : w.thickness));
+  });
 
   if (modules.length === 0 && furniture.length === 0) {
     minX = 0; maxX = 10; minY = 0; maxY = 10;
