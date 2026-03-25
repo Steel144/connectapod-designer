@@ -453,7 +453,6 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
                           const variants = item.description ? item.description.split(",").map(v => v.trim()) : [];
                           const moduleElement = (
                             <div
-                              key={item.code}
                               draggable
                               onDragStart={(e) => {
                                 e.dataTransfer.effectAllowed = "copy";
@@ -490,7 +489,7 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
                               {moduleElement}
                             </ModuleTooltip>
                           ) : (
-                            moduleElement
+                            <div key={item.code}>{moduleElement}</div>
                           );
                         })}
                         </div>
