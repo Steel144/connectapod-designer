@@ -485,9 +485,10 @@ export default function Configurator() {
     setWalls((prev) =>
       prev.map((w) => {
         const WALL_OFFSET = 0.308;
+        const wallFace = w.face || (w.orientation === 'vertical' ? 'Z' : 'W');
         
         // Only transform walls attached to this module
-        if (w.face === 'W' && Math.abs(w.x - modToRotate.x) < 0.5 && Math.abs(w.y - (modToRotate.y - WALL_OFFSET)) < 0.5) {
+        if (wallFace === 'W' && Math.abs(w.x - modToRotate.x) < 0.5 && Math.abs(w.y - (modToRotate.y - WALL_OFFSET)) < 0.5) {
           return {
             ...w,
             rotation: (w.rotation || 0) + 180,
@@ -495,7 +496,7 @@ export default function Configurator() {
             face: 'Y'
           };
         }
-        if (w.face === 'Y' && Math.abs(w.x - modToRotate.x) < 0.5 && Math.abs(w.y - (modToRotate.y + modToRotate.h)) < 0.5) {
+        if (wallFace === 'Y' && Math.abs(w.x - modToRotate.x) < 0.5 && Math.abs(w.y - (modToRotate.y + modToRotate.h)) < 0.5) {
           return {
             ...w,
             rotation: (w.rotation || 0) + 180,
@@ -503,7 +504,7 @@ export default function Configurator() {
             face: 'W'
           };
         }
-        if (w.face === 'Z' && Math.abs(w.y - modToRotate.y) < 0.5 && Math.abs(w.x - modToRotate.x) < 0.5) {
+        if (wallFace === 'Z' && Math.abs(w.y - modToRotate.y) < 0.5 && Math.abs(w.x - modToRotate.x) < 0.5) {
           return {
             ...w,
             rotation: (w.rotation || 0) + 180,
@@ -511,7 +512,7 @@ export default function Configurator() {
             face: 'X'
           };
         }
-        if (w.face === 'X' && Math.abs(w.y - modToRotate.y) < 0.5 && Math.abs(w.x - (modToRotate.x + modToRotate.w - WALL_OFFSET)) < 0.5) {
+        if (wallFace === 'X' && Math.abs(w.y - modToRotate.y) < 0.5 && Math.abs(w.x - (modToRotate.x + modToRotate.w - WALL_OFFSET)) < 0.5) {
           return {
             ...w,
             rotation: (w.rotation || 0) + 180,
