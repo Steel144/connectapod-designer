@@ -202,14 +202,15 @@ function KitchenSingleRun({ orange }) {
   );
 }
 
-function KitchenDoubleRun() {
+function KitchenDoubleRun({ orange }) {
+  const c = orange ? "#F15A22" : fixture;
   return (
     <g>
-      <Box x={8} y={8} w={W-16} h={10} />
-      <circle cx={W*0.4} cy={13} r={3} fill={fill} stroke={fixture} strokeWidth="0.8" />
-      <Box x={8} y={H-18} w={W-16} h={10} />
-      <circle cx={W*0.6} cy={H-13} r={3} fill={fill} stroke={fixture} strokeWidth="0.8" />
-      <text x={W/2} y={H/2+3} textAnchor="middle" fontSize="7" fill={fixture} fontFamily="monospace">Galley</text>
+      <Box x={8} y={8} w={W-16} h={10} c={c} />
+      <circle cx={W*0.4} cy={13} r={3} fill={fill} stroke={c} strokeWidth="0.8" />
+      <Box x={8} y={H-18} w={W-16} h={10} c={c} />
+      <circle cx={W*0.6} cy={H-13} r={3} fill={fill} stroke={c} strokeWidth="0.8" />
+      <text x={W/2} y={H/2+3} textAnchor="middle" fontSize="7" fill={c} fontFamily="monospace">Galley</text>
     </g>
   );
 }
