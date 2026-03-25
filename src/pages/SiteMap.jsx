@@ -124,6 +124,16 @@ export default function SiteMap() {
     return { width: maxX - minX, height: maxY - minY, minX, minY };
   };
 
+  // Update zoom from map instance
+  useEffect(() => {
+    if (!mapRef.current) return;
+    const handleZoom = () => {
+      setMapZoom(mapRef.current._zoom);
+    };
+    mapRef.current.on('zoom', handleZoom);
+    return () => mapRef.current?.off('zoom', handleZoom);
+  }, []);
+
   // Generate floor plan canvas overlay
   useEffect(() => {
     if (!design) return;
@@ -256,7 +266,6 @@ export default function SiteMap() {
               <MapContainer
                 center={getAdjustedCenter()}
                 zoom={mapZoom}
-                onZoomend={(e) => setMapZoom(e.target._zoom)}
                 className="w-full h-full"
                 ref={mapRef}
               >
