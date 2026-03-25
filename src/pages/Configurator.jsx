@@ -918,9 +918,14 @@ export default function Configurator() {
               </Tooltip>
                <PrintMenu placedModules={placedModules} walls={walls} onPrint={(mode) => { setPendingPrintMode(mode); setDetailsModalMode('print'); }} />
             </div>
-            <button onClick={handleUndo} disabled={history.length === 0} title="Undo (Ctrl+Z)" className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-gray-600 bg-white border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22] disabled:opacity-30 transition-all" style={{ clipPath: "polygon(0 0, calc(100% - 8px) 0, 100% 50%, calc(100% - 8px) 100%, 0 100%)" }}>
-              <Undo2 size={13} /> Undo {history.length > 0 && <span className="text-[10px] text-gray-400">({history.length})</span>}
-            </button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button onClick={handleUndo} disabled={history.length === 0} className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-gray-600 bg-white border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22] disabled:opacity-30 transition-all" style={{ clipPath: "polygon(0 0, calc(100% - 8px) 0, 100% 50%, calc(100% - 8px) 100%, 0 100%)" }}>
+                  <Undo2 size={13} /> Undo {history.length > 0 && <span className="text-[10px] text-gray-400">({history.length})</span>}
+                </button>
+              </TooltipTrigger>
+              <TooltipContent>Undo last action (Ctrl+Z)</TooltipContent>
+            </Tooltip>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-gray-600 hover:text-[#F15A22] border border-gray-200 bg-white hover:border-[#F15A22] transition-all">
