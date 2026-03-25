@@ -288,7 +288,7 @@ export default function SiteMap() {
                     maxWidth: '80%',
                     maxHeight: '80%',
                     objectFit: 'contain',
-                    transform: `scale(${Math.pow(2, (mapZoom - 15) / 7)})`,
+                    transform: `scale(${1 + (mapZoom - 15) / 10})`,
                     transition: 'transform 0.1s ease-out'
                   }}
                 />
