@@ -251,44 +251,48 @@ export default function SiteMap() {
         )}
       </div>
 
-      {/* Controls */}
+      {/* Floating Controls */}
       {design && (
-        <div className="border-t border-gray-200 bg-gray-50 p-4">
-          <div className="max-w-2xl mx-auto flex items-center gap-4">
-            <div className="flex-1">
+        <div className="absolute bottom-4 right-4 z-50 bg-white rounded-lg shadow-lg p-4 border border-gray-200 max-w-xs">
+          <div className="space-y-3">
+            <div>
               <label className="text-xs font-semibold text-gray-600 block mb-2">Rotation</label>
-              <input
-                type="range"
-                min="0"
-                max="360"
-                step="1"
-                value={overlayRotation}
-                onChange={(e) => setOverlayRotation(parseInt(e.target.value))}
-                className="w-full"
-              />
-              <span className="text-xs text-gray-600">{overlayRotation}°</span>
+              <div className="flex items-center gap-2">
+                <input
+                  type="range"
+                  min="0"
+                  max="360"
+                  step="1"
+                  value={overlayRotation}
+                  onChange={(e) => setOverlayRotation(parseInt(e.target.value))}
+                  className="flex-1"
+                />
+                <span className="text-xs text-gray-600 w-8 text-right">{overlayRotation}°</span>
+              </div>
             </div>
-            <div className="flex-1">
+            <div>
               <label className="text-xs font-semibold text-gray-600 block mb-2">Scale</label>
-              <input
-                type="range"
-                min="0.1"
-                max="2"
-                step="0.1"
-                value={overlayScale}
-                onChange={(e) => setOverlayScale(parseFloat(e.target.value))}
-                className="w-full"
-              />
-              <span className="text-xs text-gray-600">{(overlayScale * 100).toFixed(0)}%</span>
+              <div className="flex items-center gap-2">
+                <input
+                  type="range"
+                  min="0.1"
+                  max="2"
+                  step="0.1"
+                  value={overlayScale}
+                  onChange={(e) => setOverlayScale(parseFloat(e.target.value))}
+                  className="flex-1"
+                />
+                <span className="text-xs text-gray-600 w-10 text-right">{(overlayScale * 100).toFixed(0)}%</span>
+              </div>
             </div>
             <Button
               onClick={() => setOverlayRotation(0)}
               variant="outline"
               size="sm"
-              className="self-end"
+              className="w-full"
               title="Reset rotation"
             >
-              <RotateCw className="w-4 h-4" />
+              <RotateCw className="w-4 h-4 mr-1" /> Reset
             </Button>
           </div>
         </div>
