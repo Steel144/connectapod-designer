@@ -296,7 +296,7 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
      }), [customWalls, deletedWalls]);
 
   React.useEffect(() => {
-    if (selectedWall || selectedModule) setOpenGroup("walls");
+    // Keep all groups collapsed by default - don't auto-open on selection
   }, [selectedWall?.id, selectedModule?.id]);
 
   const { compatibleWalls, filterReason } = React.useMemo(() => {
