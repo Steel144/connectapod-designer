@@ -7,7 +7,7 @@ const FURNITURE_ITEMS = [
   { id: "bed_single", label: "Single Bed", width: 0.92, depth: 1.88, image: "https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/15a6d51af_bed_single_920x1880-01.png" },
   { id: "sofa_1", label: "1-Seater Sofa .75 x .9m", width: 0.9, depth: 0.9, image: "https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/cbef171dd_sofa_1_seater-01.png" },
   { id: "sofa_2", label: "2-Seater Sofa .75 x 1.6m", width: 1.6, depth: 0.9, image: "https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/d02306e1d_sofa_2_seater-01.png" },
-  { id: "sofa_3", label: "3-Seater Sofa", width: 2.5, depth: 0.9, image: "https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/f1888e620_sofa_3_seater-01.png" },
+  { id: "sofa_3", label: "3-Seater Sofa .9 x 2.2m", width: 2.5, depth: 0.9, image: "https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/f1888e620_sofa_3_seater-01.png" },
   { id: "sofa_chaise_left", label: "Chaise Lounge Left", width: 2.2, depth: 1.2, image: "https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/e0b83bbc4_sofa_chaise_left-01.png" },
   { id: "sofa_chaise_right", label: "Chaise Lounge Right", width: 2.2, depth: 1.2, image: "https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/86e5f9663_sofa_chaise_right-01.png" },
   { id: "dining_rect_4", label: "Dining Table Rect 4-Seater 1.3 x .9m", width: 2.058, depth: 2.058, image: "https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/b9e008a82_dining_rect_4_seater-01.png" },
