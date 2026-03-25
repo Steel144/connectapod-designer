@@ -165,7 +165,12 @@ export default function DesignMiniPreview({ grid = [], walls = [], furniture = [
           const cx = toX(item.x) + fw / 2;
           const cy = toY(item.y) + fh / 2;
           return (
-            <g key={`furn-${item.id || i}`} transform={`rotate(${item.rotation || 0}, ${cx}, ${cy})`}>
+            <g key={`furn-${item.id || i}`}
+              transform={`rotate(${item.rotation || 0}, ${cx}, ${cy})`}
+              onMouseEnter={() => setHoveredItem({ label: item.label, width: item.width, depth: item.depth, image: item.image })}
+              onMouseLeave={() => setHoveredItem(null)}
+              style={{ cursor: "default" }}
+            >
               {item.image ? (
                 <image
                   href={item.image}
@@ -186,6 +191,15 @@ export default function DesignMiniPreview({ grid = [], walls = [], furniture = [
                   strokeWidth={0.5}
                 />
               )}
+              {/* Invisible hit area for hover */}
+              <rect
+                x={toX(item.x)}
+                y={toY(item.y)}
+                width={fw}
+                height={fh}
+                fill="transparent"
+                stroke="none"
+              />
             </g>
           );
         })}
