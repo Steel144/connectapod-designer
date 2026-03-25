@@ -300,38 +300,7 @@ export default function PrintablePlansSheet({ placedModules, furniture = [], onC
                 );
               })}
             </svg>
-          </div>
-
-          </div>
-
-          {/* Title block footer */}
-          <div className="shrink-0">
-            <div className="border-t-4 grid" style={{ borderColor: "#F15A22", gridTemplateColumns: "2fr 2fr 1.5fr 1fr", fontSize: "9px", lineHeight: "1.3" }}>
-              <div className="border-r p-2" style={{ borderColor: "#F15A22" }}>
-                <p className="uppercase font-bold" style={{ color: "#F15A22" }}>Project</p>
-                <p className="mt-0.5 text-gray-800 font-semibold" style={{ fontSize: "13.5px" }}>{printDetails.projectName || "—"}</p>
-
-              </div>
-              <div className="border-r p-2" style={{ borderColor: "#F15A22" }}>
-                <p className="uppercase font-bold" style={{ color: "#F15A22" }}>Client</p>
-                <p className="mt-0.5 text-gray-700">{printDetails.clientName || "—"}</p>
-                {printDetails.address && <p className="text-gray-500">{printDetails.address}</p>}
-                {(printDetails.email || printDetails.phone) && (
-                  <p className="text-gray-400">{[printDetails.email, printDetails.phone].filter(Boolean).join(" · ")}</p>
-                )}
-              </div>
-              <div className="border-r p-2" style={{ borderColor: "#F15A22" }}>
-                <p className="uppercase font-bold" style={{ color: "#F15A22" }}>Date</p>
-                <p className="mt-0.5 text-gray-600">{new Date().toLocaleDateString()}</p>
-              </div>
-              <div className="p-2">
-                <p className="uppercase font-bold" style={{ color: "#F15A22" }}>Scale</p>
-                <p className="mt-0.5 text-gray-600">1:100</p>
-                <p className="mt-1" style={{ fontSize: "9px", color: "#000", fontWeight: "600" }}>© {new Date().getFullYear()} Connectapod Ltd.</p>
-              </div>
-            </div>
-          </div>
-      </div>
+            </PrintPage>
 
 
 
