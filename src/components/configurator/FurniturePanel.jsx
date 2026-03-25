@@ -20,7 +20,7 @@ const FURNITURE_ITEMS = [
   { id: "ottoman", label: "Ottoman .5 x .5m", width: 0.5, depth: 0.5, image: "https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/f9049e560_ottoman_500-01.png" },
   { id: "side_table", label: "Side Table .4 x .4m", width: 0.45, depth: 0.45, image: "https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/5d6bf96ae_side_table_450-01.png" },
   { id: "wardrobe_sq", label: "Wardrobe .6 x .6m", width: 0.6, depth: 0.6, image: "https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/73a3b1911_Wardrobe_600x600-01.png" },
-  { id: "wardrobe_rect", label: "Wardrobe 1.8m", width: 1.8, depth: 0.6, image: "https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/df63759da_wardrobe_1800x600-01.png" },
+  { id: "wardrobe_rect", label: "Wardrobe 1.8 x .6m", width: 1.8, depth: 0.6, image: "https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/df63759da_wardrobe_1800x600-01.png" },
 ];
 
 function getFurnitureIcon(id, size = 18) {
