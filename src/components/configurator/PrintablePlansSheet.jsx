@@ -63,7 +63,7 @@ const PrintPage = ({ children, header, footer, isLast, paperSize = "a4" }) => {
   );
 };
 
-export default function PrintablePlansSheet({ placedModules, furniture = [], walls = [], onClose, printDetails = {}, paperSize = "a4" }) {
+export default function PrintablePlansSheet({ placedModules, furniture = [], walls = [], onClose, printDetails = {}, paperSize = "a4", showLabels = true, showFurniture = true, showPhotoImages = true, showDimensions = true }) {
   useEffect(() => {
     const timer = setTimeout(() => {
       window.print();
@@ -187,7 +187,7 @@ export default function PrintablePlansSheet({ placedModules, furniture = [], wal
               <rect width={canvasWidth} height={canvasHeight} fill="url(#grid)" />
 
               {/* Modules */}
-              {modules.map((mod) => {
+              {modules.filter(mod => showLabels || mod).map((mod) => {
                 const x = (mod.x - minX + 1) * CELL_SIZE;
                 const y = (mod.y - minY + 1) * CELL_SIZE;
                 const w = mod.w * CELL_SIZE;
@@ -207,7 +207,7 @@ export default function PrintablePlansSheet({ placedModules, furniture = [], wal
                     />
 
                     {/* Floor plan image if available */}
-                    {mod.floorPlanImage && (
+                    {showPhotoImages && mod.floorPlanImage && (
                       <image
                         x={x}
                         y={y}
@@ -282,7 +282,7 @@ export default function PrintablePlansSheet({ placedModules, furniture = [], wal
               })}
 
               {/* Furniture */}
-              {furniture.map((f) => {
+              {showFurniture && furniture.map((f) => {
                 const fWidth = (f.width || 1.4) * CELL_SIZE;
                 const fDepth = (f.depth || 2.0) * CELL_SIZE;
                 const fx = (f.x - minX + 1) * CELL_SIZE;

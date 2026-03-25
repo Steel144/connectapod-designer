@@ -120,7 +120,7 @@ const PrintPage = ({ children, header, footer, isLast }) => {
   );
 };
 
-export default function PrintableElevationsSheet({ walls = [], placedModules = [], onClose, printDetails = {} }) {
+export default function PrintableElevationsSheet({ walls = [], placedModules = [], onClose, printDetails = {}, showLabels = true }) {
   useEffect(() => {
     const timer = setTimeout(() => {
       window.print();
@@ -211,9 +211,11 @@ export default function PrintableElevationsSheet({ walls = [], placedModules = [
         header={<Header title="Elevations — Building" />}
         footer={<Footer sheet="Building Elevations" pageNum={1} totalPages={totalPages} printDetails={printDetails} />}
       >
-        <div style={{ fontSize: "10px", fontWeight: "bold", color: "#666", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "16px" }}>
-          Building Elevations
-        </div>
+        {showLabels && (
+          <div style={{ fontSize: "10px", fontWeight: "bold", color: "#666", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "16px" }}>
+             Building Elevations
+           </div>
+        )}
         <div style={{ display: "flex", gap: "16px", flexWrap: "wrap", alignItems: "flex-start" }}>
           <VerticalElevation
             layers={zElevation}
@@ -280,23 +282,27 @@ export default function PrintableElevationsSheet({ walls = [], placedModules = [
             header={<Header title={`Elevations — ${label}`} />}
             footer={<Footer sheet={label} pageNum={pageNum} totalPages={totalPages} printDetails={printDetails} />}
           >
-            <div style={{ fontSize: "10px", fontWeight: "bold", color: "#666", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "16px" }}>
-              {label}
-            </div>
+            {showLabels && (
+              <div style={{ fontSize: "10px", fontWeight: "bold", color: "#666", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "16px" }}>
+                 {label}
+               </div>
+            )}
             <div style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
               {(pavNum === 2 ? ["Z", "X"] : ["Y", "W"]).map(face => {
                 const hasAny = mods.some(mod => findWall(mod, face));
                 if (!hasAny) return null;
                 const faceLabels = { Y: "Y Face (Outside / Top)", W: "W Face (Outside / Bottom)", Z: "Z Face (West)", X: "X Face (East)" };
                 return (
-                  <div key={face}>
-                    <div style={{ fontSize: "9px", color: "#888", marginBottom: "10px", fontWeight: "600", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-                      {faceLabels[face]}
-                    </div>
+                   <div key={face}>
+                     {showLabels && (
+                       <div style={{ fontSize: "9px", color: "#888", marginBottom: "10px", fontWeight: "600", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                         {faceLabels[face]}
+                       </div>
+                     )}
                     <div style={{ display: "flex", gap: "4px", flexWrap: "nowrap" }}>
                       {mods.map((mod, i) => {
                         const wall = findWall(mod, face);
-                        return wall ? <ElevationImage key={i} wall={wall} label={`${face}${i + 1}`} face={face} /> : null;
+                        return wall ? <ElevationImage key={i} wall={wall} label={`${face}${i + 1}`} face={showLabels ? face : ""} /> : null;
                       })}
                     </div>
                   </div>
