@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, Rectangle, ImageOverlay } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Rectangle, ImageOverlay, useMap } from 'react-leaflet';
 import L from 'leaflet';
+import { useEffect as useMapEffect } from 'react';
 import 'leaflet/dist/leaflet.css';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -266,20 +267,12 @@ export default function SiteMap() {
 
             {/* Floor plan overlay at map scale */}
             {floorPlanOverlay && getOverlayBounds() && (
-              <div style={{
-                position: 'absolute',
-                width: '100%',
-                height: '100%',
-                pointerEvents: 'none',
-                transform: `rotate(${overlayRotation}deg)`,
-                transformOrigin: 'center'
-              }}>
-                <ImageOverlay
-                  url={floorPlanOverlay}
-                  bounds={getOverlayBounds()}
-                  opacity={0.8}
-                />
-              </div>
+              <RotatedImageOverlay
+                url={floorPlanOverlay}
+                bounds={getOverlayBounds()}
+                opacity={0.8}
+                rotation={overlayRotation}
+              />
             )}
           </MapContainer>
         ) : (
@@ -359,4 +352,30 @@ export default function SiteMap() {
       )}
     </div>
   );
+}
+
+// Custom component to handle rotated image overlay
+function RotatedImageOverlay({ url, bounds, opacity, rotation }) {
+  const map = useMap();
+
+  useMapEffect(() => {
+    if (!url || !bounds) return;
+
+    const overlay = L.imageOverlay(url, bounds, { opacity });
+    overlay.addTo(map);
+
+    // Apply rotation using CSS transform
+    const img = overlay.getElement();
+    if (img) {
+      img.style.transform = `rotate(${rotation}deg)`;
+      img.style.transformOrigin = 'center';
+      img.style.transition = 'transform 0.1s ease-out';
+    }
+
+    return () => {
+      map.removeLayer(overlay);
+    };
+  }, [url, bounds, rotation, map]);
+
+  return null;
 }
