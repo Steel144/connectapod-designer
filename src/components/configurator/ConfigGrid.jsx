@@ -979,7 +979,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                  }, 0);
                }}
              >
-               <div className="w-full h-full overflow-visible relative">
+               <div className="w-full h-full overflow-visible relative" style={{ transform: `rotate(${item.rotation || 0}deg)`, transformOrigin: "center" }}>
                  {item.image ? (
                    <img src={item.image} alt={item.label} className="absolute object-contain" loading="eager" style={{ width: item.id.startsWith('bed_') || item.id.startsWith('dining_') ? '190%' : '100%', height: item.id.startsWith('bed_') || item.id.startsWith('dining_') ? '190%' : '100%', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }} />
                  ) : (
