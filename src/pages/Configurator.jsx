@@ -754,9 +754,15 @@ export default function Configurator() {
       };
     });
 
+    const loadedFurniture = (design.furniture || []).map(f => {
+      if (f.image) return f;
+      const match = FURNITURE_ITEMS.find(fi => fi.id === f.type || fi.id === f.id);
+      return match ? { ...f, image: match.image } : f;
+    });
+
     setPlacedModules(grid);
     setWalls(loadedWalls);
-    setFurniture(design.furniture || []);
+    setFurniture(loadedFurniture);
     setLoadCounter(c => c + 1);
     setShowSaved(false);
     toast.success(`Loaded "${design.name}"`);
