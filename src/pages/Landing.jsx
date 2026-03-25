@@ -4,10 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import InstructionsModal from "@/components/InstructionsModal";
+import { HelpCircle } from "lucide-react";
 
 export default function Landing() {
   const [formData, setFormData] = useState({ name: "", email: "", company: "" });
   const [loading, setLoading] = useState(false);
+  const [showInstructions, setShowInstructions] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
