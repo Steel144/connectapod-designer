@@ -166,7 +166,7 @@ export default function SiteMap() {
     setFloorPlanOverlay(canvas.toDataURL());
   }, [design]);
 
-  // Calculate overlay bounds based on design dimensions and offset
+  // Calculate overlay bounds based on design dimensions
   const getOverlayBounds = () => {
     if (!coordinates || !design) return null;
     const dims = getDesignDimensions();
@@ -177,8 +177,8 @@ export default function SiteMap() {
     const latDelta = (dims.height / 1000) / 111;
     const lngDelta = (dims.width / 1000) / 111;
     
-    const lat = coordinates[0] + positionOffset.lat;
-    const lng = coordinates[1] + positionOffset.lng;
+    const lat = coordinates[0];
+    const lng = coordinates[1];
     
     return [
       [lat + latDelta / 2, lng - lngDelta / 2],
@@ -242,7 +242,7 @@ export default function SiteMap() {
       <div className="flex-1 relative">
         {coordinates ? (
           <MapContainer
-            center={coordinates}
+            center={[coordinates[0] - positionOffset.lat, coordinates[1] - positionOffset.lng]}
             zoom={mapZoom}
             onZoomend={(e) => setMapZoom(e.target._zoom)}
             className="w-full h-full"
