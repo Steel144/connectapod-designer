@@ -103,6 +103,7 @@ export default function Configurator() {
   const [showFurniture, setShowFurniture] = useState(true);
   const [showPhotoImages, setShowPhotoImages] = useState(true);
   const [showDimensions, setShowDimensions] = useState(true);
+  const [showTooltips, setShowTooltips] = useState(true);
   const navBarRef = useRef(null);
   const [navBarHeight, setNavBarHeight] = useState(0);
 
@@ -908,22 +909,26 @@ export default function Configurator() {
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-52">
-                <DropdownMenuItem onClick={() => setShowLabels(v => !v)} className="flex items-center justify-between cursor-pointer">
-                  <span className="flex items-center gap-2"><Eye size={13} /> Show Labels</span>
-                  {showLabels && <Check size={12} className="text-[#F15A22]" />}
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setShowFurniture(v => !v)} className="flex items-center justify-between cursor-pointer">
-                  <span className="flex items-center gap-2"><Eye size={13} /> Show Furniture</span>
-                  {showFurniture && <Check size={12} className="text-[#F15A22]" />}
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setShowPhotoImages(v => !v)} className="flex items-center justify-between cursor-pointer">
-                  <span className="flex items-center gap-2"><Image size={13} /> {showPhotoImages ? "Photo Images" : "Line Drawings"}</span>
-                  {showPhotoImages && <Check size={12} className="text-[#F15A22]" />}
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setShowDimensions(v => !v)} className="flex items-center justify-between cursor-pointer">
-                  <span className="flex items-center gap-2"><Eye size={13} /> Show Dimensions</span>
-                  {showDimensions && <Check size={12} className="text-[#F15A22]" />}
-                </DropdownMenuItem>
+               <DropdownMenuItem onClick={() => setShowLabels(v => !v)} className="flex items-center justify-between cursor-pointer">
+                 <span className="flex items-center gap-2"><Eye size={13} /> Show Labels</span>
+                 {showLabels && <Check size={12} className="text-[#F15A22]" />}
+               </DropdownMenuItem>
+               <DropdownMenuItem onClick={() => setShowFurniture(v => !v)} className="flex items-center justify-between cursor-pointer">
+                 <span className="flex items-center gap-2"><Eye size={13} /> Show Furniture</span>
+                 {showFurniture && <Check size={12} className="text-[#F15A22]" />}
+               </DropdownMenuItem>
+               <DropdownMenuItem onClick={() => setShowPhotoImages(v => !v)} className="flex items-center justify-between cursor-pointer">
+                 <span className="flex items-center gap-2"><Image size={13} /> {showPhotoImages ? "Photo Images" : "Line Drawings"}</span>
+                 {showPhotoImages && <Check size={12} className="text-[#F15A22]" />}
+               </DropdownMenuItem>
+               <DropdownMenuItem onClick={() => setShowDimensions(v => !v)} className="flex items-center justify-between cursor-pointer">
+                 <span className="flex items-center gap-2"><Eye size={13} /> Show Dimensions</span>
+                 {showDimensions && <Check size={12} className="text-[#F15A22]" />}
+               </DropdownMenuItem>
+               <DropdownMenuItem onClick={() => setShowTooltips(v => !v)} className="flex items-center justify-between cursor-pointer">
+                 <span className="flex items-center gap-2"><Eye size={13} /> Show Tooltips</span>
+                 {showTooltips && <Check size={12} className="text-[#F15A22]" />}
+               </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
             <div className="flex border border-gray-200 overflow-hidden">
@@ -1133,6 +1138,7 @@ export default function Configurator() {
                     floorPlanImages={floorPlanImages}
                     wallImages={wallImages}
                     highlightWallType={wallToReplace?.type}
+                    showTooltips={showTooltips}
                     onWallHover={(wall) => {
                       setHoveredWall(wall);
                       if (wall) setSummaryCollapsed(false);
@@ -1363,6 +1369,7 @@ export default function Configurator() {
                 floorPlanImages={floorPlanImages}
                 wallImages={wallImages}
                 highlightWallType={wallToReplace?.type}
+                showTooltips={showTooltips}
                 onWallSelected={(wallType) => {
                    if (wallToReplace) {
                      pushHistory(placedModules, walls);
