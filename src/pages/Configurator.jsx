@@ -543,7 +543,25 @@ export default function Configurator() {
       prev.map((w) => {
         const WALL_OFFSET = 0.308;
         
-        // Flip walls and swap Z/X positions when module flips
+        // W face: top side at modToFlip.y - WALL_OFFSET
+        if (Math.abs(w.x - modToFlip.x) < 0.5 && Math.abs(w.y - (modToFlip.y - WALL_OFFSET)) < 0.5) {
+          return {
+            ...w,
+            flipped: !w.flipped,
+            y: modToFlip.y + modToFlip.h,  // Move to bottom
+            face: w.face === 'W' ? 'Y' : w.face === 'Y' ? 'W' : w.face
+          };
+        }
+        // Y face: bottom side at modToFlip.y + modToFlip.h
+        if (Math.abs(w.x - modToFlip.x) < 0.5 && Math.abs(w.y - (modToFlip.y + modToFlip.h)) < 0.5) {
+          return {
+            ...w,
+            flipped: !w.flipped,
+            y: modToFlip.y - WALL_OFFSET,  // Move to top
+            face: w.face === 'Y' ? 'W' : w.face === 'W' ? 'Y' : w.face
+          };
+        }
+        // Z face: left side at modToFlip.x
         if (Math.abs(w.y - modToFlip.y) < 0.5 && Math.abs(w.x - modToFlip.x) < 0.5) {
           return {
             ...w,
@@ -552,6 +570,7 @@ export default function Configurator() {
             face: w.face === 'Z' ? 'X' : w.face === 'X' ? 'Z' : w.face
           };
         }
+        // X face: right side at modToFlip.x + modToFlip.w - WALL_OFFSET
         if (Math.abs(w.y - modToFlip.y) < 0.5 && Math.abs(w.x - (modToFlip.x + modToFlip.w - WALL_OFFSET)) < 0.5) {
           return {
             ...w,
