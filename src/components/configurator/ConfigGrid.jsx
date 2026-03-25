@@ -815,17 +815,25 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
               </div>
 
               {/* Face labels - conditionally shown based on module type */}
-              {(() => {
-                const isConnection = mod.chassis === "C" || isConnectionModule(mod);
-                const isLeftEnd = mod.chassis === "LF" || mod.chassis === "ER";
-                const isRightEnd = mod.chassis === "RF" || mod.chassis === "LR";
-                const isDeck = mod.description && mod.description.includes("Deck");
-                
-                // Standard: W, Y | Left end: W, Z, Y | Right end: W, X, Y | Deck: W, Y | Connection: Z, X
-                const showW = !isConnection;
-                const showX = isConnection || isRightEnd;
-                const showY = !isConnection;
-                const showZ = (isLeftEnd || isConnection);
+               {(() => {
+                 const isConnection = mod.chassis === "C" || isConnectionModule(mod);
+                 const isLeftEnd = mod.chassis === "LF" || mod.chassis === "ER";
+                 const isRightEnd = mod.chassis === "RF" || mod.chassis === "LR";
+                 const isDeck = mod.description && mod.description.includes("Deck");
+                 const rotation = mod.rotation || 0;
+                 const isRotated = rotation === 90 || rotation === 270;
+
+                 // Standard: W, Y | Left end: W, Z, Y | Right end: W, X, Y | Deck: W, Y | Connection: Z, X
+                 // When rotated 90°, end walls swap: Z↔X
+                 const showW = !isConnection;
+                 let showX = isConnection || isRightEnd;
+                 let showY = !isConnection;
+                 let showZ = (isLeftEnd || isConnection);
+
+                 // Swap Z/X for rotated end modules
+                 if ((isLeftEnd || isRightEnd) && isRotated) {
+                   [showZ, showX] = [showX, showZ];
+                 }
                 
                 const isVisibleBtn = isSelected || hoveredModuleId === mod.id;
                 
