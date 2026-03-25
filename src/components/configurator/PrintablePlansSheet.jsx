@@ -289,10 +289,9 @@ export default function PrintablePlansSheet({ placedModules, furniture = [], wal
                 const maxX = Math.max(...modules.map(m => m.x + m.w));
                 const minY = Math.min(...modules.map(m => m.y));
                 const maxY = Math.max(...modules.map(m => m.y + m.h));
-                const widthM = (maxX - minX) * 0.6;
-                const dimColor = '#94a3b8';
+                const totalWidthM = (maxX - minX) * 0.6;
 
-                // Detect pavilions dynamically
+                // Detect pavilions by Y clusters
                 const sortedYs = [...new Set(modules.map(m => m.y))].sort((a, b) => a - b);
                 const groups = [];
                 let currentGroup = [];
@@ -306,124 +305,48 @@ export default function PrintablePlansSheet({ placedModules, furniture = [], wal
                 }
                 if (currentGroup.length > 0) groups.push(currentGroup);
 
-                const allGroupDimensions = groups.map((group, i) => {
-                  const yMin = group[0];
-                  const yMax = group[group.length - 1];
-                  const modsInPav = modules.filter(m => m.y >= yMin && m.y <= yMax + 2);
-                  if (modsInPav.length === 0) return null;
-                  const pavMinX = Math.min(...modsInPav.map(m => m.x));
-                  const pavMaxX = Math.max(...modsInPav.map(m => m.x + m.w));
-                  const pavMinY = Math.min(...modsInPav.map(m => m.y));
-                  const pavMaxY = Math.max(...modsInPav.map(m => m.y + m.h));
-                  const isConnection = groups.length === 3 && i === 1;
-                  return { name: isConnection ? 'Conn' : `P${i+1}`, isConnection, color: dimColor, minX: pavMinX, maxX: pavMaxX, pavMinY, pavMaxY };
+                const groupDims = groups.map((group, i) => {
+                  const modsInGroup = modules.filter(m => m.y >= group[0] && m.y <= group[group.length - 1] + 2);
+                  if (modsInGroup.length === 0) return null;
+                  const gMinX = Math.min(...modsInGroup.map(m => m.x));
+                  const gMaxX = Math.max(...modsInGroup.map(m => m.x + m.w));
+                  const gMinY = Math.min(...modsInGroup.map(m => m.y));
+                  const gMaxY = Math.max(...modsInGroup.map(m => m.y + m.h));
+                  const isConn = groups.length === 3 && i === 1;
+                  return { minX: gMinX, maxX: gMaxX, minY: gMinY, maxY: gMaxY, isConn, idx: i };
                 }).filter(Boolean);
-
-                const pavilionDimensions = allGroupDimensions.filter(g => !g.isConnection);
-                const connectionDimensions = allGroupDimensions.filter(g => g.isConnection);
 
                 return (
                   <>
-                    {/* Overall length dimension (horizontal) */}
-                    <line
-                      x1={(minX - 1) * CELL_SIZE}
-                      y1={(minY - 2.5) * CELL_SIZE}
-                      x2={(maxX + 1) * CELL_SIZE}
-                      y2={(minY - 2.5) * CELL_SIZE}
-                      stroke="#CBD5E1"
-                      strokeWidth="1.5"
-                    />
-                    <line x1={(minX - 1) * CELL_SIZE} y1={(minY - 2.5) * CELL_SIZE - 6} x2={(minX - 1) * CELL_SIZE} y2={(minY - 2.5) * CELL_SIZE + 6} stroke="#CBD5E1" strokeWidth="1.5" />
-                    <line x1={(maxX + 1) * CELL_SIZE} y1={(minY - 2.5) * CELL_SIZE - 6} x2={(maxX + 1) * CELL_SIZE} y2={(minY - 2.5) * CELL_SIZE + 6} stroke="#CBD5E1" strokeWidth="1.5" />
-                    <text
-                      x={((minX - 1) * CELL_SIZE + (maxX + 1) * CELL_SIZE) / 2}
-                      y={(minY - 2.5) * CELL_SIZE - 10}
-                      textAnchor="middle"
-                      fontSize="11"
-                      fontWeight="bold"
-                      fill="#64748b"
-                    >
-                      {widthM.toFixed(1)}m
+                    {/* Overall top horizontal dimension */}
+                    <line x1={(minX - 1) * CELL_SIZE} y1={(minY - 3.5) * CELL_SIZE} x2={(maxX + 1) * CELL_SIZE} y2={(minY - 3.5) * CELL_SIZE} stroke="#94a3b8" strokeWidth="2" />
+                    <line x1={(minX - 1) * CELL_SIZE} y1={(minY - 3.5) * CELL_SIZE - 8} x2={(minX - 1) * CELL_SIZE} y2={(minY - 3.5) * CELL_SIZE + 8} stroke="#94a3b8" strokeWidth="2" />
+                    <line x1={(maxX + 1) * CELL_SIZE} y1={(minY - 3.5) * CELL_SIZE - 8} x2={(maxX + 1) * CELL_SIZE} y2={(minY - 3.5) * CELL_SIZE + 8} stroke="#94a3b8" strokeWidth="2" />
+                    <text x={((minX - 1) + (maxX + 1)) * CELL_SIZE / 2} y={(minY - 3.5) * CELL_SIZE - 14} textAnchor="middle" fontSize="13" fontWeight="bold" fill="#475569">
+                      {totalWidthM.toFixed(1)}m
                     </text>
 
-                    {/* Pavilion depth dimensions */}
-                    {pavilionDimensions.map(pav => {
-                      const actualHeightCells = 5.2 / 0.6;
-                      const pavCenterY = (pav.pavMinY + pav.pavMaxY) / 2;
-                      const dimTop = pavCenterY - actualHeightCells / 2;
-                      const dimLeft = (pav.minX - 2) * CELL_SIZE;
-                      return (
-                        <g key={pav.name}>
-                          <line x1={dimLeft} y1={dimTop * CELL_SIZE} x2={dimLeft} y2={(dimTop + actualHeightCells) * CELL_SIZE} stroke={pav.color} strokeWidth="1.5" opacity="0.6" />
-                          <line x1={dimLeft - 6} y1={dimTop * CELL_SIZE} x2={dimLeft + 4} y2={dimTop * CELL_SIZE} stroke={pav.color} strokeWidth="1.5" opacity="0.6" />
-                          <line x1={dimLeft - 6} y1={(dimTop + actualHeightCells) * CELL_SIZE} x2={dimLeft + 4} y2={(dimTop + actualHeightCells) * CELL_SIZE} stroke={pav.color} strokeWidth="1.5" opacity="0.6" />
-                          <text
-                            x={dimLeft - 14}
-                            y={(dimTop + actualHeightCells / 2) * CELL_SIZE}
-                            textAnchor="middle"
-                            dominantBaseline="middle"
-                            fontSize="9"
-                            fontWeight="bold"
-                            fill={pav.color}
-                            transform={`rotate(-90 ${dimLeft - 14} ${(dimTop + actualHeightCells / 2) * CELL_SIZE})`}
-                          >
-                            5.2m
-                          </text>
-                        </g>
-                      );
-                    })}
+                    {/* Each group's width and depth */}
+                    {groupDims.map((g, idx) => {
+                      const widthM = (g.maxX - g.minX) * 0.6;
+                      const heightM = (g.maxY - g.minY) * 0.6;
 
-                    {/* Pavilion 2 bottom length dimension */}
-                    {pavilionDimensions.length >= 2 && (() => {
-                      const pav2 = pavilionDimensions[pavilionDimensions.length - 1];
-                      const pav2WidthM = (pav2.maxX - pav2.minX) * 0.6;
                       return (
-                        <g key="pav2-bottom-dim">
-                          <line
-                            x1={pav2.minX * CELL_SIZE}
-                            y1={(pav2.pavMaxY + 2.5) * CELL_SIZE}
-                            x2={pav2.maxX * CELL_SIZE}
-                            y2={(pav2.pavMaxY + 2.5) * CELL_SIZE}
-                            stroke="#CBD5E1"
-                            strokeWidth="1.5"
-                          />
-                          <line x1={pav2.minX * CELL_SIZE} y1={(pav2.pavMaxY + 2.5) * CELL_SIZE - 6} x2={pav2.minX * CELL_SIZE} y2={(pav2.pavMaxY + 2.5) * CELL_SIZE + 6} stroke="#CBD5E1" strokeWidth="1.5" />
-                          <line x1={pav2.maxX * CELL_SIZE} y1={(pav2.pavMaxY + 2.5) * CELL_SIZE - 6} x2={pav2.maxX * CELL_SIZE} y2={(pav2.pavMaxY + 2.5) * CELL_SIZE + 6} stroke="#CBD5E1" strokeWidth="1.5" />
-                          <text
-                            x={(pav2.minX * CELL_SIZE + pav2.maxX * CELL_SIZE) / 2}
-                            y={(pav2.pavMaxY + 2.5) * CELL_SIZE + 16}
-                            textAnchor="middle"
-                            fontSize="11"
-                            fontWeight="bold"
-                            fill="#64748b"
-                          >
-                            {pav2WidthM.toFixed(1)}m
+                        <g key={`group-${idx}`}>
+                          {/* Width dimension at top of pavilion */}
+                          <line x1={g.minX * CELL_SIZE} y1={(g.minY - 0.5) * CELL_SIZE} x2={g.maxX * CELL_SIZE} y2={(g.minY - 0.5) * CELL_SIZE} stroke={g.isConn ? '#94a3b8' : '#64748b'} strokeWidth="1.5" />
+                          <line x1={g.minX * CELL_SIZE} y1={(g.minY - 0.5) * CELL_SIZE - 5} x2={g.minX * CELL_SIZE} y2={(g.minY - 0.5) * CELL_SIZE + 5} stroke={g.isConn ? '#94a3b8' : '#64748b'} strokeWidth="1.5" />
+                          <line x1={g.maxX * CELL_SIZE} y1={(g.minY - 0.5) * CELL_SIZE - 5} x2={g.maxX * CELL_SIZE} y2={(g.minY - 0.5) * CELL_SIZE + 5} stroke={g.isConn ? '#94a3b8' : '#64748b'} strokeWidth="1.5" />
+                          <text x={(g.minX + g.maxX) * CELL_SIZE / 2} y={(g.minY - 0.5) * CELL_SIZE - 10} textAnchor="middle" fontSize="10" fontWeight="bold" fill={g.isConn ? '#64748b' : '#1e293b'}>
+                            {widthM.toFixed(1)}m
                           </text>
-                        </g>
-                      );
-                    })()}
 
-                    {/* Connection module depth dimensions */}
-                    {connectionDimensions.map(conn => {
-                      const actualHeightCells = conn.pavMaxY - conn.pavMinY;
-                      const actualHeightM = (actualHeightCells * 0.6).toFixed(1);
-                      const dimLeft = (conn.minX - 2) * CELL_SIZE;
-                      return (
-                        <g key={conn.name}>
-                          <line x1={dimLeft} y1={conn.pavMinY * CELL_SIZE} x2={dimLeft} y2={conn.pavMaxY * CELL_SIZE} stroke={conn.color} strokeWidth="1.5" opacity="0.6" />
-                          <line x1={dimLeft - 6} y1={conn.pavMinY * CELL_SIZE} x2={dimLeft + 4} y2={conn.pavMinY * CELL_SIZE} stroke={conn.color} strokeWidth="1.5" opacity="0.6" />
-                          <line x1={dimLeft - 6} y1={conn.pavMaxY * CELL_SIZE} x2={dimLeft + 4} y2={conn.pavMaxY * CELL_SIZE} stroke={conn.color} strokeWidth="1.5" opacity="0.6" />
-                          <text
-                            x={dimLeft - 14}
-                            y={(conn.pavMinY + actualHeightCells / 2) * CELL_SIZE}
-                            textAnchor="middle"
-                            dominantBaseline="middle"
-                            fontSize="9"
-                            fontWeight="bold"
-                            fill={conn.color}
-                            transform={`rotate(-90 ${dimLeft - 14} ${(conn.pavMinY + actualHeightCells / 2) * CELL_SIZE})`}
-                          >
-                            {actualHeightM}m
+                          {/* Depth dimension on left side */}
+                          <line x1={(g.minX - 1.5) * CELL_SIZE} y1={g.minY * CELL_SIZE} x2={(g.minX - 1.5) * CELL_SIZE} y2={g.maxY * CELL_SIZE} stroke={g.isConn ? '#94a3b8' : '#64748b'} strokeWidth="1.5" />
+                          <line x1={(g.minX - 1.5) * CELL_SIZE - 5} y1={g.minY * CELL_SIZE} x2={(g.minX - 1.5) * CELL_SIZE + 5} y2={g.minY * CELL_SIZE} stroke={g.isConn ? '#94a3b8' : '#64748b'} strokeWidth="1.5" />
+                          <line x1={(g.minX - 1.5) * CELL_SIZE - 5} y1={g.maxY * CELL_SIZE} x2={(g.minX - 1.5) * CELL_SIZE + 5} y2={g.maxY * CELL_SIZE} stroke={g.isConn ? '#94a3b8' : '#64748b'} strokeWidth="1.5" />
+                          <text x={(g.minX - 1.5) * CELL_SIZE - 16} y={(g.minY + g.maxY) * CELL_SIZE / 2} textAnchor="middle" dominantBaseline="middle" fontSize="10" fontWeight="bold" fill={g.isConn ? '#64748b' : '#1e293b'} transform={`rotate(-90 ${(g.minX - 1.5) * CELL_SIZE - 16} ${(g.minY + g.maxY) * CELL_SIZE / 2})`}>
+                            {heightM.toFixed(1)}m
                           </text>
                         </g>
                       );
