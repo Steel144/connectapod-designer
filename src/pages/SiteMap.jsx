@@ -239,42 +239,55 @@ export default function SiteMap() {
       </div>
 
       {/* Map and overlay */}
-      <div className="flex-1 relative">
+      <div className="flex-1 relative overflow-hidden">
         {coordinates ? (
-          <MapContainer
-            center={[coordinates[0] - positionOffset.lat, coordinates[1] - positionOffset.lng]}
-            zoom={mapZoom}
-            onZoomend={(e) => setMapZoom(e.target._zoom)}
-            className="w-full h-full"
-            ref={mapRef}
-          >
-            <TileLayer
-              url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-              attribution='&copy; Esri, DigitalGlobe, Earthstar Geographics'
-              maxZoom={22}
-            />
-            <Marker position={coordinates}>
-              <Popup>Site Location</Popup>
-            </Marker>
+          <>
+            {/* Map behind - rotates and moves */}
+            <div className="absolute inset-0" style={{
+              transform: `rotate(${overlayRotation}deg)`,
+              transformOrigin: 'center',
+              transition: 'transform 0.1s ease-out'
+            }}>
+              <MapContainer
+                center={[coordinates[0] + positionOffset.lat, coordinates[1] + positionOffset.lng]}
+                zoom={mapZoom}
+                onZoomend={(e) => setMapZoom(e.target._zoom)}
+                className="w-full h-full"
+                ref={mapRef}
+              >
+                <TileLayer
+                  url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+                  attribution='&copy; Esri, DigitalGlobe, Earthstar Geographics'
+                  maxZoom={22}
+                />
+                <Marker position={coordinates}>
+                  <Popup>Site Location</Popup>
+                </Marker>
 
-            {/* Site boundary */}
-            {siteBounds && (
-              <Rectangle
-                bounds={siteBounds}
-                pathOptions={{ color: '#3b82f6', weight: 3, opacity: 0.7, fill: true, fillOpacity: 0.1 }}
-              />
-            )}
+                {siteBounds && (
+                  <Rectangle
+                    bounds={siteBounds}
+                    pathOptions={{ color: '#3b82f6', weight: 3, opacity: 0.7, fill: true, fillOpacity: 0.1 }}
+                  />
+                )}
+              </MapContainer>
+            </div>
 
-            {/* Floor plan overlay at map scale */}
-            {floorPlanOverlay && getOverlayBounds() && (
-              <RotatedImageOverlay
-                url={floorPlanOverlay}
-                bounds={getOverlayBounds()}
-                opacity={0.8}
-                rotation={overlayRotation}
-              />
+            {/* Floor plan fixed in center - on top */}
+            {floorPlanOverlay && (
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <img 
+                  src={floorPlanOverlay} 
+                  alt="Floor Plan"
+                  style={{
+                    maxWidth: '80%',
+                    maxHeight: '80%',
+                    objectFit: 'contain'
+                  }}
+                />
+              </div>
             )}
-          </MapContainer>
+          </>
         ) : (
           <div className="w-full h-full flex items-center justify-center text-gray-400">
             <p>Enter an address to view the site map</p>
@@ -352,30 +365,4 @@ export default function SiteMap() {
       )}
     </div>
   );
-}
-
-// Custom component to handle rotated image overlay
-function RotatedImageOverlay({ url, bounds, opacity, rotation }) {
-  const map = useMap();
-
-  useMapEffect(() => {
-    if (!url || !bounds) return;
-
-    const overlay = L.imageOverlay(url, bounds, { opacity });
-    overlay.addTo(map);
-
-    // Apply rotation using CSS transform
-    const img = overlay.getElement();
-    if (img) {
-      img.style.transform = `rotate(${rotation}deg)`;
-      img.style.transformOrigin = 'center';
-      img.style.transition = 'transform 0.1s ease-out';
-    }
-
-    return () => {
-      map.removeLayer(overlay);
-    };
-  }, [url, bounds, rotation, map]);
-
-  return null;
 }
