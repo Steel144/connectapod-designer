@@ -16,7 +16,6 @@ const LayoutWrapper = ({ children, currentPageName }) => Layout ?
   : <>{children}</>;
 
 // Import Landing page
-import Landing from './pages/Landing';
 import DesignCatalogue from './pages/DesignCatalogue';
 
 const AuthenticatedApp = () => {
