@@ -102,7 +102,7 @@ export default function FurniturePanel({ onDragStart, onDragEnd }) {
               </div>
               <div className="min-w-0">
                 <p className="text-gray-700 font-medium text-xs leading-tight">{item.label}</p>
-                <p className="text-[10px] text-gray-400">{item.width.toFixed(2)}×{item.depth.toFixed(2)}m</p>
+
               </div>
             </div>
           ))}
