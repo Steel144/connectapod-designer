@@ -1,12 +1,70 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 
 const CELL_SIZE = 40; // pixels per grid cell in print
 
+const PrintPage = ({ children, header, footer, isLast }) => {
+  const contentRef = useRef(null);
+  const innerRef = useRef(null);
+
+  useEffect(() => {
+    const container = contentRef.current;
+    const inner = innerRef.current;
+    if (!container || !inner) return;
+
+    const fit = () => {
+      inner.style.transform = "none";
+      inner.style.transformOrigin = "top left";
+      const cw = container.clientWidth;
+      const ch = container.clientHeight;
+      const iw = inner.scrollWidth;
+      const ih = inner.scrollHeight;
+      if (iw > cw || ih > ch) {
+        const scaleX = cw / iw;
+        const scaleY = ch / ih;
+        const s = Math.min(scaleX, scaleY, 1);
+        inner.style.transform = `scale(${s})`;
+      }
+    };
+
+    const imgs = inner.querySelectorAll("img");
+    let loaded = 0;
+    if (imgs.length === 0) { fit(); return; }
+    imgs.forEach(img => {
+      if (img.complete) { loaded++; if (loaded === imgs.length) fit(); }
+      else img.addEventListener("load", () => { loaded++; if (loaded === imgs.length) fit(); }, { once: true });
+    });
+    fit();
+  }, []);
+
+  return (
+    <div style={{
+      background: "white",
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "space-between",
+      width: "calc(297mm - 14mm)",
+      height: "calc(210mm - 14mm)",
+      pageBreakAfter: isLast ? "avoid" : "always",
+      breakAfter: isLast ? "avoid" : "page",
+      boxSizing: "border-box",
+      overflow: "visible",
+    }}>
+      {header}
+      <div ref={contentRef} style={{ flex: 1, overflow: "hidden", padding: "12px 24px", position: "relative" }}>
+        <div ref={innerRef} style={{ display: "inline-block", transformOrigin: "top left" }}>
+          {children}
+        </div>
+      </div>
+      {footer}
+    </div>
+  );
+};
+
 export default function PrintablePlansSheet({ placedModules, furniture = [], onClose, printDetails = {} }) {
-  React.useEffect(() => {
+  useEffect(() => {
     const timer = setTimeout(() => {
       window.print();
-    }, 1200);
+    }, 1800);
 
     return () => clearTimeout(timer);
   }, [onClose]);
