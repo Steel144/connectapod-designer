@@ -315,79 +315,7 @@ export default function SiteMap() {
         </div>
       </div>
 
-      {/* Address input section */}
-      <div className="border-b border-gray-200 p-4 bg-gray-50 relative z-[9999]">
-        <div className="max-w-2xl mx-auto">
-          <label className="text-sm font-semibold text-gray-700 mb-2 block">Site Address</label>
-          <div className="flex gap-2 relative">
-            <div className="flex-1 relative">
-              <Input
-                type="text"
-                placeholder="Enter site address (e.g., 123 Main St, City)"
-                value={address}
-                onChange={handleAddressChange}
-                onKeyPress={handleKeyPress}
-                onFocus={() => setShowSuggestions(true)}
-                className="flex-1"
-              />
-              {address && (
-                <button
-                  onClick={clearAddress}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              )}
-              {showSuggestions && suggestions.length > 0 && (
-                <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded shadow-lg z-50 max-h-48 overflow-y-auto">
-                  {suggestions.map((suggestion, idx) => (
-                    <button
-                      key={idx}
-                      onClick={() => selectSuggestion(suggestion)}
-                      className="w-full text-left px-3 py-2 hover:bg-gray-100 text-sm text-gray-700 border-b last:border-b-0"
-                    >
-                      {suggestion.display_name}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-            <Button
-              onClick={geocodeAddress}
-              disabled={loading}
-              className="bg-orange-600 hover:bg-orange-700"
-            >
-              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Find'}
-            </Button>
-          </div>
-          {coordinates && (
-           <>
-             <div className="mt-2 text-xs text-gray-600">
-               📍 {coordinates[0].toFixed(6)}, {coordinates[1].toFixed(6)}
-             </div>
-             <div className="mt-3">
-               <label className="text-sm font-semibold text-gray-700 mb-2 block">Site Boundaries (Optional)</label>
-               <div className="flex gap-2">
-                 <Input
-                   type="text"
-                   placeholder="lat1,lng1,lat2,lng2"
-                   value={boundaryInput}
-                   onChange={(e) => setBoundaryInput(e.target.value)}
-                   className="flex-1 text-sm"
-                 />
-                 <Button
-                   onClick={setBoundary}
-                   variant="outline"
-                   size="sm"
-                 >
-                   Set
-                 </Button>
-               </div>
-             </div>
-           </>
-          )}
-        </div>
-      </div>
+
 
       {/* Map and overlay */}
       <div 
@@ -455,44 +383,113 @@ export default function SiteMap() {
         )}
       </div>
 
-      {/* Floating Controls */}
+      {/* Floating Config Panel */}
       {design && (
-        <div className="absolute bottom-4 right-4 z-[9999] bg-white rounded-lg shadow-lg p-4 border border-gray-200 max-w-xs">
-          <div className="space-y-3">
+        <div className="absolute bottom-4 right-4 z-[9999] bg-white rounded-lg shadow-lg p-4 border border-gray-200 max-w-xs space-y-4">
+          {/* Address Section */}
+          <div>
+            <label className="text-xs font-semibold text-gray-700 block mb-2">Site Address</label>
+            <div className="flex gap-2">
+              <div className="flex-1 relative">
+                <Input
+                  type="text"
+                  placeholder="Enter site address"
+                  value={address}
+                  onChange={handleAddressChange}
+                  onKeyPress={handleKeyPress}
+                  onFocus={() => setShowSuggestions(true)}
+                  className="text-xs"
+                />
+                {address && (
+                  <button
+                    onClick={clearAddress}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                )}
+                {showSuggestions && suggestions.length > 0 && (
+                  <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded shadow-lg z-50 max-h-32 overflow-y-auto">
+                    {suggestions.map((suggestion, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => selectSuggestion(suggestion)}
+                        className="w-full text-left px-2 py-1 hover:bg-gray-100 text-xs text-gray-700 border-b last:border-b-0"
+                      >
+                        {suggestion.display_name}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+              <button
+                onClick={geocodeAddress}
+                disabled={loading}
+                className="px-2 py-1.5 text-xs bg-orange-600 hover:bg-orange-700 text-white rounded transition-all disabled:opacity-50"
+              >
+                {loading ? <Loader2 className="w-3 h-3 animate-spin" /> : 'Find'}
+              </button>
+            </div>
+            {coordinates && (
+              <p className="text-xs text-gray-600 mt-1">
+                📍 {coordinates[0].toFixed(4)}, {coordinates[1].toFixed(4)}
+              </p>
+            )}
+          </div>
 
+          {/* Boundaries Section */}
+          {coordinates && (
             <div>
-              <label className="text-xs font-semibold text-gray-600 block mb-2">Rotation</label>
-              <div className="flex items-center gap-2">
-                <input
-                  type="range"
-                  min="0"
-                  max="360"
-                  step="1"
-                  value={overlayRotation}
-                  onChange={(e) => setOverlayRotation(parseInt(e.target.value))}
-                  className="flex-1"
+              <label className="text-xs font-semibold text-gray-700 block mb-2">Site Boundaries</label>
+              <div className="flex gap-2">
+                <Input
+                  type="text"
+                  placeholder="lat1,lng1,lat2,lng2"
+                  value={boundaryInput}
+                  onChange={(e) => setBoundaryInput(e.target.value)}
+                  className="flex-1 text-xs"
                 />
-                <span className="text-xs text-gray-600 w-8 text-right">{overlayRotation}°</span>
+                <button
+                  onClick={setBoundary}
+                  className="px-2 py-1.5 text-xs border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22] transition-all rounded"
+                >
+                  Set
+                </button>
               </div>
             </div>
-            <div>
-              <label className="text-xs font-semibold text-gray-600 block">Current Map Zoom:</label>
-              <p className="text-sm font-bold text-[#F15A22]">{Math.round(mapZoom)}</p>
+          )}
+
+          {/* Rotation Section */}
+          <div>
+            <label className="text-xs font-semibold text-gray-600 block mb-2">Rotation</label>
+            <div className="flex items-center gap-2">
+              <input
+                type="range"
+                min="0"
+                max="360"
+                step="1"
+                value={overlayRotation}
+                onChange={(e) => setOverlayRotation(parseInt(e.target.value))}
+                className="flex-1"
+              />
+              <span className="text-xs text-gray-600 w-8 text-right">{overlayRotation}°</span>
             </div>
-            <div>
-              <label className="text-xs font-semibold text-gray-600 block mb-2">Plan Scale Adjust</label>
-              <div className="flex items-center gap-2">
-                <input
-                  type="range"
-                  min="0.1"
-                  max="2"
-                  step="0.1"
-                  value={planScaleMultiplier}
-                  onChange={(e) => setPlanScaleMultiplier(parseFloat(e.target.value))}
-                  className="flex-1"
-                />
-                <span className="text-xs text-gray-600 w-10 text-right">{planScaleMultiplier.toFixed(1)}x</span>
-              </div>
+          </div>
+
+          {/* Plan Scale Section */}
+          <div>
+            <label className="text-xs font-semibold text-gray-600 block mb-2">Plan Scale</label>
+            <div className="flex items-center gap-2">
+              <input
+                type="range"
+                min="0.1"
+                max="2"
+                step="0.1"
+                value={planScaleMultiplier}
+                onChange={(e) => setPlanScaleMultiplier(parseFloat(e.target.value))}
+                className="flex-1"
+              />
+              <span className="text-xs text-gray-600 w-10 text-right">{planScaleMultiplier.toFixed(1)}x</span>
             </div>
           </div>
         </div>
