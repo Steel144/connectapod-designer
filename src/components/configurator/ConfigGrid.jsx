@@ -850,7 +850,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                 const item = dragging.mod;
                 const rect = gridRef.current?.getBoundingClientRect();
                 if (!rect) return null;
-                const displayWidth = item.id === 'sofa_1' ? 1.08 : (item.width || 1.4);
+                const displayWidth = item.id === 'sofa_1' ? 0.9 : (item.width || 1.4);
                 const width = displayWidth / 0.6;
                 const height = (item.depth || 2.0) / 0.6;
                 const deltaX = (dragging.cursorX - rect.left - item.x * scaledCellW - dragging.offsetX) / scaledCellW;
@@ -938,7 +938,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
 
         {/* Furniture */}
          {furniture.map((item) => {
-           const displayWidth = item.id === 'sofa_1' ? 1.08 : (item.width || 1.4);
+           const displayWidth = item.id === 'sofa_1' ? 0.9 : (item.width || 1.4);
            const width = displayWidth / 0.6;
            const height = (item.depth || 2.0) / 0.6;
            const isSelected = selectedFurnitureId === item.id;
