@@ -7,6 +7,27 @@ import { Input } from '@/components/ui/input';
 import { Loader2, X } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 
+// Component to capture map zoom and calculate scale
+function MapScaleUpdater({ onScaleChange }) {
+  const map = useMap();
+  
+  useEffect(() => {
+    const updateScale = () => {
+      const zoom = map.getZoom();
+      const metersPerDegree = 111320;
+      const pixelsPerDegree = 256 * Math.pow(2, zoom);
+      const metersPerPixel = metersPerDegree / pixelsPerDegree;
+      onScaleChange(metersPerPixel);
+    };
+    
+    updateScale();
+    map.on('zoom', updateScale);
+    return () => map.off('zoom', updateScale);
+  }, [map, onScaleChange]);
+  
+  return null;
+}
+
 export default function SiteMap() {
   const [address, setAddress] = useState('');
   const [coordinates, setCoordinates] = useState(null);
@@ -178,26 +199,9 @@ export default function SiteMap() {
     return 1 / mapScale;
   };
 
-  // Calculate map scale (meters per pixel) and update zoom
-  useEffect(() => {
-    if (!mapRef.current) return;
-    const map = mapRef.current;
-    
-    const updateScale = () => {
-      const zoom = map._zoom;
-      const center = map.getCenter();
-      // Calculate meters per pixel: (meters per degree / pixels per degree)
-      const metersPerDegree = 111320; // at equator, refined for NZ
-      const pixelsPerDegree = 256 * Math.pow(2, zoom);
-      const metersPerPixel = metersPerDegree / pixelsPerDegree;
-      setMapScale(metersPerPixel);
-      setMapZoom(zoom);
-    };
-    
-    updateScale();
-    map.on('zoom', updateScale);
-    return () => map.off('zoom', updateScale);
-  }, [mapRef.current]);
+  const handleScaleChange = (metersPerPixel) => {
+    setMapScale(metersPerPixel);
+  };
 
   // Generate floor plan canvas overlay
   useEffect(() => {
@@ -364,6 +368,7 @@ export default function SiteMap() {
                   attribution='&copy; Esri, DigitalGlobe, Earthstar Geographics'
                   maxZoom={22}
                 />
+                <MapScaleUpdater onScaleChange={handleScaleChange} />
                 <ScaleControl position="bottomleft" imperial={false} />
                 <Marker position={coordinates}>
                   <Popup>Site Location</Popup>
