@@ -131,14 +131,18 @@ export default function DesignCatalogue() {
              <p className="text-sm text-gray-500">Start with a pre-designed layout and customise it</p>
            </div>
          </div>
-         <button
-           onClick={() => setShowInstructions(true)}
-           className="p-2 text-gray-400 hover:text-[#F15A22] transition-colors"
-           title="View instructions"
-         >
-           <HelpCircle size={20} />
-         </button>
-       </div>
+         <Tooltip>
+           <TooltipTrigger asChild>
+             <button
+               onClick={() => setShowInstructions(true)}
+               className="p-2 text-gray-400 hover:text-[#F15A22] transition-colors"
+             >
+               <HelpCircle size={20} />
+             </button>
+           </TooltipTrigger>
+           <TooltipContent>View instructions</TooltipContent>
+         </Tooltip>
+         </div>
 
       {/* Tag filters */}
       <div className="px-6 pt-6 pb-2 flex gap-2 flex-wrap">
