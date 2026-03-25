@@ -305,7 +305,7 @@ export default function PrintablePlansSheet({ placedModules, furniture = [], wal
                 const fx = (f.x - minX + 1) * CELL_SIZE;
                 const fy = (f.y - minY + 1) * CELL_SIZE;
                 const rotation = f.rotation || 0;
-                
+
                 let transforms = [
                   `translate(${fx + fWidth / 2}, ${fy + fDepth / 2})`,
                   `rotate(${rotation})`,
@@ -316,8 +316,8 @@ export default function PrintablePlansSheet({ placedModules, furniture = [], wal
                 return (
                   <g key={f.id} transform={transforms.join(' ')}>
                     <rect
-                       x={0}
-                       y={0}
+                       x={-fWidth / 2}
+                       y={-fDepth / 2}
                        width={fWidth}
                        height={fDepth}
                        fill={f.image ? "white" : "#FFB3A8"}
