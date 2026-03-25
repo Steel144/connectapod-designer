@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, Rectangle, ImageOverlay, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Rectangle, ImageOverlay, useMap, ScaleControl } from 'react-leaflet';
 import L from 'leaflet';
 import { useEffect as useMapEffect } from 'react';
 import 'leaflet/dist/leaflet.css';
@@ -278,6 +278,7 @@ export default function SiteMap() {
                   attribution='&copy; Esri, DigitalGlobe, Earthstar Geographics'
                   maxZoom={22}
                 />
+                <ScaleControl position="bottomleft" imperial={false} />
                 <Marker position={coordinates}>
                   <Popup>Site Location</Popup>
                 </Marker>
