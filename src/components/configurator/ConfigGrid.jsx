@@ -1100,7 +1100,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
 
 
         {/* Dimensions */}
-        {placedModules.length > 0 && (() => {
+        {showDimensions && placedModules.length > 0 && (() => {
           const minX = Math.min(...placedModules.map(m => m.x));
           const maxX = Math.max(...placedModules.map(m => m.x + m.w));
           const minY = Math.min(...placedModules.map(m => m.y));
