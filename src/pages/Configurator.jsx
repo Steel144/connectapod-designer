@@ -39,6 +39,7 @@ const generateId = () => `mod-${Math.random().toString(36).substr(2, 9)}`;
 const generateWallId = () => `wall-${Math.random().toString(36).substr(2, 9)}`;
 
 export default function Configurator() {
+  const { user } = useAuth();
   const MAX_HISTORY = 10;
   const [history, setHistory] = useState([]);
   const [placedModules, setPlacedModules] = useState(() => {
