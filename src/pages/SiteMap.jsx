@@ -8,6 +8,8 @@ import { Input } from '@/components/ui/input';
 import { Loader2, X } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 
+const FLOOR_PLAN_SCALE = 0.64; // Adjusted for proper overlay size
+
 export default function SiteMap() {
   const [address, setAddress] = useState('');
   const [coordinates, setCoordinates] = useState(null);
@@ -376,7 +378,7 @@ export default function SiteMap() {
                     maxHeight: '90%',
                     objectFit: 'contain',
                     // At zoom 20, ~50m visible width. Scale by zoom level relative to base.
-                    transform: `scale(${Math.pow(2, mapZoom - 20) * 0.64})`,
+                    transform: `scale(${Math.pow(2, mapZoom - 20) * FLOOR_PLAN_SCALE})`,
                     transition: 'transform 0.1s ease-out'
                   }}
                 />
