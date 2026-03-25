@@ -243,39 +243,38 @@ export default function SiteMap() {
         {coordinates ? (
           <>
             {/* Map behind - rotates and moves */}
-            <div className="absolute inset-0" style={{
-              transform: `rotate(${overlayRotation}deg)`,
-              transformOrigin: 'center',
-              transition: 'transform 0.1s ease-out'
-            }}>
-              <MapContainer
-                center={[coordinates[0] + positionOffset.lat, coordinates[1] + positionOffset.lng]}
-                zoom={mapZoom}
-                onZoomend={(e) => setMapZoom(e.target._zoom)}
-                className="w-full h-full"
-                ref={mapRef}
-              >
-                <TileLayer
-                  url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-                  attribution='&copy; Esri, DigitalGlobe, Earthstar Geographics'
-                  maxZoom={22}
-                />
-                <Marker position={coordinates}>
-                  <Popup>Site Location</Popup>
-                </Marker>
+            <MapContainer
+              center={[coordinates[0] + positionOffset.lat, coordinates[1] + positionOffset.lng]}
+              zoom={mapZoom}
+              onZoomend={(e) => setMapZoom(e.target._zoom)}
+              className="w-full h-full absolute inset-0"
+              ref={mapRef}
+              style={{
+                transform: `rotate(${overlayRotation}deg)`,
+                transformOrigin: 'center',
+                transition: 'transform 0.1s ease-out'
+              }}
+            >
+              <TileLayer
+                url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+                attribution='&copy; Esri, DigitalGlobe, Earthstar Geographics'
+                maxZoom={22}
+              />
+              <Marker position={coordinates}>
+                <Popup>Site Location</Popup>
+              </Marker>
 
-                {siteBounds && (
-                  <Rectangle
-                    bounds={siteBounds}
-                    pathOptions={{ color: '#3b82f6', weight: 3, opacity: 0.7, fill: true, fillOpacity: 0.1 }}
-                  />
-                )}
-              </MapContainer>
-            </div>
+              {siteBounds && (
+                <Rectangle
+                  bounds={siteBounds}
+                  pathOptions={{ color: '#3b82f6', weight: 3, opacity: 0.7, fill: true, fillOpacity: 0.1 }}
+                />
+              )}
+            </MapContainer>
 
             {/* Floor plan fixed in center - on top */}
             {floorPlanOverlay && (
-              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
                 <img 
                   src={floorPlanOverlay} 
                   alt="Floor Plan"
