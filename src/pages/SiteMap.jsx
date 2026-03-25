@@ -17,7 +17,7 @@ function MapScaleUpdater({ onScaleChange }) {
       const metersPerDegree = 111320;
       const pixelsPerDegree = 256 * Math.pow(2, zoom);
       const metersPerPixel = metersPerDegree / pixelsPerDegree;
-      onScaleChange(metersPerPixel);
+      onScaleChange(metersPerPixel, zoom);
     };
     
     updateScale();
@@ -199,8 +199,9 @@ export default function SiteMap() {
     return 1 / mapScale;
   };
 
-  const handleScaleChange = (metersPerPixel) => {
+  const handleScaleChange = (metersPerPixel, zoom) => {
     setMapScale(metersPerPixel);
+    setMapZoom(zoom);
   };
 
   // Generate floor plan canvas overlay
@@ -394,8 +395,7 @@ export default function SiteMap() {
                     maxHeight: '90%',
                     objectFit: 'contain',
                     // Scale based on real-world meters per pixel
-                    // Canvas is 800px wide, design width in meters
-                    transform: `scale(${mapScale && getDesignDimensions() ? (getScalePixelsPerMeter() * getDesignDimensions().widthM / 800) : 0.1})`,
+                    transform: `scale(${mapScale && getDesignDimensions() ? (getScalePixelsPerMeter() * getDesignDimensions().widthM / 800) : 0.01})`,
                     transition: 'transform 0.1s ease-out'
                   }}
                 />
