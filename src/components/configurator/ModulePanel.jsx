@@ -418,7 +418,7 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
                        if (!bySize[size]) bySize[size] = [];
                        bySize[size].push(item);
                      });
-                     const sizes = Object.keys(bySize).sort((a, b) => parseFloat(a) - parseFloat(b));
+                     const sizes = Object.keys(bySize).sort((a, b) => parseFloat(b) - parseFloat(a));
 
                      return sizes.map(size => {
                        const sizeKey = `living-${size}`;
