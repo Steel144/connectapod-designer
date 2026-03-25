@@ -9,6 +9,7 @@ import InstructionsModal from "@/components/InstructionsModal";
 export default function DesignCatalogue() {
   const navigate = useNavigate();
   const [selectedTag, setSelectedTag] = useState("All");
+  const [showInstructions, setShowInstructions] = useState(false);
 
   const { data: templates = [], isLoading } = useQuery({
     queryKey: ["homeDesigns", "templates"],
