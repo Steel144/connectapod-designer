@@ -538,7 +538,7 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
                                     {expandedSizes[`${group.key}-${size}-end`] ? <ChevronDown size={10} /> : <ChevronRight size={10} />}
                                   </span>
                                 </button>
-                                {endItems.map((item) => {
+                                {expandedSizes[`${group.key}-${size}-end`] && endItems.map((item) => {
                                   const mod = MODULE_TYPES.find((m) => m.type === item.code) || {
                                     type: item.code,
                                     label: item.name,
