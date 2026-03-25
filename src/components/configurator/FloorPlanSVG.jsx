@@ -82,10 +82,10 @@ const PLANS = {
   "050-4": () => <LCornerPlan mirror={true} flip={true} />,
 
   // ── KITCHEN ───────────────────────────────────
-  "005-K30": () => <KitchenUShape />,
-  "005-K31": () => <KitchenGalley />,
-  "012-K01": () => <KitchenSingleRun />,
-  "012-K02": () => <KitchenDoubleRun />,
+  "005-K30": () => <KitchenUShape orange />,
+  "005-K31": () => <KitchenGalley orange />,
+  "012-K01": () => <KitchenSingleRun orange />,
+  "012-K02": () => <KitchenDoubleRun orange />,
 
   // ── BATHROOM ──────────────────────────────────
   "401-B10": () => <BathroomStandard />,
