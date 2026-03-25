@@ -922,6 +922,10 @@ export default function Configurator() {
                   <span className="flex items-center gap-2"><Image size={13} /> {showPhotoImages ? "Photo Images" : "Line Drawings"}</span>
                   {showPhotoImages && <Check size={12} className="text-[#F15A22]" />}
                 </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setShowDimensions(v => !v)} className="flex items-center justify-between cursor-pointer">
+                  <span className="flex items-center gap-2"><Eye size={13} /> Show Dimensions</span>
+                  {showDimensions && <Check size={12} className="text-[#F15A22]" />}
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
             <div className="flex border border-gray-200 overflow-hidden">
