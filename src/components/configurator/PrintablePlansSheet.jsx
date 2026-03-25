@@ -1,6 +1,8 @@
 import React, { useEffect, useRef } from "react";
 
-const CELL_SIZE = 40; // pixels per grid cell in print
+const CELL_M = 0.6;
+const PX_PER_M = 100;
+const PRINT_SCALE = 0.55;
 
 const PrintPage = ({ children, header, footer, isLast, paperSize = "a4" }) => {
   const contentRef = useRef(null);
