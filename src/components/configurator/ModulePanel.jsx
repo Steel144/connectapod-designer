@@ -408,91 +408,31 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
             </button>
 
             {isOpen && (
-               <div className="border-t border-gray-100 max-h-96 overflow-y-auto">
-                 {group.key === "living" ? (
-                   // Special layout for Living modules: grouped by size
-                   (() => {
-                     const bySize = {};
-                     group.items.forEach(item => {
-                       const size = `${item.width}m`;
-                       if (!bySize[size]) bySize[size] = [];
-                       bySize[size].push(item);
-                     });
-                     const sizes = Object.keys(bySize).sort((a, b) => parseFloat(b) - parseFloat(a));
+                <div className="border-t border-gray-100 max-h-96 overflow-y-auto">
+                  {(() => {
+                    const bySize = {};
+                    group.items.forEach(item => {
+                      const size = `${item.width}m`;
+                      if (!bySize[size]) bySize[size] = [];
+                      bySize[size].push(item);
+                    });
+                    const sizes = Object.keys(bySize).sort((a, b) => parseFloat(b) - parseFloat(a));
 
-                     return sizes.map(size => {
-                       const sizeKey = `living-${size}`;
-                       const isExpanded = expandedSizes[sizeKey] === true; // Default collapsed
-                       return (
-                       <div key={size} className="border-b border-gray-100 last:border-0">
-                         <button 
-                           onClick={() => setExpandedSizes(prev => ({ ...prev, [sizeKey]: !prev[sizeKey] }))}
-                           className="w-full flex items-center justify-between px-3 py-1.5 bg-gray-50 border-b border-gray-100 hover:bg-gray-100 transition-colors sticky top-0 z-10"
-                         >
-                           <p className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider">{size} wide</p>
-                           <span className="text-gray-400">
-                             {isExpanded ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
-                           </span>
-                         </button>
-                         {isExpanded && bySize[size].map((item) => {
-                           const mod = MODULE_TYPES.find((m) => m.type === item.code) || {
-                             type: item.code,
-                             label: item.name,
-                             mpCode: item.mpCode,
-                             color: group.color,
-                             border: group.border,
-                             w: Math.round(item.width / 0.6),
-                             h: Math.round(item.depth / 0.6),
-                             sqm: item.sqm,
-                             price: group.price,
-                             groupKey: group.key,
-                             chassis: item.chassis || "SF",
-                             widthCode: item.widthCode || "30",
-                             room: item.room || "G",
-                             orientation: item.orientation || 1,
-                           };
-                           const variants = item.description ? item.description.split(",").map(v => v.trim()) : [];
-                           return (
-                             <div
-                               key={item.code}
-                               draggable
-                               onDragStart={(e) => {
-                                 e.dataTransfer.effectAllowed = "copy";
-                                 e.dataTransfer.setData("moduleType", mod.type);
-                                 const imageUrl = floorPlanImages[mod.type] || floorPlanImages[item.originalCode];
-                                 if (imageUrl) {
-                                   e.dataTransfer.setData("moduleImage", imageUrl);
-                                 }
-                                 onDragStart(e, mod);
-                               }}
-                               onDragEnd={onDragEnd}
-                               onMouseEnter={() => setHoveredModule({ ...mod, floorPlanImage: floorPlanImages[mod.type] })}
-                               onMouseLeave={() => setHoveredModule(null)}
-                               className="flex items-center gap-3 px-3 py-2 cursor-grab active:cursor-grabbing hover:bg-orange-50 border-b border-gray-50 last:border-0 transition-colors"
-                             >
-                               <div className="shrink-0 bg-white overflow-hidden relative flex items-center justify-center border border-gray-200" style={{ height: "60px", width: "60px" }}>
-                                 {floorPlanImages[mod.type] || floorPlanImages[item.originalCode] ? (
-                                   <img src={floorPlanImages[mod.type] || floorPlanImages[item.originalCode]} alt={item.name} className="w-auto h-full object-contain" />
-                                 ) : (
-                                   <FloorPlanSVG code={item.code} className="h-full w-auto" />
-                                 )}
-                               </div>
-                               <div className="min-w-0 flex-1">
-                                 <p className="text-xs font-medium text-gray-700 leading-tight">{item.name}</p>
-                                 {variants.length > 0 && <p className="text-[9px] text-gray-500 mt-0.5">{variants.join(" · ")}</p>}
-                                 <p className="text-[10px] font-mono text-[#F15A22] mt-0.5" title={item.mpCode}>{item.mpCode}</p>
-                                 <p className="text-[10px] text-gray-400">{item.sqm}m²</p>
-                               </div>
-                             </div>
-                           );
-                         })}
-                         </div>
-                         );
-                         });
-                         })()
-                         ) : (
-                   // Standard layout for other categories
-                   group.items.map((item) => {
+                    return sizes.map(size => {
+                      const sizeKey = `${group.key}-${size}`;
+                      const isExpanded = expandedSizes[sizeKey] === true; // Default collapsed
+                      return (
+                      <div key={size} className="border-b border-gray-100 last:border-0">
+                        <button 
+                          onClick={() => setExpandedSizes(prev => ({ ...prev, [sizeKey]: !prev[sizeKey] }))}
+                          className="w-full flex items-center justify-between px-3 py-1.5 bg-gray-50 border-b border-gray-100 hover:bg-gray-100 transition-colors sticky top-0 z-10"
+                        >
+                          <p className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider">{size} wide</p>
+                          <span className="text-gray-400">
+                            {isExpanded ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
+                          </span>
+                        </button>
+                        {isExpanded && bySize[size].map((item) => {
                      const mod = MODULE_TYPES.find((m) => m.type === item.code) || {
                        type: item.code,
                        label: item.name,
