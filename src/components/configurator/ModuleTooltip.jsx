@@ -49,7 +49,7 @@ export default function ModuleTooltip({ item, children }) {
         <TooltipTrigger asChild>
           {children}
         </TooltipTrigger>
-        <TooltipContent side="right" className="w-64" asChild>
+        <TooltipContent side="right" className="w-64">
           <div className={`p-3 rounded-lg border ${info.color}`}>
             <div className="flex items-start gap-2 mb-2">
               <Info size={14} className="mt-0.5 shrink-0 text-gray-600" />
