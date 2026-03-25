@@ -199,21 +199,13 @@ export default function PrintablePlansSheet({ placedModules, furniture = [], wal
                 const y = (mod.y - minY + 1) * CELL_SIZE;
                 const w = mod.w * CELL_SIZE;
                 const h = mod.h * CELL_SIZE;
-                const rotation = mod.rotation || 0;
-
-                let transforms = [
-                  `translate(${x + w / 2}, ${y + h / 2})`,
-                  `rotate(${rotation})`,
-                ];
-                if (mod.flipped) transforms.push('scale(-1, 1)');
-                transforms.push(`translate(${-w / 2}, ${-h / 2})`);
 
                 return (
-                  <g key={mod.id} transform={transforms.join(' ')}>
+                  <g key={mod.id}>
                     {/* Module background */}
                     <rect
-                      x={-w / 2}
-                      y={-h / 2}
+                      x={x}
+                      y={y}
                       width={w}
                       height={h}
                       fill="white"
@@ -224,8 +216,8 @@ export default function PrintablePlansSheet({ placedModules, furniture = [], wal
                     {/* Floor plan image if available */}
                     {showPhotoImages && mod.floorPlanImage && (
                       <image
-                        x={-w / 2}
-                        y={-h / 2}
+                        x={x}
+                        y={y}
                         width={w}
                         height={h}
                         href={mod.floorPlanImage}
@@ -237,10 +229,10 @@ export default function PrintablePlansSheet({ placedModules, furniture = [], wal
                     {[...Array(mod.w)].map((_, i) => (
                       <line
                         key={`v-${i}`}
-                        x1={-w / 2 + (i + 1) * CELL_SIZE}
-                        y1={-h / 2}
-                        x2={-w / 2 + (i + 1) * CELL_SIZE}
-                        y2={h / 2}
+                        x1={x + (i + 1) * CELL_SIZE}
+                        y1={y}
+                        x2={x + (i + 1) * CELL_SIZE}
+                        y2={y + h}
                         stroke="#e5e7eb"
                         strokeWidth="0.5"
                         opacity="0.5"
@@ -249,10 +241,10 @@ export default function PrintablePlansSheet({ placedModules, furniture = [], wal
                     {[...Array(mod.h)].map((_, i) => (
                       <line
                         key={`h-${i}`}
-                        x1={-w / 2}
-                        y1={-h / 2 + (i + 1) * CELL_SIZE}
-                        x2={w / 2}
-                        y2={-h / 2 + (i + 1) * CELL_SIZE}
+                        x1={x}
+                        y1={y + (i + 1) * CELL_SIZE}
+                        x2={x + w}
+                        y2={y + (i + 1) * CELL_SIZE}
                         stroke="#e5e7eb"
                         strokeWidth="0.5"
                         opacity="0.5"
@@ -305,7 +297,7 @@ export default function PrintablePlansSheet({ placedModules, furniture = [], wal
                 const fx = (f.x - minX + 1) * CELL_SIZE;
                 const fy = (f.y - minY + 1) * CELL_SIZE;
                 const rotation = f.rotation || 0;
-
+                
                 let transforms = [
                   `translate(${fx + fWidth / 2}, ${fy + fDepth / 2})`,
                   `rotate(${rotation})`,
@@ -316,16 +308,16 @@ export default function PrintablePlansSheet({ placedModules, furniture = [], wal
                 return (
                   <g key={f.id} transform={transforms.join(' ')}>
                     <rect
-                       x={-fWidth / 2}
-                       y={-fDepth / 2}
+                       x={0}
+                       y={0}
                        width={fWidth}
                        height={fDepth}
                        fill={f.image ? "white" : "#FFB3A8"}
                      />
                     {f.image && (
                       <image
-                        x={-fWidth / 2 + 2}
-                        y={-fDepth / 2 + 2}
+                        x={2}
+                        y={2}
                         width={fWidth - 4}
                         height={fDepth - 4}
                         href={f.image}
@@ -334,8 +326,8 @@ export default function PrintablePlansSheet({ placedModules, furniture = [], wal
                     )}
                     {!f.image && (
                       <text
-                        x={0}
-                        y={3}
+                        x={fWidth / 2}
+                        y={fDepth / 2 + 3}
                         textAnchor="middle"
                         fontSize="7"
                         fontWeight="bold"
