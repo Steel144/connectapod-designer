@@ -57,16 +57,13 @@ export default function SiteMap() {
         const designs = await base44.entities.HomeDesign.list('-updated_date', 1);
         if (designs.length > 0) {
           setDesign(designs[0]);
-          if (coordinates) {
-            setOverlayPos({ lat: coordinates[0], lng: coordinates[1] });
-          }
         }
       } catch (err) {
         console.error('Failed to load design:', err);
       }
     };
     loadDesign();
-  }, [coordinates]);
+  }, []);
 
   const geocodeAddress = async () => {
     if (!address.trim()) return;
@@ -393,7 +390,7 @@ export default function SiteMap() {
                     objectFit: 'contain',
                     // Scale based on real-world meters per pixel
                     // Canvas is 800px wide, design width in meters
-                    transform: `scale(${mapScale ? (getScalePixelsPerMeter() / 800 * getDesignDimensions()?.widthM || 10) : 1})`,
+                    transform: `scale(${mapScale && getDesignDimensions() ? (getScalePixelsPerMeter() * getDesignDimensions().widthM / 800) : 0.1})`,
                     transition: 'transform 0.1s ease-out'
                   }}
                 />
