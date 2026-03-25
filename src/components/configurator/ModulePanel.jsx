@@ -420,12 +420,21 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
                      });
                      const sizes = Object.keys(bySize).sort((a, b) => parseFloat(a) - parseFloat(b));
 
-                     return sizes.map(size => (
+                     return sizes.map(size => {
+                       const sizeKey = `living-${size}`;
+                       const isExpanded = expandedSizes[sizeKey] !== false; // Default expanded
+                       return (
                        <div key={size} className="border-b border-gray-100 last:border-0">
-                         <div className="px-3 py-1.5 bg-gray-50 border-b border-gray-100 sticky top-0 z-10">
+                         <button 
+                           onClick={() => setExpandedSizes(prev => ({ ...prev, [sizeKey]: !prev[sizeKey] }))}
+                           className="w-full flex items-center justify-between px-3 py-1.5 bg-gray-50 border-b border-gray-100 hover:bg-gray-100 transition-colors sticky top-0 z-10"
+                         >
                            <p className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider">{size} wide</p>
-                         </div>
-                         {bySize[size].map((item) => {
+                           <span className="text-gray-400">
+                             {isExpanded ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
+                           </span>
+                         </button>
+                         {isExpanded && bySize[size].map((item) => {
                            const mod = MODULE_TYPES.find((m) => m.type === item.code) || {
                              type: item.code,
                              label: item.name,
