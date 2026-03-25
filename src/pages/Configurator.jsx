@@ -1484,5 +1484,6 @@ export default function Configurator() {
         </div>
       )}
     </div>
+    </TooltipProvider>
   );
 }
