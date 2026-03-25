@@ -1074,6 +1074,7 @@ export default function Configurator() {
                 showLabels={showLabels}
                 showFurniture={showFurniture}
                 showPhotoImages={showPhotoImages}
+                showDimensions={showDimensions}
                 />
           </div>
         )}
