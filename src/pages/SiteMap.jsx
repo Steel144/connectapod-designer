@@ -301,8 +301,7 @@ export default function SiteMap() {
                     maxWidth: '80%',
                     maxHeight: '80%',
                     objectFit: 'contain',
-                    // At zoom 20, ~1m = ~12px on screen. Scale proportionally.
-                    transform: `scale(${Math.pow(2, mapZoom - 20)})`,
+                    transform: `scale(${Math.pow(2, mapZoom - 15)})`,
                     transition: 'transform 0.1s ease-out'
                   }}
                 />
