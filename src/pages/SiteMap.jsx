@@ -297,7 +297,9 @@ export default function SiteMap() {
                     maxWidth: '80%',
                     maxHeight: '80%',
                     objectFit: 'contain',
-                    transform: `scale(${Math.pow(2, mapZoom - 15)})`,
+                    // Scale based on map zoom: at zoom 21, 1 meter ≈ 3.6 pixels
+                    // Scale factor: Math.pow(2, mapZoom) / 256 * 40075016.686 meters
+                    transform: `scale(${Math.pow(2, mapZoom - 21)})`,
                     transition: 'transform 0.1s ease-out'
                   }}
                 />
