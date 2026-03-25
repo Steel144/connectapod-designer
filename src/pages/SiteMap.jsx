@@ -23,6 +23,21 @@ export default function SiteMap() {
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState(null);
 
+  // Load address from print details on mount
+  useEffect(() => {
+    const savedDetails = localStorage.getItem('connectapod_print_details');
+    if (savedDetails) {
+      try {
+        const details = JSON.parse(savedDetails);
+        if (details.address) {
+          setAddress(details.address);
+        }
+      } catch (err) {
+        console.error('Failed to load saved address:', err);
+      }
+    }
+  }, []);
+
   // Load most recent design
   useEffect(() => {
     const loadDesign = async () => {
