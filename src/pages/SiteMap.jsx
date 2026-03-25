@@ -122,6 +122,12 @@ export default function SiteMap() {
     canvas.width = 800;
     canvas.height = 600;
     const ctx = canvas.getContext('2d');
+    
+    // Apply rotation
+    ctx.save();
+    ctx.translate(canvas.width / 2, canvas.height / 2);
+    ctx.rotate((overlayRotation * Math.PI) / 180);
+    ctx.translate(-canvas.width / 2, -canvas.height / 2);
 
     // White background
     ctx.fillStyle = '#ffffff';
@@ -161,9 +167,11 @@ export default function SiteMap() {
         ctx.fillText(mod.label || mod.type, x + w / 2, y + h / 2);
       });
     }
+    
+    ctx.restore();
 
     setFloorPlanOverlay(canvas.toDataURL());
-  }, [design]);
+  }, [design, overlayRotation]);
 
   // Calculate overlay bounds based on design dimensions and offset
   const getOverlayBounds = () => {
@@ -266,19 +274,11 @@ export default function SiteMap() {
 
             {/* Floor plan overlay at map scale */}
             {floorPlanOverlay && getOverlayBounds() && (
-              <div style={{
-                position: 'absolute',
-                width: '100%',
-                height: '100%',
-                pointerEvents: 'none'
-              }}>
-                <ImageOverlay
-                  url={floorPlanOverlay}
-                  bounds={getOverlayBounds()}
-                  opacity={0.8}
-                  style={{ transform: `rotate(${overlayRotation}deg)`, transformOrigin: 'center' }}
-                />
-              </div>
+              <ImageOverlay
+                url={floorPlanOverlay}
+                bounds={getOverlayBounds()}
+                opacity={0.8}
+              />
             )}
           </MapContainer>
         ) : (
