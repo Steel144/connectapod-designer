@@ -416,6 +416,10 @@ export default function SiteMap() {
               <label className="text-xs font-semibold text-gray-600 block">Current Map Zoom:</label>
               <p className="text-sm font-bold text-[#F15A22]">{Math.round(mapZoom)}</p>
             </div>
+            <div>
+              <label className="text-xs font-semibold text-gray-600 block">Plan Scale:</label>
+              <p className="text-sm font-bold text-[#F15A22]">{(Math.pow(2, mapZoom - 20) * FLOOR_PLAN_SCALE).toFixed(3)}</p>
+            </div>
           </div>
         </div>
       )}
