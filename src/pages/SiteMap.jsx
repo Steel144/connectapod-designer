@@ -186,7 +186,7 @@ export default function SiteMap() {
   return (
     <div className="w-full h-screen flex flex-col bg-white">
       {/* Header with address input */}
-      <div className="border-b border-gray-200 p-4 bg-gray-50">
+      <div className="border-b border-gray-200 p-4 bg-gray-50 relative z-[9999]">
         <div className="max-w-2xl mx-auto">
           <label className="text-sm font-semibold text-gray-700 mb-2 block">Site Address</label>
           <div className="flex gap-2">
