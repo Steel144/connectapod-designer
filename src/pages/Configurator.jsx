@@ -486,19 +486,23 @@ export default function Configurator() {
       prev.map((w) => {
         const WALL_OFFSET = 0.308;
         
-        // Rotate Z and X walls, and update their positions for 180° rotation
-        if (w.face === 'Z' && Math.abs(w.y - modToRotate.y) < 0.5 && Math.abs(w.x - modToRotate.x) < 0.5) {
+        // Check if wall is attached to Z or X face (by position, not by face label)
+        // Z face: left side at modToRotate.x
+        if (Math.abs(w.y - modToRotate.y) < 0.5 && Math.abs(w.x - modToRotate.x) < 0.5) {
           return {
             ...w,
             rotation: (w.rotation || 0) + 180,
-            x: modToRotate.x + modToRotate.w - WALL_OFFSET  // Move from left to right
+            x: modToRotate.x + modToRotate.w - WALL_OFFSET,  // Move to right side
+            face: w.face === 'Z' ? 'X' : w.face === 'X' ? 'Z' : w.face  // Swap face if it was Z or X
           };
         }
-        if (w.face === 'X' && Math.abs(w.y - modToRotate.y) < 0.5 && Math.abs(w.x - (modToRotate.x + modToRotate.w - WALL_OFFSET)) < 0.5) {
+        // X face: right side at modToRotate.x + modToRotate.w - WALL_OFFSET
+        if (Math.abs(w.y - modToRotate.y) < 0.5 && Math.abs(w.x - (modToRotate.x + modToRotate.w - WALL_OFFSET)) < 0.5) {
           return {
             ...w,
             rotation: (w.rotation || 0) + 180,
-            x: modToRotate.x  // Move from right to left
+            x: modToRotate.x,  // Move to left side
+            face: w.face === 'X' ? 'Z' : w.face === 'Z' ? 'X' : w.face  // Swap face if it was X or Z
           };
         }
         return w;
