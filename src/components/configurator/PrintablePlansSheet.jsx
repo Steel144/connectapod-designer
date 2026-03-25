@@ -210,9 +210,9 @@ export default function PrintablePlansSheet({ placedModules, furniture = [], wal
                     {mod.floorPlanImage && (
                       <image
                         x={x}
-                        y={y - (w * 0.66) / 2 + h / 2}
+                        y={y}
                         width={w}
-                        height={w * 0.66}
+                        height={h}
                         href={mod.floorPlanImage}
                         preserveAspectRatio="xMidYMid slice"
                       />
