@@ -1,5 +1,8 @@
+import { useState } from "react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Info } from "lucide-react";
+import { Info, Edit2 } from "lucide-react";
+import { useAuth } from "@/lib/AuthContext";
+import EditTooltipModal from "./EditTooltipModal";
 
 export function getModuleTypeInfo(item) {
   const variants = item.description ? item.description.split(",").map(v => v.trim()) : [];
@@ -41,15 +44,21 @@ export function getModuleTypeInfo(item) {
 }
 
 export function TypeTooltip({ type, children }) {
+  const { user } = useAuth();
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [tooltipData, setTooltipData] = useState(null);
+
   let info;
   if (type === "standard") {
     info = {
+      key: "standard-module",
       type: "Standard Module",
       description: "Standard modules form the main building structure. They can be joined together in rows and columns to create various floor plan configurations.",
       color: "bg-green-50 border-green-200"
     };
   } else if (type === "end") {
     info = {
+      key: "end-module",
       type: "End Module",
       description: "End modules terminate the building structure. They attach to the ends of standard modules and feature enclosed sides. Used for creating complete building perimeters.",
       color: "bg-blue-50 border-blue-200"
@@ -58,25 +67,50 @@ export function TypeTooltip({ type, children }) {
     return children;
   }
   
+  const isAdmin = user?.role === "admin";
+
   return (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          {children}
-        </TooltipTrigger>
-        <TooltipContent side="right" className="w-64">
-          <div className={`p-3 rounded-lg border ${info.color}`}>
-            <div className="flex items-start gap-2 mb-2">
-              <Info size={14} className="mt-0.5 shrink-0 text-gray-600" />
-              <div className="text-xs">
-                <p className="font-semibold text-gray-800">{info.type}</p>
+    <>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            {children}
+          </TooltipTrigger>
+          <TooltipContent side="right" className="w-64">
+            <div className={`p-3 rounded-lg border ${info.color}`}>
+              <div className="flex items-start gap-2 mb-2">
+                <Info size={14} className="mt-0.5 shrink-0 text-gray-600" />
+                <div className="flex-1">
+                  <p className="text-xs font-semibold text-gray-800">{info.type}</p>
+                </div>
+                {isAdmin && (
+                  <button
+                    onClick={() => {
+                      setTooltipData(info);
+                      setEditModalOpen(true);
+                    }}
+                    className="shrink-0 ml-1 p-1 hover:bg-gray-200 rounded transition-colors"
+                  >
+                    <Edit2 size={12} className="text-gray-600" />
+                  </button>
+                )}
               </div>
+              <p className="text-xs leading-relaxed text-gray-700">{info.description}</p>
             </div>
-            <p className="text-xs leading-relaxed text-gray-700">{info.description}</p>
-          </div>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+      
+      <EditTooltipModal 
+        isOpen={editModalOpen} 
+        onClose={() => setEditModalOpen(false)} 
+        type={tooltipData}
+        onSave={(newData) => {
+          info.type = newData.type;
+          info.description = newData.description;
+        }}
+      />
+    </>
   );
 }
 
