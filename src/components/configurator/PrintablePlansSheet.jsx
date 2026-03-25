@@ -2,7 +2,7 @@ import React from "react";
 
 const CELL_SIZE = 40; // pixels per grid cell in print
 
-export default function PrintablePlansSheet({ placedModules, onClose, printDetails = {} }) {
+export default function PrintablePlansSheet({ placedModules, furniture = [], onClose, printDetails = {} }) {
   React.useEffect(() => {
     const timer = setTimeout(() => {
       window.print();
@@ -23,8 +23,14 @@ export default function PrintablePlansSheet({ placedModules, onClose, printDetai
     minY = Math.min(minY, m.y);
     maxY = Math.max(maxY, m.y + m.h);
   });
+  furniture.forEach(f => {
+    minX = Math.min(minX, f.x);
+    maxX = Math.max(maxX, f.x + (f.width || 1.4) / 0.6);
+    minY = Math.min(minY, f.y);
+    maxY = Math.max(maxY, f.y + (f.depth || 2.0) / 0.6);
+  });
 
-  if (modules.length === 0) {
+  if (modules.length === 0 && furniture.length === 0) {
     minX = 0; maxX = 10; minY = 0; maxY = 10;
   }
 
