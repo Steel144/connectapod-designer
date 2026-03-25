@@ -1119,7 +1119,6 @@ export default function Configurator() {
                 <p className="text-[11px] text-gray-400 mt-0.5">Expand a category · drag to place</p>
               </div>
               <div className="flex-1 overflow-y-auto p-3 space-y-2">
-                <FurniturePanel onDragStart={handleDragStart} onDragEnd={handleDragEnd} />
                 <ModulePanel
                     onDragStart={handleDragStart}
                     onDragEnd={handleDragEnd}
