@@ -267,6 +267,16 @@ export default function PrintablePlansSheet({ placedModules, furniture = [], wal
                       stroke="#2d3748"
                       strokeWidth="1"
                     />
+                    {wall.elevationImage && (
+                      <image
+                        x={wx + 2}
+                        y={wy + 2}
+                        width={wallW - 4}
+                        height={wallH - 4}
+                        href={wall.elevationImage}
+                        preserveAspectRatio="xMidYMid slice"
+                      />
+                    )}
                     {wall.face && (
                       <text
                         x={wx + wallW / 2}
