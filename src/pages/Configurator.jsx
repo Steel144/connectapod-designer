@@ -1149,6 +1149,7 @@ export default function Configurator() {
                       }
                     }}
                   />
+                <FurniturePanel onDragStart={handleDragStart} onDragEnd={handleDragEnd} />
               </div>
             </div>
             <button
