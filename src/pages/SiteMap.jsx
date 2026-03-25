@@ -177,12 +177,15 @@ export default function SiteMap() {
   // Update zoom from map instance
   useEffect(() => {
     if (!mapRef.current) return;
+    const map = mapRef.current;
+    // Set initial zoom from map
+    setMapZoom(map._zoom);
     const handleZoom = () => {
-      setMapZoom(mapRef.current._zoom);
+      setMapZoom(map._zoom);
     };
-    mapRef.current.on('zoom', handleZoom);
-    return () => mapRef.current?.off('zoom', handleZoom);
-  }, []);
+    map.on('zoom', handleZoom);
+    return () => map.off('zoom', handleZoom);
+  }, [mapRef.current]);
 
   // Generate floor plan canvas overlay
   useEffect(() => {
