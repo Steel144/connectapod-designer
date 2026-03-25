@@ -38,14 +38,15 @@ function AddressAutocomplete({ value, onChange }) {
     if (val.length < 3) { setSuggestions([]); setOpen(false); return; }
     debounceRef.current = setTimeout(async () => {
        try {
-         const res = await base44.functions.invoke('geocodeAddress', {
+         const response = await base44.functions.invoke('geocodeAddress', {
            query: val,
            limit: 5
          });
-         const data = res.data.results || [];
+         const data = response.data?.results || [];
          setSuggestions(data);
          setOpen(data.length > 0);
-       } catch {
+       } catch (err) {
+         console.error('Geocoding error:', err);
          setSuggestions([]);
        }
      }, 350);
