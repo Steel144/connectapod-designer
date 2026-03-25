@@ -52,7 +52,28 @@ export default function DesignMiniPreview({ grid = [], walls = [], furniture = [
   const toY = (y) => (y - bounds.minY + PAD) * CELL;
 
   return (
-    <div className="w-full h-full flex items-center justify-center overflow-hidden">
+    <div className="w-full h-full flex items-center justify-center overflow-hidden relative">
+      {/* Furniture hover tooltip */}
+      {hoveredItem && (
+        <div className="absolute z-20 bg-white border border-gray-200 shadow-lg p-2 rounded pointer-events-none text-left"
+          style={{ bottom: 4, right: 4, maxWidth: 140 }}>
+          {hoveredItem.image && (
+            <img src={hoveredItem.image} alt={hoveredItem.label} className="w-full h-16 object-contain mb-1 bg-gray-50" />
+          )}
+          <p className="text-[10px] font-semibold text-gray-800 leading-tight">{hoveredItem.label}</p>
+          <p className="text-[9px] text-gray-500">{hoveredItem.width?.toFixed(1)}m × {hoveredItem.depth?.toFixed(1)}m</p>
+        </div>
+      )}
+      {/* Module hover tooltip */}
+      {hoveredModule && !hoveredItem && (
+        <div className="absolute z-20 bg-white border border-gray-200 shadow-lg p-2 rounded pointer-events-none text-left"
+          style={{ bottom: 4, right: 4, maxWidth: 140 }}>
+          <p className="text-[10px] font-semibold text-gray-800 leading-tight">{hoveredModule.label}</p>
+          <p className="text-[9px] text-gray-500">{hoveredModule.type}</p>
+          {hoveredModule.sqm > 0 && <p className="text-[9px] text-gray-500">{hoveredModule.sqm?.toFixed(1)} m²</p>}
+          {hoveredModule.price > 0 && <p className="text-[9px] font-semibold text-[#F15A22]">${hoveredModule.price?.toLocaleString()}</p>}
+        </div>
+      )}
       <svg
         viewBox={`0 0 ${W} ${H}`}
         style={{ maxWidth: "100%", maxHeight: "100%" }}
