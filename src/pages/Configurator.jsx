@@ -539,9 +539,10 @@ export default function Configurator() {
     setWalls((prev) =>
       prev.map((w) => {
         const WALL_OFFSET = 0.308;
+        const wallFace = w.face || (w.orientation === 'vertical' ? 'Z' : 'W');
         
         // Only transform walls attached to this module (check by face first)
-        if (w.face === 'W' && Math.abs(w.x - modToFlip.x) < 0.5 && Math.abs(w.y - (modToFlip.y - WALL_OFFSET)) < 0.5) {
+        if (wallFace === 'W' && Math.abs(w.x - modToFlip.x) < 0.5 && Math.abs(w.y - (modToFlip.y - WALL_OFFSET)) < 0.5) {
           return {
             ...w,
             flipped: !w.flipped,
@@ -549,7 +550,7 @@ export default function Configurator() {
             face: 'Y'
           };
         }
-        if (w.face === 'Y' && Math.abs(w.x - modToFlip.x) < 0.5 && Math.abs(w.y - (modToFlip.y + modToFlip.h)) < 0.5) {
+        if (wallFace === 'Y' && Math.abs(w.x - modToFlip.x) < 0.5 && Math.abs(w.y - (modToFlip.y + modToFlip.h)) < 0.5) {
           return {
             ...w,
             flipped: !w.flipped,
@@ -557,7 +558,7 @@ export default function Configurator() {
             face: 'W'
           };
         }
-        if (w.face === 'Z' && Math.abs(w.y - modToFlip.y) < 0.5 && Math.abs(w.x - modToFlip.x) < 0.5) {
+        if (wallFace === 'Z' && Math.abs(w.y - modToFlip.y) < 0.5 && Math.abs(w.x - modToFlip.x) < 0.5) {
           return {
             ...w,
             flipped: !w.flipped,
@@ -565,7 +566,7 @@ export default function Configurator() {
             face: 'X'
           };
         }
-        if (w.face === 'X' && Math.abs(w.y - modToFlip.y) < 0.5 && Math.abs(w.x - (modToFlip.x + modToFlip.w - WALL_OFFSET)) < 0.5) {
+        if (wallFace === 'X' && Math.abs(w.y - modToFlip.y) < 0.5 && Math.abs(w.x - (modToFlip.x + modToFlip.w - WALL_OFFSET)) < 0.5) {
           return {
             ...w,
             flipped: !w.flipped,
