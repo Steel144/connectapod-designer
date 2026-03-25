@@ -131,6 +131,38 @@ export default function DesignMiniPreview({ grid = [], walls = [], furniture = [
           );
         })}
 
+        {/* Furniture */}
+        {furniture.map((item, i) => {
+          const fw = (item.width || 1.4) / 0.6 * CELL;
+          const fh = (item.depth || 1.4) / 0.6 * CELL;
+          const cx = toX(item.x) + fw / 2;
+          const cy = toY(item.y) + fh / 2;
+          return (
+            <g key={`furn-${item.id || i}`} transform={`rotate(${item.rotation || 0}, ${cx}, ${cy})`}>
+              {item.image ? (
+                <image
+                  href={item.image}
+                  x={toX(item.x)}
+                  y={toY(item.y)}
+                  width={fw}
+                  height={fh}
+                  preserveAspectRatio="xMidYMid meet"
+                />
+              ) : (
+                <rect
+                  x={toX(item.x)}
+                  y={toY(item.y)}
+                  width={fw}
+                  height={fh}
+                  fill="#e5e7eb"
+                  stroke="#9ca3af"
+                  strokeWidth={0.5}
+                />
+              )}
+            </g>
+          );
+        })}
+
         {/* Walls */}
         {walls.map((w, i) => {
           const isH = w.orientation === "horizontal";
