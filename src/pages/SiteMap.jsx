@@ -287,7 +287,9 @@ export default function SiteMap() {
                   style={{
                     maxWidth: '80%',
                     maxHeight: '80%',
-                    objectFit: 'contain'
+                    objectFit: 'contain',
+                    transform: `scale(${Math.pow(2, (mapZoom - 15) / 7)})`,
+                    transition: 'transform 0.1s ease-out'
                   }}
                 />
               </div>
