@@ -24,7 +24,7 @@ export default function SiteMap() {
   const [boundaryInput, setBoundaryInput] = useState('');
   const [overlayRotation, setOverlayRotation] = useState(0);
   const [positionOffset, setPositionOffset] = useState({ lat: 0, lng: 0 });
-  const [planScaleMultiplier, setPlanScaleMultiplier] = useState(0.5);
+  const [planScaleMultiplier, setPlanScaleMultiplier] = useState(1);
 
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
