@@ -557,22 +557,18 @@ export default function Configurator() {
             face: w.face === 'Y' ? 'W' : w.face === 'W' ? 'Y' : w.face
           };
         }
-        // Z face: left side at modToFlip.x
+        // Z face: left side (End module walls - don't move, just flip in place)
         if (Math.abs(w.y - modToFlip.y) < 0.5 && Math.abs(w.x - modToFlip.x) < 0.5) {
           return {
             ...w,
-            flipped: !w.flipped,
-            x: modToFlip.x + modToFlip.w - WALL_OFFSET,  // Move to right
-            face: w.face === 'Z' ? 'X' : w.face === 'X' ? 'Z' : w.face
+            flipped: !w.flipped
           };
         }
-        // X face: right side at modToFlip.x + modToFlip.w - WALL_OFFSET
+        // X face: right side (End module walls - don't move, just flip in place)
         if (Math.abs(w.y - modToFlip.y) < 0.5 && Math.abs(w.x - (modToFlip.x + modToFlip.w - WALL_OFFSET)) < 0.5) {
           return {
             ...w,
-            flipped: !w.flipped,
-            x: modToFlip.x,  // Move to left
-            face: w.face === 'X' ? 'Z' : w.face === 'Z' ? 'X' : w.face
+            flipped: !w.flipped
           };
         }
         return w;
