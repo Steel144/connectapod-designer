@@ -3,6 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, Maximize2, Layers, Tag, Play, HelpCircle } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import DesignMiniPreview from "@/components/configurator/DesignMiniPreview";
 import InstructionsModal from "@/components/InstructionsModal";
 
