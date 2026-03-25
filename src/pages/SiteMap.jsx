@@ -46,15 +46,20 @@ export default function SiteMap() {
     setLoading(true);
     try {
       const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json`
+        `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json`,
+        {
+          headers: {
+            'User-Agent': 'Connectapod-App (connectapod.com)'
+          }
+        }
       );
       const data = await response.json();
-      if (data.length > 0) {
+      if (data && data.length > 0) {
         const { lat, lon } = data[0];
         setCoordinates([parseFloat(lat), parseFloat(lon)]);
         setOverlayPos({ lat: parseFloat(lat), lng: parseFloat(lon) });
       } else {
-        alert('Address not found');
+        alert('Address not found. Try a more specific address (e.g., "123 Main St, City, Country")');
       }
     } catch (err) {
       console.error('Geocoding error:', err);
