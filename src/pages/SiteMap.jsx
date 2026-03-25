@@ -70,24 +70,28 @@ export default function SiteMap() {
     setLoading(true);
     try {
       const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&countrycodes=nz&format=json`,
+        `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&countrycodes=nz&format=json&timeout=10`,
         {
           headers: {
             'User-Agent': 'Connectapod-App (connectapod.com)'
           }
         }
       );
+      if (!response.ok) {
+        alert('Geocoding service temporarily unavailable. Please try again.');
+        return;
+      }
       const data = await response.json();
       if (data && data.length > 0) {
         const { lat, lon } = data[0];
         setCoordinates([parseFloat(lat), parseFloat(lon)]);
-        setOverlayPos({ lat: parseFloat(lat), lng: parseFloat(lon) });
+        setPositionOffset({ lat: 0, lng: 0 });
       } else {
-        alert('Address not found. Try a more specific address (e.g., "123 Main St, City, Country")');
+        alert('Address not found. Try a more specific address (e.g., "123 Main St, City, NZ")');
       }
     } catch (err) {
       console.error('Geocoding error:', err);
-      alert('Failed to geocode address');
+      alert('Network error. Please check your internet connection and try again.');
     } finally {
       setLoading(false);
     }
