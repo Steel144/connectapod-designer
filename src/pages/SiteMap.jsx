@@ -22,6 +22,7 @@ export default function SiteMap() {
   const [overlayScale, setOverlayScale] = useState(0.5);
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState(null);
+  const [mapZoom, setMapZoom] = useState(16);
 
   // Load address from print details on mount
   useEffect(() => {
