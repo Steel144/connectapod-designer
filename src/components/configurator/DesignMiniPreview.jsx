@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 
-export default function DesignMiniPreview({ grid = [], walls = [], floorPlanImages: propFloorPlanImages, wallImages: propWallImages }) {
+export default function DesignMiniPreview({ grid = [], walls = [], furniture = [], floorPlanImages: propFloorPlanImages, wallImages: propWallImages }) {
   const CELL = 6; // pixels per grid cell
 
   const { data: queryFloorPlanImages = {} } = useQuery({
