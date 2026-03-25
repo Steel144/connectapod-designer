@@ -939,10 +939,8 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
 
         {/* Furniture */}
          {furniture.map((item) => {
-           const displayWidth = (item.id === 'sofa_1' || item.type === 'sofa_1') ? 0.9 : (item.width || 1.4);
-           const displayDepth = (item.id === 'sofa_1' || item.type === 'sofa_1') ? 0.9 : (item.depth || 2.0);
-           const width = displayWidth / 0.6;
-           const height = displayDepth / 0.6;
+           const width = (item.width || 1.4) / 0.6;
+           const height = (item.depth || 1.4) / 0.6;
            const isSelected = selectedFurnitureId === item.id;
 
            return (
