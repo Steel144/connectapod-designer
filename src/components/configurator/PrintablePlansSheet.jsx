@@ -160,6 +160,7 @@ export default function PrintablePlansSheet({ placedModules, furniture = [], onC
 
       <PrintPage
         isLast={true}
+        paperSize={paperSize}
         header={<Header title="Floor Plan" />}
         footer={<Footer printDetails={printDetails} />}
       >
