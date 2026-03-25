@@ -212,8 +212,8 @@ export default function PrintablePlansSheet({ placedModules, furniture = [], wal
                   <g key={mod.id} transform={transforms.join(' ')}>
                     {/* Module background */}
                     <rect
-                      x={x}
-                      y={y}
+                      x={-w / 2}
+                      y={-h / 2}
                       width={w}
                       height={h}
                       fill="white"
