@@ -99,8 +99,47 @@ export default function PrintablePlansSheet({ placedModules, furniture = [], onC
   const canvasWidth = gridWidth * CELL_SIZE;
   const canvasHeight = gridHeight * CELL_SIZE;
 
+  const Header = ({ title }) => (
+    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 24px 8px", borderBottom: "2px solid #F15A22", flexShrink: 0 }}>
+      <img src="https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/201470147_ConnectapodArchLogo-01.png" alt="connectapod" style={{ height: "72px", width: "auto" }} />
+      <div style={{ textAlign: "center" }}>
+        <div style={{ color: "#F15A22", fontSize: "14px", fontWeight: "600" }}>www.connectapod.co.nz</div>
+        <div style={{ color: "#888", fontSize: "12px" }}>hello@connectapod.com · 022 396 2657</div>
+      </div>
+      <span style={{ color: "#888", fontSize: "20pt", fontWeight: "700" }}>{title}</span>
+    </div>
+  );
+
+  const Footer = ({ printDetails = {} }) => (
+    <div style={{ flexShrink: 0 }}>
+      <div style={{ borderTop: "4px solid #F15A22", display: "grid", gridTemplateColumns: "2fr 2fr 1.5fr 1fr", fontSize: "10px" }}>
+        <div style={{ borderRight: "1px solid #F15A22", padding: "6px 16px" }}>
+          <p style={{ fontWeight: "bold", textTransform: "uppercase", color: "#F15A22" }}>Project</p>
+          <p style={{ marginTop: "2px", color: "#333", fontWeight: "600", fontSize: "15px" }}>{printDetails.projectName || "—"}</p>
+        </div>
+        <div style={{ borderRight: "1px solid #F15A22", padding: "6px 16px" }}>
+          <p style={{ fontWeight: "bold", textTransform: "uppercase", color: "#F15A22" }}>Client</p>
+          <p style={{ marginTop: "2px", color: "#333" }}>{printDetails.clientName || "—"}</p>
+          {printDetails.address && <p style={{ marginTop: "1px", color: "#666", fontSize: "9px" }}>{printDetails.address}</p>}
+          {(printDetails.email || printDetails.phone) && (
+            <p style={{ marginTop: "1px", color: "#888", fontSize: "9px" }}>{[printDetails.email, printDetails.phone].filter(Boolean).join(" · ")}</p>
+          )}
+        </div>
+        <div style={{ borderRight: "1px solid #F15A22", padding: "6px 16px" }}>
+          <p style={{ fontWeight: "bold", textTransform: "uppercase", color: "#F15A22" }}>Date</p>
+          <p style={{ marginTop: "2px", color: "#666" }}>{new Date().toLocaleDateString()}</p>
+        </div>
+        <div style={{ padding: "6px 16px" }}>
+          <p style={{ fontWeight: "bold", textTransform: "uppercase", color: "#F15A22" }}>Scale</p>
+          <p style={{ marginTop: "2px", color: "#666" }}>1:100</p>
+          <p style={{ marginTop: "4px", color: "#000", fontSize: "9px", fontWeight: "600" }}>© {new Date().getFullYear()} Connectapod Ltd.</p>
+        </div>
+      </div>
+    </div>
+  );
+
   return (
-    <div className="bg-white relative" style={{ overflow: "hidden" }}>
+    <div className="bg-white relative">
       <div className="fixed top-4 right-4 z-50 flex gap-2 print:hidden">
         <button
           onClick={() => { setTimeout(() => window.print(), 300); }}
@@ -115,22 +154,12 @@ export default function PrintablePlansSheet({ placedModules, furniture = [], onC
           ← Back to Design
         </button>
       </div>
-      <div className="bg-white flex flex-col p-0 relative" style={{ height: "297mm", overflow: "hidden", boxSizing: "border-box" }}>
 
-         {/* Header with logo */}
-           <div className="flex items-center justify-between px-6 pt-4 pb-2 border-b" style={{ borderColor: "#F15A22" }}>
-             <img src="https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/201470147_ConnectapodArchLogo-01.png" alt="connectapod" style={{ height: "72px", width: "auto" }} />
-             <div style={{ textAlign: "center" }}>
-               <div style={{ color: "#F15A22", fontSize: "14px", fontWeight: "600" }}>www.connectapod.co.nz</div>
-               <div style={{ color: "#888", fontSize: "12px" }}>hello@connectapod.com · 022 396 2657</div>
-             </div>
-             <span style={{ color: "#888", fontSize: "20pt", fontWeight: "700" }}>Floor Plan</span>
-           </div>
-
-         {/* Main content */}
-         <div className="flex-1 flex flex-col p-6" style={{ minHeight: 0 }}>
-           {/* Grid view */}
-           <div className="flex-1 flex items-center justify-center overflow-hidden mb-4" style={{ minHeight: 0 }}>
+      <PrintPage
+        isLast={true}
+        header={<Header title="Floor Plan" />}
+        footer={<Footer printDetails={printDetails} />}
+      >
             <svg
               width={canvasWidth}
               height={canvasHeight}
