@@ -75,19 +75,11 @@ export default function SiteMap() {
     if (!address.trim()) return;
     setLoading(true);
     try {
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&countrycodes=nz&format=json&timeout=10`,
-        {
-          headers: {
-            'User-Agent': 'Connectapod-App (connectapod.com)'
-          }
-        }
-      );
-      if (!response.ok) {
-        alert('Geocoding service temporarily unavailable. Please try again.');
-        return;
-      }
-      const data = await response.json();
+      const response = await base44.functions.invoke('geocodeAddress', {
+        query: address,
+        limit: 1
+      });
+      const data = response.data.results;
       if (data && data.length > 0) {
         const { lat, lon } = data[0];
         setCoordinates([parseFloat(lat), parseFloat(lon)]);
@@ -97,7 +89,7 @@ export default function SiteMap() {
       }
     } catch (err) {
       console.error('Geocoding error:', err);
-      alert('Network error. Please check your internet connection and try again.');
+      alert('Geocoding service error. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -114,18 +106,11 @@ export default function SiteMap() {
     }
 
     try {
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&countrycodes=nz&format=json&limit=5&timeout=10`,
-        {
-          headers: {
-            'User-Agent': 'Connectapod-App (connectapod.com)'
-          }
-        }
-      );
-      if (response.ok) {
-        const data = await response.json();
-        setSuggestions(data || []);
-      }
+      const response = await base44.functions.invoke('geocodeAddress', {
+        query: query,
+        limit: 5
+      });
+      setSuggestions(response.data.results || []);
     } catch (err) {
       console.error('Autocomplete error:', err);
     }
