@@ -470,13 +470,14 @@ export default function Configurator() {
     const modToRotate = placedModules.find((m) => m.id === id);
     if (!modToRotate) return;
     
+    const currentRotation = modToRotate.rotation || 0;
+    const newRotation = (currentRotation + 180) % 360;
+    const baseW = modToRotate.baseW ?? modToRotate.w;
+    const baseH = modToRotate.baseH ?? modToRotate.h;
+    
     setPlacedModules((prev) =>
       prev.map((m) => {
         if (m.id !== id) return m;
-        const currentRotation = m.rotation || 0;
-        const newRotation = (currentRotation + 180) % 360;
-        const baseW = m.baseW ?? m.w;
-        const baseH = m.baseH ?? m.h;
         return { ...m, baseW, baseH, w: baseW, h: baseH, rotation: newRotation };
       })
     );
@@ -484,11 +485,21 @@ export default function Configurator() {
     setWalls((prev) =>
       prev.map((w) => {
         const WALL_OFFSET = 0.308;
+        
+        // Rotate Z and X walls, and update their positions for 180° rotation
         if (w.face === 'Z' && Math.abs(w.y - modToRotate.y) < 0.5 && Math.abs(w.x - modToRotate.x) < 0.5) {
-          return { ...w, rotation: (w.rotation || 0) + 180 };
+          return {
+            ...w,
+            rotation: (w.rotation || 0) + 180,
+            x: modToRotate.x + modToRotate.w - WALL_OFFSET  // Move from left to right
+          };
         }
         if (w.face === 'X' && Math.abs(w.y - modToRotate.y) < 0.5 && Math.abs(w.x - (modToRotate.x + modToRotate.w - WALL_OFFSET)) < 0.5) {
-          return { ...w, rotation: (w.rotation || 0) + 180 };
+          return {
+            ...w,
+            rotation: (w.rotation || 0) + 180,
+            x: modToRotate.x  // Move from right to left
+          };
         }
         return w;
       })
