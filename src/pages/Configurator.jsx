@@ -504,22 +504,18 @@ export default function Configurator() {
             face: w.face === 'Y' ? 'W' : w.face === 'W' ? 'Y' : w.face
           };
         }
-        // Z face: left side at modToRotate.x
+        // Z face: left side (End module walls - don't move, just rotate in place)
         if (Math.abs(w.y - modToRotate.y) < 0.5 && Math.abs(w.x - modToRotate.x) < 0.5) {
           return {
             ...w,
-            rotation: (w.rotation || 0) + 180,
-            x: modToRotate.x + modToRotate.w - WALL_OFFSET,  // Move to right side
-            face: w.face === 'Z' ? 'X' : w.face === 'X' ? 'Z' : w.face
+            rotation: (w.rotation || 0) + 180
           };
         }
-        // X face: right side at modToRotate.x + modToRotate.w - WALL_OFFSET
+        // X face: right side (End module walls - don't move, just rotate in place)
         if (Math.abs(w.y - modToRotate.y) < 0.5 && Math.abs(w.x - (modToRotate.x + modToRotate.w - WALL_OFFSET)) < 0.5) {
           return {
             ...w,
-            rotation: (w.rotation || 0) + 180,
-            x: modToRotate.x,  // Move to left side
-            face: w.face === 'X' ? 'Z' : w.face === 'Z' ? 'X' : w.face
+            rotation: (w.rotation || 0) + 180
           };
         }
         return w;
