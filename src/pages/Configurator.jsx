@@ -542,23 +542,20 @@ export default function Configurator() {
         const WALL_OFFSET = 0.308;
         const wallFace = w.face || (w.orientation === 'vertical' ? 'Z' : 'W');
         
-        // Only transform walls attached to this module (check by face first)
+        // W and Y walls: just flip, don't move or change face
         if (wallFace === 'W' && Math.abs(w.x - modToFlip.x) < 0.5 && Math.abs(w.y - (modToFlip.y - WALL_OFFSET)) < 0.5) {
           return {
             ...w,
-            flipped: !w.flipped,
-            y: modToFlip.y + modToFlip.h,
-            face: 'Y'
+            flipped: !w.flipped
           };
         }
         if (wallFace === 'Y' && Math.abs(w.x - modToFlip.x) < 0.5 && Math.abs(w.y - (modToFlip.y + modToFlip.h)) < 0.5) {
           return {
             ...w,
-            flipped: !w.flipped,
-            y: modToFlip.y - WALL_OFFSET,
-            face: 'W'
+            flipped: !w.flipped
           };
         }
+        // Z and X walls: move to opposite side and flip
         if (wallFace === 'Z' && Math.abs(w.y - modToFlip.y) < 0.5 && Math.abs(w.x - modToFlip.x) < 0.5) {
           return {
             ...w,
