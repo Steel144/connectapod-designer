@@ -22,7 +22,7 @@ export default function SiteMap() {
   const [overlayScale, setOverlayScale] = useState(2);
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState(null);
-  const [mapZoom, setMapZoom] = useState(19);
+  const [mapZoom, setMapZoom] = useState(21);
 
   // Load address from print details on mount
   useEffect(() => {
@@ -219,7 +219,7 @@ export default function SiteMap() {
             <TileLayer
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               attribution='&copy; OpenStreetMap contributors'
-              maxZoom={19}
+              maxZoom={22}
             />
             <Marker position={coordinates}>
               <Popup>Site Location</Popup>
