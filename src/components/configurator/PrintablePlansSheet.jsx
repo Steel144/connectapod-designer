@@ -305,12 +305,12 @@ export default function PrintablePlansSheet({ placedModules, furniture = [], onC
 
 
       <style>{`
-         @page { margin: 7mm; size: A4 landscape; }
-         @media print {
-           html, body { margin: 0 !important; padding: 0 !important; overflow: hidden !important; }
-           * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-         }
-       `}</style>
+        @page { margin: 7mm; size: A4 landscape; }
+        @media print {
+          html, body { margin: 0 !important; padding: 0 !important; overflow: visible !important; }
+          * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+        }
+      `}</style>
     </div>
   );
 }
