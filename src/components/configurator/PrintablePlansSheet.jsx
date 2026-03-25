@@ -292,7 +292,7 @@ export default function PrintablePlansSheet({ placedModules, furniture = [], wal
                 const rotation = f.rotation || 0;
 
                 return (
-                  <g key={f.id} transform={`translate(${fx + fWidth / 2}, ${fy + fDepth / 2}) rotate(${rotation}) translate(${-fWidth / 2}, ${-fDepth / 2})`}>
+                  <g key={f.id} transform={`translate(${fx + fWidth / 2}, ${fy + fDepth / 2}) rotate(${rotation}) ${f.flipped ? 'scaleX(-1)' : ''} translate(${-fWidth / 2}, ${-fDepth / 2})`}>
                     <rect
                        x={0}
                        y={0}
