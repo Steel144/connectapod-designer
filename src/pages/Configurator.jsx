@@ -512,10 +512,28 @@ export default function Configurator() {
 
   const handleFlip = (id) => {
     pushHistory(placedModules, walls);
+    const modToFlip = placedModules.find((m) => m.id === id);
+    if (!modToFlip) return;
+    
     setPlacedModules((prev) =>
       prev.map((m) => {
         if (m.id !== id) return m;
         return { ...m, flipped: !m.flipped };
+      })
+    );
+    
+    setWalls((prev) =>
+      prev.map((w) => {
+        const WALL_OFFSET = 0.308;
+        
+        // Flip walls attached to Z or X faces
+        if (Math.abs(w.y - modToFlip.y) < 0.5 && Math.abs(w.x - modToFlip.x) < 0.5) {
+          return { ...w, flipped: !w.flipped };
+        }
+        if (Math.abs(w.y - modToFlip.y) < 0.5 && Math.abs(w.x - (modToFlip.x + modToFlip.w - WALL_OFFSET)) < 0.5) {
+          return { ...w, flipped: !w.flipped };
+        }
+        return w;
       })
     );
   };
