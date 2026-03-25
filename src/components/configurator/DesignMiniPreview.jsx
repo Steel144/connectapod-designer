@@ -140,7 +140,11 @@ export default function DesignMiniPreview({ grid = [], walls = [], furniture = [
         {grid.map((m, i) => {
           const imgUrl = m.floorPlanImage || floorPlanImages[m.type] || (m.originalCode && floorPlanImages[m.originalCode]);
           return (
-            <g key={m.id || i}>
+            <g key={m.id || i}
+              onMouseEnter={() => setHoveredModule({ label: m.label, type: m.type, sqm: m.sqm, price: m.price })}
+              onMouseLeave={() => setHoveredModule(null)}
+              style={{ cursor: "default" }}
+            >
               <rect
                 x={toX(m.x)}
                 y={toY(m.y)}
