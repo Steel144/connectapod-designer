@@ -224,8 +224,8 @@ export default function PrintablePlansSheet({ placedModules, furniture = [], wal
                     {/* Floor plan image if available */}
                     {showPhotoImages && mod.floorPlanImage && (
                       <image
-                        x={x}
-                        y={y}
+                        x={-w / 2}
+                        y={-h / 2}
                         width={w}
                         height={h}
                         href={mod.floorPlanImage}
