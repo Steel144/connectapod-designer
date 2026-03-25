@@ -273,7 +273,22 @@ export default function SiteMap() {
               </div>
             </div>
             <div>
-              <label className="text-xs font-semibold text-gray-600 block mb-2">Scale</label>
+              <label className="text-xs font-semibold text-gray-600 block mb-2">Zoom</label>
+              <div className="flex items-center gap-2">
+                <input
+                  type="range"
+                  min="10"
+                  max="22"
+                  step="1"
+                  value={mapZoom}
+                  onChange={(e) => setMapZoom(parseInt(e.target.value))}
+                  className="flex-1"
+                />
+                <span className="text-xs text-gray-600 w-8 text-right">{mapZoom}</span>
+              </div>
+            </div>
+            <div>
+              <label className="text-xs font-semibold text-gray-600 block mb-2">Plan Scale</label>
               <div className="flex items-center gap-2">
                 <input
                   type="range"
