@@ -301,8 +301,8 @@ export default function SiteMap() {
                     maxWidth: '90%',
                     maxHeight: '90%',
                     objectFit: 'contain',
-                    // At zoom 18, ~200m visible width. Scale by zoom level relative to base.
-                    transform: `scale(${Math.pow(2, mapZoom - 18)})`,
+                    // At zoom 20, ~50m visible width. Scale by zoom level relative to base.
+                    transform: `scale(${Math.pow(2, mapZoom - 20)})`,
                     transition: 'transform 0.1s ease-out'
                   }}
                 />
