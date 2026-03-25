@@ -273,11 +273,11 @@ export default function SiteMap() {
               </div>
             </div>
             <div>
-              <label className="text-xs font-semibold text-gray-600 block mb-2">Zoom</label>
+              <label className="text-xs font-semibold text-gray-600 block mb-2">Map Zoom</label>
               <div className="flex items-center gap-2">
                 <input
                   type="range"
-                  min="10"
+                  min="15"
                   max="22"
                   step="1"
                   value={mapZoom}
