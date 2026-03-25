@@ -953,7 +953,6 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                  width: width * scaledCellW,
                  height: height * scaledCellH,
                  backgroundColor: "transparent",
-                 border: isSelected ? "3px solid #4F46E5" : "none",
                }}
                onMouseDown={(e) => {
                  e.preventDefault();
