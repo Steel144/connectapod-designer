@@ -376,7 +376,7 @@ export default function SiteMap() {
                     maxHeight: '90%',
                     objectFit: 'contain',
                     // At zoom 20, ~50m visible width. Scale by zoom level relative to base.
-                    transform: `scale(${Math.pow(2, mapZoom - 20) * 0.81})`,
+                    transform: `scale(${Math.pow(2, mapZoom - 20) * 0.9})`,
                     transition: 'transform 0.1s ease-out'
                   }}
                 />
