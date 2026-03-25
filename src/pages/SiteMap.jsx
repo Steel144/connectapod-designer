@@ -395,7 +395,7 @@ export default function SiteMap() {
                     maxHeight: '90%',
                     objectFit: 'contain',
                     // Scale based on real-world meters per pixel
-                    transform: `scale(${mapScale && getDesignDimensions() ? (getScalePixelsPerMeter() * getDesignDimensions().widthM / 800 * 0.2) : 0.01})`,
+                    transform: `scale(${mapScale && getDesignDimensions() ? (getScalePixelsPerMeter() * getDesignDimensions().widthM / 800 / 500) : 0.01})`,
                     transition: 'transform 0.1s ease-out'
                   }}
                 />
