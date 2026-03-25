@@ -409,31 +409,33 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
             </button>
 
             {isOpen && (
-                <div className="border-t border-gray-100 max-h-96 overflow-y-auto">
-                  {(() => {
-                    const bySize = {};
-                    group.items.forEach(item => {
-                      const size = `${item.width}m`;
-                      if (!bySize[size]) bySize[size] = [];
-                      bySize[size].push(item);
-                    });
-                    const sizes = Object.keys(bySize).sort((a, b) => parseFloat(b) - parseFloat(a));
+            <div className="border-t border-gray-100 max-h-96 overflow-y-auto">
+            {(() => {
+            // Separate end/deck modules from standard modules
+            const endModules = [];
+            const standardModules = [];
 
-                    return sizes.map(size => {
-                      const sizeKey = `${group.key}-${size}`;
-                      const isExpanded = expandedSizes[sizeKey] === true; // Default collapsed
-                      return (
-                      <div key={size} className="border-b border-gray-100 last:border-0">
-                        <button 
-                          onClick={() => setExpandedSizes(prev => ({ ...prev, [sizeKey]: !prev[sizeKey] }))}
-                          className="w-full flex items-center justify-between px-3 py-1.5 bg-gray-50 border-b border-gray-100 hover:bg-gray-100 transition-colors sticky top-0 z-10"
-                        >
-                          <p className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider">{size} wide</p>
-                          <span className="text-gray-400">
-                            {isExpanded ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
-                          </span>
-                        </button>
-                        {isExpanded && bySize[size].map((item) => {
+            group.items.forEach(item => {
+            const isEnd = item.chassis === "EF" || item.chassis === "ER" || item.chassis === "LF" || item.chassis === "RF";
+            const isDeck = item.description?.includes("Deck") || item.description?.includes("Soffit");
+
+            if (isEnd || isDeck) {
+            endModules.push(item);
+            } else {
+            standardModules.push(item);
+            }
+            });
+
+            // Render End/Deck Modules first
+            return (
+            <>
+            {endModules.length > 0 && (
+              <div className="border-b border-gray-100">
+                <div className="px-3 py-2 bg-gray-50 border-b border-gray-100">
+                  <p className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider">End & Deck Modules</p>
+                </div>
+                <div>
+                  {endModules.map((item) => {
                           const mod = MODULE_TYPES.find((m) => m.type === item.code) || {
                             type: item.code,
                             label: item.name,
