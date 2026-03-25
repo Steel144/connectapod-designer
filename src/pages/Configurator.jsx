@@ -486,14 +486,31 @@ export default function Configurator() {
       prev.map((w) => {
         const WALL_OFFSET = 0.308;
         
-        // Check if wall is attached to Z or X face (by position, not by face label)
+        // W face: top side at modToRotate.y - WALL_OFFSET
+        if (Math.abs(w.x - modToRotate.x) < 0.5 && Math.abs(w.y - (modToRotate.y - WALL_OFFSET)) < 0.5) {
+          return {
+            ...w,
+            rotation: (w.rotation || 0) + 180,
+            y: modToRotate.y + modToRotate.h,  // Move to bottom side
+            face: w.face === 'W' ? 'Y' : w.face === 'Y' ? 'W' : w.face
+          };
+        }
+        // Y face: bottom side at modToRotate.y + modToRotate.h
+        if (Math.abs(w.x - modToRotate.x) < 0.5 && Math.abs(w.y - (modToRotate.y + modToRotate.h)) < 0.5) {
+          return {
+            ...w,
+            rotation: (w.rotation || 0) + 180,
+            y: modToRotate.y - WALL_OFFSET,  // Move to top side
+            face: w.face === 'Y' ? 'W' : w.face === 'W' ? 'Y' : w.face
+          };
+        }
         // Z face: left side at modToRotate.x
         if (Math.abs(w.y - modToRotate.y) < 0.5 && Math.abs(w.x - modToRotate.x) < 0.5) {
           return {
             ...w,
             rotation: (w.rotation || 0) + 180,
             x: modToRotate.x + modToRotate.w - WALL_OFFSET,  // Move to right side
-            face: w.face === 'Z' ? 'X' : w.face === 'X' ? 'Z' : w.face  // Swap face if it was Z or X
+            face: w.face === 'Z' ? 'X' : w.face === 'X' ? 'Z' : w.face
           };
         }
         // X face: right side at modToRotate.x + modToRotate.w - WALL_OFFSET
@@ -502,7 +519,7 @@ export default function Configurator() {
             ...w,
             rotation: (w.rotation || 0) + 180,
             x: modToRotate.x,  // Move to left side
-            face: w.face === 'X' ? 'Z' : w.face === 'Z' ? 'X' : w.face  // Swap face if it was X or Z
+            face: w.face === 'X' ? 'Z' : w.face === 'Z' ? 'X' : w.face
           };
         }
         return w;
