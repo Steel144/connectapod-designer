@@ -486,13 +486,11 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
                              </div>
                            );
                          })}
-                       </div>
-                     );
-                     })
-                       </div>
-                     ));
-                   })()
-                 ) : (
+                         </div>
+                         );
+                         });
+                         })()
+                         ) : (
                    // Standard layout for other categories
                    group.items.map((item) => {
                      const mod = MODULE_TYPES.find((m) => m.type === item.code) || {
