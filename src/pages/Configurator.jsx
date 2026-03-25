@@ -924,7 +924,7 @@ export default function Configurator() {
   };
 
   if (printMode) {
-    return <PrintRouter mode={printMode} walls={walls} placedModules={placedModules} customWalls={customWalls} printDetails={printDetails} onClose={() => setPrintMode(null)} />;
+    return <PrintRouter mode={printMode} walls={walls} placedModules={placedModules} furniture={furniture} customWalls={customWalls} printDetails={printDetails} onClose={() => setPrintMode(null)} />;
   }
 
   return (
