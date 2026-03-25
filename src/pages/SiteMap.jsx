@@ -1,32 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, Rectangle, ScaleControl, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Rectangle, ImageOverlay, useMap } from 'react-leaflet';
 import L from 'leaflet';
+import { useEffect as useMapEffect } from 'react';
 import 'leaflet/dist/leaflet.css';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Loader2, X } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 
-// Component to capture map zoom and calculate scale
-function MapScaleUpdater({ onScaleChange }) {
-  const map = useMap();
-  
-  useEffect(() => {
-    const updateScale = () => {
-      const zoom = map.getZoom();
-      const metersPerDegree = 111320;
-      const pixelsPerDegree = 256 * Math.pow(2, zoom);
-      const metersPerPixel = metersPerDegree / pixelsPerDegree;
-      onScaleChange(metersPerPixel, zoom);
-    };
-    
-    updateScale();
-    map.on('zoom', updateScale);
-    return () => map.off('zoom', updateScale);
-  }, [map, onScaleChange]);
-  
-  return null;
-}
+const FLOOR_PLAN_SCALE = 0.64; // Adjusted for proper overlay size
 
 export default function SiteMap() {
   const [address, setAddress] = useState('');
@@ -42,7 +24,6 @@ export default function SiteMap() {
   const [boundaryInput, setBoundaryInput] = useState('');
   const [overlayRotation, setOverlayRotation] = useState(0);
   const [positionOffset, setPositionOffset] = useState({ lat: 0, lng: 0 });
-  const [mapScale, setMapScale] = useState(null); // meters per pixel at current zoom
 
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -78,13 +59,16 @@ export default function SiteMap() {
         const designs = await base44.entities.HomeDesign.list('-updated_date', 1);
         if (designs.length > 0) {
           setDesign(designs[0]);
+          if (coordinates) {
+            setOverlayPos({ lat: coordinates[0], lng: coordinates[1] });
+          }
         }
       } catch (err) {
         console.error('Failed to load design:', err);
       }
     };
     loadDesign();
-  }, []);
+  }, [coordinates]);
 
   const geocodeAddress = async () => {
     if (!address.trim()) return;
@@ -182,27 +166,28 @@ export default function SiteMap() {
 
 
 
-  // Calculate design dimensions in meters (modules are in meters)
+  // Calculate design dimensions in meters
   const getDesignDimensions = () => {
     if (!design || !design.grid || design.grid.length === 0) return null;
     const minX = Math.min(...design.grid.map(m => m.x));
     const maxX = Math.max(...design.grid.map(m => m.x + m.w));
     const minY = Math.min(...design.grid.map(m => m.y));
     const maxY = Math.max(...design.grid.map(m => m.y + m.h));
-    return { widthM: maxX - minX, heightM: maxY - minY, minX, minY };
+    return { width: maxX - minX, height: maxY - minY, minX, minY };
   };
 
-  // Calculate scale: how many pixels on screen represent 1 meter in real world
-  const getScalePixelsPerMeter = () => {
-    if (!mapScale) return 1; // fallback
-    // mapScale is meters per pixel, so 1/mapScale = pixels per meter
-    return 1 / mapScale;
-  };
-
-  const handleScaleChange = (metersPerPixel, zoom) => {
-    setMapScale(metersPerPixel);
-    setMapZoom(zoom);
-  };
+  // Update zoom from map instance
+  useEffect(() => {
+    if (!mapRef.current) return;
+    const map = mapRef.current;
+    // Set initial zoom from map
+    setMapZoom(map._zoom);
+    const handleZoom = () => {
+      setMapZoom(map._zoom);
+    };
+    map.on('zoom', handleZoom);
+    return () => map.off('zoom', handleZoom);
+  }, [mapRef.current]);
 
   // Generate floor plan canvas overlay
   useEffect(() => {
@@ -369,8 +354,6 @@ export default function SiteMap() {
                   attribution='&copy; Esri, DigitalGlobe, Earthstar Geographics'
                   maxZoom={22}
                 />
-                <MapScaleUpdater onScaleChange={handleScaleChange} />
-                <ScaleControl position="bottomleft" imperial={false} />
                 <Marker position={coordinates}>
                   <Popup>Site Location</Popup>
                 </Marker>
@@ -394,8 +377,8 @@ export default function SiteMap() {
                     maxWidth: '90%',
                     maxHeight: '90%',
                     objectFit: 'contain',
-                    // Fixed small scale for realistic map display
-                    transform: `scale(0.002)`,
+                    // At zoom 20, ~50m visible width. Scale by zoom level relative to base.
+                    transform: `scale(${Math.pow(2, mapZoom - 20) * FLOOR_PLAN_SCALE})`,
                     transition: 'transform 0.1s ease-out'
                   }}
                 />
