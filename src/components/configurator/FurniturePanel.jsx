@@ -5,7 +5,7 @@ const FURNITURE_ITEMS = [
   { id: "bed_king", label: "King Bed", width: 1.67, depth: 2.03, image: "https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/273f5e755_bed_king_1670x2030-01.png" },
   { id: "bed_queen", label: "Queen Bed", width: 1.53, depth: 2.03, image: "https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/31a3e7315_bed_queen_1530x2030-01.png" },
   { id: "bed_single", label: "Single Bed", width: 0.92, depth: 1.88, image: "https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/15a6d51af_bed_single_920x1880-01.png" },
-  { id: "sofa_1", label: "1-Seater Sofa", width: 0.9, depth: 0.9, image: "https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/afaf2eee8_sofa_1_seater-01.png" },
+  { id: "sofa_1", label: "1-Seater Sofa", width: 0.9, depth: 0.9, image: "https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/cbef171dd_sofa_1_seater-01.png" },
   { id: "sofa_2", label: "2-Seater Sofa", width: 1.6, depth: 0.9, image: "https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/d02306e1d_sofa_2_seater-01.png" },
   { id: "sofa_3", label: "3-Seater Sofa", width: 2.5, depth: 0.9, image: "https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/f1888e620_sofa_3_seater-01.png" },
   { id: "sofa_chaise_left", label: "Chaise Lounge Left", width: 2.2, depth: 1.2, image: "https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/e0b83bbc4_sofa_chaise_left-01.png" },
