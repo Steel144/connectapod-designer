@@ -62,6 +62,33 @@ function getFurnitureIcon(id, size = 18) {
 
 export default function FurniturePanel({ onDragStart, onDragEnd }) {
   const [isOpen, setIsOpen] = useState(true);
+  const [expandedCategories, setExpandedCategories] = useState({
+    Beds: true,
+    Seating: true,
+    Dining: false,
+    Tables: false,
+    Workspace: false,
+    Storage: false,
+  });
+
+  const categories = ["Beds", "Seating", "Dining", "Tables", "Workspace", "Storage"];
+  const categoryIcons = {
+    Beds: "bed",
+    Seating: "sofa",
+    Dining: "table",
+    Tables: "table",
+    Workspace: "desk",
+    Storage: "chair",
+  };
+
+  const groupedItems = categories.reduce((acc, cat) => {
+    acc[cat] = FURNITURE_ITEMS.filter(item => item.category === cat);
+    return acc;
+  }, {});
+
+  const toggleCategory = (cat) => {
+    setExpandedCategories(prev => ({ ...prev, [cat]: !prev[cat] }));
+  };
 
   return (
     <div className="border border-gray-200 bg-white overflow-hidden">
@@ -79,31 +106,51 @@ export default function FurniturePanel({ onDragStart, onDragEnd }) {
       </button>
 
       {isOpen && (
-        <div className="border-t border-gray-100 max-h-64 overflow-y-auto p-2 space-y-1">
-          {FURNITURE_ITEMS.map((item) => (
-            <div
-              key={item.id}
-              draggable
-              onDragStart={(e) => {
-                e.dataTransfer.effectAllowed = "copy";
-                e.dataTransfer.setData("furnitureType", item.id);
-                e.dataTransfer.setData("furnitureData", JSON.stringify(item));
-                onDragStart?.(e, item);
-              }}
-              onDragEnd={onDragEnd}
-              className="flex items-center gap-3 px-3 py-2 cursor-grab active:cursor-grabbing hover:bg-orange-50 border border-gray-200 rounded transition-colors text-sm"
-            >
-              <div className="w-12 h-12 shrink-0 bg-gray-100 rounded border border-gray-200 flex items-center justify-center overflow-hidden">
-                {item.image ? (
-                  <img src={item.image} alt={item.label} className="w-full h-full object-contain" />
-                ) : (
-                  getFurnitureIcon(item.id, 16)
-                )}
-              </div>
-              <div className="min-w-0">
-                <p className="text-gray-700 font-medium text-xs leading-tight">{item.label}</p>
+        <div className="border-t border-gray-100 max-h-96 overflow-y-auto">
+          {categories.map((cat) => (
+            <div key={cat}>
+              <button
+                onClick={() => toggleCategory(cat)}
+                className="w-full flex items-center gap-2 px-3 py-2 hover:bg-gray-50 transition-colors text-left border-b border-gray-100"
+              >
+                <span className="flex items-center justify-center w-4 h-4 shrink-0">
+                  {getFurnitureIcon(categoryIcons[cat], 14)}
+                </span>
+                <span className="flex-1 text-xs font-semibold text-gray-700">{cat}</span>
+                <span className="text-gray-400 shrink-0">
+                  {expandedCategories[cat] ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
+                </span>
+              </button>
 
-              </div>
+              {expandedCategories[cat] && (
+                <div className="p-2 space-y-1 bg-gray-50">
+                  {groupedItems[cat].map((item) => (
+                    <div
+                      key={item.id}
+                      draggable
+                      onDragStart={(e) => {
+                        e.dataTransfer.effectAllowed = "copy";
+                        e.dataTransfer.setData("furnitureType", item.id);
+                        e.dataTransfer.setData("furnitureData", JSON.stringify(item));
+                        onDragStart?.(e, item);
+                      }}
+                      onDragEnd={onDragEnd}
+                      className="flex items-center gap-2 px-3 py-2 cursor-grab active:cursor-grabbing hover:bg-orange-50 border border-gray-200 rounded transition-colors text-sm"
+                    >
+                      <div className="w-10 h-10 shrink-0 bg-white rounded border border-gray-200 flex items-center justify-center overflow-hidden">
+                        {item.image ? (
+                          <img src={item.image} alt={item.label} className="w-full h-full object-contain" />
+                        ) : (
+                          getFurnitureIcon(item.id, 14)
+                        )}
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-gray-700 font-medium text-xs leading-tight">{item.label}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           ))}
         </div>
