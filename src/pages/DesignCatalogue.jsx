@@ -215,6 +215,10 @@ export default function DesignCatalogue() {
           </div>
         )}
       </div>
+
+      {showInstructions && (
+        <InstructionsModal onClose={() => setShowInstructions(false)} />
+      )}
     </div>
   );
 }
