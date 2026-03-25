@@ -266,11 +266,20 @@ export default function SiteMap() {
 
             {/* Floor plan overlay at map scale */}
             {floorPlanOverlay && getOverlayBounds() && (
-              <ImageOverlay
-                url={floorPlanOverlay}
-                bounds={getOverlayBounds()}
-                opacity={0.8}
-              />
+              <div style={{
+                position: 'absolute',
+                width: '100%',
+                height: '100%',
+                pointerEvents: 'none',
+                transform: `rotate(${-overlayRotation}deg)`,
+                transformOrigin: 'center'
+              }}>
+                <ImageOverlay
+                  url={floorPlanOverlay}
+                  bounds={getOverlayBounds()}
+                  opacity={0.8}
+                />
+              </div>
             )}
           </MapContainer>
         ) : (
