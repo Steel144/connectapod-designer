@@ -12,7 +12,7 @@ const FURNITURE_ITEMS = [
   { id: "sofa_chaise_right", label: "Chaise Lounge Right", width: 2.2, depth: 1.2, image: "https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/86e5f9663_sofa_chaise_right-01.png" },
   { id: "dining_rect_4", label: "Dining Table Rect 4-Seater 1.3 x .9m", width: 2.058, depth: 2.058, image: "https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/b9e008a82_dining_rect_4_seater-01.png" },
   { id: "dining_rect_6", label: "Dining Table Rect 6-seater 1.9 x .9m", width: 3.087, depth: 1.715, image: "https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/d039c2080_dining_rect_6_seater-01.png" },
-  { id: "dining_round_4", label: "Dining Table Round 4-Seater", width: 1.715, depth: 1.715, image: "https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/015e6a804_dining_round_4_seater-01.png" },
+  { id: "dining_round_4", label: "Dining Table Round 4-Seater .9m", width: 1.715, depth: 1.715, image: "https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/015e6a804_dining_round_4_seater-01.png" },
   { id: "dining_round_6", label: "Dining Table Round 6-Seater", width: 2.058, depth: 2.058, image: "https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/2cb8cd3ce_dining_round_6_seater-01.png" },
   { id: "coffee_table_rect", label: "Coffee Table Rect", width: 1.2, depth: 0.6, image: "https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/8d9041fd5_coffee_table_rect_1200x600-01.png" },
   { id: "coffee_table_round", label: "Coffee Table Round", width: 0.9, depth: 0.9, image: "https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/732d1a4e2_coffee_table_round_900-01.png" },
