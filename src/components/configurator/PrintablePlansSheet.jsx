@@ -55,7 +55,7 @@ export default function PrintablePlansSheet({ placedModules, furniture = [], onC
           ← Back to Design
         </button>
       </div>
-      <div className="bg-white flex flex-col p-0 relative" style={{ height: "calc(297mm - 14mm)", overflow: "hidden", boxSizing: "border-box" }}>
+      <div className="bg-white flex flex-col p-0 relative" style={{ height: "calc(210mm - 14mm)", overflow: "hidden", boxSizing: "border-box" }}>
 
          {/* Header with logo */}
            <div className="flex items-center justify-between px-6 pt-4 pb-2 border-b" style={{ borderColor: "#F15A22" }}>
@@ -249,7 +249,7 @@ export default function PrintablePlansSheet({ placedModules, furniture = [], onC
 
 
       <style>{`
-         @page { margin: 7mm; size: A3 landscape; }
+         @page { margin: 7mm; size: A4 landscape; }
          @media print {
            html, body { margin: 0 !important; padding: 0 !important; overflow: hidden !important; }
            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
