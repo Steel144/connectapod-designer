@@ -181,9 +181,9 @@ export default function PrintablePlansSheet({ placedModules, furniture = [], wal
             <svg
               width={canvasWidth}
               height={canvasHeight}
-              style={{ maxWidth: "100%", maxHeight: "100%", width: "auto", height: "auto", display: "block" }}
+              style={{ display: "block" }}
               viewBox={`0 0 ${canvasWidth} ${canvasHeight}`}
-              preserveAspectRatio="xMidYMid meet"
+              preserveAspectRatio="none"
             >
               {/* Grid background */}
               <defs>
