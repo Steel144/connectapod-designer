@@ -63,7 +63,7 @@ const PrintPage = ({ children, header, footer, isLast, paperSize = "a4" }) => {
   );
 };
 
-export default function PrintablePlansSheet({ placedModules, furniture = [], onClose, printDetails = {} }) {
+export default function PrintablePlansSheet({ placedModules, furniture = [], onClose, printDetails = {}, paperSize = "a4" }) {
   useEffect(() => {
     const timer = setTimeout(() => {
       window.print();
