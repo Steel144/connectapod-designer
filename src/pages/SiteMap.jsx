@@ -5,7 +5,7 @@ import { useEffect as useMapEffect } from 'react';
 import 'leaflet/dist/leaflet.css';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Loader2 } from 'lucide-react';
+import { Loader2, X } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 
 export default function SiteMap() {
@@ -22,6 +22,9 @@ export default function SiteMap() {
   const [boundaryInput, setBoundaryInput] = useState('');
   const [overlayRotation, setOverlayRotation] = useState(0);
   const [positionOffset, setPositionOffset] = useState({ lat: 0, lng: 0 });
+
+  const [suggestions, setSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
 
   // Rotate position offset by negative rotation to account for map rotation
   const getAdjustedCenter = () => {
@@ -99,6 +102,49 @@ export default function SiteMap() {
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') geocodeAddress();
+  };
+
+  const fetchAddressSuggestions = async (query) => {
+    if (!query.trim() || query.length < 3) {
+      setSuggestions([]);
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&countrycodes=nz&format=json&limit=5&timeout=10`,
+        {
+          headers: {
+            'User-Agent': 'Connectapod-App (connectapod.com)'
+          }
+        }
+      );
+      if (response.ok) {
+        const data = await response.json();
+        setSuggestions(data || []);
+      }
+    } catch (err) {
+      console.error('Autocomplete error:', err);
+    }
+  };
+
+  const handleAddressChange = (e) => {
+    const value = e.target.value;
+    setAddress(value);
+    fetchAddressSuggestions(value);
+    setShowSuggestions(true);
+  };
+
+  const selectSuggestion = (suggestion) => {
+    setAddress(suggestion.display_name);
+    setSuggestions([]);
+    setShowSuggestions(false);
+  };
+
+  const clearAddress = () => {
+    setAddress('');
+    setSuggestions([]);
+    setShowSuggestions(false);
   };
 
   const setBoundary = () => {
@@ -211,15 +257,39 @@ export default function SiteMap() {
       <div className="border-b border-gray-200 p-4 bg-gray-50 relative z-[9999]">
         <div className="max-w-2xl mx-auto">
           <label className="text-sm font-semibold text-gray-700 mb-2 block">Site Address</label>
-          <div className="flex gap-2">
-            <Input
-              type="text"
-              placeholder="Enter site address (e.g., 123 Main St, City)"
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-              onKeyPress={handleKeyPress}
-              className="flex-1"
-            />
+          <div className="flex gap-2 relative">
+            <div className="flex-1 relative">
+              <Input
+                type="text"
+                placeholder="Enter site address (e.g., 123 Main St, City)"
+                value={address}
+                onChange={handleAddressChange}
+                onKeyPress={handleKeyPress}
+                onFocus={() => setShowSuggestions(true)}
+                className="flex-1"
+              />
+              {address && (
+                <button
+                  onClick={clearAddress}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
+              {showSuggestions && suggestions.length > 0 && (
+                <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded shadow-lg z-50 max-h-48 overflow-y-auto">
+                  {suggestions.map((suggestion, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => selectSuggestion(suggestion)}
+                      className="w-full text-left px-3 py-2 hover:bg-gray-100 text-sm text-gray-700 border-b last:border-b-0"
+                    >
+                      {suggestion.display_name}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
             <Button
               onClick={geocodeAddress}
               disabled={loading}
