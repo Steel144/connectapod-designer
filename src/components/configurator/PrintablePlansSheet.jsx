@@ -24,10 +24,12 @@ export default function PrintablePlansSheet({ placedModules, furniture = [], onC
     maxY = Math.max(maxY, m.y + m.h);
   });
   furniture.forEach(f => {
-    minX = Math.min(minX, f.x);
-    maxX = Math.max(maxX, f.x + (f.width || 1.4) / 0.6);
-    minY = Math.min(minY, f.y);
-    maxY = Math.max(maxY, f.y + (f.depth || 2.0) / 0.6);
+    const fWidthGridUnits = (f.width || 1.4) / 0.6;
+    const fDepthGridUnits = (f.depth || 2.0) / 0.6;
+    minX = Math.min(minX, f.x - fWidthGridUnits / 2);
+    maxX = Math.max(maxX, f.x + fWidthGridUnits / 2);
+    minY = Math.min(minY, f.y - fDepthGridUnits / 2);
+    maxY = Math.max(maxY, f.y + fDepthGridUnits / 2);
   });
 
   if (modules.length === 0 && furniture.length === 0) {
