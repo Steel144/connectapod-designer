@@ -99,6 +99,7 @@ export default function Configurator() {
   const [showLabels, setShowLabels] = useState(true);
   const [showFurniture, setShowFurniture] = useState(true);
   const [showPhotoImages, setShowPhotoImages] = useState(true);
+  const [showDimensions, setShowDimensions] = useState(true);
   const navBarRef = useRef(null);
   const [navBarHeight, setNavBarHeight] = useState(0);
 
