@@ -528,18 +528,20 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
                             )}
                             {hasEndModules && (
                               <div>
-                                <button
-                                  onClick={() => {
-                                    const subKey = `${group.key}-${size}-end`;
-                                    setExpandedSizes(prev => ({ ...prev, [subKey]: !prev[subKey] }));
-                                  }}
-                                  className="w-full flex items-center justify-between px-3 py-1 bg-gray-100 border-b border-gray-100 hover:bg-gray-200 transition-colors"
-                                >
-                                  <p className="text-[9px] font-semibold text-gray-600 uppercase tracking-wider">End</p>
-                                  <span className="text-gray-500">
-                                    {expandedSizes[`${group.key}-${size}-end`] ? <ChevronDown size={10} /> : <ChevronRight size={10} />}
-                                  </span>
-                                </button>
+                                <TypeTooltip type="end">
+                                  <button
+                                    onClick={() => {
+                                      const subKey = `${group.key}-${size}-end`;
+                                      setExpandedSizes(prev => ({ ...prev, [subKey]: !prev[subKey] }));
+                                    }}
+                                    className="w-full flex items-center justify-between px-3 py-1 bg-gray-100 border-b border-gray-100 hover:bg-gray-200 transition-colors"
+                                  >
+                                    <p className="text-[9px] font-semibold text-gray-600 uppercase tracking-wider">End</p>
+                                    <span className="text-gray-500">
+                                      {expandedSizes[`${group.key}-${size}-end`] ? <ChevronDown size={10} /> : <ChevronRight size={10} />}
+                                    </span>
+                                  </button>
+                                </TypeTooltip>
                                 {expandedSizes[`${group.key}-${size}-end`] && endItems.map((item) => {
                                   const mod = MODULE_TYPES.find((m) => m.type === item.code) || {
                                     type: item.code,
