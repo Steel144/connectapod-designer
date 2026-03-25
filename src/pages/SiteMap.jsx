@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Loader2, X } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 
-const FLOOR_PLAN_SCALE = 0.64; // Adjusted for proper overlay size
+const FLOOR_PLAN_SCALE = 0.32; // Adjusted for proper overlay size
 
 export default function SiteMap() {
   const [address, setAddress] = useState('');
