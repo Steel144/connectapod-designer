@@ -187,7 +187,7 @@ export default function PrintablePlansSheet({ placedModules, furniture = [], wal
               <rect width={canvasWidth} height={canvasHeight} fill="url(#grid)" />
 
               {/* Modules */}
-              {modules.filter(mod => showLabels || mod).map((mod) => {
+              {modules.map((mod) => {
                 const x = (mod.x - minX + 1) * CELL_SIZE;
                 const y = (mod.y - minY + 1) * CELL_SIZE;
                 const w = mod.w * CELL_SIZE;
@@ -244,6 +244,34 @@ export default function PrintablePlansSheet({ placedModules, furniture = [], wal
                       />
                     ))}
 
+                    {/* Dimensions */}
+                    {showDimensions && (
+                      <>
+                        {/* Width dimension */}
+                        <text
+                          x={x + w / 2}
+                          y={y - 8}
+                          textAnchor="middle"
+                          fontSize="10"
+                          fontWeight="bold"
+                          fill="#111"
+                        >
+                          {(mod.w * 0.6).toFixed(1)}m
+                        </text>
+                        {/* Height dimension */}
+                        <text
+                          x={x - 8}
+                          y={y + h / 2}
+                          textAnchor="middle"
+                          fontSize="10"
+                          fontWeight="bold"
+                          fill="#111"
+                          transform={`rotate(-90 ${x - 8} ${y + h / 2})`}
+                        >
+                          {(mod.h * 0.6).toFixed(1)}m
+                        </text>
+                      </>
+                    )}
 
                   </g>
                 );
