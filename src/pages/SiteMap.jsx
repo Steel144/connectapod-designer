@@ -46,7 +46,7 @@ export default function SiteMap() {
     setLoading(true);
     try {
       const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json`,
+        `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&countrycodes=nz&format=json`,
         {
           headers: {
             'User-Agent': 'Connectapod-App (connectapod.com)'
