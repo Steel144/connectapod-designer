@@ -285,8 +285,8 @@ export default function PrintablePlansSheet({ placedModules, furniture = [], wal
 
               {/* Furniture */}
               {showFurniture && furniture.map((f) => {
-                const fWidth = (f.width || 1.4) * CELL_SIZE;
-                const fDepth = (f.depth || 2.0) * CELL_SIZE;
+                const fWidth = ((f.width || 1.4) / 0.6) * CELL_SIZE;
+                const fDepth = ((f.depth || 2.0) / 0.6) * CELL_SIZE;
                 const fx = (f.x - minX + 1) * CELL_SIZE;
                 const fy = (f.y - minY + 1) * CELL_SIZE;
                 const rotation = f.rotation || 0;
