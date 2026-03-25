@@ -20,18 +20,17 @@ const PrintPage = ({ children, header, footer, isLast, paperSize = "a4" }) => {
     const fit = () => {
       inner.style.transform = "none";
       inner.style.transformOrigin = "top left";
-      // Only auto-fit for A4; A3 uses fixed 150% scale
-      if (paperSize === "a4") {
-        const cw = container.clientWidth;
-        const ch = container.clientHeight;
-        const iw = inner.scrollWidth;
-        const ih = inner.scrollHeight;
-        if (iw > cw || ih > ch) {
-          const scaleX = cw / iw;
-          const scaleY = ch / ih;
-          const s = Math.min(scaleX, scaleY, 1);
-          inner.style.transform = `scale(${s})`;
-        }
+      const cw = container.clientWidth;
+      const ch = container.clientHeight;
+      const iw = inner.scrollWidth;
+      const ih = inner.scrollHeight;
+      // For A3, allow scale up to 1.5; for A4, only scale down
+      const maxScale = paperSize === "a3" ? 1.5 : 1;
+      if (iw > cw || ih > ch) {
+        const scaleX = cw / iw;
+        const scaleY = ch / ih;
+        const s = Math.min(scaleX, scaleY, maxScale);
+        inner.style.transform = `scale(${s})`;
       }
     };
 
