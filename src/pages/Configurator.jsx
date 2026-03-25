@@ -928,6 +928,9 @@ export default function Configurator() {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
+            <Link to={createPageUrl("Catalogue")} className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-white bg-red-600 hover:bg-red-700 border border-red-700 transition-all">
+              ⚙ Admin
+            </Link>
             <div className="flex border border-gray-200 overflow-hidden">
               <button onClick={() => viewMode === "elevations" ? setElevationZoom(z => Math.max(25, z - 10)) : setGridZoom(z => Math.max(25, z - 10))} title="Zoom out" className="px-2.5 py-1.5 text-xs text-gray-600 hover:text-[#F15A22] transition-all">
                 <ZoomOut size={13} />
