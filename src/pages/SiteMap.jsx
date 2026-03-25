@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Rectangle } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { Button } from '@/components/ui/button';
@@ -23,6 +23,8 @@ export default function SiteMap() {
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState(null);
   const [mapZoom, setMapZoom] = useState(21);
+  const [siteBounds, setSiteBounds] = useState(null);
+  const [boundaryInput, setBoundaryInput] = useState('');
 
   // Load address from print details on mount
   useEffect(() => {
@@ -87,6 +89,21 @@ export default function SiteMap() {
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') geocodeAddress();
+  };
+
+  const setBoundary = () => {
+    if (!boundaryInput.trim()) return;
+    try {
+      // Parse input as "lat1,lng1,lat2,lng2" for rectangle bounds
+      const parts = boundaryInput.split(',').map(p => parseFloat(p.trim()));
+      if (parts.length === 4 && parts.every(p => !isNaN(p))) {
+        setSiteBounds([[parts[0], parts[1]], [parts[2], parts[3]]]);
+      } else {
+        alert('Please enter bounds as: lat1,lng1,lat2,lng2');
+      }
+    } catch (err) {
+      alert('Invalid bounds format');
+    }
   };
 
   const handleOverlayMouseDown = (e) => {
@@ -199,9 +216,30 @@ export default function SiteMap() {
             </Button>
           </div>
           {coordinates && (
-            <div className="mt-2 text-xs text-gray-600">
-              📍 {coordinates[0].toFixed(6)}, {coordinates[1].toFixed(6)}
-            </div>
+           <>
+             <div className="mt-2 text-xs text-gray-600">
+               📍 {coordinates[0].toFixed(6)}, {coordinates[1].toFixed(6)}
+             </div>
+             <div className="mt-3">
+               <label className="text-sm font-semibold text-gray-700 mb-2 block">Site Boundaries (Optional)</label>
+               <div className="flex gap-2">
+                 <Input
+                   type="text"
+                   placeholder="lat1,lng1,lat2,lng2"
+                   value={boundaryInput}
+                   onChange={(e) => setBoundaryInput(e.target.value)}
+                   className="flex-1 text-sm"
+                 />
+                 <Button
+                   onClick={setBoundary}
+                   variant="outline"
+                   size="sm"
+                 >
+                   Set
+                 </Button>
+               </div>
+             </div>
+           </>
           )}
         </div>
       </div>
@@ -224,6 +262,14 @@ export default function SiteMap() {
             <Marker position={coordinates}>
               <Popup>Site Location</Popup>
             </Marker>
+
+            {/* Site boundary */}
+            {siteBounds && (
+              <Rectangle
+                bounds={siteBounds}
+                pathOptions={{ color: '#3b82f6', weight: 3, opacity: 0.7, fill: true, fillOpacity: 0.1 }}
+              />
+            )}
 
             {/* Floor plan overlay */}
             {floorPlanOverlay && (
