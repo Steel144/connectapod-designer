@@ -124,10 +124,6 @@ export default function SiteMap() {
     canvas.height = 600;
     const ctx = canvas.getContext('2d');
 
-    // White background
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
     // Draw simple grid and modules
     if (design.grid && design.grid.length > 0) {
       const minX = Math.min(...design.grid.map(m => m.x));
