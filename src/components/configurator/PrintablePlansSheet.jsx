@@ -249,6 +249,40 @@ export default function PrintablePlansSheet({ placedModules, furniture = [], wal
                 );
               })}
 
+              {/* Walls */}
+              {walls.map((wall) => {
+                const wallW = wall.orientation === "horizontal" ? wall.length * CELL_SIZE : wall.thickness * CELL_SIZE;
+                const wallH = wall.orientation === "vertical" ? wall.length * CELL_SIZE : wall.thickness * CELL_SIZE;
+                const wx = (wall.x - minX + 1) * CELL_SIZE;
+                const wy = (wall.y - minY + 1) * CELL_SIZE;
+
+                return (
+                  <g key={wall.id}>
+                    <rect
+                      x={wx}
+                      y={wy}
+                      width={wallW}
+                      height={wallH}
+                      fill="#4B5563"
+                      stroke="#2d3748"
+                      strokeWidth="1"
+                    />
+                    {wall.face && (
+                      <text
+                        x={wx + wallW / 2}
+                        y={wy + wallH / 2 + 3}
+                        textAnchor="middle"
+                        fontSize="8"
+                        fontWeight="bold"
+                        fill="white"
+                      >
+                        {wall.face}
+                      </text>
+                    )}
+                  </g>
+                );
+              })}
+
               {/* Furniture */}
               {furniture.map((f) => {
                 const fWidth = (f.width || 1.4) * CELL_SIZE;
