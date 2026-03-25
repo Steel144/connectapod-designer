@@ -92,12 +92,12 @@ export default function SaveDesignModal({ open, onClose, onConfirm, isSaving, la
               )}
             </div>
             <Button
-              onClick={() => handleConfirm(saveToCatalogue)}
-              disabled={!name.trim() || isSaving}
-              className="rounded-xl bg-slate-900 hover:bg-slate-700 text-white"
-            >
-              {isSaving ? "Saving..." : isSaveAs ? "Save As" : "Update"}
-            </Button>
+               onClick={() => handleConfirm(false)}
+               disabled={!name.trim() || isSaving}
+               className="rounded-xl bg-slate-900 hover:bg-slate-700 text-white"
+             >
+               {isSaving ? "Saving..." : isSaveAs ? "Save As" : "Update"}
+             </Button>
           </div>
         </div>
       </DialogContent>
