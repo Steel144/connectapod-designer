@@ -24,6 +24,7 @@ export default function SiteMap() {
   const [boundaryInput, setBoundaryInput] = useState('');
   const [overlayRotation, setOverlayRotation] = useState(0);
   const [positionOffset, setPositionOffset] = useState({ lat: 0, lng: 0 });
+  const [planScaleMultiplier, setPlanScaleMultiplier] = useState(1);
 
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -378,7 +379,7 @@ export default function SiteMap() {
                     maxHeight: '90%',
                     objectFit: 'contain',
                     // At zoom 20, ~50m visible width. Scale by zoom level relative to base.
-                    transform: `scale(${Math.pow(2, mapZoom - 20) * FLOOR_PLAN_SCALE})`,
+                    transform: `scale(${Math.pow(2, mapZoom - 20) * FLOOR_PLAN_SCALE * planScaleMultiplier})`,
                     transition: 'transform 0.1s ease-out'
                   }}
                 />
@@ -417,8 +418,19 @@ export default function SiteMap() {
               <p className="text-sm font-bold text-[#F15A22]">{Math.round(mapZoom)}</p>
             </div>
             <div>
-              <label className="text-xs font-semibold text-gray-600 block">Plan Scale:</label>
-              <p className="text-sm font-bold text-[#F15A22]">{(Math.pow(2, mapZoom - 20) * FLOOR_PLAN_SCALE).toFixed(3)}</p>
+              <label className="text-xs font-semibold text-gray-600 block mb-2">Plan Scale Adjust</label>
+              <div className="flex items-center gap-2">
+                <input
+                  type="range"
+                  min="0.5"
+                  max="2"
+                  step="0.1"
+                  value={planScaleMultiplier}
+                  onChange={(e) => setPlanScaleMultiplier(parseFloat(e.target.value))}
+                  className="flex-1"
+                />
+                <span className="text-xs text-gray-600 w-10 text-right">{planScaleMultiplier.toFixed(1)}x</span>
+              </div>
             </div>
           </div>
         </div>
