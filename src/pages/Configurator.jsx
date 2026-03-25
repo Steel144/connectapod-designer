@@ -492,7 +492,7 @@ export default function Configurator() {
             ...w,
             rotation: (w.rotation || 0) + 180,
             y: modToRotate.y + modToRotate.h,  // Move to bottom side
-            face: w.face === 'W' ? 'Y' : w.face === 'Y' ? 'W' : w.face
+            face: 'Y'
           };
         }
         // Y face: bottom side at modToRotate.y + modToRotate.h
@@ -501,21 +501,25 @@ export default function Configurator() {
             ...w,
             rotation: (w.rotation || 0) + 180,
             y: modToRotate.y - WALL_OFFSET,  // Move to top side
-            face: w.face === 'Y' ? 'W' : w.face === 'W' ? 'Y' : w.face
+            face: 'W'
           };
         }
-        // Z face: left side (End module walls - don't move, just rotate in place)
+        // Z face: left side at modToRotate.x
         if (Math.abs(w.y - modToRotate.y) < 0.5 && Math.abs(w.x - modToRotate.x) < 0.5) {
           return {
             ...w,
-            rotation: (w.rotation || 0) + 180
+            rotation: (w.rotation || 0) + 180,
+            x: modToRotate.x + modToRotate.w - WALL_OFFSET,  // Move to right side
+            face: 'X'
           };
         }
-        // X face: right side (End module walls - don't move, just rotate in place)
+        // X face: right side at modToRotate.x + modToRotate.w - WALL_OFFSET
         if (Math.abs(w.y - modToRotate.y) < 0.5 && Math.abs(w.x - (modToRotate.x + modToRotate.w - WALL_OFFSET)) < 0.5) {
           return {
             ...w,
-            rotation: (w.rotation || 0) + 180
+            rotation: (w.rotation || 0) + 180,
+            x: modToRotate.x,  // Move to left side
+            face: 'Z'
           };
         }
         return w;
