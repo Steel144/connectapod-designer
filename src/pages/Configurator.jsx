@@ -935,25 +935,27 @@ export default function Configurator() {
                 <ZoomIn size={13} />
               </button>
             </div>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-white bg-red-600 hover:bg-red-700 border border-red-700 transition-all">
-                  ⚙ Admin
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-40">
-                <DropdownMenuItem asChild>
-                  <Link to={createPageUrl("Catalogue")} className="flex items-center gap-2 cursor-pointer">
-                    <BookOpen size={13} /> Floor Catalogue
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to={createPageUrl("WallCatalogue")} className="flex items-center gap-2 cursor-pointer">
-                    <BookOpen size={13} /> Wall Catalogue
-                  </Link>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            {user?.role === "admin" && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-white bg-red-600 hover:bg-red-700 border border-red-700 transition-all">
+                    ⚙ Admin
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-40">
+                  <DropdownMenuItem asChild>
+                    <Link to={createPageUrl("Catalogue")} className="flex items-center gap-2 cursor-pointer">
+                      <BookOpen size={13} /> Floor Catalogue
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to={createPageUrl("WallCatalogue")} className="flex items-center gap-2 cursor-pointer">
+                      <BookOpen size={13} /> Wall Catalogue
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
 
           </div>
         </div>
