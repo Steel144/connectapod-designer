@@ -19,7 +19,7 @@ export default function SiteMap() {
   // Overlay state
   const [overlayPos, setOverlayPos] = useState({ lat: 0, lng: 0 });
   const [overlayRotation, setOverlayRotation] = useState(0);
-  const [overlayScale, setOverlayScale] = useState(0.5);
+  const [overlayScale, setOverlayScale] = useState(2);
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState(null);
   const [mapZoom, setMapZoom] = useState(16);
