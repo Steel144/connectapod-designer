@@ -249,10 +249,10 @@ export default function PrintablePlansSheet({ placedModules, furniture = [], wal
                     {[...Array(mod.h)].map((_, i) => (
                       <line
                         key={`h-${i}`}
-                        x1={x}
-                        y1={y + (i + 1) * CELL_SIZE}
-                        x2={x + w}
-                        y2={y + (i + 1) * CELL_SIZE}
+                        x1={-w / 2}
+                        y1={-h / 2 + (i + 1) * CELL_SIZE}
+                        x2={w / 2}
+                        y2={-h / 2 + (i + 1) * CELL_SIZE}
                         stroke="#e5e7eb"
                         strokeWidth="0.5"
                         opacity="0.5"
