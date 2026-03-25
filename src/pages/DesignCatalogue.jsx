@@ -213,13 +213,18 @@ export default function DesignCatalogue() {
                     </div>
                   )}
 
-                  <button
-                    onClick={() => handleStartDesign(design.id)}
-                    className="w-full flex items-center justify-center gap-2 py-2 bg-[#F15A22] text-white text-xs font-semibold hover:bg-[#d94e1a] transition-colors"
-                  >
-                    <Play size={11} />
-                    Start with this design
-                  </button>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button
+                        onClick={() => handleStartDesign(design.id)}
+                        className="w-full flex items-center justify-center gap-2 py-2 bg-[#F15A22] text-white text-xs font-semibold hover:bg-[#d94e1a] transition-colors"
+                      >
+                        <Play size={11} />
+                        Start with this design
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent>Load this template into the configurator</TooltipContent>
+                  </Tooltip>
                 </div>
               </div>
             ))}
