@@ -1066,7 +1066,10 @@ export default function Configurator() {
                 floorPlanImages={floorPlanImages}
                 wallImages={wallImages}
                 zoom={gridZoom}
-               />
+                showLabels={showLabels}
+                showFurniture={showFurniture}
+                showPhotoImages={showPhotoImages}
+                />
           </div>
         )}
       </div>
