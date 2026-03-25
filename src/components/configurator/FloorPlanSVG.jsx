@@ -11,8 +11,8 @@ const stroke = "#334155";
 const fixture = "#64748b";
 const fill = "none";
 
-function Box({ x, y, w, h, r = 0 }) {
-  return <rect x={x} y={y} width={w} height={h} rx={r} fill={fill} stroke={fixture} strokeWidth="1" />;
+function Box({ x, y, w, h, r = 0, c }) {
+  return <rect x={x} y={y} width={w} height={h} rx={r} fill={fill} stroke={c || fixture} strokeWidth="1" />;
 }
 function Line({ x1, y1, x2, y2, dashed }) {
   return (
