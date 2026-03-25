@@ -167,6 +167,40 @@ export default function PrintablePlansSheet({ placedModules, furniture = [], onC
                   </g>
                 );
               })}
+
+              {/* Furniture */}
+              {furniture.map((f) => {
+                const CELL_M = 0.6;
+                const fWidth = f.width ? (f.width / CELL_M) * CELL_SIZE : 1.4 * CELL_SIZE;
+                const fDepth = f.depth ? (f.depth / CELL_M) * CELL_SIZE : 2.0 * CELL_SIZE;
+                const fx = (f.x - minX + 1) * CELL_SIZE;
+                const fy = (f.y - minY + 1) * CELL_SIZE;
+                const rotation = f.rotation || 0;
+
+                return (
+                  <g key={f.id} transform={`translate(${fx + fWidth / 2}, ${fy + fDepth / 2}) rotate(${rotation}) translate(${-fWidth / 2}, ${-fDepth / 2})`}>
+                    <rect
+                      x={0}
+                      y={0}
+                      width={fWidth}
+                      height={fDepth}
+                      fill="#FFB3A8"
+                      stroke="#E8725B"
+                      strokeWidth="1.5"
+                    />
+                    <text
+                      x={fWidth / 2}
+                      y={fDepth / 2 + 3}
+                      textAnchor="middle"
+                      fontSize="7"
+                      fontWeight="bold"
+                      fill="#666"
+                    >
+                      {f.label || f.type}
+                    </text>
+                  </g>
+                );
+              })}
             </svg>
           </div>
 
