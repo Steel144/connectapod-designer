@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, Rectangle, ImageOverlay, useMap, ScaleControl } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Rectangle, ImageOverlay, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import { useEffect as useMapEffect } from 'react';
 import 'leaflet/dist/leaflet.css';
@@ -289,14 +289,6 @@ export default function SiteMap() {
                   />
                 )}
               </MapContainer>
-            </div>
-
-            {/* Scale ruler outside transform */}
-            <div className="absolute bottom-4 left-4 z-[1000] bg-white px-2 py-1 rounded text-xs text-gray-700 border border-gray-300 shadow">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-0.5 bg-gray-700"></div>
-                <span>100m</span>
-              </div>
             </div>
 
             {/* Floor plan fixed in center - on top */}
