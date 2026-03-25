@@ -184,20 +184,32 @@ export default function PrintablePlansSheet({ placedModules, furniture = [], onC
                       y={0}
                       width={fWidth}
                       height={fDepth}
-                      fill="#FFB3A8"
+                      fill={f.image ? "white" : "#FFB3A8"}
                       stroke="#E8725B"
                       strokeWidth="1.5"
                     />
-                    <text
-                      x={fWidth / 2}
-                      y={fDepth / 2 + 3}
-                      textAnchor="middle"
-                      fontSize="7"
-                      fontWeight="bold"
-                      fill="#666"
-                    >
-                      {f.label || f.type}
-                    </text>
+                    {f.image && (
+                      <image
+                        x={2}
+                        y={2}
+                        width={fWidth - 4}
+                        height={fDepth - 4}
+                        href={f.image}
+                        preserveAspectRatio="xMidYMid slice"
+                      />
+                    )}
+                    {!f.image && (
+                      <text
+                        x={fWidth / 2}
+                        y={fDepth / 2 + 3}
+                        textAnchor="middle"
+                        fontSize="7"
+                        fontWeight="bold"
+                        fill="#666"
+                      >
+                        {f.label || f.type}
+                      </text>
+                    )}
                   </g>
                 );
               })}
