@@ -211,7 +211,8 @@ export default function SiteMap() {
         {coordinates ? (
           <MapContainer
             center={coordinates}
-            zoom={16}
+            zoom={mapZoom}
+            onZoomend={(e) => setMapZoom(e.target._zoom)}
             className="w-full h-full"
             ref={mapRef}
           >
