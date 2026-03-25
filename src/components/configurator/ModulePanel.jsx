@@ -496,7 +496,7 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
 
 
 
-      <p className="text-xs text-gray-400 mt-3 text-center">Expand a category, then drag →</p>
+
 
       {/* Wall suggestions for selected end module */}
       {showWallSuggestions && (
