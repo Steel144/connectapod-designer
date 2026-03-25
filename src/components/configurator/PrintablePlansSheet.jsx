@@ -233,26 +233,7 @@ export default function PrintablePlansSheet({ placedModules, furniture = [], onC
                       />
                     ))}
 
-                    {/* Module label */}
-                    <rect
-                      x={x}
-                      y={y + h - 20}
-                      width={w}
-                      height={20}
-                      fill="white"
-                      stroke="#e5e7eb"
-                      strokeWidth="1"
-                    />
-                    <text
-                      x={x + w / 2}
-                      y={y + h - 6}
-                      textAnchor="middle"
-                      fontSize="9"
-                      fontWeight="bold"
-                      fill="#111"
-                    >
-                      {mod.label || mod.type} • {mod.type}
-                    </text>
+
                   </g>
                 );
               })}
