@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { FileText, Download, Printer, X } from "lucide-react";
+import { base44 } from "@/api/base44Client";
 
 const STORAGE_KEY = "connectapod_print_details";
 
@@ -36,18 +37,18 @@ function AddressAutocomplete({ value, onChange }) {
     clearTimeout(debounceRef.current);
     if (val.length < 3) { setSuggestions([]); setOpen(false); return; }
     debounceRef.current = setTimeout(async () => {
-      try {
-        const res = await fetch(
-          `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(val)}&format=json&addressdetails=1&limit=5&countrycodes=nz`,
-          { headers: { "Accept-Language": "en" } }
-        );
-        const data = await res.json();
-        setSuggestions(data);
-        setOpen(data.length > 0);
-      } catch {
-        setSuggestions([]);
-      }
-    }, 350);
+       try {
+         const res = await base44.functions.invoke('geocodeAddress', {
+           query: val,
+           limit: 5
+         });
+         const data = res.data.results || [];
+         setSuggestions(data);
+         setOpen(data.length > 0);
+       } catch {
+         setSuggestions([]);
+       }
+     }, 350);
   };
 
   const handleSelect = (place) => {
