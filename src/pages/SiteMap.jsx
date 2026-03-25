@@ -5,11 +5,12 @@ import { useEffect as useMapEffect } from 'react';
 import 'leaflet/dist/leaflet.css';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Loader2, X, Map as MapIcon, ChevronLeft, ZoomIn, ZoomOut, Settings, Eye } from 'lucide-react';
+import { Loader2, X, Map as MapIcon, ChevronLeft, ZoomIn, ZoomOut, Settings, Eye, LayoutTemplate, FolderOpen, Grid2X2, Image, Save, Undo2, Check } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/lib/AuthContext';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { useQuery } from '@tanstack/react-query';
 
 const FLOOR_PLAN_SCALE = 0.32; // Adjusted for proper overlay size
 
@@ -36,6 +37,11 @@ export default function SiteMap() {
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState(null);
   const [showLabels, setShowLabels] = useState(true);
+
+  const { data: designs = [] } = useQuery({
+    queryKey: ["homeDesigns"],
+    queryFn: async () => { try { const r = await base44.entities.HomeDesign.list("-created_date"); return Array.isArray(r) ? r : []; } catch { return []; } },
+  });
 
   // Rotate position offset by negative rotation to account for map rotation
   const getAdjustedCenter = () => {
@@ -284,21 +290,63 @@ export default function SiteMap() {
           <img src="https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/1a43e85d2_Connectapod-01.png" alt="connectapod" style={{ height: "25px", width: "auto" }} />
           <span className="text-[10px] text-gray-400 tracking-widest uppercase">Site Map</span>
         </div>
+
         <div className="flex items-center gap-2 ml-auto shrink-0">
-          <Link to="/Configurator" className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-gray-600 bg-white border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22] transition-all" style={{ clipPath: "polygon(0 0, calc(100% - 8px) 0, 100% 50%, calc(100% - 8px) 100%, 0 100%)" }}>
-            <ChevronLeft size={13} /> Back to Configurator
-          </Link>
+          {/* Design Catalogue dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-[#F15A22] text-white hover:bg-[#d94e1a] transition-all" style={{ clipPath: "polygon(0 0, calc(100% - 8px) 0, 100% 50%, calc(100% - 8px) 100%, 0 100%)" }}>
+                <LayoutTemplate size={13} /> Design Catalogue
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start">
+              <DropdownMenuItem asChild>
+                <Link to="/DesignCatalogue" className="flex items-center gap-2 cursor-pointer">
+                  <LayoutTemplate size={13} /> Starter Designs
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <button className="w-full text-left flex items-center gap-2 cursor-pointer">
+                  <FolderOpen size={13} /> My Designs {designs.length > 0 && `(${designs.length})`}
+                </button>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          {/* 2D / Elevations / Save / Estimate buttons */}
+          <div className="flex border border-gray-200 overflow-hidden">
+            <Link to="/Configurator" className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-white text-gray-600 hover:text-[#F15A22] transition-all" style={{ clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 50%, calc(100% - 6px) 100%, 0 100%)" }}>
+              <Grid2X2 size={13} /> 2D
+            </Link>
+            <Link to="/Configurator" className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-white text-gray-600 hover:text-[#F15A22] transition-all" style={{ clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 50%, calc(100% - 6px) 100%, 0 100%)" }}>
+              <Image size={13} /> Elevations
+            </Link>
+          </div>
+
+          {/* Site Map (current) */}
+          <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-white text-gray-600 border border-gray-200 border-[#F15A22] text-[#F15A22] transition-all" style={{ clipPath: "polygon(0 0, calc(100% - 8px) 0, 100% 50%, calc(100% - 8px) 100%, 0 100%)" }}>
+            <MapIcon size={13} /> Site Map
+          </button>
+
+          {/* Undo button */}
+          <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-gray-600 bg-white border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22] disabled:opacity-30 transition-all" style={{ clipPath: "polygon(0 0, calc(100% - 8px) 0, 100% 50%, calc(100% - 8px) 100%, 0 100%)" }}>
+            <Undo2 size={13} /> Undo
+          </button>
+
+          {/* Zoom controls */}
           <div className="flex border border-gray-200 overflow-hidden">
             <button onClick={() => setMapZoom(z => Math.max(10, z - 1))} title="Zoom out" className="px-2.5 py-1.5 text-xs text-gray-600 hover:text-[#F15A22] transition-all">
               <ZoomOut size={13} />
             </button>
             <button onClick={() => setMapZoom(21)} title="Reset zoom" className="px-2 py-1.5 text-xs font-semibold text-gray-600 hover:text-[#F15A22] transition-all min-w-12">
-              {Math.round(mapZoom)}
+              100%
             </button>
             <button onClick={() => setMapZoom(z => Math.min(22, z + 1))} title="Zoom in" className="px-2.5 py-1.5 text-xs text-gray-600 hover:text-[#F15A22] transition-all">
               <ZoomIn size={13} />
             </button>
           </div>
+
+          {/* Settings dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-gray-600 hover:text-[#F15A22] border border-gray-200 bg-white hover:border-[#F15A22] transition-all">
@@ -308,7 +356,7 @@ export default function SiteMap() {
             <DropdownMenuContent align="end">
               <DropdownMenuItem onClick={() => setShowLabels(v => !v)} className="flex items-center justify-between cursor-pointer">
                 <span className="flex items-center gap-2"><Eye size={13} /> Show Labels</span>
-                {showLabels && <span className="text-[#F15A22]">✓</span>}
+                {showLabels && <Check size={12} className="text-[#F15A22]" />}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
