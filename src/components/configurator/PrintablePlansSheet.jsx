@@ -50,8 +50,8 @@ const PrintPage = ({ children, header, footer, isLast }) => {
       overflow: "visible",
     }}>
       {header}
-      <div ref={contentRef} style={{ flex: 1, overflow: "hidden", padding: "12px 24px", position: "relative" }}>
-        <div ref={innerRef} style={{ display: "inline-block", transformOrigin: "top left" }}>
+      <div ref={contentRef} style={{ flex: 1, overflow: "hidden", padding: "12px 24px", position: "relative", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div ref={innerRef} style={{ display: "inline-block", transformOrigin: "center" }}>
           {children}
         </div>
       </div>
