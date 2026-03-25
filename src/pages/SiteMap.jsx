@@ -215,8 +215,9 @@ export default function SiteMap() {
             ref={mapRef}
           >
             <TileLayer
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              url="https://{s}.tile.openstreetmap.de/tiles/osmde/{z}/{x}/{y}.png"
               attribution='&copy; OpenStreetMap contributors'
+              maxZoom={18}
             />
             <Marker position={coordinates}>
               <Popup>Site Location</Popup>
