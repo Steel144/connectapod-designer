@@ -334,8 +334,8 @@ export default function PrintablePlansSheet({ placedModules, furniture = [], wal
                     )}
                     {!f.image && (
                       <text
-                        x={fWidth / 2}
-                        y={fDepth / 2 + 3}
+                        x={0}
+                        y={3}
                         textAnchor="middle"
                         fontSize="7"
                         fontWeight="bold"
