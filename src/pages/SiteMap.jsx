@@ -5,12 +5,15 @@ import { useEffect as useMapEffect } from 'react';
 import 'leaflet/dist/leaflet.css';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Loader2, X } from 'lucide-react';
+import { Loader2, X, Map as MapIcon, ChevronLeft } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
+import { Link } from 'react-router-dom';
+import { useAuth } from '@/lib/AuthContext';
 
 const FLOOR_PLAN_SCALE = 0.32; // Adjusted for proper overlay size
 
 export default function SiteMap() {
+  const { user } = useAuth();
   const [address, setAddress] = useState('');
   const [coordinates, setCoordinates] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -273,7 +276,18 @@ export default function SiteMap() {
 
   return (
     <div className="w-full h-screen flex flex-col bg-white">
-      {/* Header with address input */}
+      {/* ── TOP BAR ── */}
+      <div className="flex items-center px-4 py-4 bg-white border-b border-gray-200 overflow-x-auto gap-4 min-w-0 z-30">
+        <div className="shrink-0 flex flex-col gap-0.5">
+          <img src="https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/1a43e85d2_Connectapod-01.png" alt="connectapod" style={{ height: "25px", width: "auto" }} />
+          <span className="text-[10px] text-gray-400 tracking-widest uppercase">Site Map</span>
+        </div>
+        <Link to="/Configurator" className="ml-auto flex items-center gap-1.5 px-3 py-1.5 text-xs text-gray-600 bg-white border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22] transition-all" style={{ clipPath: "polygon(0 0, calc(100% - 8px) 0, 100% 50%, calc(100% - 8px) 100%, 0 100%)" }}>
+          <ChevronLeft size={13} /> Back to Configurator
+        </Link>
+      </div>
+
+      {/* Address input section */}
       <div className="border-b border-gray-200 p-4 bg-gray-50 relative z-[9999]">
         <div className="max-w-2xl mx-auto">
           <label className="text-sm font-semibold text-gray-700 mb-2 block">Site Address</label>
