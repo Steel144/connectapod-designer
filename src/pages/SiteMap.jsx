@@ -341,6 +341,7 @@ export default function SiteMap() {
               transition: 'transform 0.1s ease-out'
             }}>
               <MapContainer
+                key={`${coordinates[0]}-${coordinates[1]}`}
                 center={getAdjustedCenter()}
                 zoom={mapZoom}
                 className="w-full h-full"
