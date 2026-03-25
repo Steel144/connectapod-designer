@@ -5,7 +5,7 @@ import { useEffect as useMapEffect } from 'react';
 import 'leaflet/dist/leaflet.css';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Loader2, X, Map as MapIcon, ChevronLeft, ZoomIn, ZoomOut, Settings, Eye, LayoutTemplate, FolderOpen, Grid2X2, Image, Save, Undo2, Check } from 'lucide-react';
+import { Loader2, X, Map as MapIcon, ChevronLeft, ZoomIn, ZoomOut, Settings, Eye, LayoutTemplate, FolderOpen, Grid2X2, Image, Save, Undo2, Check, FileText, Printer } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/lib/AuthContext';
@@ -313,13 +313,22 @@ export default function SiteMap() {
             </DropdownMenuContent>
           </DropdownMenu>
 
-          {/* 2D / Elevations / Save / Estimate buttons */}
+          {/* 2D / Elevations / Save / Estimate / Print buttons */}
           <div className="flex border border-gray-200 overflow-hidden">
             <Link to="/Configurator" className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-white text-gray-600 hover:text-[#F15A22] transition-all" style={{ clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 50%, calc(100% - 6px) 100%, 0 100%)" }}>
               <Grid2X2 size={13} /> 2D
             </Link>
             <Link to="/Configurator" className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-white text-gray-600 hover:text-[#F15A22] transition-all" style={{ clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 50%, calc(100% - 6px) 100%, 0 100%)" }}>
               <Image size={13} /> Elevations
+            </Link>
+            <Link to="/Configurator" className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-white text-gray-600 border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22] transition-all" style={{ clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 50%, calc(100% - 6px) 100%, 0 100%)" }}>
+              <Save size={13} /> Save
+            </Link>
+            <Link to="/Configurator" className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-white text-gray-600 border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22] transition-all" style={{ clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 50%, calc(100% - 6px) 100%, 0 100%)" }}>
+              Get Estimate
+            </Link>
+            <Link to="/Configurator" className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-white text-gray-600 border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22] transition-all" style={{ clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 50%, calc(100% - 6px) 100%, 0 100%)" }}>
+              <Printer size={13} /> Print
             </Link>
           </div>
 
