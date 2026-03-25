@@ -2,9 +2,13 @@ import React, { useEffect, useRef } from "react";
 
 const CELL_SIZE = 40; // pixels per grid cell in print
 
-const PrintPage = ({ children, header, footer, isLast }) => {
+const PrintPage = ({ children, header, footer, isLast, paperSize = "a4" }) => {
   const contentRef = useRef(null);
   const innerRef = useRef(null);
+
+  const pageDimensions = paperSize === "a3" 
+    ? { width: "calc(420mm - 14mm)", height: "calc(297mm - 14mm)" }
+    : { width: "calc(297mm - 14mm)", height: "calc(210mm - 14mm)" };
 
   useEffect(() => {
     const container = contentRef.current;
@@ -42,8 +46,7 @@ const PrintPage = ({ children, header, footer, isLast }) => {
       display: "flex",
       flexDirection: "column",
       justifyContent: "space-between",
-      width: "calc(297mm - 14mm)",
-      height: "calc(210mm - 14mm)",
+      ...pageDimensions,
       pageBreakAfter: isLast ? "avoid" : "always",
       breakAfter: isLast ? "avoid" : "page",
       boxSizing: "border-box",
