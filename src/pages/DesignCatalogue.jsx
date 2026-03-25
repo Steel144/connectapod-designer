@@ -114,15 +114,24 @@ export default function DesignCatalogue() {
   return (
     <div className="min-h-screen bg-[#F8F7F5]">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4 flex items-center gap-4">
-        <Link to="/Configurator" className="text-gray-400 hover:text-[#F15A22] transition-colors">
-          <ArrowLeft size={20} />
-        </Link>
-        <div>
-          <h1 className="text-xl font-bold text-gray-900 tracking-tight">Design Catalogue</h1>
-          <p className="text-sm text-gray-500">Start with a pre-designed layout and customise it</p>
-        </div>
-      </div>
+       <div className="bg-white border-b border-gray-200 px-6 py-4 flex items-center gap-4 justify-between">
+         <div className="flex items-center gap-4">
+           <Link to="/Configurator" className="text-gray-400 hover:text-[#F15A22] transition-colors">
+             <ArrowLeft size={20} />
+           </Link>
+           <div>
+             <h1 className="text-xl font-bold text-gray-900 tracking-tight">Design Catalogue</h1>
+             <p className="text-sm text-gray-500">Start with a pre-designed layout and customise it</p>
+           </div>
+         </div>
+         <button
+           onClick={() => setShowInstructions(true)}
+           className="p-2 text-gray-400 hover:text-[#F15A22] transition-colors"
+           title="View instructions"
+         >
+           <HelpCircle size={20} />
+         </button>
+       </div>
 
       {/* Tag filters */}
       <div className="px-6 pt-6 pb-2 flex gap-2 flex-wrap">
