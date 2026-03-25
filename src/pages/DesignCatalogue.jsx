@@ -235,6 +235,7 @@ export default function DesignCatalogue() {
       {showInstructions && (
         <InstructionsModal onClose={() => setShowInstructions(false)} />
       )}
-    </div>
-  );
-}
+      </div>
+      </TooltipProvider>
+      );
+      }
