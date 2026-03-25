@@ -117,7 +117,18 @@ export default function Landing() {
             <p className="text-xs text-muted-foreground">Plans</p>
           </div>
         </div>
+
+        {/* Help Button */}
+        <button
+          onClick={() => setShowInstructions(true)}
+          className="mt-6 w-full flex items-center justify-center gap-2 px-4 py-2 text-sm text-gray-600 border border-gray-300 rounded hover:bg-gray-50 transition-colors"
+        >
+          <HelpCircle size={16} /> How to use this tool
+        </button>
       </div>
+
+      {/* Instructions Modal */}
+      <InstructionsModal open={showInstructions} onClose={() => setShowInstructions(false)} />
     </div>
   );
 }
