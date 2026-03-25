@@ -23,6 +23,15 @@ export default function SiteMap() {
   const [overlayRotation, setOverlayRotation] = useState(0);
   const [positionOffset, setPositionOffset] = useState({ lat: 0, lng: 0 });
 
+  // Rotate position offset by negative rotation to account for map rotation
+  const getAdjustedCenter = () => {
+    if (!coordinates) return [0, 0];
+    const rad = (-overlayRotation * Math.PI) / 180;
+    const rotatedLat = positionOffset.lat * Math.cos(rad) - positionOffset.lng * Math.sin(rad);
+    const rotatedLng = positionOffset.lat * Math.sin(rad) + positionOffset.lng * Math.cos(rad);
+    return [coordinates[0] + rotatedLat, coordinates[1] + rotatedLng];
+  };
+
   // Load address from print details on mount
   useEffect(() => {
     const savedDetails = localStorage.getItem('connectapod_print_details');
@@ -245,7 +254,7 @@ export default function SiteMap() {
               transition: 'transform 0.1s ease-out'
             }}>
               <MapContainer
-                center={[coordinates[0] + positionOffset.lat, coordinates[1] + positionOffset.lng]}
+                center={getAdjustedCenter()}
                 zoom={mapZoom}
                 onZoomend={(e) => setMapZoom(e.target._zoom)}
                 className="w-full h-full"
