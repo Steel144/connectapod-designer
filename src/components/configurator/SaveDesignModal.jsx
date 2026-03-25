@@ -76,34 +76,7 @@ export default function SaveDesignModal({ open, onClose, onConfirm, isSaving, la
             autoFocus
           />
 
-          {/* Catalogue toggle */}
-          <button
-            type="button"
-            onClick={() => setSaveToCatalogue(c => !c)}
-            className={`w-full flex items-center gap-2 px-3 py-2 border text-xs transition-all rounded-lg ${
-              saveToCatalogue ? "border-[#F15A22] bg-orange-50 text-[#F15A22]" : "border-gray-200 text-gray-500 hover:border-[#F15A22] hover:text-[#F15A22]"
-            }`}
-          >
-            <LayoutTemplate size={13} />
-            {saveToCatalogue ? "Will appear in Design Catalogue ✓" : "Also save to Design Catalogue"}
-          </button>
 
-          {saveToCatalogue && (
-            <div className="space-y-2 border border-gray-100 rounded-xl p-3 bg-gray-50">
-              <Input
-                placeholder="Short description (optional)"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                className="rounded-lg border-slate-200 h-9 text-sm"
-              />
-              <Input
-                placeholder="Tags, comma-separated (e.g. 2 bed, compact)"
-                value={tags}
-                onChange={(e) => setTags(e.target.value)}
-                className="rounded-lg border-slate-200 h-9 text-sm"
-              />
-            </div>
-          )}
 
           <div className="flex gap-2 justify-between">
             <div className="flex gap-2">
