@@ -421,7 +421,22 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
 
                     return sizes.map(size => {
                       const sizeKey = `${group.key}-${size}`;
-                      const isExpanded = expandedSizes[sizeKey] === true; // Default collapsed
+                      const isExpanded = expandedSizes[sizeKey] === true;
+                      const sizeItems = bySize[size];
+                      
+                      // Split items by type: end vs standard
+                      const endItems = sizeItems.filter(item => {
+                        const chassis = item.chassis || "SF";
+                        return chassis === "EF" || chassis === "ER" || chassis === "LF" || chassis === "RF";
+                      });
+                      const standardItems = sizeItems.filter(item => {
+                        const chassis = item.chassis || "SF";
+                        return !(chassis === "EF" || chassis === "ER" || chassis === "LF" || chassis === "RF");
+                      });
+
+                      const hasEndModules = endItems.length > 0;
+                      const hasStandardModules = standardItems.length > 0;
+
                       return (
                       <div key={size} className="border-b border-gray-100 last:border-0">
                         <button 
@@ -433,65 +448,140 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
                             {isExpanded ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
                           </span>
                         </button>
-                        {isExpanded && bySize[size].map((item) => {
-                          const mod = MODULE_TYPES.find((m) => m.type === item.code) || {
-                            type: item.code,
-                            label: item.name,
-                            mpCode: item.mpCode,
-                            color: group.color,
-                            border: group.border,
-                            w: Math.round(item.width / 0.6),
-                            h: Math.round(item.depth / 0.6),
-                            sqm: item.sqm,
-                            price: group.price,
-                            groupKey: group.key,
-                            chassis: item.chassis || "SF",
-                            widthCode: item.widthCode || "30",
-                            room: item.room || "G",
-                            orientation: item.orientation || 1,
-                          };
-                          const variants = item.description ? item.description.split(",").map(v => v.trim()) : [];
-                          const moduleElement = (
-                            <div
-                              draggable
-                              onDragStart={(e) => {
-                                e.dataTransfer.effectAllowed = "copy";
-                                e.dataTransfer.setData("moduleType", mod.type);
-                                const imageUrl = floorPlanImages[mod.type] || floorPlanImages[item.originalCode];
-                                if (imageUrl) {
-                                  e.dataTransfer.setData("moduleImage", imageUrl);
-                                }
-                                onDragStart(e, mod);
-                              }}
-                              onDragEnd={onDragEnd}
-                              onMouseEnter={() => setHoveredModule({ ...mod, floorPlanImage: floorPlanImages[mod.type] })}
-                              onMouseLeave={() => setHoveredModule(null)}
-                              className="flex items-center gap-3 px-3 py-2 cursor-grab active:cursor-grabbing hover:bg-orange-50 border-b border-gray-50 last:border-0 transition-colors"
-                            >
-                              <div className="shrink-0 bg-white overflow-hidden relative flex items-center justify-center border border-gray-200" style={{ height: "60px", width: "60px" }}>
-                                {floorPlanImages[mod.type] || floorPlanImages[item.originalCode] ? (
-                                  <img src={floorPlanImages[mod.type] || floorPlanImages[item.originalCode]} alt={item.name} className="w-auto h-full object-contain" />
-                                ) : (
-                                  <FloorPlanSVG code={item.code} className="h-full w-auto" />
-                                )}
+                        {isExpanded && (
+                          <div>
+                            {hasStandardModules && (
+                              <div>
+                                <div className="px-3 py-1 bg-gray-100 border-b border-gray-100">
+                                  <p className="text-[9px] font-semibold text-gray-600 uppercase tracking-wider">Standard</p>
+                                </div>
+                                {standardItems.map((item) => {
+                                  const mod = MODULE_TYPES.find((m) => m.type === item.code) || {
+                                    type: item.code,
+                                    label: item.name,
+                                    mpCode: item.mpCode,
+                                    color: group.color,
+                                    border: group.border,
+                                    w: Math.round(item.width / 0.6),
+                                    h: Math.round(item.depth / 0.6),
+                                    sqm: item.sqm,
+                                    price: group.price,
+                                    groupKey: group.key,
+                                    chassis: item.chassis || "SF",
+                                    widthCode: item.widthCode || "30",
+                                    room: item.room || "G",
+                                    orientation: item.orientation || 1,
+                                  };
+                                  const variants = item.description ? item.description.split(",").map(v => v.trim()) : [];
+                                  const moduleElement = (
+                                    <div
+                                      draggable
+                                      onDragStart={(e) => {
+                                        e.dataTransfer.effectAllowed = "copy";
+                                        e.dataTransfer.setData("moduleType", mod.type);
+                                        const imageUrl = floorPlanImages[mod.type] || floorPlanImages[item.originalCode];
+                                        if (imageUrl) {
+                                          e.dataTransfer.setData("moduleImage", imageUrl);
+                                        }
+                                        onDragStart(e, mod);
+                                      }}
+                                      onDragEnd={onDragEnd}
+                                      onMouseEnter={() => setHoveredModule({ ...mod, floorPlanImage: floorPlanImages[mod.type] })}
+                                      onMouseLeave={() => setHoveredModule(null)}
+                                      className="flex items-center gap-3 px-3 py-2 cursor-grab active:cursor-grabbing hover:bg-orange-50 border-b border-gray-50 last:border-0 transition-colors"
+                                    >
+                                      <div className="shrink-0 bg-white overflow-hidden relative flex items-center justify-center border border-gray-200" style={{ height: "60px", width: "60px" }}>
+                                        {floorPlanImages[mod.type] || floorPlanImages[item.originalCode] ? (
+                                          <img src={floorPlanImages[mod.type] || floorPlanImages[item.originalCode]} alt={item.name} className="w-auto h-full object-contain" />
+                                        ) : (
+                                          <FloorPlanSVG code={item.code} className="h-full w-auto" />
+                                        )}
+                                      </div>
+                                      <div className="min-w-0 flex-1">
+                                        <p className="text-xs font-medium text-gray-700 leading-tight">{item.name}</p>
+                                        {variants.length > 0 && <p className="text-[9px] text-gray-500 mt-0.5">{variants.join(" · ")}</p>}
+                                        <p className="text-[10px] font-mono text-[#F15A22] mt-0.5" title={item.mpCode}>{item.mpCode}</p>
+                                        <p className="text-[10px] text-gray-400">{item.sqm}m²</p>
+                                      </div>
+                                    </div>
+                                  );
+                                  return showTooltips ? (
+                                    <ModuleTooltip key={item.code} item={item}>
+                                      {moduleElement}
+                                    </ModuleTooltip>
+                                  ) : (
+                                    <div key={item.code}>{moduleElement}</div>
+                                  );
+                                })}
                               </div>
-                              <div className="min-w-0 flex-1">
-                                <p className="text-xs font-medium text-gray-700 leading-tight">{item.name}</p>
-                                {variants.length > 0 && <p className="text-[9px] text-gray-500 mt-0.5">{variants.join(" · ")}</p>}
-                                <p className="text-[10px] font-mono text-[#F15A22] mt-0.5" title={item.mpCode}>{item.mpCode}</p>
-                                <p className="text-[10px] text-gray-400">{item.sqm}m²</p>
+                            )}
+                            {hasEndModules && (
+                              <div>
+                                <div className="px-3 py-1 bg-gray-100 border-b border-gray-100">
+                                  <p className="text-[9px] font-semibold text-gray-600 uppercase tracking-wider">End</p>
+                                </div>
+                                {endItems.map((item) => {
+                                  const mod = MODULE_TYPES.find((m) => m.type === item.code) || {
+                                    type: item.code,
+                                    label: item.name,
+                                    mpCode: item.mpCode,
+                                    color: group.color,
+                                    border: group.border,
+                                    w: Math.round(item.width / 0.6),
+                                    h: Math.round(item.depth / 0.6),
+                                    sqm: item.sqm,
+                                    price: group.price,
+                                    groupKey: group.key,
+                                    chassis: item.chassis || "SF",
+                                    widthCode: item.widthCode || "30",
+                                    room: item.room || "G",
+                                    orientation: item.orientation || 1,
+                                  };
+                                  const variants = item.description ? item.description.split(",").map(v => v.trim()) : [];
+                                  const moduleElement = (
+                                    <div
+                                      draggable
+                                      onDragStart={(e) => {
+                                        e.dataTransfer.effectAllowed = "copy";
+                                        e.dataTransfer.setData("moduleType", mod.type);
+                                        const imageUrl = floorPlanImages[mod.type] || floorPlanImages[item.originalCode];
+                                        if (imageUrl) {
+                                          e.dataTransfer.setData("moduleImage", imageUrl);
+                                        }
+                                        onDragStart(e, mod);
+                                      }}
+                                      onDragEnd={onDragEnd}
+                                      onMouseEnter={() => setHoveredModule({ ...mod, floorPlanImage: floorPlanImages[mod.type] })}
+                                      onMouseLeave={() => setHoveredModule(null)}
+                                      className="flex items-center gap-3 px-3 py-2 cursor-grab active:cursor-grabbing hover:bg-orange-50 border-b border-gray-50 last:border-0 transition-colors"
+                                    >
+                                      <div className="shrink-0 bg-white overflow-hidden relative flex items-center justify-center border border-gray-200" style={{ height: "60px", width: "60px" }}>
+                                        {floorPlanImages[mod.type] || floorPlanImages[item.originalCode] ? (
+                                          <img src={floorPlanImages[mod.type] || floorPlanImages[item.originalCode]} alt={item.name} className="w-auto h-full object-contain" />
+                                        ) : (
+                                          <FloorPlanSVG code={item.code} className="h-full w-auto" />
+                                        )}
+                                      </div>
+                                      <div className="min-w-0 flex-1">
+                                        <p className="text-xs font-medium text-gray-700 leading-tight">{item.name}</p>
+                                        {variants.length > 0 && <p className="text-[9px] text-gray-500 mt-0.5">{variants.join(" · ")}</p>}
+                                        <p className="text-[10px] font-mono text-[#F15A22] mt-0.5" title={item.mpCode}>{item.mpCode}</p>
+                                        <p className="text-[10px] text-gray-400">{item.sqm}m²</p>
+                                      </div>
+                                    </div>
+                                  );
+                                  return showTooltips ? (
+                                    <ModuleTooltip key={item.code} item={item}>
+                                      {moduleElement}
+                                    </ModuleTooltip>
+                                  ) : (
+                                    <div key={item.code}>{moduleElement}</div>
+                                  );
+                                })}
                               </div>
-                            </div>
-                          );
-
-                          return showTooltips ? (
-                            <ModuleTooltip key={item.code} item={item}>
-                              {moduleElement}
-                            </ModuleTooltip>
-                          ) : (
-                            <div key={item.code}>{moduleElement}</div>
-                          );
-                        })}
+                            )}
+                          </div>
+                        )}
                         </div>
                         );
                         });
