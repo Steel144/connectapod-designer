@@ -244,7 +244,7 @@ export default function SiteMap() {
           <>
             {/* Map behind - rotates and moves */}
             <div className="absolute inset-0" style={{
-              transform: `rotate(${overlayRotation}deg)`,
+              transform: `scale(2) rotate(${overlayRotation}deg)`,
               transformOrigin: 'center',
               transition: 'transform 0.1s ease-out'
             }}>
