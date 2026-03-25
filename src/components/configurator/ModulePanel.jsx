@@ -422,7 +422,7 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
 
                      return sizes.map(size => {
                        const sizeKey = `living-${size}`;
-                       const isExpanded = expandedSizes[sizeKey] !== false; // Default expanded
+                       const isExpanded = expandedSizes[sizeKey] === true; // Default collapsed
                        return (
                        <div key={size} className="border-b border-gray-100 last:border-0">
                          <button 
