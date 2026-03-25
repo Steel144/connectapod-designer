@@ -952,15 +952,30 @@ export default function Configurator() {
               </DropdownMenuContent>
             </DropdownMenu>
             <div className="flex border border-gray-200 overflow-hidden">
-              <button onClick={() => viewMode === "elevations" ? setElevationZoom(z => Math.max(25, z - 10)) : setGridZoom(z => Math.max(25, z - 10))} title="Zoom out" className="px-2.5 py-1.5 text-xs text-gray-600 hover:text-[#F15A22] transition-all">
-                <ZoomOut size={13} />
-              </button>
-              <button onClick={() => viewMode === "elevations" ? setElevationZoom(100) : setGridZoom(100)} title="Reset zoom" className="px-2 py-1.5 text-xs font-semibold text-gray-600 hover:text-[#F15A22] transition-all min-w-12">
-                {viewMode === "elevations" ? elevationZoom : gridZoom}%
-              </button>
-              <button onClick={() => viewMode === "elevations" ? setElevationZoom(z => Math.min(300, z + 10)) : setGridZoom(z => Math.min(300, z + 10))} title="Zoom in" className="px-2.5 py-1.5 text-xs text-gray-600 hover:text-[#F15A22] transition-all">
-                <ZoomIn size={13} />
-              </button>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button onClick={() => viewMode === "elevations" ? setElevationZoom(z => Math.max(25, z - 10)) : setGridZoom(z => Math.max(25, z - 10))} className="px-2.5 py-1.5 text-xs text-gray-600 hover:text-[#F15A22] transition-all">
+                    <ZoomOut size={13} />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent>Zoom out</TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button onClick={() => viewMode === "elevations" ? setElevationZoom(100) : setGridZoom(100)} className="px-2 py-1.5 text-xs font-semibold text-gray-600 hover:text-[#F15A22] transition-all min-w-12">
+                    {viewMode === "elevations" ? elevationZoom : gridZoom}%
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent>Reset zoom to 100%</TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button onClick={() => viewMode === "elevations" ? setElevationZoom(z => Math.min(300, z + 10)) : setGridZoom(z => Math.min(300, z + 10))} className="px-2.5 py-1.5 text-xs text-gray-600 hover:text-[#F15A22] transition-all">
+                    <ZoomIn size={13} />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent>Zoom in</TooltipContent>
+              </Tooltip>
             </div>
             {user?.role === "admin" && (
               <DropdownMenu>
