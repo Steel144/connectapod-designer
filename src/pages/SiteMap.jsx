@@ -5,10 +5,11 @@ import { useEffect as useMapEffect } from 'react';
 import 'leaflet/dist/leaflet.css';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Loader2, X, Map as MapIcon, ChevronLeft } from 'lucide-react';
+import { Loader2, X, Map as MapIcon, ChevronLeft, ZoomIn, ZoomOut, Settings, Eye } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/lib/AuthContext';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 const FLOOR_PLAN_SCALE = 0.32; // Adjusted for proper overlay size
 
@@ -34,6 +35,7 @@ export default function SiteMap() {
 
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState(null);
+  const [showLabels, setShowLabels] = useState(true);
 
   // Rotate position offset by negative rotation to account for map rotation
   const getAdjustedCenter = () => {
@@ -282,9 +284,35 @@ export default function SiteMap() {
           <img src="https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/1a43e85d2_Connectapod-01.png" alt="connectapod" style={{ height: "25px", width: "auto" }} />
           <span className="text-[10px] text-gray-400 tracking-widest uppercase">Site Map</span>
         </div>
-        <Link to="/Configurator" className="ml-auto flex items-center gap-1.5 px-3 py-1.5 text-xs text-gray-600 bg-white border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22] transition-all" style={{ clipPath: "polygon(0 0, calc(100% - 8px) 0, 100% 50%, calc(100% - 8px) 100%, 0 100%)" }}>
-          <ChevronLeft size={13} /> Back to Configurator
-        </Link>
+        <div className="flex items-center gap-2 ml-auto shrink-0">
+          <Link to="/Configurator" className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-gray-600 bg-white border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22] transition-all" style={{ clipPath: "polygon(0 0, calc(100% - 8px) 0, 100% 50%, calc(100% - 8px) 100%, 0 100%)" }}>
+            <ChevronLeft size={13} /> Back to Configurator
+          </Link>
+          <div className="flex border border-gray-200 overflow-hidden">
+            <button onClick={() => setMapZoom(z => Math.max(10, z - 1))} title="Zoom out" className="px-2.5 py-1.5 text-xs text-gray-600 hover:text-[#F15A22] transition-all">
+              <ZoomOut size={13} />
+            </button>
+            <button onClick={() => setMapZoom(21)} title="Reset zoom" className="px-2 py-1.5 text-xs font-semibold text-gray-600 hover:text-[#F15A22] transition-all min-w-12">
+              {Math.round(mapZoom)}
+            </button>
+            <button onClick={() => setMapZoom(z => Math.min(22, z + 1))} title="Zoom in" className="px-2.5 py-1.5 text-xs text-gray-600 hover:text-[#F15A22] transition-all">
+              <ZoomIn size={13} />
+            </button>
+          </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-gray-600 hover:text-[#F15A22] border border-gray-200 bg-white hover:border-[#F15A22] transition-all">
+                <Settings size={13} /> Settings
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => setShowLabels(v => !v)} className="flex items-center justify-between cursor-pointer">
+                <span className="flex items-center gap-2"><Eye size={13} /> Show Labels</span>
+                {showLabels && <span className="text-[#F15A22]">✓</span>}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
 
       {/* Address input section */}
