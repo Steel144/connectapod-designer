@@ -1,10 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, Rectangle } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Rectangle, ImageOverlay } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Loader2, RotateCw, Copy } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 
 export default function SiteMap() {
@@ -16,12 +16,6 @@ export default function SiteMap() {
   const mapRef = useRef(null);
   const overlayRef = useRef(null);
 
-  // Overlay state
-  const [overlayPos, setOverlayPos] = useState({ lat: 0, lng: 0 });
-  const [overlayRotation, setOverlayRotation] = useState(0);
-  const [overlayScale, setOverlayScale] = useState(2);
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragStart, setDragStart] = useState(null);
   const [mapZoom, setMapZoom] = useState(21);
   const [siteBounds, setSiteBounds] = useState(null);
   const [boundaryInput, setBoundaryInput] = useState('');
@@ -106,40 +100,17 @@ export default function SiteMap() {
     }
   };
 
-  const handleOverlayMouseDown = (e) => {
-    setIsDragging(true);
-    setDragStart({ x: e.clientX, y: e.clientY });
+
+
+  // Calculate design dimensions in meters
+  const getDesignDimensions = () => {
+    if (!design || !design.grid || design.grid.length === 0) return null;
+    const minX = Math.min(...design.grid.map(m => m.x));
+    const maxX = Math.max(...design.grid.map(m => m.x + m.w));
+    const minY = Math.min(...design.grid.map(m => m.y));
+    const maxY = Math.max(...design.grid.map(m => m.y + m.h));
+    return { width: maxX - minX, height: maxY - minY, minX, minY };
   };
-
-  const handleMouseMove = (e) => {
-    if (!isDragging || !dragStart || !mapRef.current) return;
-
-    const deltaX = e.clientX - dragStart.x;
-    const deltaY = e.clientY - dragStart.y;
-    
-    // Simple drag: move overlay slightly (would need proper lat/lng conversion for real map drag)
-    setOverlayPos(prev => ({
-      lat: prev.lat + (deltaY * 0.00001),
-      lng: prev.lng + (deltaX * 0.00001)
-    }));
-    setDragStart({ x: e.clientX, y: e.clientY });
-  };
-
-  const handleMouseUp = () => {
-    setIsDragging(false);
-    setDragStart(null);
-  };
-
-  useEffect(() => {
-    if (isDragging) {
-      window.addEventListener('mousemove', handleMouseMove);
-      window.addEventListener('mouseup', handleMouseUp);
-      return () => {
-        window.removeEventListener('mousemove', handleMouseMove);
-        window.removeEventListener('mouseup', handleMouseUp);
-      };
-    }
-  }, [isDragging, dragStart]);
 
   // Generate floor plan canvas overlay
   useEffect(() => {
@@ -191,6 +162,26 @@ export default function SiteMap() {
 
     setFloorPlanOverlay(canvas.toDataURL());
   }, [design]);
+
+  // Calculate overlay bounds based on design dimensions
+  const getOverlayBounds = () => {
+    if (!coordinates || !design) return null;
+    const dims = getDesignDimensions();
+    if (!dims) return null;
+    
+    // Convert meters to approximate degrees (rough conversion for display)
+    // 1 degree ≈ 111 km at equator
+    const latDelta = (dims.height / 1000) / 111;
+    const lngDelta = (dims.width / 1000) / 111;
+    
+    const lat = coordinates[0];
+    const lng = coordinates[1];
+    
+    return [
+      [lat + latDelta / 2, lng - lngDelta / 2],
+      [lat - latDelta / 2, lng + lngDelta / 2]
+    ];
+  };
 
   return (
     <div className="w-full h-screen flex flex-col bg-white">
@@ -245,7 +236,7 @@ export default function SiteMap() {
       </div>
 
       {/* Map and overlay */}
-      <div className="flex-1 relative" onMouseMove={handleMouseMove} onMouseUp={handleMouseUp} onMouseLeave={handleMouseUp}>
+      <div className="flex-1 relative">
         {coordinates ? (
           <MapContainer
             center={coordinates}
@@ -271,25 +262,13 @@ export default function SiteMap() {
               />
             )}
 
-            {/* Floor plan overlay */}
-            {floorPlanOverlay && (
-              <div
-                ref={overlayRef}
-                onMouseDown={handleOverlayMouseDown}
-                className="absolute z-40 cursor-grab active:cursor-grabbing"
-                style={{
-                  left: '50%',
-                  top: '50%',
-                  transform: `translate(-50%, -50%) rotate(${overlayRotation}deg) scale(${overlayScale})`,
-                  transformOrigin: 'center',
-                }}
-              >
-                <img
-                  src={floorPlanOverlay}
-                  alt="Floor Plan"
-                  className="w-96 h-72 border-2 border-orange-500 rounded shadow-lg pointer-events-none"
-                />
-              </div>
+            {/* Floor plan overlay at map scale */}
+            {floorPlanOverlay && getOverlayBounds() && (
+              <ImageOverlay
+                url={floorPlanOverlay}
+                bounds={getOverlayBounds()}
+                opacity={0.8}
+              />
             )}
           </MapContainer>
         ) : (
@@ -303,21 +282,6 @@ export default function SiteMap() {
       {design && (
         <div className="absolute bottom-4 right-4 z-50 bg-white rounded-lg shadow-lg p-4 border border-gray-200 max-w-xs">
           <div className="space-y-3">
-            <div>
-              <label className="text-xs font-semibold text-gray-600 block mb-2">Rotation</label>
-              <div className="flex items-center gap-2">
-                <input
-                  type="range"
-                  min="0"
-                  max="360"
-                  step="1"
-                  value={overlayRotation}
-                  onChange={(e) => setOverlayRotation(parseInt(e.target.value))}
-                  className="flex-1"
-                />
-                <span className="text-xs text-gray-600 w-8 text-right">{overlayRotation}°</span>
-              </div>
-            </div>
             <div>
               <label className="text-xs font-semibold text-gray-600 block mb-2">Map Zoom</label>
               <div className="flex items-center gap-2">
@@ -333,30 +297,6 @@ export default function SiteMap() {
                 <span className="text-xs text-gray-600 w-8 text-right">{mapZoom}</span>
               </div>
             </div>
-            <div>
-              <label className="text-xs font-semibold text-gray-600 block mb-2">Plan Scale</label>
-              <div className="flex items-center gap-2">
-                <input
-                  type="range"
-                  min="0.1"
-                  max="2"
-                  step="0.1"
-                  value={overlayScale}
-                  onChange={(e) => setOverlayScale(parseFloat(e.target.value))}
-                  className="flex-1"
-                />
-                <span className="text-xs text-gray-600 w-10 text-right">{(overlayScale * 100).toFixed(0)}%</span>
-              </div>
-            </div>
-            <Button
-              onClick={() => setOverlayRotation(0)}
-              variant="outline"
-              size="sm"
-              className="w-full"
-              title="Reset rotation"
-            >
-              <RotateCw className="w-4 h-4 mr-1" /> Reset
-            </Button>
           </div>
         </div>
       )}
