@@ -4,6 +4,8 @@ import { base44 } from "@/api/base44Client";
 
 export default function DesignMiniPreview({ grid = [], walls = [], furniture = [], floorPlanImages: propFloorPlanImages, wallImages: propWallImages }) {
   const CELL = 6; // pixels per grid cell
+  const [hoveredItem, setHoveredItem] = useState(null); // { label, width, depth, image, svgX, svgY }
+  const [hoveredModule, setHoveredModule] = useState(null); // { label, type, sqm, price }
 
   const { data: queryFloorPlanImages = {} } = useQuery({
     queryKey: ["floorPlanImages", "miniPreview"],
