@@ -486,39 +486,36 @@ export default function Configurator() {
       prev.map((w) => {
         const WALL_OFFSET = 0.308;
         
-        // W face: top side at modToRotate.y - WALL_OFFSET
-        if (Math.abs(w.x - modToRotate.x) < 0.5 && Math.abs(w.y - (modToRotate.y - WALL_OFFSET)) < 0.5) {
+        // Only transform walls attached to this module
+        if (w.face === 'W' && Math.abs(w.x - modToRotate.x) < 0.5 && Math.abs(w.y - (modToRotate.y - WALL_OFFSET)) < 0.5) {
           return {
             ...w,
             rotation: (w.rotation || 0) + 180,
-            y: modToRotate.y + modToRotate.h,  // Move to bottom side
+            y: modToRotate.y + modToRotate.h,
             face: 'Y'
           };
         }
-        // Y face: bottom side at modToRotate.y + modToRotate.h
-        if (Math.abs(w.x - modToRotate.x) < 0.5 && Math.abs(w.y - (modToRotate.y + modToRotate.h)) < 0.5) {
+        if (w.face === 'Y' && Math.abs(w.x - modToRotate.x) < 0.5 && Math.abs(w.y - (modToRotate.y + modToRotate.h)) < 0.5) {
           return {
             ...w,
             rotation: (w.rotation || 0) + 180,
-            y: modToRotate.y - WALL_OFFSET,  // Move to top side
+            y: modToRotate.y - WALL_OFFSET,
             face: 'W'
           };
         }
-        // Z face: left side at modToRotate.x
-        if (Math.abs(w.y - modToRotate.y) < 0.5 && Math.abs(w.x - modToRotate.x) < 0.5) {
+        if (w.face === 'Z' && Math.abs(w.y - modToRotate.y) < 0.5 && Math.abs(w.x - modToRotate.x) < 0.5) {
           return {
             ...w,
             rotation: (w.rotation || 0) + 180,
-            x: modToRotate.x + modToRotate.w - WALL_OFFSET,  // Move to right side
+            x: modToRotate.x + modToRotate.w - WALL_OFFSET,
             face: 'X'
           };
         }
-        // X face: right side at modToRotate.x + modToRotate.w - WALL_OFFSET
-        if (Math.abs(w.y - modToRotate.y) < 0.5 && Math.abs(w.x - (modToRotate.x + modToRotate.w - WALL_OFFSET)) < 0.5) {
+        if (w.face === 'X' && Math.abs(w.y - modToRotate.y) < 0.5 && Math.abs(w.x - (modToRotate.x + modToRotate.w - WALL_OFFSET)) < 0.5) {
           return {
             ...w,
             rotation: (w.rotation || 0) + 180,
-            x: modToRotate.x,  // Move to left side
+            x: modToRotate.x,
             face: 'Z'
           };
         }
