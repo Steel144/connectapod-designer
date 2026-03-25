@@ -1244,6 +1244,7 @@ export default function Configurator() {
                       <DesignSummary
                         placedModules={placedModules}
                         walls={walls}
+                        furniture={furniture}
                         onSave={() => setSaveModalOpen(true)}
                         onClear={handleClear}
                         isSaving={saveMutation.isPending}
