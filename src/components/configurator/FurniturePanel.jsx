@@ -63,8 +63,8 @@ function getFurnitureIcon(id, size = 18) {
 export default function FurniturePanel({ onDragStart, onDragEnd }) {
   const [isOpen, setIsOpen] = useState(true);
   const [expandedCategories, setExpandedCategories] = useState({
-    Beds: true,
-    Seating: true,
+    Beds: false,
+    Seating: false,
     Dining: false,
     Tables: false,
     Workspace: false,
