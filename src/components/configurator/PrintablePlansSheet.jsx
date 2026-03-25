@@ -87,8 +87,8 @@ export default function PrintablePlansSheet({ placedModules, furniture = [], wal
     maxY = Math.max(maxY, m.y + m.h);
   });
   furniture.forEach(f => {
-    const fWidthGridUnits = (f.width || 1.4) / 0.6;
-    const fDepthGridUnits = (f.depth || 2.0) / 0.6;
+    const fWidthGridUnits = (f.width || 1.4) / CELL_M;
+    const fDepthGridUnits = (f.depth || 2.0) / CELL_M;
     minX = Math.min(minX, f.x - fWidthGridUnits / 2);
     maxX = Math.max(maxX, f.x + fWidthGridUnits / 2);
     minY = Math.min(minY, f.y - fDepthGridUnits / 2);
@@ -107,6 +107,7 @@ export default function PrintablePlansSheet({ placedModules, furniture = [], wal
 
   const gridWidth = Math.max(maxX - minX, 0) + 2;
   const gridHeight = Math.max(maxY - minY, 0) + 2;
+  const CELL_SIZE = PRINT_SCALE * CELL_M * PX_PER_M;
   const canvasWidth = gridWidth * CELL_SIZE;
   const canvasHeight = gridHeight * CELL_SIZE;
 
