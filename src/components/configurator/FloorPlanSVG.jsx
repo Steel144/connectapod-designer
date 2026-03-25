@@ -189,14 +189,15 @@ function KitchenGalley({ orange }) {
   );
 }
 
-function KitchenSingleRun() {
+function KitchenSingleRun({ orange }) {
+  const c = orange ? "#F15A22" : fixture;
   return (
     <g>
-      <Box x={8} y={8} w={W-16} h={12} />
-      <circle cx={W*0.4} cy={14} r={3} fill={fill} stroke={fixture} strokeWidth="0.8" />
+      <Box x={8} y={8} w={W-16} h={12} c={c} />
+      <circle cx={W*0.4} cy={14} r={3} fill={fill} stroke={c} strokeWidth="0.8" />
       {/* overhead cabinets dashed */}
-      <Box x={8} y={22} w={W-16} h={6} />
-      <text x={W/2} y={H*0.6} textAnchor="middle" fontSize="7" fill={fixture} fontFamily="monospace">Single Run</text>
+      <Box x={8} y={22} w={W-16} h={6} c={c} />
+      <text x={W/2} y={H*0.6} textAnchor="middle" fontSize="7" fill={c} fontFamily="monospace">Single Run</text>
     </g>
   );
 }
