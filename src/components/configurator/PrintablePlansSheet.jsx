@@ -24,7 +24,8 @@ const PrintPage = ({ children, header, footer, isLast, paperSize = "a4" }) => {
       const ch = container.clientHeight;
       const iw = inner.scrollWidth;
       const ih = inner.scrollHeight;
-      if (iw > cw || ih > ch) {
+      // Only scale down if content exceeds container, but allow A3 to use intended 150% scale
+      if ((paperSize === "a4" && (iw > cw || ih > ch)) || (paperSize === "a3" && iw > cw * 1.1)) {
         const scaleX = cw / iw;
         const scaleY = ch / ih;
         const s = Math.min(scaleX, scaleY, 1);
@@ -40,7 +41,7 @@ const PrintPage = ({ children, header, footer, isLast, paperSize = "a4" }) => {
       else img.addEventListener("load", () => { loaded++; if (loaded === imgs.length) fit(); }, { once: true });
     });
     fit();
-  }, []);
+  }, [paperSize]);
 
   return (
     <div style={{
