@@ -516,13 +516,7 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
                                       </div>
                                     </div>
                                   );
-                                  return showTooltips ? (
-                                    <ModuleTooltip key={item.code} item={item}>
-                                      {moduleElement}
-                                    </ModuleTooltip>
-                                  ) : (
-                                    <div key={item.code}>{moduleElement}</div>
-                                  );
+                                  return <div key={item.code}>{moduleElement}</div>;
                                 })}
                               </div>
                             )}
@@ -592,13 +586,7 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
                                       </div>
                                     </div>
                                   );
-                                  return showTooltips ? (
-                                    <ModuleTooltip key={item.code} item={item}>
-                                      {moduleElement}
-                                    </ModuleTooltip>
-                                  ) : (
-                                    <div key={item.code}>{moduleElement}</div>
-                                  );
+                                  return <div key={item.code}>{moduleElement}</div>;
                                 })}
                               </div>
                             )}
