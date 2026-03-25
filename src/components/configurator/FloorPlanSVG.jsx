@@ -175,15 +175,16 @@ function KitchenUShape({ orange }) {
   );
 }
 
-function KitchenGalley() {
+function KitchenGalley({ orange }) {
+  const c = orange ? "#F15A22" : fixture;
   return (
     <g>
-      <Box x={8} y={8} w={W-16} h={10} />
+      <Box x={8} y={8} w={W-16} h={10} c={c} />
       {/* sink */}
-      <circle cx={W/2} cy={13} r={3} fill={fill} stroke={fixture} strokeWidth="0.8" />
+      <circle cx={W/2} cy={13} r={3} fill={fill} stroke={c} strokeWidth="0.8" />
       {/* DW */}
-      <Box x={W-22} y={8} w={10} h={10} />
-      <text x={W/2} y={H/2+3} textAnchor="middle" fontSize="7" fill={fixture} fontFamily="monospace">Galley</text>
+      <Box x={W-22} y={8} w={10} h={10} c={c} />
+      <text x={W/2} y={H/2+3} textAnchor="middle" fontSize="7" fill={c} fontFamily="monospace">Galley</text>
     </g>
   );
 }
