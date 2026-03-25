@@ -33,6 +33,7 @@ import PrintMenu from "@/components/configurator/PrintMenu";
 import ProjectDetailsModal from "@/components/configurator/ProjectDetailsModal";
 import FurniturePanel, { FURNITURE_ITEMS } from "@/components/configurator/FurniturePanel";
 import { ZoomIn, ZoomOut } from "lucide-react";
+import { useAuth } from "@/lib/AuthContext";
 
 const generateId = () => `mod-${Math.random().toString(36).substr(2, 9)}`;
 const generateWallId = () => `wall-${Math.random().toString(36).substr(2, 9)}`;
