@@ -179,14 +179,12 @@ export default function PrintablePlansSheet({ placedModules, furniture = [], onC
                 return (
                   <g key={f.id} transform={`translate(${fx + fWidth / 2}, ${fy + fDepth / 2}) rotate(${rotation}) translate(${-fWidth / 2}, ${-fDepth / 2})`}>
                     <rect
-                      x={0}
-                      y={0}
-                      width={fWidth}
-                      height={fDepth}
-                      fill={f.image ? "white" : "#FFB3A8"}
-                      stroke="#E8725B"
-                      strokeWidth="1.5"
-                    />
+                       x={0}
+                       y={0}
+                       width={fWidth}
+                       height={fDepth}
+                       fill={f.image ? "white" : "#FFB3A8"}
+                     />
                     {f.image && (
                       <image
                         x={2}
