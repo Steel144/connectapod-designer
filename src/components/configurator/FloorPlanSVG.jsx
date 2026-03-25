@@ -157,19 +157,20 @@ function LCornerPlan({ mirror, flip }) {
   );
 }
 
-function KitchenUShape() {
+function KitchenUShape({ orange }) {
+  const c = orange ? "#F15A22" : fixture;
   return (
     <g>
       {/* U-shaped bench */}
-      <Box x={8} y={8} w={W-16} h={10} /> {/* top run */}
-      <Box x={8} y={8} w={10} h={H-16} /> {/* left run */}
-      <Box x={8} y={H-18} w={W-16} h={10} /> {/* bottom run */}
+      <Box x={8} y={8} w={W-16} h={10} c={c} /> {/* top run */}
+      <Box x={8} y={8} w={10} h={H-16} c={c} /> {/* left run */}
+      <Box x={8} y={H-18} w={W-16} h={10} c={c} /> {/* bottom run */}
       {/* sink */}
-      <circle cx={W/2} cy={13} r={3} fill={fill} stroke={fixture} strokeWidth="0.8" />
+      <circle cx={W/2} cy={13} r={3} fill={fill} stroke={c} strokeWidth="0.8" />
       {/* hob */}
-      <circle cx={20} cy={H-13} r={2} fill={fill} stroke={fixture} strokeWidth="0.8" />
-      <circle cx={28} cy={H-13} r={2} fill={fill} stroke={fixture} strokeWidth="0.8" />
-      <text x={W/2} y={H/2+3} textAnchor="middle" fontSize="7" fill={fixture} fontFamily="monospace">U-Shape</text>
+      <circle cx={20} cy={H-13} r={2} fill={fill} stroke={c} strokeWidth="0.8" />
+      <circle cx={28} cy={H-13} r={2} fill={fill} stroke={c} strokeWidth="0.8" />
+      <text x={W/2} y={H/2+3} textAnchor="middle" fontSize="7" fill={c} fontFamily="monospace">U-Shape</text>
     </g>
   );
 }
