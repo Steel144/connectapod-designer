@@ -280,7 +280,7 @@ export default function SiteMap() {
 
       {/* Floating Controls */}
       {design && (
-        <div className="absolute bottom-4 right-4 z-50 bg-white rounded-lg shadow-lg p-4 border border-gray-200 max-w-xs">
+        <div className="absolute bottom-4 right-4 z-[9999] bg-white rounded-lg shadow-lg p-4 border border-gray-200 max-w-xs">
           <div className="space-y-3">
             <div>
               <label className="text-xs font-semibold text-gray-600 block mb-2">Map Zoom</label>
