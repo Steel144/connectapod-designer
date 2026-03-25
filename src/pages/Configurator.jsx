@@ -96,6 +96,9 @@ export default function Configurator() {
   const [loadCounter, setLoadCounter] = useState(0);
   const [wallToReplace, setWallToReplace] = useState(null);
   const [gridZoom, setGridZoom] = useState(100);
+  const [showLabels, setShowLabels] = useState(true);
+  const [showFurniture, setShowFurniture] = useState(true);
+  const [showPhotoImages, setShowPhotoImages] = useState(true);
   const navBarRef = useRef(null);
   const [navBarHeight, setNavBarHeight] = useState(0);
 
