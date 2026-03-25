@@ -42,9 +42,9 @@ const AuthenticatedApp = () => {
   // Render the main app
   return (
     <Routes>
-      <Route path="/Landing" element={<Landing />} />
+      <Route path="/" element={<DesignCatalogue />} />
       <Route path="/DesignCatalogue" element={<DesignCatalogue />} />
-      <Route path="/" element={
+      <Route path="/Home" element={
         <LayoutWrapper currentPageName={mainPageKey}>
           <MainPage />
         </LayoutWrapper>
