@@ -900,9 +900,14 @@ export default function Configurator() {
               </TooltipTrigger>
               <TooltipContent>View Wall Elevations</TooltipContent>
             </Tooltip>
-              <button onClick={() => setSaveModalOpen(true)} disabled={placedModules.length === 0 || saveMutation.isPending} className={`flex items-center gap-1.5 px-3 py-1.5 text-xs transition-all ${placedModules.length === 0 || saveMutation.isPending ? "bg-white text-gray-400 opacity-40" : "bg-white text-gray-600 border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22]"}`} style={{ clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 50%, calc(100% - 6px) 100%, 0 100%)" }}>
-                <Save size={13} /> {saveMutation.isPending ? "Saving…" : "Save"}
-              </button>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button onClick={() => setSaveModalOpen(true)} disabled={placedModules.length === 0 || saveMutation.isPending} className={`flex items-center gap-1.5 px-3 py-1.5 text-xs transition-all ${placedModules.length === 0 || saveMutation.isPending ? "bg-white text-gray-400 opacity-40" : "bg-white text-gray-600 border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22]"}`} style={{ clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 50%, calc(100% - 6px) 100%, 0 100%)" }}>
+                    <Save size={13} /> {saveMutation.isPending ? "Saving…" : "Save"}
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent>Save this design</TooltipContent>
+              </Tooltip>
                <button onClick={() => setDetailsModalMode('estimate')} disabled={placedModules.length === 0} className={`flex items-center gap-1.5 px-3 py-1.5 text-xs transition-all ${placedModules.length === 0 ? "bg-white text-gray-400 opacity-40" : "bg-white text-gray-600 border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22]"}`} style={{ clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 50%, calc(100% - 6px) 100%, 0 100%)" }}>
                   Get Estimate
                 </button>
