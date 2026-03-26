@@ -13,29 +13,22 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { useQuery } from '@tanstack/react-query';
 
 const FLOOR_PLAN_SCALE = 0.32;
+const CSS_SCALE = 2; // the scale(2) applied to the map wrapper div
 
-function MapDragSync({ onDragEnd }) {
+function MapDisableDrag() {
   const map = useMap();
   useEffect(() => {
-    map.on('dragend', onDragEnd);
-    return () => map.off('dragend', onDragEnd);
-  }, [map, onDragEnd]);
+    map.dragging.disable();
+  }, [map]);
   return null;
 }
 
-function MapSync({ center, zoom, skipRef }) {
+function MapSync({ center, zoom }) {
   const map = useMap();
   const prevCenter = useRef(null);
   const prevZoom = useRef(null);
   useEffect(() => {
     if (!center) return;
-    // If flagged as a silent update (post-drag commit), skip setView
-    if (skipRef && skipRef.current) {
-      skipRef.current = false;
-      prevCenter.current = center;
-      prevZoom.current = zoom;
-      return;
-    }
     const centerChanged = !prevCenter.current ||
       Math.abs(prevCenter.current[0] - center[0]) > 1e-10 ||
       Math.abs(prevCenter.current[1] - center[1]) > 1e-10;
@@ -82,7 +75,8 @@ export default function SiteMap() {
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
 
-  const silentOffsetUpdate = useRef(false);
+  const isDragging = useRef(false);
+  const dragLast = useRef(null);
   const [showLabels, setShowLabels] = useState(true);
 
   const { data: designs = [] } = useQuery({
@@ -239,15 +233,50 @@ export default function SiteMap() {
     }
   };
 
-  // Sync offset from map position after Leaflet drag ends
-  const handleMapDragEnd = () => {
-    if (!mapRef.current || !coordinates) return;
-    const center = mapRef.current.getCenter();
-    silentOffsetUpdate.current = true;
+  // Manual drag handlers on the outer wrapper.
+  // Mouse deltas are in screen-space. The map div has scale(CSS_SCALE) and rotate(overlayRotation).
+  // To convert screen px → map-north-up px: divide by CSS_SCALE, then un-rotate.
+  const handleDragStart = (e) => {
+    isDragging.current = true;
+    dragLast.current = { x: e.clientX, y: e.clientY };
+  };
+
+  const handleDragMove = (e) => {
+    if (!isDragging.current || !dragLast.current || !mapRef.current || !coordinates) return;
+
+    const dx = e.clientX - dragLast.current.x;
+    const dy = e.clientY - dragLast.current.y;
+    dragLast.current = { x: e.clientX, y: e.clientY };
+
+    // Un-scale: screen px → map container px
+    const mx = dx / CSS_SCALE;
+    const my = dy / CSS_SCALE;
+
+    // Un-rotate: map container px → north-up map px
+    const rad = (overlayRotation * Math.PI) / 180;
+    const cos = Math.cos(rad);
+    const sin = Math.sin(rad);
+    const npx = mx * cos + my * sin;
+    const npy = -mx * sin + my * cos;
+
+    // Translate using Leaflet's project/unproject
+    const map = mapRef.current;
+    const center = map.getCenter();
+    const centerPx = map.project(center, mapZoom);
+    const newLatLng = map.unproject(
+      L.point(centerPx.x - npx, centerPx.y - npy),
+      mapZoom
+    );
+
     setPositionOffset({
-      lat: center.lat - coordinates[0],
-      lng: center.lng - coordinates[1],
+      lat: newLatLng.lat - coordinates[0],
+      lng: newLatLng.lng - coordinates[1],
     });
+  };
+
+  const handleDragEnd = () => {
+    isDragging.current = false;
+    dragLast.current = null;
   };
 
 
@@ -459,7 +488,13 @@ export default function SiteMap() {
 
 
       {/* Map and overlay */}
-      <div className="flex-1 relative overflow-hidden">
+      <div
+        className="flex-1 relative overflow-hidden cursor-grab active:cursor-grabbing select-none"
+        onMouseDown={handleDragStart}
+        onMouseMove={handleDragMove}
+        onMouseUp={handleDragEnd}
+        onMouseLeave={handleDragEnd}
+      >
         {coordinates ? (
         <>
           {/* Map behind - rotates and moves */}
@@ -475,8 +510,8 @@ export default function SiteMap() {
               className="w-full h-full"
               ref={mapRef}
             >
-              <MapSync center={getAdjustedCenter()} zoom={mapZoom} skipRef={silentOffsetUpdate} />
-              <MapDragSync onDragEnd={handleMapDragEnd} />
+              <MapSync center={getAdjustedCenter()} zoom={mapZoom} />
+              <MapDisableDrag />
                 <TileLayer
                   url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
                   attribution='&copy; Esri, DigitalGlobe, Earthstar Geographics'
