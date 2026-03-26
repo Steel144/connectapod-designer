@@ -441,9 +441,7 @@ export default function SiteMap() {
         });
 
         // Draw furniture (top layer)
-        furnResults.forEach(furnResult => {
-         const furn = furnResult.furn || furnResult;
-         const furnImg = furnResult.img;
+         furnResults.forEach(({ furn, img: furnImg }) => {
 
          if (furn.x === undefined || furn.y === undefined || !furn.width || !furn.depth) return;
 
