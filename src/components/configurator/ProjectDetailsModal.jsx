@@ -360,6 +360,7 @@ export default function ProjectDetailsModal({
 
   const isEstimate = mode === 'estimate';
   const isPrint = mode === 'print';
+  const isSave = mode === 'save';
   const costSummary = !isEstimate ? null : (() => {
     const modulesTotal = placedModules.reduce((s, m) => s + (m.price || 0), 0);
     const wallsTotal = walls.reduce((s, w) => s + (w.price || 0), 0);
@@ -372,12 +373,12 @@ export default function ProjectDetailsModal({
       <DialogContent className={`${isEstimate ? 'max-w-md' : 'max-w-sm'} rounded-none`} aria-describedby="dialog-description">
         <DialogHeader>
           <DialogTitle className="text-base font-bold">
-            {isEstimate ? "Generate Estimate PDF" : isPrint ? `Print ${printMode === "plans" ? "Floor Plan" : "Elevations"}` : ""}
+            {isEstimate ? "Generate Estimate PDF" : isPrint ? `Print ${printMode === "plans" ? "Floor Plan" : "Elevations"}` : isSave ? "Save Design" : ""}
           </DialogTitle>
         </DialogHeader>
 
         <p id="dialog-description" className="text-xs text-gray-500 -mt-2">
-          {isEstimate ? "These details will appear in the estimate." : isPrint ? "These details will appear in the title block." : ""}
+          {isEstimate ? "These details will appear in the estimate." : isPrint ? "These details will appear in the title block." : isSave ? "Enter project and customer details." : ""}
         </p>
 
         {/* Cost summary for estimate */}
@@ -437,6 +438,13 @@ export default function ProjectDetailsModal({
             >
               <Download size={14} className="mr-1.5" />
               {generating ? "Generating..." : "Download PDF"}
+            </Button>
+          ) : isSave ? (
+            <Button 
+              onClick={() => onConfirm(handleSaveDetails())} 
+              className="flex-1 bg-[#F15A22] hover:bg-[#d94e1a] text-white rounded-none h-9"
+            >
+              <FileText size={14} className="mr-1.5" /> Save
             </Button>
           ) : (
             <Button onClick={handlePrint} className="flex-1 bg-[#F15A22] hover:bg-[#d94e1a] text-white rounded-none h-9">
