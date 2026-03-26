@@ -215,68 +215,85 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
 
 
 
-     return PANEL_GROUPS.map(group => {
-       // Keep built-in items, filter out deleted ones
+     const knownGroupLabels = new Set(PANEL_GROUPS.map(g => g.label));
+     const assignedCodes = new Set();
+
+     const toItem = (m) => {
+       const variants = (m.variants || []).map(v => v.toLowerCase());
+       const isEnd = variants.some(v => v.includes("end"));
+       const isConnection = variants.some(v => v.includes("connection"));
+       const chassis = isConnection ? "C" : isEnd ? "LF" : "SF";
+       return {
+         code: m.code,
+         name: m.name,
+         mpCode: m.code,
+         width: m.width || 3.0,
+         depth: m.depth || 4.8,
+         sqm: m.sqm || parseFloat(((m.width || 3.0) * (m.depth || 4.8)).toFixed(1)),
+         description: m.description || "",
+         chassis,
+         widthCode: "30",
+         room: "G",
+         originalCode: m.originalCode || undefined,
+       };
+     };
+
+     const sortItems = (items) => items.sort((a, b) => {
+       const aIsEnd = a.chassis === "EF" || a.chassis === "ER" || a.chassis === "LF" || a.chassis === "RF";
+       const bIsEnd = b.chassis === "EF" || b.chassis === "ER" || b.chassis === "LF" || b.chassis === "RF";
+       const aIsDeck = a.description?.includes("Deck") || a.description?.includes("Soffit");
+       const bIsDeck = b.description?.includes("Deck") || b.description?.includes("Soffit");
+       if (aIsEnd !== bIsEnd) return aIsEnd ? -1 : 1;
+       if (aIsDeck !== bIsDeck) return aIsDeck ? 1 : -1;
+       return a.width - b.width;
+     });
+
+     const builtInGroups = PANEL_GROUPS.map(group => {
        const builtInItems = group.items.filter(item => !deletedCodes.has(item.code));
 
-       // Find custom modules for this category
-        const categoryModules = (Array.isArray(customModules) ? customModules : []).filter(m => {
-          if (deletedCodes.has(m.code)) return false;
-          const descriptions = (m.description || "").split(",").map(s => s.trim()).filter(Boolean);
-          const categories = Array.isArray(m.categories) ? m.categories : [];
-          const variants = Array.isArray(m.variants) ? m.variants.map(v => v.toLowerCase()) : [];
-
-          // Check if this module matches the group
-          const matchesPrimaryCategory = m.category === group.label;
-          const matchesDescription = descriptions.includes(group.label);
-          const matchesAdditionalCategories = categories.includes(group.label);
-          const matchesVariant = variants.some(v => v.toLowerCase().includes(group.label.toLowerCase()));
-
-          const matches = matchesPrimaryCategory || matchesDescription || matchesAdditionalCategories || matchesVariant;
-
-          return matches;
-        });
-
-       const customItems = categoryModules.map(m => {
-         const variants = (m.variants || []).map(v => v.toLowerCase());
-         const isEnd = variants.some(v => v.includes("end"));
-         const isConnection = variants.some(v => v.includes("connection"));
-         const chassis = isConnection ? "C" : isEnd ? "LF" : "SF";
-         
-         return {
-           code: m.code,
-           name: m.name,
-           mpCode: m.code,
-           width: m.width || 3.0,
-           depth: m.depth || 4.8,
-           sqm: m.sqm || parseFloat(((m.width || 3.0) * (m.depth || 4.8)).toFixed(1)),
-           description: m.description || "",
-           chassis: chassis,
-           widthCode: "30",
-           room: "G",
-           originalCode: m.originalCode || undefined,
-         };
-       });
-
-       // Merge built-in and custom items
-       const allItems = [...builtInItems, ...customItems];
-       const sorted = allItems.sort((a, b) => {
-         const aIsEnd = a.chassis === "EF" || a.chassis === "ER" || a.chassis === "LF" || a.chassis === "RF";
-         const bIsEnd = b.chassis === "EF" || b.chassis === "ER" || b.chassis === "LF" || b.chassis === "RF";
-         const aIsDeck = a.description?.includes("Deck") || a.description?.includes("Soffit");
-         const bIsDeck = b.description?.includes("Deck") || b.description?.includes("Soffit");
-
-         if (aIsEnd !== bIsEnd) return aIsEnd ? -1 : 1;
-         if (aIsDeck !== bIsDeck) return aIsDeck ? 1 : -1;
-         return a.width - b.width;
+       const categoryModules = (Array.isArray(customModules) ? customModules : []).filter(m => {
+         if (deletedCodes.has(m.code)) return false;
+         const categories = Array.isArray(m.categories) ? m.categories : [];
+         const matchesPrimaryCategory = m.category === group.label;
+         const matchesAdditionalCategories = categories.includes(group.label);
+         const matches = matchesPrimaryCategory || matchesAdditionalCategories;
+         if (matches) assignedCodes.add(m.code);
+         return matches;
        });
 
        return {
          ...group,
-         items: sorted,
+         items: sortItems([...builtInItems, ...categoryModules.map(toItem)]),
        };
+     });
+
+     // Create new groups for custom modules with unknown categories
+     const extraModules = (Array.isArray(customModules) ? customModules : []).filter(m => {
+       if (deletedCodes.has(m.code)) return false;
+       if (assignedCodes.has(m.code)) return false;
+       return true;
+     });
+
+     const extraGroups = [];
+     const extraByCategory = {};
+     extraModules.forEach(m => {
+       const cat = m.category || "Other";
+       if (!extraByCategory[cat]) extraByCategory[cat] = [];
+       extraByCategory[cat].push(m);
+     });
+     Object.entries(extraByCategory).forEach(([cat, mods]) => {
+       extraGroups.push({
+         key: cat.toLowerCase().replace(/\s+/g, "_"),
+         label: cat,
+         color: "#FDF0EB",
+         border: "#F15A22",
+         price: 12000,
+         items: sortItems(mods.map(toItem)),
        });
-       }, [customModules, deletedModules]);
+     });
+
+     return [...builtInGroups, ...extraGroups];
+     }, [customModules, deletedModules]);
 
   const customWallTypes = React.useMemo(() => (Array.isArray(customWalls) ? customWalls : [])
      .filter(w => !(Array.isArray(deletedWalls) ? deletedWalls : []).some(d => d.wallCode === w.code))
