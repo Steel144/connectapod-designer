@@ -248,9 +248,11 @@ export default function SiteMap() {
     const rad = (overlayRotation * Math.PI) / 180;
     const metersPerPixel = 156543.03392 * Math.cos((coordinates?.[0] ?? 0) * Math.PI / 180) / Math.pow(2, mapZoom);
     const degreesPerPixel = metersPerPixel / 111320;
+    // CSS scale(2) means 1 visual pixel = 0.5 map pixels
     const movementScale = degreesPerPixel / 2;
-    const rotatedDeltaLat = (deltaY * Math.cos(-rad) + deltaX * Math.sin(-rad)) * movementScale;
-    const rotatedDeltaLng = (-deltaX * Math.cos(-rad) + deltaY * Math.sin(-rad)) * movementScale;
+    // Rotate screen delta into map coordinate space (un-rotate by overlay rotation)
+    const rotatedDeltaLat = -(deltaY * Math.cos(rad) - deltaX * Math.sin(rad)) * movementScale;
+    const rotatedDeltaLng =  (deltaX * Math.cos(rad) + deltaY * Math.sin(rad)) * movementScale;
 
     const newOffset = {
       lat: liveOffsetRef.current.lat + rotatedDeltaLat,
