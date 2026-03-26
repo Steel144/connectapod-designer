@@ -12,77 +12,68 @@ export default function PrintSiteMapModal({ open, onOpenChange, mapContainerRef,
   const [fileName, setFileName] = useState('site-plan');
 
   const handlePrint = async () => {
-    if (!mapContainerRef?.current) {
-      alert('Map is not ready. Please try again.');
-      return;
-    }
-    
     setLoading(true);
     try {
-      // Capture the leaflet map container
-      const mapElement = mapContainerRef.current;
-      const canvas = await html2canvas(mapElement, {
+      // Take a screenshot of the viewport
+      const canvas = await html2canvas(document.body, {
         allowTaint: true,
         useCORS: false,
-        scale: 0.5,
+        scale: 0.8,
         backgroundColor: '#ffffff',
-        logging: false,
-        delay: 500
+        logging: false
       });
 
+      const imgData = canvas.toDataURL('image/png');
+      
       const pdf = new jsPDF({
-        orientation: 'landscape',
+        orientation: 'portrait',
         unit: 'mm',
         format: 'a4'
       });
 
       const pageWidth = pdf.internal.pageSize.getWidth();
       const pageHeight = pdf.internal.pageSize.getHeight();
-      let yPos = 10;
 
-      // Add header
-      pdf.setFontSize(16);
-      pdf.text('SITE PLAN', 14, yPos);
-      yPos += 10;
+      // Title block (top section)
+      const titleBlockHeight = 60;
+      pdf.setFillColor(245, 90, 34); // #F15A22
+      pdf.rect(0, 0, pageWidth, titleBlockHeight, 'F');
+
+      // Title
+      pdf.setTextColor(255, 255, 255);
+      pdf.setFontSize(24);
+      pdf.text('SITE PLAN', pageWidth / 2, 18, { align: 'center' });
+
+      // Details in white text
+      pdf.setFontSize(11);
+      let detailY = 32;
       
       if (saveDetails?.projectName) {
-        pdf.setFontSize(10);
-        pdf.text(`Project: ${saveDetails.projectName}`, 14, yPos);
-        yPos += 6;
+        pdf.text(`Project: ${saveDetails.projectName}`, 14, detailY);
+        detailY += 8;
       }
       
       if (siteAddress) {
-        pdf.setFontSize(10);
-        pdf.text(`Site Address: ${siteAddress}`, 14, yPos);
-        yPos += 6;
+        pdf.text(`Site Address: ${siteAddress}`, 14, detailY);
+        detailY += 8;
       }
 
-      yPos += 8;
+      pdf.text(`Generated: ${new Date().toLocaleString()}`, 14, detailY);
 
-      // Add map image
-      const imgData = canvas.toDataURL('image/png');
-      const imgWidth = pageWidth - 20;
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      const availableHeight = pageHeight - yPos - 10;
+      // Screenshot below title block
+      const screenshotWidth = pageWidth;
+      const screenshotHeight = (canvas.height * screenshotWidth) / canvas.width;
+      const maxScreenshotHeight = pageHeight - titleBlockHeight - 5;
       
-      if (imgHeight > availableHeight) {
-        pdf.addImage(imgData, 'PNG', 10, yPos, imgWidth, availableHeight);
-      } else {
-        pdf.addImage(imgData, 'PNG', 10, yPos, imgWidth, imgHeight);
-      }
-
-      // Add timestamp
-      pdf.setFontSize(8);
-      pdf.setTextColor(150, 150, 150);
-      pdf.text(`Generated: ${new Date().toLocaleString()}`, 14, pageHeight - 5);
-      pdf.setTextColor(0, 0, 0);
+      const finalHeight = Math.min(screenshotHeight, maxScreenshotHeight);
+      pdf.addImage(imgData, 'PNG', 0, titleBlockHeight, screenshotWidth, finalHeight);
 
       // Download
       pdf.save(`${fileName}.pdf`);
       onOpenChange(false);
     } catch (error) {
       console.error('Print error:', error);
-      alert('Failed to capture map. Please ensure the map is fully loaded.');
+      alert('Failed to generate PDF. Please try again.');
     } finally {
       setLoading(false);
     }
