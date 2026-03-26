@@ -312,10 +312,30 @@ export default function SiteMap() {
   useEffect(() => {
     if (!design || !design.grid || design.grid.length === 0) return;
 
-    const minX = Math.min(...design.grid.map(m => m.x));
-    const maxX = Math.max(...design.grid.map(m => m.x + m.w));
-    const minY = Math.min(...design.grid.map(m => m.y));
-    const maxY = Math.max(...design.grid.map(m => m.y + m.h));
+    let minX = Math.min(...design.grid.map(m => m.x));
+    let maxX = Math.max(...design.grid.map(m => m.x + m.w));
+    let minY = Math.min(...design.grid.map(m => m.y));
+    let maxY = Math.max(...design.grid.map(m => m.y + m.h));
+    
+    // Include walls in bounds
+    if (design.walls && design.walls.length > 0) {
+      design.walls.forEach(w => {
+        minX = Math.min(minX, w.x);
+        maxX = Math.max(maxX, w.x + (w.width ? w.width / 1000 : (w.length || 1) * 0.6));
+        minY = Math.min(minY, w.y);
+        maxY = Math.max(maxY, w.y + (w.height ? w.height / 1000 : 2 * 0.6));
+      });
+    }
+    
+    // Include furniture in bounds
+    if (design.furniture && design.furniture.length > 0) {
+      design.furniture.forEach(f => {
+        minX = Math.min(minX, f.x);
+        maxX = Math.max(maxX, f.x + (f.width || 1.4));
+        minY = Math.min(minY, f.y);
+        maxY = Math.max(maxY, f.y + (f.depth || 2.0));
+      });
+    }
 
     const gridCellsW = maxX - minX;
     const gridCellsH = maxY - minY;
