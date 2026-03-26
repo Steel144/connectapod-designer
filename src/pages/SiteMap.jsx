@@ -12,7 +12,6 @@ import { useAuth } from '@/lib/AuthContext';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useQuery } from '@tanstack/react-query';
 
-const FLOOR_PLAN_SCALE = 0.32;
 const CSS_SCALE = 2; // the scale(2) applied to the map wrapper div
 
 function MapDisableDrag() {
@@ -305,48 +304,47 @@ export default function SiteMap() {
   }, [mapRef.current]);
 
   // Generate floor plan canvas overlay
+  // Canvas is drawn at CANVAS_PX_PER_CELL pixels per grid cell so the image
+  // has a known, fixed pixel-per-metre ratio we can use for geo-scaling.
+  const CANVAS_PX_PER_CELL = 20; // pixels per grid cell (1 cell = 0.6 m)
+  const CELL_M = 0.6; // metres per grid cell
+
   useEffect(() => {
-    if (!design) return;
+    if (!design || !design.grid || design.grid.length === 0) return;
+
+    const minX = Math.min(...design.grid.map(m => m.x));
+    const maxX = Math.max(...design.grid.map(m => m.x + m.w));
+    const minY = Math.min(...design.grid.map(m => m.y));
+    const maxY = Math.max(...design.grid.map(m => m.y + m.h));
+
+    const gridCellsW = maxX - minX;
+    const gridCellsH = maxY - minY;
 
     const canvas = document.createElement('canvas');
-    canvas.width = 800;
-    canvas.height = 600;
+    canvas.width = gridCellsW * CANVAS_PX_PER_CELL;
+    canvas.height = gridCellsH * CANVAS_PX_PER_CELL;
     const ctx = canvas.getContext('2d');
 
-    // Draw simple grid and modules
-    if (design.grid && design.grid.length > 0) {
-      const minX = Math.min(...design.grid.map(m => m.x));
-      const maxX = Math.max(...design.grid.map(m => m.x + m.w));
-      const minY = Math.min(...design.grid.map(m => m.y));
-      const maxY = Math.max(...design.grid.map(m => m.y + m.h));
+    design.grid.forEach(mod => {
+      const x = (mod.x - minX) * CANVAS_PX_PER_CELL;
+      const y = (mod.y - minY) * CANVAS_PX_PER_CELL;
+      const w = mod.w * CANVAS_PX_PER_CELL;
+      const h = mod.h * CANVAS_PX_PER_CELL;
 
-      const gridW = maxX - minX;
-      const gridH = maxY - minY;
-      const scale = Math.min(canvas.width / gridW, canvas.height / gridH) * 0.9;
-      const offsetX = (canvas.width - gridW * scale) / 2;
-      const offsetY = (canvas.height - gridH * scale) / 2;
+      ctx.fillStyle = mod.color || '#FDF0EB';
+      ctx.fillRect(x, y, w, h);
+      ctx.strokeStyle = mod.border || '#F15A22';
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(x, y, w, h);
 
-      // Draw grid modules
-      design.grid.forEach(mod => {
-        const x = (mod.x - minX) * scale + offsetX;
-        const y = (mod.y - minY) * scale + offsetY;
-        const w = mod.w * scale;
-        const h = mod.h * scale;
-
-        ctx.fillStyle = mod.color || '#FDF0EB';
-        ctx.fillRect(x, y, w, h);
-        ctx.strokeStyle = mod.border || '#F15A22';
-        ctx.lineWidth = 2;
-        ctx.strokeRect(x, y, w, h);
-
-        // Module label
+      if (w > 30 && h > 20) {
         ctx.fillStyle = '#333';
-        ctx.font = '12px sans-serif';
+        ctx.font = `${Math.max(8, Math.min(14, Math.min(w, h) / 4))}px sans-serif`;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillText(mod.label || mod.type, x + w / 2, y + h / 2);
-      });
-    }
+      }
+    });
 
     setFloorPlanOverlay(canvas.toDataURL());
   }, [design]);
@@ -531,22 +529,43 @@ export default function SiteMap() {
             </div>
 
             {/* Floor plan fixed in center - on top */}
-            {floorPlanOverlay && (
-              <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
-                <img 
-                  src={floorPlanOverlay} 
-                  alt="Floor Plan"
-                  style={{
-                    maxWidth: '90%',
-                    maxHeight: '90%',
-                    objectFit: 'contain',
-                    // At zoom 20, ~50m visible width. Scale by zoom level relative to base.
-                    transform: `scale(${Math.pow(2, mapZoom - 20) * FLOOR_PLAN_SCALE * planScaleMultiplier})`,
-                    transition: 'transform 0.1s ease-out'
-                  }}
-                />
-              </div>
-            )}
+            {floorPlanOverlay && design?.grid?.length > 0 && (() => {
+              // Physical size of the design in metres
+              const minX = Math.min(...design.grid.map(m => m.x));
+              const maxX = Math.max(...design.grid.map(m => m.x + m.w));
+              const minY = Math.min(...design.grid.map(m => m.y));
+              const maxY = Math.max(...design.grid.map(m => m.y + m.h));
+              const designMetresW = (maxX - minX) * CELL_M;
+              const designMetresH = (maxY - minY) * CELL_M;
+
+              // At Leaflet zoom Z, 1 metre = 2^Z / (111320 * cos(lat)) pixels
+              // Simplified: at zoom 20 at ~45° lat, 1m ≈ 0.268px. We use equator approx.
+              const METRES_PER_PX_AT_ZOOM0 = 156543.03; // metres per pixel at zoom 0 (equator)
+              const lat = coordinates ? coordinates[0] : 0;
+              const metresToPx = Math.pow(2, mapZoom) / (METRES_PER_PX_AT_ZOOM0 * Math.cos(lat * Math.PI / 180));
+
+              // The canvas was drawn at CANVAS_PX_PER_CELL / CELL_M px per metre
+              // We need to scale it so 1 canvas px = metresToPx screen px / (CANVAS_PX_PER_CELL / CELL_M)
+              const canvasPxPerMetre = CANVAS_PX_PER_CELL / CELL_M;
+              const cssScale = (metresToPx / canvasPxPerMetre) * planScaleMultiplier;
+
+              return (
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                  <img
+                    src={floorPlanOverlay}
+                    alt="Floor Plan"
+                    style={{
+                      width: `${(maxX - minX) * CANVAS_PX_PER_CELL}px`,
+                      height: `${(maxY - minY) * CANVAS_PX_PER_CELL}px`,
+                      transform: `scale(${cssScale})`,
+                      transformOrigin: 'center',
+                      transition: 'transform 0.1s ease-out',
+                      imageRendering: 'pixelated',
+                    }}
+                  />
+                </div>
+              );
+            })()}
           </>
         ) : (
           <div className="w-full h-full flex items-center justify-center text-gray-400">
