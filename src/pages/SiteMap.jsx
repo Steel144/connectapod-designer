@@ -243,34 +243,23 @@ export default function SiteMap() {
     if (!isDraggingRef.current || !dragStartRef.current || !mapRef.current) return;
 
     const map = mapRef.current;
-    const size = map.getSize(); // map container size in px
-
-    // Current map center in container pixel coords
-    const centerPx = map.latLngToContainerPoint(map.getCenter());
-
-    // The outer wrapper is scale(2) and rotated. We receive screen-space deltas.
-    // To get map-container-pixel deltas we:
-    //   1. undo CSS scale(2) → divide by 2
-    //   2. undo CSS rotation → rotate by -overlayRotation
     const dx = e.clientX - dragStartRef.current.x;
     const dy = e.clientY - dragStartRef.current.y;
-
-    // Undo CSS scale
-    const sdx = dx / 2;
-    const sdy = dy / 2;
-
-    // Undo CSS rotation
-    const rad = (overlayRotation * Math.PI) / 180;
-    const mapDx = sdx * Math.cos(-rad) - sdy * Math.sin(-rad);
-    const mapDy = sdx * Math.sin(-rad) + sdy * Math.cos(-rad);
-
-    // New center pixel = old center pixel - drag delta (dragging right moves view right = center moves right)
-    const newCenterPx = L.point(centerPx.x - mapDx, centerPx.y - mapDy);
-    const newLatLng = map.containerPointToLatLng(newCenterPx);
-
     dragStartRef.current = { x: e.clientX, y: e.clientY };
 
-    // Update live offset ref
+    // Convert screen pixel delta to lat/lng delta using Leaflet's own conversion.
+    // The map div has CSS scale(2) applied, so 1 screen pixel = 0.5 map pixels.
+    // The map div also has CSS rotation, so we un-rotate the delta first.
+    const rad = (overlayRotation * Math.PI) / 180;
+    // Un-rotate: screen delta → map-north-up pixel delta
+    const mpx = (dx * Math.cos(rad) + dy * Math.sin(rad)) / 2;
+    const mpy = (-dx * Math.sin(rad) + dy * Math.cos(rad)) / 2;
+
+    // Use Leaflet to go from current center pixel → shifted pixel → new latlng
+    const currentCenter = map.getCenter();
+    const centerPx = map.project(currentCenter, mapZoom);
+    const newLatLng = map.unproject(L.point(centerPx.x - mpx, centerPx.y - mpy), mapZoom);
+
     liveOffsetRef.current = {
       lat: newLatLng.lat - coordinates[0],
       lng: newLatLng.lng - coordinates[1],
