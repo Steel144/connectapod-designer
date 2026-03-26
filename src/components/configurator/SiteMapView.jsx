@@ -329,13 +329,9 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
                 });
               }
 
-              const designMetresW = (maxX - minX) * CELL_M;
-              const designMetresH = (maxY - minY) * CELL_M;
-
               const METRES_PER_PX_AT_ZOOM0 = 78271.52;
               const lat = coordinates ? coordinates[0] : 0;
               const metresToPx = Math.pow(2, mapZoom) / (METRES_PER_PX_AT_ZOOM0 * Math.cos(lat * Math.PI / 180));
-
               const canvasPxPerMetre = CANVAS_PX_PER_CELL / CELL_M;
               const cssScale = (metresToPx / canvasPxPerMetre) * planScaleMultiplier;
 
@@ -347,7 +343,7 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
                     style={{
                       width: `${(maxX - minX) * CANVAS_PX_PER_CELL}px`,
                       height: `${(maxY - minY) * CANVAS_PX_PER_CELL}px`,
-                      transform: `scale(${cssScale}) rotate(${overlayRotation}deg)`,
+                      transform: `scale(${cssScale})`,
                       transformOrigin: 'center',
                       transition: 'transform 0.1s ease-out',
                       imageRendering: 'pixelated',
