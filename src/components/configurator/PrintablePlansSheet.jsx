@@ -325,8 +325,6 @@ export default function PrintablePlansSheet({ placedModules, furniture = [], wal
                        width={fWidth}
                        height={fDepth}
                        fill={f.image ? "white" : "#FFB3A8"}
-                       stroke="#888"
-                       strokeWidth="1"
                      />
                     {f.image && (
                       <image
