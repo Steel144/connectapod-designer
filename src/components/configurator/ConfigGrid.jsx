@@ -835,11 +835,15 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                    [showZ, showX] = [showX, showZ];
                  }
 
-                 // Hide one of Z/X based on flip state
-                 if (mod.flipped) {
-                   showZ = false;
-                 } else {
-                   showX = (isConnection || isRightEnd) && !mod.flipped;
+                 // Visibility based on flip state: Z when not flipped, X when flipped
+                 if (showZ || showX) {
+                   if (mod.flipped) {
+                     showZ = false;
+                     showX = true;
+                   } else {
+                     showZ = true;
+                     showX = false;
+                   }
                  }
                 
                 const isVisibleBtn = isSelected || hoveredModuleId === mod.id;
