@@ -12,6 +12,7 @@ import { useAuth } from '@/lib/AuthContext';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useQuery } from '@tanstack/react-query';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import PrintSiteMapModal from '@/components/sitemap/PrintSiteMapModal';
 
 const CSS_SCALE = 2; // the scale(2) applied to the map wrapper div
 
@@ -79,8 +80,9 @@ export default function SiteMap() {
   const dragLast = useRef(null);
   const [showLabels, setShowLabels] = useState(true);
   const [showSaveModal, setShowSaveModal] = useState(false);
+  const [showPrintModal, setShowPrintModal] = useState(false);
   const [saveDetails, setSaveDetails] = useState(() => {
-    try { return JSON.parse(localStorage.getItem('connectapod_save_details')) ?? { projectName: '', clientName: '' }; } catch { return { projectName: '', clientName: '' }; }
+    try { return JSON.parse(localStorage.getItem('connectapod_save_details')) ?? { projectName: '', clientFirstName: '', clientFamilyName: '' }; } catch { return { projectName: '', clientFirstName: '', clientFamilyName: '' }; }
   });
 
   const { data: designs = [] } = useQuery({
@@ -525,6 +527,7 @@ export default function SiteMap() {
   };
 
   return (
+    <>
     <div className="w-full h-screen flex flex-col bg-white">
       {/* ── TOP BAR ── */}
       <div className="flex items-center px-4 py-4 bg-white border-b border-gray-200 overflow-x-auto gap-4 min-w-0 z-30">
@@ -569,9 +572,9 @@ export default function SiteMap() {
             <Link to="/Configurator" className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-white text-gray-600 border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22] transition-all" style={{ clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 50%, calc(100% - 6px) 100%, 0 100%)" }}>
               Get Estimate
             </Link>
-            <Link to="/Configurator" className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-white text-gray-600 border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22] transition-all" style={{ clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 50%, calc(100% - 6px) 100%, 0 100%)" }}>
+            <button onClick={() => setShowPrintModal(true)} className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-white text-gray-600 border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22] transition-all" style={{ clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 50%, calc(100% - 6px) 100%, 0 100%)" }}>
               <Printer size={13} /> Print
-            </Link>
+            </button>
           </div>
 
           {/* Site Map (current) */}
@@ -909,6 +912,16 @@ export default function SiteMap() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Print Site Map Modal */}
+      <PrintSiteMapModal 
+        open={showPrintModal} 
+        onOpenChange={setShowPrintModal}
+        mapContainerRef={mapRef}
+        siteAddress={address}
+        saveDetails={saveDetails}
+      />
     </div>
+    </>
   );
 }
