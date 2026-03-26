@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
+import { jsPDF } from "jspdf";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { FileText, Download, Printer, X } from "lucide-react";
 import { base44 } from "@/api/base44Client";
-import { generateEstimatePDF } from "./generateEstimatePDF";
 
 const STORAGE_KEY = "connectapod_print_details";
 
@@ -250,116 +250,41 @@ export default function ProjectDetailsModal({
 
     y += 4;
 
-    // Group modules and their attached walls
+    // Modules section
+    doc.setFillColor(241, 90, 34);
+    doc.rect(col1, y, pageW - 2 * margin, 7, "F");
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(9);
+    doc.setFont("helvetica", "bold");
+    doc.text("MODULES", col1 + 3, y + 5);
+    doc.text("SQM", pageW - margin - 60, y + 5, { align: "right" });
+    doc.text("UNIT PRICE", pageW - margin - 20, y + 5, { align: "right" });
+    doc.text("TOTAL", col2, y + 5, { align: "right" });
+    y += 10;
+
     const moduleGroups = {};
     placedModules.forEach(m => {
-      const key = m.id || m.label || m.type;
-      if (!moduleGroups[key]) {
-        moduleGroups[key] = { 
-          module: m, 
-          label: m.label || m.type, 
-          sqm: m.sqm || 0, 
-          price: m.price || 0, 
-          count: 0,
-          attachedWalls: []
-        };
-      }
+      const key = m.label || m.type;
+      if (!moduleGroups[key]) moduleGroups[key] = { label: key, sqm: m.sqm || 0, price: m.price || 0, count: 0 };
       moduleGroups[key].count += 1;
     });
 
-    // Assign walls to modules based on position and face
-    const CELL_M = 0.6;
-    walls.forEach(w => {
-      // Find the module this wall is attached to by checking proximity
-      let attachedModule = null;
-      let minDistance = Infinity;
-      
-      for (const m of placedModules) {
-        let distance = Infinity;
-        
-        // Check W face (top of module)
-        if (w.face === "W") {
-          const wallBottom = w.y * CELL_M + (w.thickness || 0.15);
-          const moduleTop = m.y * CELL_M;
-          const xMatch = Math.abs(m.x * CELL_M - w.x * CELL_M) < 0.2;
-          const yMatch = Math.abs(wallBottom - moduleTop) < 0.2;
-          if (xMatch && yMatch) distance = Math.abs(wallBottom - moduleTop);
-        }
-        // Check Y face (bottom of module)
-        else if (w.face === "Y") {
-          const wallTop = w.y * CELL_M;
-          const moduleBottom = (m.y + m.h) * CELL_M;
-          const xMatch = Math.abs(m.x * CELL_M - w.x * CELL_M) < 0.2;
-          const yMatch = Math.abs(wallTop - moduleBottom) < 0.2;
-          if (xMatch && yMatch) distance = Math.abs(wallTop - moduleBottom);
-        }
-        // Check Z face (left side of module)
-        else if (w.face === "Z") {
-          const wallRight = w.x * CELL_M + (w.thickness || 0.15);
-          const moduleLeft = m.x * CELL_M;
-          const yMatch = Math.abs(m.y * CELL_M - w.y * CELL_M) < 0.2;
-          const xMatch = Math.abs(wallRight - moduleLeft) < 0.2;
-          if (xMatch && yMatch) distance = Math.abs(wallRight - moduleLeft);
-        }
-        // Check X face (right side of module)
-        else if (w.face === "X") {
-          const wallLeft = w.x * CELL_M;
-          const moduleRight = (m.x + m.w) * CELL_M;
-          const yMatch = Math.abs(m.y * CELL_M - w.y * CELL_M) < 0.2;
-          const xMatch = Math.abs(wallLeft - moduleRight) < 0.2;
-          if (xMatch && yMatch) distance = Math.abs(wallLeft - moduleRight);
-        }
-        
-        if (distance < minDistance) {
-          minDistance = distance;
-          attachedModule = m;
-        }
-      }
-      
-      if (attachedModule && minDistance < 0.2) {
-        const key = attachedModule.id || attachedModule.label || attachedModule.type;
-        if (moduleGroups[key]) {
-          moduleGroups[key].attachedWalls.push(w);
-        }
-      }
-    });
-
-    // Render each module with its attached walls
+    doc.setTextColor(30, 30, 30);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(8.5);
     let rowAlt = false;
     Object.values(moduleGroups).forEach(g => {
-      // Module row
       if (rowAlt) {
         doc.setFillColor(252, 252, 252);
         doc.rect(col1, y - 2, pageW - 2 * margin, 8, "F");
       }
       rowAlt = !rowAlt;
       const label = g.count > 1 ? `${g.label} ×${g.count}` : g.label;
-      doc.setTextColor(30, 30, 30);
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(8.5);
       doc.text(label, col1 + 2, y + 4);
       doc.text(`${(g.sqm * g.count).toFixed(1)} m²`, pageW - margin - 60, y + 4, { align: "right" });
       doc.text(`$${g.price.toLocaleString()}`, pageW - margin - 20, y + 4, { align: "right" });
       doc.text(`$${(g.price * g.count).toLocaleString()}`, col2, y + 4, { align: "right" });
       y += 8;
-
-      // Attached walls (indented)
-      if (g.attachedWalls.length > 0) {
-        g.attachedWalls.forEach(wall => {
-          if (rowAlt) {
-            doc.setFillColor(252, 252, 252);
-            doc.rect(col1, y - 2, pageW - 2 * margin, 8, "F");
-          }
-          rowAlt = !rowAlt;
-          doc.setTextColor(100, 100, 100);
-          doc.setFont("helvetica", "italic");
-          doc.setFontSize(8);
-          const wallLabel = wall.label || wall.type || "Wall";
-          doc.text(`  └ ${wallLabel} (${wall.face || "-"})`, col1 + 2, y + 4);
-          doc.text(`$${(wall.price || 0).toLocaleString()}`, col2, y + 4, { align: "right" });
-          y += 8;
-        });
-      }
     });
 
     doc.setDrawColor(200, 200, 200);
@@ -367,10 +292,56 @@ export default function ProjectDetailsModal({
     y += 5;
     doc.setFont("helvetica", "bold");
     doc.setFontSize(9);
-    doc.setTextColor(30, 30, 30);
-    doc.text("Total", col1 + 2, y + 3);
-    doc.text(`$${grandTotal.toLocaleString()}`, col2, y + 3, { align: "right" });
-    y += 12;
+    doc.text("Modules Subtotal", col1 + 2, y + 3);
+    doc.text(`$${modulesTotal.toLocaleString()}`, col2, y + 3, { align: "right" });
+    y += 10;
+
+    // Walls section
+    if (walls.length > 0) {
+      doc.setFillColor(241, 90, 34);
+      doc.rect(col1, y, pageW - 2 * margin, 7, "F");
+      doc.setTextColor(255, 255, 255);
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(9);
+      doc.text("WALL PANELS", col1 + 3, y + 5);
+      doc.text("FACE", pageW - margin - 40, y + 5, { align: "right" });
+      doc.text("TOTAL", col2, y + 5, { align: "right" });
+      y += 10;
+
+      const wallGroups = {};
+      walls.forEach(w => {
+        const key = w.label || w.type;
+        if (!wallGroups[key]) wallGroups[key] = { label: key, face: w.face || "-", price: w.price || 0, count: 0 };
+        wallGroups[key].count += 1;
+      });
+
+      doc.setTextColor(30, 30, 30);
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(8.5);
+      rowAlt = false;
+      Object.values(wallGroups).forEach(g => {
+        if (rowAlt) {
+          doc.setFillColor(252, 252, 252);
+          doc.rect(col1, y - 2, pageW - 2 * margin, 8, "F");
+        }
+        rowAlt = !rowAlt;
+        const label = g.count > 1 ? `${g.label} ×${g.count}` : g.label;
+        doc.text(label, col1 + 2, y + 4);
+        doc.text(g.face, pageW - margin - 40, y + 4, { align: "right" });
+        doc.text(`$${(g.price * g.count).toLocaleString()}`, col2, y + 4, { align: "right" });
+        y += 8;
+      });
+
+      doc.setDrawColor(200, 200, 200);
+      doc.line(col1, y, col2, y);
+      y += 5;
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(9);
+      doc.setTextColor(30, 30, 30);
+      doc.text("Wall Panels Subtotal", col1 + 2, y + 3);
+      doc.text(`$${wallsTotal.toLocaleString()}`, col2, y + 3, { align: "right" });
+      y += 12;
+    }
 
     // Grand total
     y += 4;
