@@ -82,7 +82,12 @@ export default function SiteMap() {
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [showPrintModal, setShowPrintModal] = useState(false);
   const [saveDetails, setSaveDetails] = useState(() => {
-    try { return JSON.parse(localStorage.getItem('connectapod_save_details')) ?? { projectName: '', clientName: '' }; } catch { return { projectName: '', clientName: '' }; }
+    try { 
+      const saved = JSON.parse(localStorage.getItem('connectapod_save_details'));
+      return saved || { projectName: '', clientName: '', address: '' }; 
+    } catch { 
+      return { projectName: '', clientName: '', address: '' }; 
+    }
   });
 
   const { data: designs = [] } = useQuery({
