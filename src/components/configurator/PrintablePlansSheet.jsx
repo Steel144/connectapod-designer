@@ -330,12 +330,12 @@ export default function PrintablePlansSheet({ placedModules, furniture = [], wal
                      />
                     {f.image && (
                       <image
-                        x={2}
-                        y={2}
-                        width={fWidth - 4}
-                        height={fDepth - 4}
+                        x={0}
+                        y={0}
+                        width={fWidth}
+                        height={fDepth}
                         href={f.image}
-                        preserveAspectRatio="xMidYMid slice"
+                        preserveAspectRatio="xMidYMid meet"
                       />
                     )}
                     {!f.image && (
