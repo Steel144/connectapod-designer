@@ -849,9 +849,9 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                      showX = isRightEnd;
                    }
                  }
-                
+
                 const isVisibleBtn = isSelected || hoveredModuleId === mod.id;
-                
+
                 return (
                   <>
                     {showW && <button onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); setFaceMenuOpen({ module: mod, face: 'W', x: e.clientX, y: e.clientY }); }} className={`absolute top-1 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-white text-gray-900 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-sm z-20 ${!isVisibleBtn ? 'opacity-0 pointer-events-none' : ''}`}>W</button>}
@@ -860,7 +860,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                     {showZ && <button onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); setFaceMenuOpen({ module: mod, face: 'Z', x: e.clientX, y: e.clientY }); }} className={`absolute left-1 top-1/2 -translate-y-1/2 px-2 py-0.5 bg-white text-gray-900 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-sm z-20 ${!isVisibleBtn ? 'opacity-0 pointer-events-none' : ''}`}>Z</button>}
                   </>
                 );
-              })()}
+               })()}
             
             </div>
               );
