@@ -526,7 +526,7 @@ export default function Catalogue() {
                              <button
                                onClick={() => {
                                  const fullMod = customModules.find(m => m.code === mod.code) || mod;
-                                 setEditingModule({ ...fullMod, category: cat.category });
+                                 setEditingModule({ ...fullMod, category: cat.category, _custom: mod._custom, _id: mod._id });
                                }}
                                className="text-gray-300 hover:text-[#F15A22] transition-colors"
                                title="Edit module"
@@ -604,9 +604,9 @@ export default function Catalogue() {
                     {editMode && (
                       <button
                         onClick={() => {
-                          const fullMod = customModules.find(m => m.code === mod.code) || mod;
-                          setEditingModule({ ...fullMod, category: cat.category });
-                        }}
+                           const fullMod = customModules.find(m => m.code === mod.code) || mod;
+                           setEditingModule({ ...fullMod, category: cat.category, _custom: mod._custom, _id: mod._id });
+                         }}
                         className="text-xs text-gray-400 hover:text-[#F15A22] mb-2 transition-colors flex items-center gap-1"
                         title="Edit module details"
                       >
