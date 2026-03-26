@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, Rectangle, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Rectangle, useMap, ZoomControl } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { Button } from '@/components/ui/button';
@@ -11,11 +11,23 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 
 const CSS_SCALE = 2;
 
-function MapDisableDrag() {
+function MapControlHandler({ onZoomChange }) {
   const map = useMap();
   useEffect(() => {
     map.dragging.disable();
-  }, [map]);
+    map.scrollWheelZoom.enable();
+    map.doubleClickZoom.enable();
+    map.touchZoom.enable();
+    
+    const handleZoom = () => {
+      const newZoom = map.getZoom();
+      console.log('Zoom changed to:', newZoom);
+      onZoomChange(newZoom);
+    };
+    
+    map.on('zoom', handleZoom);
+    return () => map.off('zoom', handleZoom);
+  }, [map, onZoomChange]);
   return null;
 }
 
@@ -262,7 +274,7 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
 
       setFloorPlanOverlay(canvas.toDataURL());
     });
-  }, [design, mapZoom]);
+  }, [design]);
 
   return (
     <div className="w-full h-screen flex flex-col bg-white">
@@ -287,14 +299,16 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
                 zoom={mapZoom}
                 className="w-full h-full"
                 ref={mapRef}
+                zoomControl={false}
               >
                 <MapSync center={getAdjustedCenter()} zoom={mapZoom} />
-                <MapDisableDrag />
+                <MapControlHandler onZoomChange={setMapZoom} />
                 <TileLayer
                   url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
                   attribution='&copy; Esri, DigitalGlobe, Earthstar Geographics'
                   maxZoom={22}
                 />
+                <ZoomControl position="bottomright" />
                 <Marker position={coordinates}>
                   <Popup>Site Location</Popup>
                 </Marker>
@@ -305,53 +319,53 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
                   />
                 )}
               </MapContainer>
-            </div>
+              
+              {floorPlanOverlay && design?.grid?.length > 0 && (() => {
+                let minX = Math.min(...design.grid.map(m => m.x));
+                let maxX = Math.max(...design.grid.map(m => m.x + m.w));
+                let minY = Math.min(...design.grid.map(m => m.y));
+                let maxY = Math.max(...design.grid.map(m => m.y + m.h));
 
-            {floorPlanOverlay && design?.grid?.length > 0 && (() => {
-              let minX = Math.min(...design.grid.map(m => m.x));
-              let maxX = Math.max(...design.grid.map(m => m.x + m.w));
-              let minY = Math.min(...design.grid.map(m => m.y));
-              let maxY = Math.max(...design.grid.map(m => m.y + m.h));
-
-              if (design.walls && design.walls.length > 0) {
-                design.walls.forEach(wall => {
-                  if (wall.x !== undefined && wall.y !== undefined) {
-                    minX = Math.min(minX, wall.x);
-                    minY = Math.min(minY, wall.y);
-                    if (wall.orientation === 'horizontal') {
-                      maxX = Math.max(maxX, wall.x + (wall.length || wall.width / 1000 || 1));
-                      maxY = Math.max(maxY, wall.y + (wall.thickness || 0.15));
-                    } else {
-                      maxX = Math.max(maxX, wall.x + (wall.thickness || 0.15));
-                      maxY = Math.max(maxY, wall.y + (wall.length || wall.height / 1000 || 1));
+                if (design.walls && design.walls.length > 0) {
+                  design.walls.forEach(wall => {
+                    if (wall.x !== undefined && wall.y !== undefined) {
+                      minX = Math.min(minX, wall.x);
+                      minY = Math.min(minY, wall.y);
+                      if (wall.orientation === 'horizontal') {
+                        maxX = Math.max(maxX, wall.x + (wall.length || wall.width / 1000 || 1));
+                        maxY = Math.max(maxY, wall.y + (wall.thickness || 0.15));
+                      } else {
+                        maxX = Math.max(maxX, wall.x + (wall.thickness || 0.15));
+                        maxY = Math.max(maxY, wall.y + (wall.length || wall.height / 1000 || 1));
+                      }
                     }
-                  }
-                });
-              }
+                  });
+                }
 
-              const METRES_PER_PX_AT_ZOOM0 = 78271.52;
-              const lat = coordinates ? coordinates[0] : 0;
-              const metresToPx = Math.pow(2, mapZoom) / (METRES_PER_PX_AT_ZOOM0 * Math.cos(lat * Math.PI / 180));
-              const canvasPxPerMetre = CANVAS_PX_PER_CELL / CELL_M;
-              const cssScale = (metresToPx / canvasPxPerMetre) * planScaleMultiplier;
+                const METRES_PER_PX_AT_ZOOM0 = 78271.52;
+                const lat = coordinates ? coordinates[0] : 0;
+                const metresToPx = Math.pow(2, mapZoom) / (METRES_PER_PX_AT_ZOOM0 * Math.cos(lat * Math.PI / 180));
+                const canvasPxPerMetre = CANVAS_PX_PER_CELL / CELL_M;
+                const cssScale = (metresToPx / canvasPxPerMetre) * planScaleMultiplier;
 
-              return (
-                <div key={`overlay-${mapZoom}`} className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
-                  <img
-                    src={floorPlanOverlay}
-                    alt="Floor Plan"
-                    style={{
-                      width: `${(maxX - minX) * CANVAS_PX_PER_CELL}px`,
-                      height: `${(maxY - minY) * CANVAS_PX_PER_CELL}px`,
-                      transform: `scale(${cssScale})`,
-                      transformOrigin: 'center',
-                      transition: 'transform 0.1s ease-out',
-                      imageRendering: 'pixelated',
-                    }}
-                  />
-                </div>
-              );
-            })()}
+                return (
+                  <div key={`overlay-${mapZoom}`} className="absolute inset-0 flex items-center justify-center pointer-events-none" style={{ zIndex: 1000 }}>
+                    <img
+                      src={floorPlanOverlay}
+                      alt="Floor Plan"
+                      style={{
+                        width: `${(maxX - minX) * CANVAS_PX_PER_CELL}px`,
+                        height: `${(maxY - minY) * CANVAS_PX_PER_CELL}px`,
+                        transform: `scale(${cssScale})`,
+                        transformOrigin: 'center',
+                        transition: 'transform 0.1s ease-out',
+                        imageRendering: 'pixelated',
+                      }}
+                    />
+                  </div>
+                );
+              })()}
+            </div>
           </>
         ) : (
           <div className="w-full h-full flex items-center justify-center text-gray-400">
