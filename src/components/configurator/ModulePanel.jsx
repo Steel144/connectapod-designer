@@ -252,13 +252,15 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
        const builtInItems = group.items.filter(item => !deletedCodes.has(item.code));
 
        const categoryModules = (Array.isArray(customModules) ? customModules : []).filter(m => {
-         if (deletedCodes.has(m.code)) return false;
-         const categories = Array.isArray(m.categories) ? m.categories : [];
-         const matchesPrimaryCategory = m.category === group.label;
-         const matchesAdditionalCategories = categories.includes(group.label);
-         const matches = matchesPrimaryCategory || matchesAdditionalCategories;
-         if (matches) assignedCodes.add(m.code);
-         return matches;
+        if (deletedCodes.has(m.code)) return false;
+        const categories = Array.isArray(m.categories) ? m.categories : [];
+        const descCategories = (m.description || "").split(",").map(s => s.trim()).filter(Boolean);
+        const matchesPrimaryCategory = m.category === group.label;
+        const matchesAdditionalCategories = categories.includes(group.label);
+        const matchesDescription = descCategories.includes(group.label);
+        const matches = matchesPrimaryCategory || matchesAdditionalCategories || matchesDescription;
+        if (matches) assignedCodes.add(m.code);
+        return matches;
        });
 
        return {
