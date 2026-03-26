@@ -352,45 +352,64 @@ export default function SiteMap() {
       img.src = mod.floorPlanImage;
     });
 
-    Promise.all(design.grid.map(loadImageForMod)).then((results) => {
-      // Draw walls first (background layer)
-       if (design.walls && design.walls.length > 0) {
-         design.walls.forEach(wall => {
-           // Use wall position if available, otherwise estimate from orientation/length
-           const hasCoords = wall.x !== undefined && wall.y !== undefined;
-           if (!hasCoords) return;
+    const loadImageForWall = (wall) => new Promise((resolve) => {
+      if (!wall.elevationImage) { resolve({ wall, img: null }); return; }
+      const img = new window.Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = () => resolve({ wall, img });
+      img.onerror = () => resolve({ wall, img: null });
+      img.src = wall.elevationImage;
+    });
 
-           const x = (wall.x - minX) * CANVAS_PX_PER_CELL;
-           const y = (wall.y - minY) * CANVAS_PX_PER_CELL;
+    Promise.all([
+      ...design.grid.map(loadImageForMod),
+      ...(design.walls || []).map(loadImageForWall)
+    ]).then((results) => {
+       // Draw walls first (background layer)
+        design.walls?.forEach(wallResult => {
+          const wall = wallResult.wall || wallResult;
+          const wallImg = wallResult.img;
 
-           // Calculate width and height based on orientation and dimensions
-           let w, h;
-           if (wall.orientation === 'horizontal') {
-             w = (wall.length || wall.width / 1000 || 1) * CANVAS_PX_PER_CELL;
-             h = (wall.thickness || 0.15) * CANVAS_PX_PER_CELL;
-           } else {
-             w = (wall.thickness || 0.15) * CANVAS_PX_PER_CELL;
-             h = (wall.length || wall.height / 1000 || 1) * CANVAS_PX_PER_CELL;
-           }
+          // Use wall position if available, otherwise estimate from orientation/length
+          const hasCoords = wall.x !== undefined && wall.y !== undefined;
+          if (!hasCoords) return;
 
-           ctx.save();
-           ctx.translate(x + w / 2, y + h / 2);
-           if (wall.rotation) ctx.rotate((wall.rotation * Math.PI) / 180);
-           if (wall.flipped) ctx.scale(-1, 1);
-           ctx.translate(-w / 2, -h / 2);
+          const x = (wall.x - minX) * CANVAS_PX_PER_CELL;
+          const y = (wall.y - minY) * CANVAS_PX_PER_CELL;
 
-           ctx.fillStyle = '#A0A0A0';
-           ctx.fillRect(0, 0, w, h);
-           ctx.strokeStyle = '#666666';
-           ctx.lineWidth = 0.5;
-           ctx.strokeRect(0, 0, w, h);
+          // Calculate width and height based on orientation and dimensions
+          let w, h;
+          if (wall.orientation === 'horizontal') {
+            w = (wall.length || wall.width / 1000 || 1) * CANVAS_PX_PER_CELL;
+            h = (wall.thickness || 0.15) * CANVAS_PX_PER_CELL;
+          } else {
+            w = (wall.thickness || 0.15) * CANVAS_PX_PER_CELL;
+            h = (wall.length || wall.height / 1000 || 1) * CANVAS_PX_PER_CELL;
+          }
 
-           ctx.restore();
-         });
-       }
-      
-      // Draw modules (foreground layer)
-      results.forEach(({ mod, img }) => {
+          ctx.save();
+          ctx.translate(x + w / 2, y + h / 2);
+          if (wall.rotation) ctx.rotate((wall.rotation * Math.PI) / 180);
+          if (wall.flipped) ctx.scale(-1, 1);
+          ctx.translate(-w / 2, -h / 2);
+
+          ctx.fillStyle = '#A0A0A0';
+          ctx.fillRect(0, 0, w, h);
+          if (wallImg) {
+            ctx.drawImage(wallImg, 0, 0, w, h);
+          }
+          ctx.strokeStyle = '#666666';
+          ctx.lineWidth = 0.5;
+          ctx.strokeRect(0, 0, w, h);
+
+          ctx.restore();
+        });
+
+        // Filter to get just module results (first part of combined array)
+         const modResults = results.slice(0, design.grid.length);
+
+        // Draw modules (foreground layer)
+        modResults.forEach(({ mod, img }) => {
         const x = (mod.x - minX) * CANVAS_PX_PER_CELL;
         const y = (mod.y - minY) * CANVAS_PX_PER_CELL;
         const w = mod.w * CANVAS_PX_PER_CELL;
