@@ -127,7 +127,8 @@ export default function ProjectDetailsModal({
   }, [open]);
 
   const handleSaveDetails = () => {
-    const details = { projectName, clientFirstName, clientFamilyName, homeAddress, siteAddress, email, phone };
+    const fullClientName = `${clientFirstName} ${clientFamilyName}`.trim();
+    const details = { projectName, clientFirstName, clientFamilyName, clientName: fullClientName, homeAddress, siteAddress, email, phone, address: siteAddress };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(details));
     return details;
   };
