@@ -310,10 +310,27 @@ export default function SiteMap() {
   useEffect(() => {
     if (!design || !design.grid || design.grid.length === 0) return;
 
-    const minX = Math.min(...design.grid.map(m => m.x));
-    const maxX = Math.max(...design.grid.map(m => m.x + m.w));
-    const minY = Math.min(...design.grid.map(m => m.y));
-    const maxY = Math.max(...design.grid.map(m => m.y + m.h));
+    let minX = Math.min(...design.grid.map(m => m.x));
+    let maxX = Math.max(...design.grid.map(m => m.x + m.w));
+    let minY = Math.min(...design.grid.map(m => m.y));
+    let maxY = Math.max(...design.grid.map(m => m.y + m.h));
+
+    // Expand bounds to include walls
+    if (design.walls && design.walls.length > 0) {
+      design.walls.forEach(wall => {
+        if (wall.x !== undefined && wall.y !== undefined) {
+          minX = Math.min(minX, wall.x);
+          minY = Math.min(minY, wall.y);
+          if (wall.orientation === 'horizontal') {
+            maxX = Math.max(maxX, wall.x + (wall.length || wall.width / 1000 || 1));
+            maxY = Math.max(maxY, wall.y + (wall.thickness || 0.15));
+          } else {
+            maxX = Math.max(maxX, wall.x + (wall.thickness || 0.15));
+            maxY = Math.max(maxY, wall.y + (wall.length || wall.height / 1000 || 1));
+          }
+        }
+      });
+    }
 
     const gridCellsW = maxX - minX;
     const gridCellsH = maxY - minY;
@@ -664,10 +681,27 @@ export default function SiteMap() {
             {/* Floor plan fixed in center - on top */}
             {floorPlanOverlay && design?.grid?.length > 0 && (() => {
               // Physical size of the design in metres
-              const minX = Math.min(...design.grid.map(m => m.x));
-              const maxX = Math.max(...design.grid.map(m => m.x + m.w));
-              const minY = Math.min(...design.grid.map(m => m.y));
-              const maxY = Math.max(...design.grid.map(m => m.y + m.h));
+              let minX = Math.min(...design.grid.map(m => m.x));
+              let maxX = Math.max(...design.grid.map(m => m.x + m.w));
+              let minY = Math.min(...design.grid.map(m => m.y));
+              let maxY = Math.max(...design.grid.map(m => m.y + m.h));
+
+              // Expand bounds to include walls
+              if (design.walls && design.walls.length > 0) {
+                design.walls.forEach(wall => {
+                  if (wall.x !== undefined && wall.y !== undefined) {
+                    minX = Math.min(minX, wall.x);
+                    minY = Math.min(minY, wall.y);
+                    if (wall.orientation === 'horizontal') {
+                      maxX = Math.max(maxX, wall.x + (wall.length || wall.width / 1000 || 1));
+                      maxY = Math.max(maxY, wall.y + (wall.thickness || 0.15));
+                    } else {
+                      maxX = Math.max(maxX, wall.x + (wall.thickness || 0.15));
+                      maxY = Math.max(maxY, wall.y + (wall.length || wall.height / 1000 || 1));
+                    }
+                  }
+                });
+              }
               const designMetresW = (maxX - minX) * CELL_M;
               const designMetresH = (maxY - minY) * CELL_M;
 
