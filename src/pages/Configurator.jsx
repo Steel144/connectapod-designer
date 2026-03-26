@@ -558,18 +558,12 @@ export default function Configurator() {
           return w;
         }
 
-        if (isAttachedVertical) {
-           // Z/X walls: match by y alignment and exact x position
-           if (!( Math.abs(w.y - modToFlip.y) < 0.5 )) return w;
-
-           // Only swap walls at the exact left (Z) or right (X) edge positions
-           if (wallFace === 'Z' && Math.abs(w.x - modToFlip.x) < 0.5) {
-             return { ...w, flipped: !w.flipped, x: modToFlip.x + modToFlip.w - WALL_OFFSET, face: 'X' };
-           }
-           if (wallFace === 'X' && Math.abs(w.x - (modToFlip.x + modToFlip.w - WALL_OFFSET)) < 0.5) {
-             return { ...w, flipped: !w.flipped, x: modToFlip.x, face: 'Z' };
-           }
-         }
+        if (wallFace === 'Z' && Math.abs(w.y - modToFlip.y) < 0.5 && Math.abs(w.x - modToFlip.x) < 0.5) {
+          return { ...w, flipped: !w.flipped, x: modToFlip.x + modToFlip.w - WALL_OFFSET, face: 'X' };
+        }
+        if (wallFace === 'X' && Math.abs(w.y - modToFlip.y) < 0.5 && Math.abs(w.x - (modToFlip.x + modToFlip.w - WALL_OFFSET)) < 0.5) {
+          return { ...w, flipped: !w.flipped, x: modToFlip.x, face: 'Z' };
+        }
 
         return w;
       })
