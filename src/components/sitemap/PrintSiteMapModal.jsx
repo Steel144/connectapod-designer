@@ -12,8 +12,24 @@ export default function PrintSiteMapModal({ open, onOpenChange, mapContainerRef,
   const [fileName, setFileName] = useState('site-plan');
 
   const handlePrint = async () => {
+    if (!mapContainerRef?.current) {
+      alert('Map is not ready. Please try again.');
+      return;
+    }
+    
     setLoading(true);
     try {
+      // Capture the leaflet map container
+      const mapElement = mapContainerRef.current;
+      const canvas = await html2canvas(mapElement, {
+        allowTaint: true,
+        useCORS: false,
+        scale: 0.5,
+        backgroundColor: '#ffffff',
+        logging: false,
+        delay: 500
+      });
+
       const pdf = new jsPDF({
         orientation: 'landscape',
         unit: 'mm',
@@ -21,31 +37,44 @@ export default function PrintSiteMapModal({ open, onOpenChange, mapContainerRef,
       });
 
       const pageWidth = pdf.internal.pageSize.getWidth();
-      let yPos = 15;
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      let yPos = 10;
 
       // Add header
       pdf.setFontSize(16);
       pdf.text('SITE PLAN', 14, yPos);
-      yPos += 12;
+      yPos += 10;
       
       if (saveDetails?.projectName) {
-        pdf.setFontSize(11);
+        pdf.setFontSize(10);
         pdf.text(`Project: ${saveDetails.projectName}`, 14, yPos);
-        yPos += 8;
+        yPos += 6;
       }
       
       if (siteAddress) {
-        pdf.setFontSize(11);
+        pdf.setFontSize(10);
         pdf.text(`Site Address: ${siteAddress}`, 14, yPos);
-        yPos += 8;
+        yPos += 6;
       }
 
-      yPos += 5;
+      yPos += 8;
+
+      // Add map image
+      const imgData = canvas.toDataURL('image/png');
+      const imgWidth = pageWidth - 20;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      const availableHeight = pageHeight - yPos - 10;
+      
+      if (imgHeight > availableHeight) {
+        pdf.addImage(imgData, 'PNG', 10, yPos, imgWidth, availableHeight);
+      } else {
+        pdf.addImage(imgData, 'PNG', 10, yPos, imgWidth, imgHeight);
+      }
 
       // Add timestamp
-      pdf.setFontSize(9);
+      pdf.setFontSize(8);
       pdf.setTextColor(150, 150, 150);
-      pdf.text(`Generated: ${new Date().toLocaleString()}`, 14, yPos);
+      pdf.text(`Generated: ${new Date().toLocaleString()}`, 14, pageHeight - 5);
       pdf.setTextColor(0, 0, 0);
 
       // Download
@@ -53,7 +82,7 @@ export default function PrintSiteMapModal({ open, onOpenChange, mapContainerRef,
       onOpenChange(false);
     } catch (error) {
       console.error('Print error:', error);
-      alert('Failed to generate PDF. Please try again.');
+      alert('Failed to capture map. Please ensure the map is fully loaded.');
     } finally {
       setLoading(false);
     }
