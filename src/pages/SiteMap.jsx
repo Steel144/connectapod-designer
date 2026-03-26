@@ -11,6 +11,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '@/lib/AuthContext';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useQuery } from '@tanstack/react-query';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 
 const CSS_SCALE = 2; // the scale(2) applied to the map wrapper div
 
@@ -77,6 +78,10 @@ export default function SiteMap() {
   const isDragging = useRef(false);
   const dragLast = useRef(null);
   const [showLabels, setShowLabels] = useState(true);
+  const [showSaveModal, setShowSaveModal] = useState(false);
+  const [saveDetails, setSaveDetails] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('connectapod_save_details')) ?? { projectName: '', clientName: '' }; } catch { return { projectName: '', clientName: '' }; }
+  });
 
   const { data: designs = [] } = useQuery({
     queryKey: ["homeDesigns"],
@@ -558,9 +563,9 @@ export default function SiteMap() {
             <Link to="/Configurator" className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-white text-gray-600 hover:text-[#F15A22] transition-all" style={{ clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 50%, calc(100% - 6px) 100%, 0 100%)" }}>
               <Image size={13} /> Elevations
             </Link>
-            <Link to={address ? "/Configurator" : "#"} onClick={(e) => !address && e.preventDefault()} className={`flex items-center gap-1.5 px-3 py-1.5 text-xs border transition-all ${address ? 'bg-white text-gray-600 border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22]' : 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'}`} style={{ clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 50%, calc(100% - 6px) 100%, 0 100%)" }} title={address ? '' : 'Enter site address to save'}>
+            <button onClick={() => address && setShowSaveModal(true)} disabled={!address} className={`flex items-center gap-1.5 px-3 py-1.5 text-xs border transition-all ${address ? 'bg-white text-gray-600 border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22]' : 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'}`} style={{ clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 50%, calc(100% - 6px) 100%, 0 100%)" }} title={address ? '' : 'Enter site address to save'}>
               <Save size={13} /> Save
-            </Link>
+            </button>
             <Link to="/Configurator" className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-white text-gray-600 border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22] transition-all" style={{ clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 50%, calc(100% - 6px) 100%, 0 100%)" }}>
               Get Estimate
             </Link>
@@ -852,6 +857,58 @@ export default function SiteMap() {
           </div>
         </div>
       )}
+
+      {/* Save Details Modal */}
+      <Dialog open={showSaveModal} onOpenChange={setShowSaveModal}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Save Design Details</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div>
+              <label className="text-sm font-semibold text-gray-700 block mb-2">Project Name</label>
+              <Input
+                type="text"
+                placeholder="e.g., Modern Villa"
+                value={saveDetails.projectName}
+                onChange={(e) => setSaveDetails({ ...saveDetails, projectName: e.target.value })}
+                className="text-sm"
+              />
+            </div>
+            <div>
+              <label className="text-sm font-semibold text-gray-700 block mb-2">Client Name</label>
+              <Input
+                type="text"
+                placeholder="e.g., John Smith"
+                value={saveDetails.clientName}
+                onChange={(e) => setSaveDetails({ ...saveDetails, clientName: e.target.value })}
+                className="text-sm"
+              />
+            </div>
+            <div>
+              <label className="text-sm font-semibold text-gray-700 block mb-2">Site Address</label>
+              <p className="text-sm text-gray-600">{address}</p>
+            </div>
+          </div>
+          <DialogFooter>
+            <button
+              onClick={() => setShowSaveModal(false)}
+              className="px-3 py-1.5 text-sm border border-gray-200 rounded hover:border-gray-300"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={() => {
+                localStorage.setItem('connectapod_save_details', JSON.stringify(saveDetails));
+                setShowSaveModal(false);
+              }}
+              className="px-3 py-1.5 text-sm bg-[#F15A22] text-white rounded hover:bg-[#d94e1a] transition-all"
+            >
+              Save
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
