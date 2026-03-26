@@ -222,7 +222,12 @@ export default function SiteMap() {
     // Rotate the mouse delta by the map rotation so dragging always
     // moves the map in the direction the mouse moves on screen.
     const rad = (overlayRotation * Math.PI) / 180;
-    const movementScale = 0.0001;
+    // At zoom 21, 1 degree ≈ ~74000px on screen. We want ~1px mouse = ~1px map movement.
+    // degrees per pixel ≈ 360 / (256 * 2^zoom) = 360 / (256 * 2097152) ≈ 6.7e-9 at zoom 21
+    // But we also have scale(2) CSS, so halve it.
+    const metersPerPixel = 156543.03392 * Math.cos((coordinates?.[0] ?? 0) * Math.PI / 180) / Math.pow(2, mapZoom);
+    const degreesPerPixel = metersPerPixel / 111320;
+    const movementScale = degreesPerPixel / 2; // /2 for the CSS scale(2)
     const rotatedDeltaLat = (-deltaY * Math.cos(rad) - deltaX * Math.sin(rad)) * movementScale;
     const rotatedDeltaLng = (deltaX * Math.cos(rad) - deltaY * Math.sin(rad)) * movementScale;
 
