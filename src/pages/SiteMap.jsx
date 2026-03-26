@@ -911,7 +911,9 @@ export default function SiteMap() {
             </button>
             <button
               onClick={() => {
-                localStorage.setItem('connectapod_save_details', JSON.stringify({ ...saveDetails, address }));
+                const newSaveDetails = { ...saveDetails, address };
+                localStorage.setItem('connectapod_save_details', JSON.stringify(newSaveDetails));
+                setSaveDetails(newSaveDetails);
                 toast.success('Site details saved');
                 setShowSaveModal(false);
               }}
