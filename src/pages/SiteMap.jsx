@@ -541,7 +541,6 @@ export default function SiteMap() {
   };
 
   return (
-    <>
     <div className="w-full h-screen flex flex-col bg-white">
       {/* ── TOP BAR (SHARED WITH CONFIGURATOR) ── */}
       <div className="flex items-center px-4 py-4 bg-white border-b border-gray-200 overflow-x-auto gap-4 min-w-0 z-30">
@@ -935,6 +934,5 @@ export default function SiteMap() {
         floorPlanImage={floorPlanOverlay}
       />
     </div>
-    </>
   );
 }
