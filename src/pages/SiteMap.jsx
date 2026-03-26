@@ -43,13 +43,10 @@ export default function SiteMap() {
     queryFn: async () => { try { const r = await base44.entities.HomeDesign.list("-created_date"); return Array.isArray(r) ? r : []; } catch { return []; } },
   });
 
-  // Rotate position offset by negative rotation to account for map rotation
+  // Get map center with position offset applied directly (no rotation compensation needed)
   const getAdjustedCenter = () => {
     if (!coordinates) return [0, 0];
-    const rad = (-overlayRotation * Math.PI) / 180;
-    const rotatedLat = positionOffset.lat * Math.cos(rad) - positionOffset.lng * Math.sin(rad);
-    const rotatedLng = positionOffset.lat * Math.sin(rad) + positionOffset.lng * Math.cos(rad);
-    return [coordinates[0] + rotatedLat, coordinates[1] + rotatedLng];
+    return [coordinates[0] + positionOffset.lat, coordinates[1] + positionOffset.lng];
   };
 
   // Load address from print details on mount and auto-geocode
@@ -188,12 +185,17 @@ export default function SiteMap() {
     const deltaX = e.clientX - dragStart.x;
     const deltaY = e.clientY - dragStart.y;
     
-    // Convert pixels to lat/lng movement (rough approximation)
+    // Rotate the mouse delta by the map rotation so dragging always
+    // moves the map in the direction the mouse moves on screen.
+    const rad = (overlayRotation * Math.PI) / 180;
     const movementScale = 0.0001;
-    setPositionOffset({
-      lat: positionOffset.lat - deltaY * movementScale,
-      lng: positionOffset.lng + deltaX * movementScale
-    });
+    const rotatedDeltaLat = (-deltaY * Math.cos(rad) - deltaX * Math.sin(rad)) * movementScale;
+    const rotatedDeltaLng = (deltaX * Math.cos(rad) - deltaY * Math.sin(rad)) * movementScale;
+
+    setPositionOffset(prev => ({
+      lat: prev.lat + rotatedDeltaLat,
+      lng: prev.lng + rotatedDeltaLng
+    }));
     
     setDragStart({ x: e.clientX, y: e.clientY });
   };
