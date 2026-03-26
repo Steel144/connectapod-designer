@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
-import { jsPDF } from "jspdf";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { FileText, Download, Printer, X } from "lucide-react";
 import { base44 } from "@/api/base44Client";
+import { generateEstimatePDF } from "./generateEstimatePDF";
 
 const STORAGE_KEY = "connectapod_print_details";
 
@@ -267,11 +267,60 @@ export default function ProjectDetailsModal({
       moduleGroups[key].count += 1;
     });
 
-    // Assign walls to modules based on moduleId or groupKey
+    // Assign walls to modules based on position and face
+    const CELL_M = 0.6;
     walls.forEach(w => {
-      const moduleId = w.moduleId || w.groupKey;
-      if (moduleId && moduleGroups[moduleId]) {
-        moduleGroups[moduleId].attachedWalls.push(w);
+      // Find the module this wall is attached to by checking proximity
+      let attachedModule = null;
+      let minDistance = Infinity;
+      
+      for (const m of placedModules) {
+        let distance = Infinity;
+        
+        // Check W face (top of module)
+        if (w.face === "W") {
+          const wallBottom = w.y * CELL_M + (w.thickness || 0.15);
+          const moduleTop = m.y * CELL_M;
+          const xMatch = Math.abs(m.x * CELL_M - w.x * CELL_M) < 0.2;
+          const yMatch = Math.abs(wallBottom - moduleTop) < 0.2;
+          if (xMatch && yMatch) distance = Math.abs(wallBottom - moduleTop);
+        }
+        // Check Y face (bottom of module)
+        else if (w.face === "Y") {
+          const wallTop = w.y * CELL_M;
+          const moduleBottom = (m.y + m.h) * CELL_M;
+          const xMatch = Math.abs(m.x * CELL_M - w.x * CELL_M) < 0.2;
+          const yMatch = Math.abs(wallTop - moduleBottom) < 0.2;
+          if (xMatch && yMatch) distance = Math.abs(wallTop - moduleBottom);
+        }
+        // Check Z face (left side of module)
+        else if (w.face === "Z") {
+          const wallRight = w.x * CELL_M + (w.thickness || 0.15);
+          const moduleLeft = m.x * CELL_M;
+          const yMatch = Math.abs(m.y * CELL_M - w.y * CELL_M) < 0.2;
+          const xMatch = Math.abs(wallRight - moduleLeft) < 0.2;
+          if (xMatch && yMatch) distance = Math.abs(wallRight - moduleLeft);
+        }
+        // Check X face (right side of module)
+        else if (w.face === "X") {
+          const wallLeft = w.x * CELL_M;
+          const moduleRight = (m.x + m.w) * CELL_M;
+          const yMatch = Math.abs(m.y * CELL_M - w.y * CELL_M) < 0.2;
+          const xMatch = Math.abs(wallLeft - moduleRight) < 0.2;
+          if (xMatch && yMatch) distance = Math.abs(wallLeft - moduleRight);
+        }
+        
+        if (distance < minDistance) {
+          minDistance = distance;
+          attachedModule = m;
+        }
+      }
+      
+      if (attachedModule && minDistance < 0.2) {
+        const key = attachedModule.id || attachedModule.label || attachedModule.type;
+        if (moduleGroups[key]) {
+          moduleGroups[key].attachedWalls.push(w);
+        }
       }
     });
 
@@ -306,8 +355,7 @@ export default function ProjectDetailsModal({
           doc.setFont("helvetica", "italic");
           doc.setFontSize(8);
           const wallLabel = wall.label || wall.type || "Wall";
-          doc.text(`  └ ${wallLabel}`, col1 + 2, y + 4);
-          doc.text(wall.face || "-", pageW - margin - 40, y + 4, { align: "right" });
+          doc.text(`  └ ${wallLabel} (${wall.face || "-"})`, col1 + 2, y + 4);
           doc.text(`$${(wall.price || 0).toLocaleString()}`, col2, y + 4, { align: "right" });
           y += 8;
         });
