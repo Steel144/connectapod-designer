@@ -541,37 +541,38 @@ export default function Configurator() {
       prev.map((w) => {
         const WALL_OFFSET = 0.308;
         const wallFace = w.face || (w.orientation === 'vertical' ? 'Z' : 'W');
-        
-        // W and Y walls: just flip, don't move or change face
-        if (wallFace === 'W' && Math.abs(w.x - modToFlip.x) < 0.5 && Math.abs(w.y - (modToFlip.y - WALL_OFFSET)) < 0.5) {
-          return {
-            ...w,
-            flipped: !w.flipped
-          };
+
+        // Only act on walls attached to this module (match by Y position and X proximity)
+        const isAttachedVertical = wallFace === 'Z' || wallFace === 'X';
+        const isAttachedHorizontal = wallFace === 'W' || wallFace === 'Y';
+
+        if (isAttachedHorizontal) {
+          // W/Y walls: match by x alignment and approximate y position
+          if (!( Math.abs(w.x - modToFlip.x) < 0.5 )) return w;
+          if (wallFace === 'W' && Math.abs(w.y - (modToFlip.y - WALL_OFFSET)) < 0.8) {
+            return { ...w, flipped: !w.flipped };
+          }
+          if (wallFace === 'Y' && Math.abs(w.y - (modToFlip.y + modToFlip.h)) < 0.8) {
+            return { ...w, flipped: !w.flipped };
+          }
+          return w;
         }
-        if (wallFace === 'Y' && Math.abs(w.x - modToFlip.x) < 0.5 && Math.abs(w.y - (modToFlip.y + modToFlip.h)) < 0.5) {
-          return {
-            ...w,
-            flipped: !w.flipped
-          };
+
+        if (isAttachedVertical) {
+          // Z/X walls: match by y alignment and any x position within the module's width range
+          if (!( Math.abs(w.y - modToFlip.y) < 0.5 )) return w;
+          const withinModuleX = w.x >= modToFlip.x - 0.5 && w.x <= modToFlip.x + modToFlip.w + 0.5;
+          if (!withinModuleX) return w;
+
+          // Move Z→X and X→Z, swapping to the opposite physical side
+          if (wallFace === 'Z') {
+            return { ...w, flipped: !w.flipped, x: modToFlip.x + modToFlip.w - WALL_OFFSET, face: 'X' };
+          }
+          if (wallFace === 'X') {
+            return { ...w, flipped: !w.flipped, x: modToFlip.x, face: 'Z' };
+          }
         }
-        // Z and X walls: move to opposite side and flip
-        if (wallFace === 'Z' && Math.abs(w.y - modToFlip.y) < 0.5 && Math.abs(w.x - modToFlip.x) < 0.5) {
-          return {
-            ...w,
-            flipped: !w.flipped,
-            x: modToFlip.x + modToFlip.w - WALL_OFFSET,
-            face: 'X'
-          };
-        }
-        if (wallFace === 'X' && Math.abs(w.y - modToFlip.y) < 0.5 && Math.abs(w.x - (modToFlip.x + modToFlip.w - WALL_OFFSET)) < 0.5) {
-          return {
-            ...w,
-            flipped: !w.flipped,
-            x: modToFlip.x,
-            face: 'Z'
-          };
-        }
+
         return w;
       })
     );
