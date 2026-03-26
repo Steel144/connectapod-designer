@@ -438,14 +438,37 @@ export default function SiteMap() {
           const w = furn.width * CANVAS_PX_PER_CELL;
           const h = furn.depth * CANVAS_PX_PER_CELL;
 
+          // Color by furniture type
+          let fillColor = '#8B6F47';
+          let strokeColor = '#5D4E37';
+
+          if (furn.type === 'bed') {
+            fillColor = '#6B5B95';
+            strokeColor = '#4A3F63';
+          } else if (furn.type === 'sofa' || furn.type === 'couch') {
+            fillColor = '#A5695D';
+            strokeColor = '#7A4F46';
+          } else if (furn.type === 'dining') {
+            fillColor = '#8B7355';
+            strokeColor = '#6A5844';
+          } else if (furn.type === 'desk' || furn.type === 'table') {
+            fillColor = '#9B8B7E';
+            strokeColor = '#7A6A5D';
+          }
+
           ctx.save();
           ctx.translate(x + w / 2, y + h / 2);
           if (furn.rotation) ctx.rotate((furn.rotation * Math.PI) / 180);
           ctx.translate(-w / 2, -h / 2);
 
-          ctx.fillStyle = '#8B6F47';
+          ctx.fillStyle = fillColor;
           ctx.fillRect(0, 0, w, h);
-          ctx.strokeStyle = '#5D4E37';
+
+          // Add interior shading for visual depth
+          ctx.fillStyle = fillColor + '80';
+          ctx.fillRect(w * 0.15, h * 0.15, w * 0.7, h * 0.7);
+
+          ctx.strokeStyle = strokeColor;
           ctx.lineWidth = 1.5;
           ctx.strokeRect(0, 0, w, h);
 
