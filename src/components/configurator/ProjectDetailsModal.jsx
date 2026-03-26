@@ -9,6 +9,23 @@ import { base44 } from "@/api/base44Client";
 
 const STORAGE_KEY = "connectapod_print_details";
 
+const saveToLocalStorage = (data) => {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  } catch (err) {
+    console.error("Save to localStorage failed:", err);
+  }
+};
+
+const loadFromLocalStorage = () => {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+  } catch (err) {
+    console.error("Load from localStorage failed:", err);
+    return {};
+  }
+};
+
 function AddressAutocomplete({ value, onChange }) {
   const [query, setQuery] = useState(value || "");
   const [suggestions, setSuggestions] = useState([]);
@@ -95,14 +112,6 @@ export default function ProjectDetailsModal({
   walls = [],
   printMode = null // 'plans' or 'elevations'
 }) {
-  const loadDetails = () => {
-    try {
-      return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
-    } catch {
-      return {};
-    }
-  };
-
   const [projectName, setProjectName] = useState("");
   const [clientFirstName, setClientFirstName] = useState("");
   const [clientFamilyName, setClientFamilyName] = useState("");
@@ -114,21 +123,28 @@ export default function ProjectDetailsModal({
 
   useEffect(() => {
     if (open) {
-      const s = loadDetails();
-      setProjectName(s.projectName || "");
-      setClientFirstName(s.clientFirstName || "");
-      setClientFamilyName(s.clientFamilyName || "");
-      setHomeAddress(s.homeAddress || "");
-      setSiteAddress(s.siteAddress || "");
-      setEmail(s.email || "");
-      setPhone(s.phone || "");
+      const saved = loadFromLocalStorage();
+      setProjectName(saved.projectName || "");
+      setClientFirstName(saved.clientFirstName || "");
+      setClientFamilyName(saved.clientFamilyName || "");
+      setHomeAddress(saved.homeAddress || "");
+      setSiteAddress(saved.siteAddress || "");
+      setEmail(saved.email || "");
+      setPhone(saved.phone || "");
     }
   }, [open]);
 
   const handleSaveDetails = () => {
-    const fullClientName = `${clientFirstName} ${clientFamilyName}`.trim();
-    const details = { projectName, clientFirstName, clientFamilyName, clientName: fullClientName, homeAddress, siteAddress, email, phone, address: siteAddress };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(details));
+    const details = {
+      projectName,
+      clientFirstName,
+      clientFamilyName,
+      homeAddress,
+      siteAddress,
+      email,
+      phone
+    };
+    saveToLocalStorage(details);
     return details;
   };
 
