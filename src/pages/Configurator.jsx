@@ -1292,7 +1292,7 @@ export default function Configurator() {
                          </div>
                          <div className="flex-1 bg-gray-50 rounded overflow-hidden flex items-center justify-center relative">
                            <img src={selectedModule.floorPlanImage} alt={selectedModule.label} className="w-full h-full object-contain" style={{ transform: `rotate(${selectedModule.rotation || 0}deg) ${selectedModule.flipped ? 'scaleX(-1)' : ''}` }} />
-                           {/* Face labels on edges */}
+                           {/* Face labels on edges — swap Z/X on flip */}
                            <button onClick={() => setSelectedFace("W")} className="absolute top-1 left-1/2 -translate-x-1/2 px-2 py-1 bg-white text-gray-900 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-md">W</button>
                            {selectedModule.flipped ? (
                              <>
