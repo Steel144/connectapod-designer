@@ -529,13 +529,18 @@ export default function Configurator() {
     pushHistory(placedModules, walls);
     const modToFlip = placedModules.find((m) => m.id === id);
     if (!modToFlip) return;
-    
+
     setPlacedModules((prev) =>
       prev.map((m) => {
         if (m.id !== id) return m;
         return { ...m, flipped: !m.flipped };
       })
     );
+
+    // Update selectedModule if it's the one being flipped
+    if (selectedModule?.id === id) {
+      setSelectedModule(prev => prev ? { ...prev, flipped: !prev.flipped } : null);
+    }
     
     setWalls((prev) =>
       prev.map((w) => {
