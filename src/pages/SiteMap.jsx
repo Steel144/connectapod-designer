@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, Rectangle, ImageOverlay, useMap } from 'react-leaflet';
 import L from 'leaflet';
-import { useEffect as useMapEffect } from 'react';
+
 import 'leaflet/dist/leaflet.css';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,7 +12,15 @@ import { useAuth } from '@/lib/AuthContext';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useQuery } from '@tanstack/react-query';
 
-const FLOOR_PLAN_SCALE = 0.32; // Adjusted for proper overlay size
+const FLOOR_PLAN_SCALE = 0.32;
+
+function MapSync({ center, zoom }) {
+  const map = useMap();
+  useEffect(() => {
+    if (center) map.setView(center, zoom, { animate: false });
+  }, [center, zoom]);
+  return null;
+} // Adjusted for proper overlay size
 
 export default function SiteMap() {
   const { user } = useAuth();
@@ -22,6 +30,7 @@ export default function SiteMap() {
   const [coordinates, setCoordinates] = useState(() => {
     try { return JSON.parse(localStorage.getItem('sitemap_coordinates')) ?? null; } catch { return null; }
   });
+  const [mapKey, setMapKey] = useState(() => localStorage.getItem('sitemap_mapkey') ?? 'default');
   // mapCenter is the actual center we pass to leaflet — bakes in the offset
   const [mapCenter, setMapCenter] = useState(() => {
     try { return JSON.parse(localStorage.getItem('sitemap_mapCenter')) ?? null; } catch { return null; }
@@ -140,8 +149,12 @@ export default function SiteMap() {
       const data = response.data.results;
       if (data && data.length > 0) {
         const { lat, lon } = data[0];
-        setCoordinates([parseFloat(lat), parseFloat(lon)]);
+        const newCoords = [parseFloat(lat), parseFloat(lon)];
+        setCoordinates(newCoords);
         setPositionOffset({ lat: 0, lng: 0 });
+        const newKey = `${lat}-${lon}`;
+        setMapKey(newKey);
+        localStorage.setItem('sitemap_mapkey', newKey);
       } else {
         alert('Address not found. Try a more specific address (e.g., "123 Main St, City, NZ")');
       }
@@ -469,12 +482,13 @@ export default function SiteMap() {
             transition: 'transform 0.1s ease-out'
           }}>
             <MapContainer
-              key={`${(mapCenter || getAdjustedCenter())[0]}-${(mapCenter || getAdjustedCenter())[1]}`}
+              key={mapKey}
               center={mapCenter || getAdjustedCenter()}
               zoom={mapZoom}
-                className="w-full h-full"
-                ref={mapRef}
-              >
+              className="w-full h-full"
+              ref={mapRef}
+            >
+              <MapSync center={mapCenter || getAdjustedCenter()} zoom={mapZoom} />
                 <TileLayer
                   url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
                   attribution='&copy; Esri, DigitalGlobe, Earthstar Geographics'
