@@ -325,7 +325,7 @@ export default function SiteMap() {
     canvas.height = gridCellsH * CANVAS_PX_PER_CELL;
     const ctx = canvas.getContext('2d');
 
-    design.grid.forEach(mod => {
+    const drawModule = (mod, img) => {
       const x = (mod.x - minX) * CANVAS_PX_PER_CELL;
       const y = (mod.y - minY) * CANVAS_PX_PER_CELL;
       const w = mod.w * CANVAS_PX_PER_CELL;
@@ -333,20 +333,29 @@ export default function SiteMap() {
 
       ctx.fillStyle = mod.color || '#FDF0EB';
       ctx.fillRect(x, y, w, h);
+
+      if (img) {
+        ctx.drawImage(img, x, y, w, h);
+      }
+
       ctx.strokeStyle = mod.border || '#F15A22';
       ctx.lineWidth = 1.5;
       ctx.strokeRect(x, y, w, h);
+    };
 
-      if (w > 30 && h > 20) {
-        ctx.fillStyle = '#333';
-        ctx.font = `${Math.max(8, Math.min(14, Math.min(w, h) / 4))}px sans-serif`;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(mod.label || mod.type, x + w / 2, y + h / 2);
-      }
+    const loadImageForMod = (mod) => new Promise((resolve) => {
+      if (!mod.floorPlanImage) { resolve({ mod, img: null }); return; }
+      const img = new window.Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = () => resolve({ mod, img });
+      img.onerror = () => resolve({ mod, img: null });
+      img.src = mod.floorPlanImage;
     });
 
-    setFloorPlanOverlay(canvas.toDataURL());
+    Promise.all(design.grid.map(loadImageForMod)).then((results) => {
+      results.forEach(({ mod, img }) => drawModule(mod, img));
+      setFloorPlanOverlay(canvas.toDataURL());
+    });
   }, [design]);
 
   // Calculate overlay bounds based on design dimensions
