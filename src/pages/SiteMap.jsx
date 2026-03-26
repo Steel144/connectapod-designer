@@ -445,7 +445,7 @@ export default function SiteMap() {
          const furn = furnResult.furn || furnResult;
          const furnImg = furnResult.img;
 
-         if (!furn.x || !furn.y || !furn.width || !furn.depth) return;
+         if (furn.x === undefined || furn.y === undefined || !furn.width || !furn.depth) return;
 
          const x = (furn.x - minX) * CANVAS_PX_PER_CELL;
          const y = (furn.y - minY) * CANVAS_PX_PER_CELL;
