@@ -902,7 +902,7 @@ export default function SiteMap() {
             </button>
             <button
               onClick={() => {
-                localStorage.setItem('connectapod_save_details', JSON.stringify(saveDetails));
+                localStorage.setItem('connectapod_save_details', JSON.stringify({ ...saveDetails, address }));
                 setShowSaveModal(false);
               }}
               className="px-3 py-1.5 text-sm bg-[#F15A22] text-white rounded hover:bg-[#d94e1a] transition-all"
