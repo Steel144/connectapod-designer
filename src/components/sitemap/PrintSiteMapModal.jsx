@@ -12,21 +12,8 @@ export default function PrintSiteMapModal({ open, onOpenChange, mapContainerRef,
   const [fileName, setFileName] = useState('site-plan');
 
   const handlePrint = async () => {
-    if (!mapContainerRef?.current) return;
-    
     setLoading(true);
     try {
-      // Capture the map container
-      const canvas = await html2canvas(mapContainerRef.current, {
-        allowTaint: true,
-        useCORS: false,
-        scale: 1,
-        backgroundColor: '#ffffff',
-        logging: false
-      });
-
-      // Create PDF
-      const imgData = canvas.toDataURL('image/png');
       const pdf = new jsPDF({
         orientation: 'landscape',
         unit: 'mm',
@@ -34,31 +21,32 @@ export default function PrintSiteMapModal({ open, onOpenChange, mapContainerRef,
       });
 
       const pageWidth = pdf.internal.pageSize.getWidth();
-      const pageHeight = pdf.internal.pageSize.getHeight();
-      const imgWidth = pageWidth - 10;
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      let yPos = 15;
 
-      // Add header info first
-      pdf.setFontSize(14);
-      pdf.text('SITE PLAN', 14, 10);
-      let yPos = 20;
+      // Add header
+      pdf.setFontSize(16);
+      pdf.text('SITE PLAN', 14, yPos);
+      yPos += 12;
       
       if (saveDetails?.projectName) {
-        pdf.setFontSize(10);
+        pdf.setFontSize(11);
         pdf.text(`Project: ${saveDetails.projectName}`, 14, yPos);
         yPos += 8;
       }
       
       if (siteAddress) {
-        pdf.setFontSize(10);
+        pdf.setFontSize(11);
         pdf.text(`Site Address: ${siteAddress}`, 14, yPos);
         yPos += 8;
       }
 
-      // Add the map image
-      const maxImgHeight = pageHeight - yPos - 10;
-      const finalImgHeight = Math.min(imgHeight, maxImgHeight);
-      pdf.addImage(imgData, 'PNG', 5, yPos, imgWidth, finalImgHeight);
+      yPos += 5;
+
+      // Add timestamp
+      pdf.setFontSize(9);
+      pdf.setTextColor(150, 150, 150);
+      pdf.text(`Generated: ${new Date().toLocaleString()}`, 14, yPos);
+      pdf.setTextColor(0, 0, 0);
 
       // Download
       pdf.save(`${fileName}.pdf`);
