@@ -540,7 +540,7 @@ export default function SiteMap() {
 
               // At Leaflet zoom Z, 1 metre = 2^Z / (111320 * cos(lat)) pixels
               // Simplified: at zoom 20 at ~45° lat, 1m ≈ 0.268px. We use equator approx.
-              const METRES_PER_PX_AT_ZOOM0 = 156543.03; // metres per pixel at zoom 0 (equator)
+              const METRES_PER_PX_AT_ZOOM0 = 78271.52; // metres per pixel at zoom 0 (equator), halved to account for CSS_SCALE=2 map wrapper
               const lat = coordinates ? coordinates[0] : 0;
               const metresToPx = Math.pow(2, mapZoom) / (METRES_PER_PX_AT_ZOOM0 * Math.cos(lat * Math.PI / 180));
 
