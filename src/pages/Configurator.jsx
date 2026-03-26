@@ -1034,20 +1034,17 @@ export default function Configurator() {
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-48">
-                  <DropdownMenuItem onClick={() => setSaveModalOpen(true)} disabled={placedModules.length === 0 || saveMutation.isPending}>
-                    <Save size={13} /> Save to Catalogue
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link to={createPageUrl("Catalogue")} className="flex items-center gap-2 cursor-pointer">
-                      <BookOpen size={13} /> Floor Catalogue
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link to={createPageUrl("WallCatalogue")} className="flex items-center gap-2 cursor-pointer">
-                      <BookOpen size={13} /> Wall Catalogue
-                    </Link>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
+                   <DropdownMenuItem asChild>
+                     <Link to={createPageUrl("Catalogue")} className="flex items-center gap-2 cursor-pointer">
+                       <BookOpen size={13} /> Floor Catalogue
+                     </Link>
+                   </DropdownMenuItem>
+                   <DropdownMenuItem asChild>
+                     <Link to={createPageUrl("WallCatalogue")} className="flex items-center gap-2 cursor-pointer">
+                       <BookOpen size={13} /> Wall Catalogue
+                     </Link>
+                   </DropdownMenuItem>
+                 </DropdownMenuContent>
               </DropdownMenu>
             )}
 
