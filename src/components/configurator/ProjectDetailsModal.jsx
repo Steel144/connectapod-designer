@@ -103,14 +103,13 @@ export default function ProjectDetailsModal({
     }
   };
 
-  const saved = loadDetails();
-  const [projectName, setProjectName] = useState(saved.projectName || "");
-  const [clientFirstName, setClientFirstName] = useState(saved.clientFirstName || "");
-  const [clientFamilyName, setClientFamilyName] = useState(saved.clientFamilyName || "");
-  const [homeAddress, setHomeAddress] = useState(saved.homeAddress || "");
-  const [siteAddress, setSiteAddress] = useState(saved.siteAddress || "");
-  const [email, setEmail] = useState(saved.email || "");
-  const [phone, setPhone] = useState(saved.phone || "");
+  const [projectName, setProjectName] = useState("");
+  const [clientFirstName, setClientFirstName] = useState("");
+  const [clientFamilyName, setClientFamilyName] = useState("");
+  const [homeAddress, setHomeAddress] = useState("");
+  const [siteAddress, setSiteAddress] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [generating, setGenerating] = useState(false);
 
   useEffect(() => {
@@ -124,7 +123,7 @@ export default function ProjectDetailsModal({
       setEmail(s.email || "");
       setPhone(s.phone || "");
     }
-  }, [open, mode]);
+  }, [open]);
 
   const handleSaveDetails = () => {
     const fullClientName = `${clientFirstName} ${clientFamilyName}`.trim();
