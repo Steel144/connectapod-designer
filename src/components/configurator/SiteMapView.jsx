@@ -329,11 +329,11 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
                 });
               }
 
-              const METRES_PER_PX_AT_ZOOM0 = 78271.52 / 2;
+              const METRES_PER_PX_AT_ZOOM0 = 78271.52;
               const lat = coordinates ? coordinates[0] : 0;
               const metresToPx = Math.pow(2, mapZoom) / (METRES_PER_PX_AT_ZOOM0 * Math.cos(lat * Math.PI / 180));
               const canvasPxPerMetre = CANVAS_PX_PER_CELL / CELL_M;
-              const cssScale = (metresToPx / canvasPxPerMetre) * planScaleMultiplier;
+              const cssScale = (metresToPx / canvasPxPerMetre) * planScaleMultiplier * CSS_SCALE;
 
               return (
                 <div key={`overlay-${mapZoom}`} className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
