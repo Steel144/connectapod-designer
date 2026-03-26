@@ -814,7 +814,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                 </button>
               </div>
 
-              {/* Face labels - positions swap based on rotation to stay aligned with module faces */}
+              {/* Face labels - buttons swap positions when module rotates to stay aligned with physical faces */}
                {(() => {
                  const isConnection = mod.chassis === "C" || isConnectionModule(mod);
                  const isLeftEnd = mod.chassis === "LF" || mod.chassis === "ER";
@@ -839,23 +839,13 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                  }
 
                 const isVisibleBtn = isSelected || hoveredModuleId === mod.id;
-                
-                // Button positions swap when module rotates 180° to stay aligned with physical faces
-                const wPosition = isRotated180 ? 'bottom-1' : 'top-1';
-                const yPosition = isRotated180 ? 'top-1' : 'bottom-1';
-                const zPosition = isRotated180 ? 'right-1' : 'left-1';
-                const xPosition = isRotated180 ? 'left-1' : 'right-1';
-                const wTransform = isRotated180 ? 'translateX(-50%) rotate(180deg)' : 'translateX(-50%)';
-                const yTransform = isRotated180 ? 'translateX(-50%) rotate(180deg)' : 'translateX(-50%)';
-                const zTransform = isRotated180 ? 'translateY(-50%) rotate(180deg)' : 'translateY(-50%)';
-                const xTransform = isRotated180 ? 'translateY(-50%) rotate(180deg)' : 'translateY(-50%)';
 
                 return (
                   <>
-                    {showW && <button onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); setFaceMenuOpen({ module: mod, face: 'W', x: e.clientX, y: e.clientY }); }} className={`absolute ${wPosition} left-1/2 px-2 py-0.5 bg-white text-gray-900 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-sm z-20 ${!isVisibleBtn ? 'opacity-0 pointer-events-none' : ''}`} style={{ transform: wTransform }}>W</button>}
-                    {showX && <button onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); setFaceMenuOpen({ module: mod, face: 'X', x: e.clientX, y: e.clientY }); }} className={`absolute ${xPosition} top-1/2 px-2 py-0.5 bg-white text-gray-900 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-sm z-20 ${!isVisibleBtn ? 'opacity-0 pointer-events-none' : ''}`} style={{ transform: xTransform }}>X</button>}
-                    {showY && <button onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); setFaceMenuOpen({ module: mod, face: 'Y', x: e.clientX, y: e.clientY }); }} className={`absolute ${yPosition} left-1/2 px-2 py-0.5 bg-white text-gray-900 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-sm z-20 ${!isVisibleBtn ? 'opacity-0 pointer-events-none' : ''}`} style={{ transform: yTransform }}>Y</button>}
-                    {showZ && <button onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); setFaceMenuOpen({ module: mod, face: 'Z', x: e.clientX, y: e.clientY }); }} className={`absolute ${zPosition} top-1/2 px-2 py-0.5 bg-white text-gray-900 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-sm z-20 ${!isVisibleBtn ? 'opacity-0 pointer-events-none' : ''}`} style={{ transform: zTransform }}>Z</button>}
+                    {showW && <button onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); setFaceMenuOpen({ module: mod, face: 'W', x: e.clientX, y: e.clientY }); }} className={`absolute left-1/2 px-2 py-0.5 bg-white text-gray-900 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-sm z-20 ${!isVisibleBtn ? 'opacity-0 pointer-events-none' : ''}`} style={{ top: isRotated180 ? 'auto' : '-2px', bottom: isRotated180 ? '-2px' : 'auto', transform: 'translateX(-50%)' }}>W</button>}
+                    {showX && <button onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); setFaceMenuOpen({ module: mod, face: 'X', x: e.clientX, y: e.clientY }); }} className={`absolute top-1/2 px-2 py-0.5 bg-white text-gray-900 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-sm z-20 ${!isVisibleBtn ? 'opacity-0 pointer-events-none' : ''}`} style={{ right: isRotated180 ? 'auto' : '-2px', left: isRotated180 ? '-2px' : 'auto', transform: 'translateY(-50%)' }}>X</button>}
+                    {showY && <button onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); setFaceMenuOpen({ module: mod, face: 'Y', x: e.clientX, y: e.clientY }); }} className={`absolute left-1/2 px-2 py-0.5 bg-white text-gray-900 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-sm z-20 ${!isVisibleBtn ? 'opacity-0 pointer-events-none' : ''}`} style={{ bottom: isRotated180 ? 'auto' : '-2px', top: isRotated180 ? '-2px' : 'auto', transform: 'translateX(-50%)' }}>Y</button>}
+                    {showZ && <button onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); setFaceMenuOpen({ module: mod, face: 'Z', x: e.clientX, y: e.clientY }); }} className={`absolute top-1/2 px-2 py-0.5 bg-white text-gray-900 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-sm z-20 ${!isVisibleBtn ? 'opacity-0 pointer-events-none' : ''}`} style={{ left: isRotated180 ? 'auto' : '-2px', right: isRotated180 ? '-2px' : 'auto', transform: 'translateY(-50%)' }}>Z</button>}
                   </>
                 );
                })()}
