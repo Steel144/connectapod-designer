@@ -269,7 +269,7 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
                       </div>
 
                       <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
-                        {(pavNum === 2 ? ["Z", "X"] : ["Y", "W"]).map(face => {
+                        {["W", "Y", "Z", "X"].map(face => {
                           const faceLabels = { Y: "Y Face (Outside/Top)", W: "W Face (Outside/Bottom)", Z: "Z Face (West)", X: "X Face (East)" };
                           const hasAny = mods.some(mod => findWall(mod, face));
                           if (!hasAny) return null;
