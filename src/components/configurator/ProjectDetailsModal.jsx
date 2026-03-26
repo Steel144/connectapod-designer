@@ -250,41 +250,68 @@ export default function ProjectDetailsModal({
 
     y += 4;
 
-    // Modules section
-    doc.setFillColor(241, 90, 34);
-    doc.rect(col1, y, pageW - 2 * margin, 7, "F");
-    doc.setTextColor(255, 255, 255);
-    doc.setFontSize(9);
-    doc.setFont("helvetica", "bold");
-    doc.text("MODULES", col1 + 3, y + 5);
-    doc.text("SQM", pageW - margin - 60, y + 5, { align: "right" });
-    doc.text("UNIT PRICE", pageW - margin - 20, y + 5, { align: "right" });
-    doc.text("TOTAL", col2, y + 5, { align: "right" });
-    y += 10;
-
+    // Group modules and their attached walls
     const moduleGroups = {};
     placedModules.forEach(m => {
-      const key = m.label || m.type;
-      if (!moduleGroups[key]) moduleGroups[key] = { label: key, sqm: m.sqm || 0, price: m.price || 0, count: 0 };
+      const key = m.id || m.label || m.type;
+      if (!moduleGroups[key]) {
+        moduleGroups[key] = { 
+          module: m, 
+          label: m.label || m.type, 
+          sqm: m.sqm || 0, 
+          price: m.price || 0, 
+          count: 0,
+          attachedWalls: []
+        };
+      }
       moduleGroups[key].count += 1;
     });
 
-    doc.setTextColor(30, 30, 30);
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(8.5);
+    // Assign walls to modules based on moduleId or groupKey
+    walls.forEach(w => {
+      const moduleId = w.moduleId || w.groupKey;
+      if (moduleId && moduleGroups[moduleId]) {
+        moduleGroups[moduleId].attachedWalls.push(w);
+      }
+    });
+
+    // Render each module with its attached walls
     let rowAlt = false;
     Object.values(moduleGroups).forEach(g => {
+      // Module row
       if (rowAlt) {
         doc.setFillColor(252, 252, 252);
         doc.rect(col1, y - 2, pageW - 2 * margin, 8, "F");
       }
       rowAlt = !rowAlt;
       const label = g.count > 1 ? `${g.label} ×${g.count}` : g.label;
+      doc.setTextColor(30, 30, 30);
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(8.5);
       doc.text(label, col1 + 2, y + 4);
       doc.text(`${(g.sqm * g.count).toFixed(1)} m²`, pageW - margin - 60, y + 4, { align: "right" });
       doc.text(`$${g.price.toLocaleString()}`, pageW - margin - 20, y + 4, { align: "right" });
       doc.text(`$${(g.price * g.count).toLocaleString()}`, col2, y + 4, { align: "right" });
       y += 8;
+
+      // Attached walls (indented)
+      if (g.attachedWalls.length > 0) {
+        g.attachedWalls.forEach(wall => {
+          if (rowAlt) {
+            doc.setFillColor(252, 252, 252);
+            doc.rect(col1, y - 2, pageW - 2 * margin, 8, "F");
+          }
+          rowAlt = !rowAlt;
+          doc.setTextColor(100, 100, 100);
+          doc.setFont("helvetica", "italic");
+          doc.setFontSize(8);
+          const wallLabel = wall.label || wall.type || "Wall";
+          doc.text(`  └ ${wallLabel}`, col1 + 2, y + 4);
+          doc.text(wall.face || "-", pageW - margin - 40, y + 4, { align: "right" });
+          doc.text(`$${(wall.price || 0).toLocaleString()}`, col2, y + 4, { align: "right" });
+          y += 8;
+        });
+      }
     });
 
     doc.setDrawColor(200, 200, 200);
@@ -292,56 +319,10 @@ export default function ProjectDetailsModal({
     y += 5;
     doc.setFont("helvetica", "bold");
     doc.setFontSize(9);
-    doc.text("Modules Subtotal", col1 + 2, y + 3);
-    doc.text(`$${modulesTotal.toLocaleString()}`, col2, y + 3, { align: "right" });
-    y += 10;
-
-    // Walls section
-    if (walls.length > 0) {
-      doc.setFillColor(241, 90, 34);
-      doc.rect(col1, y, pageW - 2 * margin, 7, "F");
-      doc.setTextColor(255, 255, 255);
-      doc.setFont("helvetica", "bold");
-      doc.setFontSize(9);
-      doc.text("WALL PANELS", col1 + 3, y + 5);
-      doc.text("FACE", pageW - margin - 40, y + 5, { align: "right" });
-      doc.text("TOTAL", col2, y + 5, { align: "right" });
-      y += 10;
-
-      const wallGroups = {};
-      walls.forEach(w => {
-        const key = w.label || w.type;
-        if (!wallGroups[key]) wallGroups[key] = { label: key, face: w.face || "-", price: w.price || 0, count: 0 };
-        wallGroups[key].count += 1;
-      });
-
-      doc.setTextColor(30, 30, 30);
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(8.5);
-      rowAlt = false;
-      Object.values(wallGroups).forEach(g => {
-        if (rowAlt) {
-          doc.setFillColor(252, 252, 252);
-          doc.rect(col1, y - 2, pageW - 2 * margin, 8, "F");
-        }
-        rowAlt = !rowAlt;
-        const label = g.count > 1 ? `${g.label} ×${g.count}` : g.label;
-        doc.text(label, col1 + 2, y + 4);
-        doc.text(g.face, pageW - margin - 40, y + 4, { align: "right" });
-        doc.text(`$${(g.price * g.count).toLocaleString()}`, col2, y + 4, { align: "right" });
-        y += 8;
-      });
-
-      doc.setDrawColor(200, 200, 200);
-      doc.line(col1, y, col2, y);
-      y += 5;
-      doc.setFont("helvetica", "bold");
-      doc.setFontSize(9);
-      doc.setTextColor(30, 30, 30);
-      doc.text("Wall Panels Subtotal", col1 + 2, y + 3);
-      doc.text(`$${wallsTotal.toLocaleString()}`, col2, y + 3, { align: "right" });
-      y += 12;
-    }
+    doc.setTextColor(30, 30, 30);
+    doc.text("Total", col1 + 2, y + 3);
+    doc.text(`$${grandTotal.toLocaleString()}`, col2, y + 3, { align: "right" });
+    y += 12;
 
     // Grand total
     y += 4;
