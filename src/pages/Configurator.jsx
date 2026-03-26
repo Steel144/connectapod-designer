@@ -1294,9 +1294,18 @@ export default function Configurator() {
                            <img src={selectedModule.floorPlanImage} alt={selectedModule.label} className="w-full h-full object-contain" style={{ transform: `rotate(${selectedModule.rotation || 0}deg) ${selectedModule.flipped ? 'scaleX(-1)' : ''}` }} />
                            {/* Face labels on edges */}
                            <button onClick={() => setSelectedFace("W")} className="absolute top-1 left-1/2 -translate-x-1/2 px-2 py-1 bg-white text-gray-900 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-md">W</button>
-                           <button onClick={() => setSelectedFace(selectedModule.flipped ? "Z" : "X")} className="absolute right-1 top-1/2 -translate-y-1/2 px-2 py-1 bg-white text-gray-900 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-md">{selectedModule.flipped ? "Z" : "X"}</button>
+                           {selectedModule.flipped ? (
+                             <>
+                               <button onClick={() => setSelectedFace("Z")} className="absolute right-1 top-1/2 -translate-y-1/2 px-2 py-1 bg-white text-gray-900 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-md">Z</button>
+                               <button onClick={() => setSelectedFace("X")} className="absolute left-1 top-1/2 -translate-y-1/2 px-2 py-1 bg-white text-gray-900 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-md">X</button>
+                             </>
+                           ) : (
+                             <>
+                               <button onClick={() => setSelectedFace("X")} className="absolute right-1 top-1/2 -translate-y-1/2 px-2 py-1 bg-white text-gray-900 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-md">X</button>
+                               <button onClick={() => setSelectedFace("Z")} className="absolute left-1 top-1/2 -translate-y-1/2 px-2 py-1 bg-white text-gray-900 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-md">Z</button>
+                             </>
+                           )}
                            <button onClick={() => setSelectedFace("Y")} className="absolute bottom-1 left-1/2 -translate-x-1/2 px-2 py-1 bg-white text-gray-900 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-md">Y</button>
-                           <button onClick={() => setSelectedFace(selectedModule.flipped ? "X" : "Z")} className="absolute left-1 top-1/2 -translate-y-1/2 px-2 py-1 bg-white text-gray-900 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-md">{selectedModule.flipped ? "X" : "Z"}</button>
                          </div>
                          <div className="flex justify-between items-center text-xs border-t border-gray-200 pt-2">
                            <span className="text-gray-600">{selectedModule.sqm?.toFixed(1)} m²</span>
