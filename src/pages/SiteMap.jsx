@@ -24,12 +24,20 @@ export default function SiteMap() {
   const mapRef = useRef(null);
   const overlayRef = useRef(null);
 
-  const [mapZoom, setMapZoom] = useState(21);
+  const [mapZoom, setMapZoom] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('sitemap_mapZoom')) ?? 21; } catch { return 21; }
+  });
   const [siteBounds, setSiteBounds] = useState(null);
   const [boundaryInput, setBoundaryInput] = useState('');
-  const [overlayRotation, setOverlayRotation] = useState(0);
-  const [positionOffset, setPositionOffset] = useState({ lat: 0, lng: 0 });
-  const [planScaleMultiplier, setPlanScaleMultiplier] = useState(1);
+  const [overlayRotation, setOverlayRotation] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('sitemap_rotation')) ?? 0; } catch { return 0; }
+  });
+  const [positionOffset, setPositionOffset] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('sitemap_offset')) ?? { lat: 0, lng: 0 }; } catch { return { lat: 0, lng: 0 }; }
+  });
+  const [planScaleMultiplier, setPlanScaleMultiplier] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('sitemap_scale')) ?? 1; } catch { return 1; }
+  });
 
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -48,6 +56,12 @@ export default function SiteMap() {
     if (!coordinates) return [0, 0];
     return [coordinates[0] + positionOffset.lat, coordinates[1] + positionOffset.lng];
   };
+
+  // Persist map state to localStorage
+  useEffect(() => { localStorage.setItem('sitemap_mapZoom', JSON.stringify(mapZoom)); }, [mapZoom]);
+  useEffect(() => { localStorage.setItem('sitemap_rotation', JSON.stringify(overlayRotation)); }, [overlayRotation]);
+  useEffect(() => { localStorage.setItem('sitemap_offset', JSON.stringify(positionOffset)); }, [positionOffset]);
+  useEffect(() => { localStorage.setItem('sitemap_scale', JSON.stringify(planScaleMultiplier)); }, [planScaleMultiplier]);
 
   // Load address from print details on mount and auto-geocode
   useEffect(() => {
