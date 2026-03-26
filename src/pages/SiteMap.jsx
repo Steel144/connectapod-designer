@@ -14,6 +14,15 @@ import { useQuery } from '@tanstack/react-query';
 
 const FLOOR_PLAN_SCALE = 0.32;
 
+function MapDragSync({ onDragEnd }) {
+  const map = useMap();
+  useEffect(() => {
+    map.on('dragend', onDragEnd);
+    return () => map.off('dragend', onDragEnd);
+  }, [map, onDragEnd]);
+  return null;
+}
+
 function MapSync({ center, zoom, skipRef }) {
   const map = useMap();
   const prevCenter = useRef(null);
@@ -73,9 +82,6 @@ export default function SiteMap() {
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
 
-  const isDraggingRef = useRef(false);
-  const dragStartRef = useRef(null);
-  const liveOffsetRef = useRef(null); // tracks offset during drag without re-renders
   const silentOffsetUpdate = useRef(false);
   const [showLabels, setShowLabels] = useState(true);
 
@@ -233,49 +239,15 @@ export default function SiteMap() {
     }
   };
 
-  const handleMapMouseDown = (e) => {
-    isDraggingRef.current = true;
-    dragStartRef.current = { x: e.clientX, y: e.clientY };
-    liveOffsetRef.current = { ...positionOffset };
-  };
-
-  const handleMapMouseMove = (e) => {
-    if (!isDraggingRef.current || !dragStartRef.current || !mapRef.current) return;
-
-    const map = mapRef.current;
-    const dx = e.clientX - dragStartRef.current.x;
-    const dy = e.clientY - dragStartRef.current.y;
-    dragStartRef.current = { x: e.clientX, y: e.clientY };
-
-    // Convert screen pixel delta to lat/lng delta using Leaflet's own conversion.
-    // The map div has CSS scale(2) applied, so 1 screen pixel = 0.5 map pixels.
-    // The map div also has CSS rotation, so we un-rotate the delta first.
-    const rad = (overlayRotation * Math.PI) / 180;
-    // Un-rotate: screen delta → map-north-up pixel delta
-    const mpx = (dx * Math.cos(rad) + dy * Math.sin(rad)) / 2;
-    const mpy = (-dx * Math.sin(rad) + dy * Math.cos(rad)) / 2;
-
-    // Use Leaflet to go from current center pixel → shifted pixel → new latlng
-    const currentCenter = map.getCenter();
-    const centerPx = map.project(currentCenter, mapZoom);
-    const newLatLng = map.unproject(L.point(centerPx.x - mpx, centerPx.y - mpy), mapZoom);
-
-    liveOffsetRef.current = {
-      lat: newLatLng.lat - coordinates[0],
-      lng: newLatLng.lng - coordinates[1],
-    };
-
-    map.setView(newLatLng, mapZoom, { animate: false });
-  };
-
-  const handleMapMouseUp = () => {
-    if (isDraggingRef.current && liveOffsetRef.current) {
-      // Commit offset to state — MapSync will skip setView via skipRef
-      silentOffsetUpdate.current = true;
-      setPositionOffset(liveOffsetRef.current);
-    }
-    isDraggingRef.current = false;
-    dragStartRef.current = null;
+  // Sync offset from map position after Leaflet drag ends
+  const handleMapDragEnd = () => {
+    if (!mapRef.current || !coordinates) return;
+    const center = mapRef.current.getCenter();
+    silentOffsetUpdate.current = true;
+    setPositionOffset({
+      lat: center.lat - coordinates[0],
+      lng: center.lng - coordinates[1],
+    });
   };
 
 
@@ -487,13 +459,7 @@ export default function SiteMap() {
 
 
       {/* Map and overlay */}
-      <div 
-        className="flex-1 relative overflow-hidden cursor-grab active:cursor-grabbing"
-        onMouseDown={handleMapMouseDown}
-        onMouseMove={handleMapMouseMove}
-        onMouseUp={handleMapMouseUp}
-        onMouseLeave={handleMapMouseUp}
-      >
+      <div className="flex-1 relative overflow-hidden">
         {coordinates ? (
         <>
           {/* Map behind - rotates and moves */}
@@ -510,6 +476,7 @@ export default function SiteMap() {
               ref={mapRef}
             >
               <MapSync center={getAdjustedCenter()} zoom={mapZoom} skipRef={silentOffsetUpdate} />
+              <MapDragSync onDragEnd={handleMapDragEnd} />
                 <TileLayer
                   url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
                   attribution='&copy; Esri, DigitalGlobe, Earthstar Geographics'
