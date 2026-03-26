@@ -132,12 +132,13 @@ export default function SiteMap() {
   }, []);
 
   // Load most recent design
-  useEffect(() => {
-    const loadDesign = async () => {
-      try {
-        const designs = await base44.entities.HomeDesign.list('-updated_date', 1);
-        if (designs.length > 0) {
-          setDesign(designs[0]);
+   useEffect(() => {
+     const loadDesign = async () => {
+       try {
+         const designs = await base44.entities.HomeDesign.list('-updated_date', 1);
+         if (designs.length > 0) {
+           console.log('Design loaded:', designs[0].name, 'Furniture:', designs[0].furniture);
+           setDesign(designs[0]);
           if (coordinates) {
             setOverlayPos({ lat: coordinates[0], lng: coordinates[1] });
           }
