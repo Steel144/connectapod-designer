@@ -569,7 +569,7 @@ export default function SiteMap() {
           </DropdownMenu>
 
           {/* 2D / Elevations / Save / Estimate / Print buttons */}
-          <div className="flex border border-gray-200 overflow-hidden">
+          <div className="flex border border-gray-200 overflow-hidden shrink-0">
             <Link to="/Configurator" className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-white text-gray-600 hover:text-[#F15A22] transition-all" style={{ clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 50%, calc(100% - 6px) 100%, 0 100%)" }}>
               <Grid2X2 size={13} /> 2D
             </Link>
@@ -608,7 +608,7 @@ export default function SiteMap() {
           </DropdownMenu>
 
           {/* Zoom controls */}
-          <div className="flex border border-gray-200 overflow-hidden">
+          <div className="flex border border-gray-200 overflow-hidden shrink-0">
             <button onClick={() => setMapZoom(z => Math.max(10, z - 1))} title="Zoom out" className="px-2.5 py-1.5 text-xs text-gray-600 hover:text-[#F15A22] transition-all">
               <ZoomOut size={13} />
             </button>
