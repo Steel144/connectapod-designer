@@ -271,8 +271,9 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
                       <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
                         {["W", "Y", "Z", "X"].map(face => {
                           const faceLabels = { Y: "Y Face (Outside/Top)", W: "W Face (Outside/Bottom)", Z: "Z Face (West)", X: "X Face (East)" };
+                          const isEndFace = face === "Z" || face === "X";
                           const hasAny = mods.some(mod => findWall(mod, face));
-                          if (!hasAny) return null;
+                          if (!hasAny && !isEndFace) return null;
                           return (
                             <div key={face}>
                               <div style={{ fontSize: "10px", color: "#666", marginBottom: "12px", fontWeight: "500" }}>{faceLabels[face]}</div>
@@ -281,6 +282,16 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
                                   const wall = findWall(mod, face);
                                   return wall ? (
                                     <ElevationImage key={`${pavNum}-${face}-${idx}`} wall={wall} label={`${face}${idx + 1}`} face={face} isPavilion={true} />
+                                  ) : isEndFace ? (
+                                    <div key={`${pavNum}-${face}-${idx}`} className="flex flex-col items-center gap-2 shrink-0">
+                                      <div className="overflow-hidden bg-white border border-gray-200 flex items-center justify-center" style={{ height: `${imgHeight}px`, width: `${Math.round((zoom / 100) * 100)}px` }}>
+                                        <span className="text-[10px] font-semibold text-gray-400 text-center">No wall</span>
+                                      </div>
+                                      <div className="text-center">
+                                        <span className="inline-block bg-[#F15A22] text-white text-[10px] font-bold px-2 py-0.5 rounded mb-1">{face}</span>
+                                        <p className="text-[11px] font-medium text-gray-500 whitespace-nowrap">{`${face}${idx + 1}`}</p>
+                                      </div>
+                                    </div>
                                   ) : null;
                                 })}
                               </div>
