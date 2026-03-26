@@ -329,29 +329,21 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
                 });
               }
 
-              const designWidthM = (maxX - minX) * CELL_M;
-              const designHeightM = (maxY - minY) * CELL_M;
-              
               const METRES_PER_PX_AT_ZOOM0 = 78271.52;
               const lat = coordinates ? coordinates[0] : 0;
-              const metresPerPx = (METRES_PER_PX_AT_ZOOM0 * Math.cos(lat * Math.PI / 180)) / Math.pow(2, mapZoom);
-              const pxPerMetre = 1 / metresPerPx;
+              const metresToPx = Math.pow(2, mapZoom) / (METRES_PER_PX_AT_ZOOM0 * Math.cos(lat * Math.PI / 180));
               const canvasPxPerMetre = CANVAS_PX_PER_CELL / CELL_M;
-              const baseScale = pxPerMetre / canvasPxPerMetre;
-              const cssScale = baseScale * planScaleMultiplier;
+              const cssScale = (metresToPx / canvasPxPerMetre) * planScaleMultiplier;
 
               return (
-                <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10" style={{
-                  transform: `translate(${positionOffset.lng * pxPerMetre}px, ${positionOffset.lat * pxPerMetre}px)`,
-                  transition: 'transform 0.1s ease-out'
-                }}>
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
                   <img
                     src={floorPlanOverlay}
                     alt="Floor Plan"
                     style={{
-                      width: `${designWidthM * pxPerMetre}px`,
-                      height: `${designHeightM * pxPerMetre}px`,
-                      transform: `scale(${cssScale}) rotate(${overlayRotation}deg)`,
+                      width: `${(maxX - minX) * CANVAS_PX_PER_CELL}px`,
+                      height: `${(maxY - minY) * CANVAS_PX_PER_CELL}px`,
+                      transform: `scale(${cssScale})`,
                       transformOrigin: 'center',
                       transition: 'transform 0.1s ease-out',
                       imageRendering: 'pixelated',
