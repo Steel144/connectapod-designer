@@ -449,8 +449,8 @@ export default function SiteMap() {
 
          const x = (furn.x - minX) * CANVAS_PX_PER_CELL;
          const y = (furn.y - minY) * CANVAS_PX_PER_CELL;
-         const w = furn.width * CANVAS_PX_PER_CELL;
-         const h = furn.depth * CANVAS_PX_PER_CELL;
+         const w = (furn.width || 1) * CANVAS_PX_PER_CELL;
+         const h = (furn.depth || 1) * CANVAS_PX_PER_CELL;
 
          ctx.save();
          ctx.translate(x + w / 2, y + h / 2);
@@ -461,10 +461,10 @@ export default function SiteMap() {
            ctx.drawImage(furnImg, 0, 0, w, h);
          } else {
            // Fallback: simple colored box if no image
-           ctx.fillStyle = '#8B6F47';
+           ctx.fillStyle = '#D4A574';
            ctx.fillRect(0, 0, w, h);
-           ctx.strokeStyle = '#5D4E37';
-           ctx.lineWidth = 1.5;
+           ctx.strokeStyle = '#8B6F47';
+           ctx.lineWidth = 1;
            ctx.strokeRect(0, 0, w, h);
          }
 
