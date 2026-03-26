@@ -369,15 +369,16 @@ export default function ProjectDetailsModal({
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className={`${isEstimate ? 'max-w-md' : 'max-w-sm'} rounded-none`}>
+      <DialogContent className={`${isEstimate ? 'max-w-md' : 'max-w-sm'} rounded-none`} aria-describedby="dialog-description">
         <DialogHeader>
           <DialogTitle className="text-base font-bold">
             {isEstimate ? "Generate Estimate PDF" : isPrint ? `Print ${printMode === "plans" ? "Floor Plan" : "Elevations"}` : ""}
           </DialogTitle>
         </DialogHeader>
 
-        {isEstimate && <p className="text-xs text-gray-500 -mt-2">These details will appear in the estimate.</p>}
-        {isPrint && <p className="text-xs text-gray-500 -mt-2">These details will appear in the title block.</p>}
+        <p id="dialog-description" className="text-xs text-gray-500 -mt-2">
+          {isEstimate ? "These details will appear in the estimate." : isPrint ? "These details will appear in the title block." : ""}
+        </p>
 
         {/* Cost summary for estimate */}
         {isEstimate && costSummary && (
