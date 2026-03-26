@@ -814,50 +814,48 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                 </button>
               </div>
 
-              {/* Face labels - conditionally shown based on module type */}
+              {/* Face labels - positions swap based on rotation to stay aligned with module faces */}
                {(() => {
                  const isConnection = mod.chassis === "C" || isConnectionModule(mod);
                  const isLeftEnd = mod.chassis === "LF" || mod.chassis === "ER";
                  const isRightEnd = mod.chassis === "RF" || mod.chassis === "LR";
-                 const isDeck = mod.description && mod.description.includes("Deck");
                  const rotation = mod.rotation || 0;
                  const isRotated180 = rotation === 180;
 
-                 // Standard: W, Y | Left end: W, Z, Y | Right end: W, X, Y | Deck: W, Y | Connection: Z, X
-                 // When rotated 180°, end walls swap: Z↔X
                  const showW = !isConnection;
                  let showX = isConnection || isRightEnd;
                  let showY = !isConnection;
                  let showZ = (isLeftEnd || isConnection);
 
-                 // Swap Z/X for rotated end modules
-                 if ((isLeftEnd || isRightEnd) && isRotated180) {
-                   [showZ, showX] = [showX, showZ];
-                 }
-
                  // For end modules, flip swaps which end wall is visible
-                 // Left end (LF/ER): shows Z when not flipped, X when flipped
-                 // Right end (RF/LR): shows X when not flipped, Z when flipped
                  if (isLeftEnd || isRightEnd) {
                    if (mod.flipped) {
-                     // Swapped: left end shows X, right end shows Z
                      showZ = isRightEnd;
                      showX = isLeftEnd;
                    } else {
-                     // Normal: left end shows Z, right end shows X
                      showZ = isLeftEnd;
                      showX = isRightEnd;
                    }
                  }
 
                 const isVisibleBtn = isSelected || hoveredModuleId === mod.id;
+                
+                // Button positions swap when module rotates 180° to stay aligned with physical faces
+                const wPosition = isRotated180 ? 'bottom-1' : 'top-1';
+                const yPosition = isRotated180 ? 'top-1' : 'bottom-1';
+                const zPosition = isRotated180 ? 'right-1' : 'left-1';
+                const xPosition = isRotated180 ? 'left-1' : 'right-1';
+                const wTransform = isRotated180 ? 'translateX(-50%) rotate(180deg)' : 'translateX(-50%)';
+                const yTransform = isRotated180 ? 'translateX(-50%) rotate(180deg)' : 'translateX(-50%)';
+                const zTransform = isRotated180 ? 'translateY(-50%) rotate(180deg)' : 'translateY(-50%)';
+                const xTransform = isRotated180 ? 'translateY(-50%) rotate(180deg)' : 'translateY(-50%)';
 
                 return (
                   <>
-                    {showW && <button onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); setFaceMenuOpen({ module: mod, face: 'W', x: e.clientX, y: e.clientY }); }} className={`absolute top-1 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-white text-gray-900 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-sm z-20 ${!isVisibleBtn ? 'opacity-0 pointer-events-none' : ''}`}>W</button>}
-                    {showX && <button onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); setFaceMenuOpen({ module: mod, face: 'X', x: e.clientX, y: e.clientY }); }} className={`absolute right-1 top-1/2 -translate-y-1/2 px-2 py-0.5 bg-white text-gray-900 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-sm z-20 ${!isVisibleBtn ? 'opacity-0 pointer-events-none' : ''}`}>X</button>}
-                    {showY && <button onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); setFaceMenuOpen({ module: mod, face: 'Y', x: e.clientX, y: e.clientY }); }} className={`absolute bottom-1 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-white text-gray-900 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-sm z-20 ${!isVisibleBtn ? 'opacity-0 pointer-events-none' : ''}`}>Y</button>}
-                    {showZ && <button onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); setFaceMenuOpen({ module: mod, face: 'Z', x: e.clientX, y: e.clientY }); }} className={`absolute left-1 top-1/2 -translate-y-1/2 px-2 py-0.5 bg-white text-gray-900 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-sm z-20 ${!isVisibleBtn ? 'opacity-0 pointer-events-none' : ''}`}>Z</button>}
+                    {showW && <button onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); setFaceMenuOpen({ module: mod, face: 'W', x: e.clientX, y: e.clientY }); }} className={`absolute ${wPosition} left-1/2 px-2 py-0.5 bg-white text-gray-900 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-sm z-20 ${!isVisibleBtn ? 'opacity-0 pointer-events-none' : ''}`} style={{ transform: wTransform }}>W</button>}
+                    {showX && <button onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); setFaceMenuOpen({ module: mod, face: 'X', x: e.clientX, y: e.clientY }); }} className={`absolute ${xPosition} top-1/2 px-2 py-0.5 bg-white text-gray-900 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-sm z-20 ${!isVisibleBtn ? 'opacity-0 pointer-events-none' : ''}`} style={{ transform: xTransform }}>X</button>}
+                    {showY && <button onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); setFaceMenuOpen({ module: mod, face: 'Y', x: e.clientX, y: e.clientY }); }} className={`absolute ${yPosition} left-1/2 px-2 py-0.5 bg-white text-gray-900 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-sm z-20 ${!isVisibleBtn ? 'opacity-0 pointer-events-none' : ''}`} style={{ transform: yTransform }}>Y</button>}
+                    {showZ && <button onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); setFaceMenuOpen({ module: mod, face: 'Z', x: e.clientX, y: e.clientY }); }} className={`absolute ${zPosition} top-1/2 px-2 py-0.5 bg-white text-gray-900 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-sm z-20 ${!isVisibleBtn ? 'opacity-0 pointer-events-none' : ''}`} style={{ transform: zTransform }}>Z</button>}
                   </>
                 );
                })()}
