@@ -357,6 +357,21 @@ export default function SiteMap() {
             <Undo2 size={13} /> Undo
           </button>
 
+          {/* Settings dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-gray-600 hover:text-[#F15A22] border border-gray-200 bg-white hover:border-[#F15A22] transition-all">
+                <Settings size={13} /> Settings
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => setShowLabels(v => !v)} className="flex items-center justify-between cursor-pointer">
+                <span className="flex items-center gap-2"><Eye size={13} /> Show Labels</span>
+                {showLabels && <Check size={12} className="text-[#F15A22]" />}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
           {/* Zoom controls */}
           <div className="flex border border-gray-200 overflow-hidden">
             <button onClick={() => setMapZoom(z => Math.max(10, z - 1))} title="Zoom out" className="px-2.5 py-1.5 text-xs text-gray-600 hover:text-[#F15A22] transition-all">
@@ -393,20 +408,6 @@ export default function SiteMap() {
             </DropdownMenu>
           )}
 
-          {/* Settings dropdown */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-gray-600 hover:text-[#F15A22] border border-gray-200 bg-white hover:border-[#F15A22] transition-all">
-                <Settings size={13} /> Settings
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => setShowLabels(v => !v)} className="flex items-center justify-between cursor-pointer">
-                <span className="flex items-center gap-2"><Eye size={13} /> Show Labels</span>
-                {showLabels && <Check size={12} className="text-[#F15A22]" />}
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
         </div>
       </div>
 
