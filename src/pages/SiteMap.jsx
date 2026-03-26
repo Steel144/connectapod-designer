@@ -412,10 +412,10 @@ export default function SiteMap() {
        // Draw furniture (top layer)
        if (design.furniture && design.furniture.length > 0) {
          design.furniture.forEach(furn => {
-           const x = (furn.x - minX) * CANVAS_PX_PER_CELL;
-           const y = (furn.y - minY) * CANVAS_PX_PER_CELL;
-           const w = furn.width * CANVAS_PX_PER_CELL;
-           const h = furn.depth * CANVAS_PX_PER_CELL;
+           const x = (furn.x / CELL_M - minX) * CANVAS_PX_PER_CELL;
+           const y = (furn.y / CELL_M - minY) * CANVAS_PX_PER_CELL;
+           const w = (furn.width / CELL_M) * CANVAS_PX_PER_CELL;
+           const h = (furn.depth / CELL_M) * CANVAS_PX_PER_CELL;
 
            ctx.save();
            ctx.translate(x + w / 2, y + h / 2);
