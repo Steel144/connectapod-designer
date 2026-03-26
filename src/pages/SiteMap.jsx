@@ -14,6 +14,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { useQuery } from '@tanstack/react-query';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import PrintSiteMapModal from '@/components/sitemap/PrintSiteMapModal';
+import SaveDesignModal from '@/components/configurator/SaveDesignModal';
 
 const CSS_SCALE = 2; // the scale(2) applied to the map wrapper div
 
@@ -90,6 +91,7 @@ export default function SiteMap() {
       return { projectName: '', clientName: '', address: '' }; 
     }
   });
+  const [lastSavedDesignName, setLastSavedDesignName] = useState('');
 
   const { data: designs = [] } = useQuery({
     queryKey: ["homeDesigns"],
@@ -165,9 +167,10 @@ export default function SiteMap() {
           // Calculate dimensions and price from localStorage data
           const totalSqm = localStorageModules.reduce((s, m) => s + (m.sqm || 0), 0);
           const estimatedPrice = localStorageModules.reduce((s, m) => s + (m.price || 0), 0) + localStorageWalls.reduce((s, w) => s + (w.price || 0), 0);
+          const savedName = localStorage.getItem('configurator_last_saved_name') || '';
           
           setDesign({
-            name: localStorage.getItem('configurator_last_saved_name') || 'Current Design',
+            name: savedName || 'Current Design',
             grid: localStorageModules,
             walls: localStorageWalls,
             furniture: localStorageFurniture,
@@ -175,6 +178,7 @@ export default function SiteMap() {
             estimatedPrice,
             moduleCount: localStorageModules.length
           });
+          setLastSavedDesignName(savedName);
           return;
         }
         
@@ -183,6 +187,7 @@ export default function SiteMap() {
         if (designs.length > 0) {
           console.log('Design loaded from DB:', designs[0].name, 'Furniture:', designs[0].furniture);
           setDesign(designs[0]);
+          setLastSavedDesignName(designs[0].name || '');
         }
       } catch (err) {
         console.error('Failed to load design:', err);
@@ -892,60 +897,24 @@ export default function SiteMap() {
         </div>
       )}
 
-      {/* Save Details Modal */}
-      <Dialog open={showSaveModal} onOpenChange={setShowSaveModal}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Save Design Details</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div>
-              <label className="text-sm font-semibold text-gray-700 block mb-2">Project Name</label>
-              <Input
-                type="text"
-                placeholder="e.g., Modern Villa"
-                value={saveDetails.projectName}
-                onChange={(e) => setSaveDetails({ ...saveDetails, projectName: e.target.value })}
-                className="text-sm"
-              />
-            </div>
-            <div>
-              <label className="text-sm font-semibold text-gray-700 block mb-2">Client Name</label>
-              <Input
-                type="text"
-                placeholder="e.g., John Smith"
-                value={saveDetails.clientName}
-                onChange={(e) => setSaveDetails({ ...saveDetails, clientName: e.target.value })}
-                className="text-sm"
-              />
-            </div>
-            <div>
-              <label className="text-sm font-semibold text-gray-700 block mb-2">Site Address</label>
-              <p className="text-sm text-gray-600">{address}</p>
-            </div>
-          </div>
-          <DialogFooter>
-            <button
-              onClick={() => setShowSaveModal(false)}
-              className="px-3 py-1.5 text-sm border border-gray-200 rounded hover:border-gray-300"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={() => {
-                const newSaveDetails = { ...saveDetails, address };
-                localStorage.setItem('connectapod_save_details', JSON.stringify(newSaveDetails));
-                setSaveDetails(newSaveDetails);
-                toast.success('Site details saved');
-                setShowSaveModal(false);
-              }}
-              className="px-3 py-1.5 text-sm bg-[#F15A22] text-white rounded hover:bg-[#d94e1a] transition-all"
-            >
-              Save
-            </button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      {/* Save Design Modal */}
+      <SaveDesignModal
+        open={showSaveModal}
+        onClose={() => setShowSaveModal(false)}
+        onConfirm={(designName, extra) => {
+          // Save to localStorage for Configurator sync
+          localStorage.setItem('configurator_last_saved_name', designName);
+          // Also save project details
+          const newSaveDetails = { ...saveDetails, projectName: designName, address };
+          localStorage.setItem('connectapod_save_details', JSON.stringify(newSaveDetails));
+          setSaveDetails(newSaveDetails);
+          setLastSavedDesignName(designName);
+          toast.success(`Design saved as "${designName}"`);
+          setShowSaveModal(false);
+        }}
+        lastSavedName={lastSavedDesignName}
+        projectName={saveDetails.projectName}
+      />
 
       {/* Print Site Map Modal */}
       <PrintSiteMapModal 
