@@ -199,57 +199,69 @@ export default function PrintablePlansSheet({ placedModules, furniture = [], wal
                 const y = (mod.y - minY + 1) * CELL_SIZE;
                 const w = mod.w * CELL_SIZE;
                 const h = mod.h * CELL_SIZE;
+                const rotation = mod.rotation || 0;
+
+                const transforms = [
+                  `translate(${x + w / 2}, ${y + h / 2})`,
+                  `rotate(${rotation})`,
+                  mod.flipped ? 'scale(-1, 1)' : '',
+                  `translate(${-w / 2}, ${-h / 2})`
+                ].filter(Boolean).join(' ');
 
                 return (
                   <g key={mod.id}>
                     {/* Module background */}
-                    <rect
-                      x={x}
-                      y={y}
-                      width={w}
-                      height={h}
-                      fill="white"
-                      stroke="#111"
-                      strokeWidth="2"
-                    />
-
-                    {/* Floor plan image if available */}
-                    {showPhotoImages && mod.floorPlanImage && (
-                      <image
-                        x={x}
-                        y={y}
+                    <g transform={transforms}>
+                      <rect
+                        x={0}
+                        y={0}
                         width={w}
                         height={h}
-                        href={mod.floorPlanImage}
-                        preserveAspectRatio="xMidYMid slice"
+                        fill="white"
+                        stroke="#111"
+                        strokeWidth="2"
                       />
-                    )}
+
+                      {/* Floor plan image if available */}
+                      {showPhotoImages && mod.floorPlanImage && (
+                        <image
+                          x={0}
+                          y={0}
+                          width={w}
+                          height={h}
+                          href={mod.floorPlanImage}
+                          preserveAspectRatio="xMidYMid slice"
+                        />
+                      )}
+                    </g>
 
                     {/* Grid lines inside */}
-                    {[...Array(mod.w)].map((_, i) => (
-                      <line
-                        key={`v-${i}`}
-                        x1={x + (i + 1) * CELL_SIZE}
-                        y1={y}
-                        x2={x + (i + 1) * CELL_SIZE}
-                        y2={y + h}
-                        stroke="#e5e7eb"
-                        strokeWidth="0.5"
-                        opacity="0.5"
-                      />
-                    ))}
-                    {[...Array(mod.h)].map((_, i) => (
-                      <line
-                        key={`h-${i}`}
-                        x1={x}
-                        y1={y + (i + 1) * CELL_SIZE}
-                        x2={x + w}
-                        y2={y + (i + 1) * CELL_SIZE}
-                        stroke="#e5e7eb"
-                        strokeWidth="0.5"
-                        opacity="0.5"
-                      />
-                    ))}
+                    <g transform={transforms}>
+                      {[...Array(mod.w)].map((_, i) => (
+                        <line
+                          key={`v-${i}`}
+                          x1={(i + 1) * CELL_SIZE}
+                          y1={0}
+                          x2={(i + 1) * CELL_SIZE}
+                          y2={h}
+                          stroke="#e5e7eb"
+                          strokeWidth="0.5"
+                          opacity="0.5"
+                        />
+                      ))}
+                      {[...Array(mod.h)].map((_, i) => (
+                        <line
+                          key={`h-${i}`}
+                          x1={0}
+                          y1={(i + 1) * CELL_SIZE}
+                          x2={w}
+                          y2={(i + 1) * CELL_SIZE}
+                          stroke="#e5e7eb"
+                          strokeWidth="0.5"
+                          opacity="0.5"
+                        />
+                      ))}
+                    </g>
 
                     {/* Dimensions */}
 
