@@ -835,14 +835,18 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                    [showZ, showX] = [showX, showZ];
                  }
 
-                 // Visibility based on flip state: Z when not flipped, X when flipped
-                 if (showZ || showX) {
+                 // For end modules, flip swaps which end wall is visible
+                 // Left end (LF/ER): shows Z when not flipped, X when flipped
+                 // Right end (RF/LR): shows X when not flipped, Z when flipped
+                 if (isLeftEnd || isRightEnd) {
                    if (mod.flipped) {
-                     showZ = false;
-                     showX = true;
+                     // Swapped: left end shows X, right end shows Z
+                     showZ = isRightEnd;
+                     showX = isLeftEnd;
                    } else {
-                     showZ = true;
-                     showX = false;
+                     // Normal: left end shows Z, right end shows X
+                     showZ = isLeftEnd;
+                     showX = isRightEnd;
                    }
                  }
                 
