@@ -262,7 +262,7 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
 
       setFloorPlanOverlay(canvas.toDataURL());
     });
-  }, [design]);
+  }, [design, mapZoom]);
 
   return (
     <div className="w-full h-screen flex flex-col bg-white">
@@ -329,14 +329,14 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
                 });
               }
 
-              const METRES_PER_PX_AT_ZOOM0 = 78271.52;
+              const METRES_PER_PX_AT_ZOOM0 = 78271.52 / 2;
               const lat = coordinates ? coordinates[0] : 0;
               const metresToPx = Math.pow(2, mapZoom) / (METRES_PER_PX_AT_ZOOM0 * Math.cos(lat * Math.PI / 180));
               const canvasPxPerMetre = CANVAS_PX_PER_CELL / CELL_M;
               const cssScale = (metresToPx / canvasPxPerMetre) * planScaleMultiplier;
 
               return (
-                <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                <div key={`overlay-${mapZoom}`} className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
                   <img
                     src={floorPlanOverlay}
                     alt="Floor Plan"
