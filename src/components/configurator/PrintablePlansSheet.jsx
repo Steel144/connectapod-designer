@@ -304,10 +304,12 @@ export default function PrintablePlansSheet({ placedModules, furniture = [], wal
 
               {/* Furniture */}
               {showFurniture && furniture.map((f) => {
-                const fWidth = ((f.width || 1.4) / 0.6) * CELL_SIZE;
-                const fDepth = ((f.depth || 2.0) / 0.6) * CELL_SIZE;
-                const fx = (f.x - minX + 1) * CELL_SIZE;
-                const fy = (f.y - minY + 1) * CELL_SIZE;
+                const fWidthGridUnits = (f.width || 1.4) / CELL_M;
+                const fDepthGridUnits = (f.depth || 2.0) / CELL_M;
+                const fWidth = fWidthGridUnits * CELL_SIZE;
+                const fDepth = fDepthGridUnits * CELL_SIZE;
+                const fx = (f.x - fWidthGridUnits / 2 - minX + 1) * CELL_SIZE;
+                const fy = (f.y - fDepthGridUnits / 2 - minY + 1) * CELL_SIZE;
                 const rotation = f.rotation || 0;
 
                 const transforms = [
@@ -325,6 +327,8 @@ export default function PrintablePlansSheet({ placedModules, furniture = [], wal
                        width={fWidth}
                        height={fDepth}
                        fill={f.image ? "white" : "#FFB3A8"}
+                       stroke="#888"
+                       strokeWidth="1"
                      />
                     {f.image && (
                       <image
