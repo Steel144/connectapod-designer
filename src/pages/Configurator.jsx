@@ -720,26 +720,25 @@ export default function Configurator() {
   const handlePlaceWallOnFace = (wallTemplate, module, face) => {
     pushHistory(placedModules, walls);
     const wallThickness = wallTemplate.thickness || 0.31;
-    const isRotated180 = (module.rotation || 0) === 180;
 
-    // Face buttons rotate WITH the module - clicking W places wall on module's W face
-    // When rotated 180°, module's W face is at screen-bottom, Y at screen-top, etc.
+    // Face buttons are fixed to screen positions - place wall based on screen direction
+    // W = screen-top, Y = screen-bottom, Z = screen-left, X = screen-right
     let x, y;
     if (face === "W") {
-      // W face: module's front - at top when 0°, at bottom when 180°
+      // Screen-top edge
       x = module.x;
-      y = isRotated180 ? module.y + module.h : module.y - wallThickness;
+      y = module.y - wallThickness;
     } else if (face === "Y") {
-      // Y face: module's back - at bottom when 0°, at top when 180°
+      // Screen-bottom edge
       x = module.x;
-      y = isRotated180 ? module.y - wallThickness : module.y + module.h;
+      y = module.y + module.h;
     } else if (face === "Z") {
-      // Z face: module's left end - at left when 0°, at right when 180°
-      x = isRotated180 ? module.x + module.w - wallThickness : module.x;
+      // Screen-left edge
+      x = module.x;
       y = module.y;
     } else if (face === "X") {
-      // X face: module's right end - at right when 0°, at left when 180°
-      x = isRotated180 ? module.x : module.x + module.w - wallThickness;
+      // Screen-right edge
+      x = module.x + module.w - wallThickness;
       y = module.y;
     }
 
