@@ -118,6 +118,10 @@ export default function SiteMap() {
     if (savedDetails) {
       try {
         const details = JSON.parse(savedDetails);
+        // Restore form fields
+        if (details.projectName || details.clientName) {
+          setSaveDetails(details);
+        }
         if (details.address) {
           setAddress(details.address);
           setLoading(true);
