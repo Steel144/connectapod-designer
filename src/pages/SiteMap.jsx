@@ -386,10 +386,6 @@ export default function SiteMap() {
         ctx.fillRect(0, 0, w, h);
         if (img) ctx.drawImage(img, 0, 0, w, h);
         
-        ctx.strokeStyle = mod.border || '#F15A22';
-        ctx.lineWidth = 1.5;
-        ctx.strokeRect(0, 0, w, h);
-        
         ctx.restore();
       });
       
