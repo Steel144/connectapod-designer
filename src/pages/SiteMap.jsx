@@ -16,8 +16,12 @@ const FLOOR_PLAN_SCALE = 0.32; // Adjusted for proper overlay size
 
 export default function SiteMap() {
   const { user } = useAuth();
-  const [address, setAddress] = useState('');
-  const [coordinates, setCoordinates] = useState(null);
+  const [address, setAddress] = useState(() => {
+    try { return localStorage.getItem('sitemap_address') ?? ''; } catch { return ''; }
+  });
+  const [coordinates, setCoordinates] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('sitemap_coordinates')) ?? null; } catch { return null; }
+  });
   const [loading, setLoading] = useState(false);
   const [design, setDesign] = useState(null);
   const [floorPlanOverlay, setFloorPlanOverlay] = useState(null);
@@ -62,16 +66,21 @@ export default function SiteMap() {
   useEffect(() => { localStorage.setItem('sitemap_rotation', JSON.stringify(overlayRotation)); }, [overlayRotation]);
   useEffect(() => { localStorage.setItem('sitemap_offset', JSON.stringify(positionOffset)); }, [positionOffset]);
   useEffect(() => { localStorage.setItem('sitemap_scale', JSON.stringify(planScaleMultiplier)); }, [planScaleMultiplier]);
+  useEffect(() => { if (coordinates) localStorage.setItem('sitemap_coordinates', JSON.stringify(coordinates)); }, [coordinates]);
+  useEffect(() => { if (address) localStorage.setItem('sitemap_address', address); }, [address]);
 
-  // Load address from print details on mount and auto-geocode
+  // Load address from print details on mount and auto-geocode (only if no saved coordinates)
   useEffect(() => {
+    // If we already have coordinates from localStorage, skip geocoding
+    const savedCoords = localStorage.getItem('sitemap_coordinates');
+    if (savedCoords) return;
+
     const savedDetails = localStorage.getItem('connectapod_print_details');
     if (savedDetails) {
       try {
         const details = JSON.parse(savedDetails);
         if (details.address) {
           setAddress(details.address);
-          // Auto-geocode the address
           setLoading(true);
           base44.functions.invoke('geocodeAddress', { query: details.address, limit: 1 })
             .then(response => {
@@ -79,7 +88,6 @@ export default function SiteMap() {
               if (data && data.length > 0) {
                 const { lat, lon } = data[0];
                 setCoordinates([parseFloat(lat), parseFloat(lon)]);
-                // Don't reset positionOffset here — restore saved position
               }
             })
             .catch(err => console.error('Auto-geocoding error:', err))
