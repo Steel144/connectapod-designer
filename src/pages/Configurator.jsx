@@ -539,9 +539,10 @@ export default function Configurator() {
 
     // Update selectedModule if it's the one being flipped
     if (selectedModule?.id === id) {
-      setSelectedModule(prev => prev ? { ...prev, flipped: !prev.flipped } : null);
+      const flippedMod = placedModules.find(m => m.id === id);
+      setSelectedModule(flippedMod ? { ...flippedMod, flipped: !flippedMod.flipped } : null);
     }
-    
+
     setWalls((prev) =>
       prev.map((w) => {
         const WALL_OFFSET = 0.308;
