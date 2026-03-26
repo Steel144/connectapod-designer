@@ -786,17 +786,17 @@ export default function Configurator() {
         height: dbWall?.height || w.height,
       };
     });
-    // Sync project name to print details storage
+    // Sync project name to print details storage, preserving all client data
+    const existing = (() => {
+      try {
+        return JSON.parse(localStorage.getItem("connectapod_print_details")) || {};
+      } catch {
+        return {};
+      }
+    })();
     localStorage.setItem("connectapod_print_details", JSON.stringify({
+      ...existing,
       projectName: name,
-      ...(() => {
-        try {
-          const saved = JSON.parse(localStorage.getItem("connectapod_print_details")) || {};
-          return { clientName: saved.clientName || "", address: saved.address || "", email: saved.email || "", phone: saved.phone || "" };
-        } catch {
-          return { clientName: "", address: "", email: "", phone: "" };
-        }
-      })(),
     }));
     saveMutation.mutate({
       name,
