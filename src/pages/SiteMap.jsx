@@ -240,39 +240,43 @@ export default function SiteMap() {
   };
 
   const handleMapMouseMove = (e) => {
-    if (!isDraggingRef.current || !dragStartRef.current) return;
-    
-    const deltaX = e.clientX - dragStartRef.current.x;
-    const deltaY = e.clientY - dragStartRef.current.y;
-    
-    // Step 1: screen pixels → map-div pixels (undo CSS scale(2))
-    const mapDx = deltaX / 2;
-    const mapDy = deltaY / 2;
+    if (!isDraggingRef.current || !dragStartRef.current || !mapRef.current) return;
 
-    // Step 2: map-div pixels → degrees (Leaflet tile math)
-    const metersPerPixel = 156543.03392 * Math.cos((coordinates?.[0] ?? 0) * Math.PI / 180) / Math.pow(2, mapZoom);
-    const degreesPerPixel = metersPerPixel / 111320;
+    const map = mapRef.current;
+    const size = map.getSize(); // map container size in px
 
-    // Step 3: un-rotate from map-div space (which is CSS-rotated) back to north-up lat/lng space
+    // Current map center in container pixel coords
+    const centerPx = map.latLngToContainerPoint(map.getCenter());
+
+    // The outer wrapper is scale(2) and rotated. We receive screen-space deltas.
+    // To get map-container-pixel deltas we:
+    //   1. undo CSS scale(2) → divide by 2
+    //   2. undo CSS rotation → rotate by -overlayRotation
+    const dx = e.clientX - dragStartRef.current.x;
+    const dy = e.clientY - dragStartRef.current.y;
+
+    // Undo CSS scale
+    const sdx = dx / 2;
+    const sdy = dy / 2;
+
+    // Undo CSS rotation
     const rad = (overlayRotation * Math.PI) / 180;
-    // Dragging right (positive mapDx) should move map east (positive lng)
-    // Dragging down (positive mapDy) should move map south (negative lat)
-    // After un-rotation: apply -rad to go from rotated-screen to north-up
-    const rotatedDeltaLng = ( mapDx * Math.cos(-rad) - mapDy * Math.sin(-rad)) * degreesPerPixel;
-    const rotatedDeltaLat = -( mapDx * Math.sin(-rad) + mapDy * Math.cos(-rad)) * degreesPerPixel;
+    const mapDx = sdx * Math.cos(-rad) - sdy * Math.sin(-rad);
+    const mapDy = sdx * Math.sin(-rad) + sdy * Math.cos(-rad);
 
-    const newOffset = {
-      lat: liveOffsetRef.current.lat + rotatedDeltaLat,
-      lng: liveOffsetRef.current.lng + rotatedDeltaLng,
-    };
-    liveOffsetRef.current = newOffset;
+    // New center pixel = old center pixel - drag delta (dragging right moves view right = center moves right)
+    const newCenterPx = L.point(centerPx.x - mapDx, centerPx.y - mapDy);
+    const newLatLng = map.containerPointToLatLng(newCenterPx);
+
     dragStartRef.current = { x: e.clientX, y: e.clientY };
 
-    // Move the map directly without triggering React re-render
-    if (mapRef.current && coordinates) {
-      const newCenter = [coordinates[0] + newOffset.lat, coordinates[1] + newOffset.lng];
-      mapRef.current.setView(newCenter, mapZoom, { animate: false });
-    }
+    // Update live offset ref
+    liveOffsetRef.current = {
+      lat: newLatLng.lat - coordinates[0],
+      lng: newLatLng.lng - coordinates[1],
+    };
+
+    map.setView(newLatLng, mapZoom, { animate: false });
   };
 
   const handleMapMouseUp = () => {
