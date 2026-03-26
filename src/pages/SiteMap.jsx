@@ -22,6 +22,10 @@ export default function SiteMap() {
   const [coordinates, setCoordinates] = useState(() => {
     try { return JSON.parse(localStorage.getItem('sitemap_coordinates')) ?? null; } catch { return null; }
   });
+  // mapCenter is the actual center we pass to leaflet — bakes in the offset
+  const [mapCenter, setMapCenter] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('sitemap_mapCenter')) ?? null; } catch { return null; }
+  });
   const [loading, setLoading] = useState(false);
   const [design, setDesign] = useState(null);
   const [floorPlanOverlay, setFloorPlanOverlay] = useState(null);
@@ -55,11 +59,19 @@ export default function SiteMap() {
     queryFn: async () => { try { const r = await base44.entities.HomeDesign.list("-created_date"); return Array.isArray(r) ? r : []; } catch { return []; } },
   });
 
-  // Get map center with position offset applied directly (no rotation compensation needed)
+  // Get map center with position offset applied directly
   const getAdjustedCenter = () => {
     if (!coordinates) return [0, 0];
     return [coordinates[0] + positionOffset.lat, coordinates[1] + positionOffset.lng];
   };
+
+  // Sync mapCenter whenever coordinates or offset change, and persist it
+  useEffect(() => {
+    if (!coordinates) return;
+    const center = [coordinates[0] + positionOffset.lat, coordinates[1] + positionOffset.lng];
+    setMapCenter(center);
+    localStorage.setItem('sitemap_mapCenter', JSON.stringify(center));
+  }, [coordinates, positionOffset]);
 
   // Persist map state to localStorage
   useEffect(() => { localStorage.setItem('sitemap_mapZoom', JSON.stringify(mapZoom)); }, [mapZoom]);
@@ -443,18 +455,18 @@ export default function SiteMap() {
         onMouseUp={handleMapMouseUp}
         onMouseLeave={handleMapMouseUp}
       >
-        {coordinates ? (
-          <>
-            {/* Map behind - rotates and moves */}
-            <div className="absolute inset-0" style={{
-              transform: `scale(2) rotate(${overlayRotation}deg)`,
-              transformOrigin: 'center',
-              transition: 'transform 0.1s ease-out'
-            }}>
-              <MapContainer
-                key={`${coordinates[0]}-${coordinates[1]}`}
-                center={getAdjustedCenter()}
-                zoom={mapZoom}
+        {(coordinates || mapCenter) ? (
+        <>
+          {/* Map behind - rotates and moves */}
+          <div className="absolute inset-0" style={{
+            transform: `scale(2) rotate(${overlayRotation}deg)`,
+            transformOrigin: 'center',
+            transition: 'transform 0.1s ease-out'
+          }}>
+            <MapContainer
+              key={`${(mapCenter || getAdjustedCenter())[0]}-${(mapCenter || getAdjustedCenter())[1]}`}
+              center={mapCenter || getAdjustedCenter()}
+              zoom={mapZoom}
                 className="w-full h-full"
                 ref={mapRef}
               >
@@ -496,7 +508,7 @@ export default function SiteMap() {
           </>
         ) : (
           <div className="w-full h-full flex items-center justify-center text-gray-400">
-            <p>Enter an address to view the site map</p>
+            <p>Enter a site address in the panel to view the map</p>
           </div>
         )}
       </div>
