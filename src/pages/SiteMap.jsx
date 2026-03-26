@@ -558,7 +558,7 @@ export default function SiteMap() {
             <Link to="/Configurator" className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-white text-gray-600 hover:text-[#F15A22] transition-all" style={{ clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 50%, calc(100% - 6px) 100%, 0 100%)" }}>
               <Image size={13} /> Elevations
             </Link>
-            <Link to="/Configurator" className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-white text-gray-600 border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22] transition-all" style={{ clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 50%, calc(100% - 6px) 100%, 0 100%)" }}>
+            <Link to={address ? "/Configurator" : "#"} onClick={(e) => !address && e.preventDefault()} className={`flex items-center gap-1.5 px-3 py-1.5 text-xs border transition-all ${address ? 'bg-white text-gray-600 border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22]' : 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'}`} style={{ clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 50%, calc(100% - 6px) 100%, 0 100%)" }} title={address ? '' : 'Enter site address to save'}>
               <Save size={13} /> Save
             </Link>
             <Link to="/Configurator" className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-white text-gray-600 border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22] transition-all" style={{ clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 50%, calc(100% - 6px) 100%, 0 100%)" }}>
