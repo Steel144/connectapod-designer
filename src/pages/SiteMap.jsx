@@ -49,10 +49,6 @@ export default function SiteMap() {
     try { return JSON.parse(localStorage.getItem('sitemap_coordinates')) ?? null; } catch { return null; }
   });
   const [mapKey, setMapKey] = useState(() => localStorage.getItem('sitemap_mapkey') ?? 'default');
-  // mapCenter is the actual center we pass to leaflet — bakes in the offset
-  const [mapCenter, setMapCenter] = useState(() => {
-    try { return JSON.parse(localStorage.getItem('sitemap_mapCenter')) ?? null; } catch { return null; }
-  });
   const [loading, setLoading] = useState(false);
   const [design, setDesign] = useState(null);
   const [floorPlanOverlay, setFloorPlanOverlay] = useState(null);
@@ -94,18 +90,14 @@ export default function SiteMap() {
     return [coordinates[0] + positionOffset.lat, coordinates[1] + positionOffset.lng];
   };
 
-  // Sync mapCenter whenever coordinates or offset change, and persist it
-  useEffect(() => {
-    if (!coordinates) return;
-    const center = [coordinates[0] + positionOffset.lat, coordinates[1] + positionOffset.lng];
-    setMapCenter(center);
-    localStorage.setItem('sitemap_mapCenter', JSON.stringify(center));
-  }, [coordinates, positionOffset]);
+
 
   // Persist map state to localStorage
   useEffect(() => { localStorage.setItem('sitemap_mapZoom', JSON.stringify(mapZoom)); }, [mapZoom]);
   useEffect(() => { localStorage.setItem('sitemap_rotation', JSON.stringify(overlayRotation)); }, [overlayRotation]);
-  useEffect(() => { localStorage.setItem('sitemap_offset', JSON.stringify(positionOffset)); }, [positionOffset]);
+  useEffect(() => {
+    localStorage.setItem('sitemap_offset', JSON.stringify(positionOffset));
+  }, [positionOffset]);
   useEffect(() => { localStorage.setItem('sitemap_scale', JSON.stringify(planScaleMultiplier)); }, [planScaleMultiplier]);
   useEffect(() => { if (coordinates) localStorage.setItem('sitemap_coordinates', JSON.stringify(coordinates)); }, [coordinates]);
   useEffect(() => { if (address) localStorage.setItem('sitemap_address', address); }, [address]);
@@ -276,14 +268,7 @@ export default function SiteMap() {
 
   const handleMapMouseUp = () => {
     if (isDraggingRef.current && liveOffsetRef.current) {
-      // Persist to localStorage directly without triggering MapSync setView
-      const offset = liveOffsetRef.current;
-      localStorage.setItem('sitemap_offset', JSON.stringify(offset));
-      if (coordinates) {
-        const newCenter = [coordinates[0] + offset.lat, coordinates[1] + offset.lng];
-        localStorage.setItem('sitemap_mapCenter', JSON.stringify(newCenter));
-      }
-      // Use a silent update: bypass the useEffect that would call setView
+      // Commit offset to state — MapSync will skip setView via skipRef
       silentOffsetUpdate.current = true;
       setPositionOffset(liveOffsetRef.current);
     }
@@ -507,7 +492,7 @@ export default function SiteMap() {
         onMouseUp={handleMapMouseUp}
         onMouseLeave={handleMapMouseUp}
       >
-        {(coordinates || mapCenter) ? (
+        {coordinates ? (
         <>
           {/* Map behind - rotates and moves */}
           <div className="absolute inset-0" style={{
@@ -517,12 +502,12 @@ export default function SiteMap() {
           }}>
             <MapContainer
               key={mapKey}
-              center={mapCenter || getAdjustedCenter()}
+              center={getAdjustedCenter()}
               zoom={mapZoom}
               className="w-full h-full"
               ref={mapRef}
             >
-              <MapSync center={mapCenter || getAdjustedCenter()} zoom={mapZoom} skipRef={silentOffsetUpdate} />
+              <MapSync center={getAdjustedCenter()} zoom={mapZoom} skipRef={silentOffsetUpdate} />
                 <TileLayer
                   url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
                   attribution='&copy; Esri, DigitalGlobe, Earthstar Geographics'
