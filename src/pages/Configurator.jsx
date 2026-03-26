@@ -316,6 +316,16 @@ export default function Configurator() {
     localStorage.setItem("configurator_furniture", JSON.stringify(furniture));
   }, [furniture]);
 
+  // Keep selectedModule in sync with placedModules
+  useEffect(() => {
+    if (selectedModule?.id) {
+      const currentMod = placedModules.find(m => m.id === selectedModule.id);
+      if (currentMod && currentMod.flipped !== selectedModule.flipped) {
+        setSelectedModule(currentMod);
+      }
+    }
+  }, [placedModules]);
+
 
 
   // When floorPlanImages or customModules loads/updates, enrich all placed modules with images, sqm, and price
