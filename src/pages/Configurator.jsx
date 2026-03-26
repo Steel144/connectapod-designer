@@ -1311,7 +1311,7 @@ export default function Configurator() {
                            {/* Face labels on edges — Z/X visibility based on flip state, positions stay fixed */}
                            <button onClick={() => setSelectedFace("W")} className="absolute top-1 left-1/2 -translate-x-1/2 px-2 py-1 bg-white text-gray-900 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-md">W</button>
                            {!selectedModule.flipped && <button onClick={() => setSelectedFace("Z")} className="absolute left-1 top-1/2 -translate-y-1/2 px-2 py-1 bg-white text-gray-900 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-md">Z</button>}
-                           {selectedModule.flipped && <button onClick={() => setSelectedFace("X")} className="absolute left-1 top-1/2 -translate-y-1/2 px-2 py-1 bg-white text-gray-900 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-md">X</button>}
+                           {selectedModule.flipped && <button onClick={() => setSelectedFace("X")} className="absolute right-1 top-1/2 -translate-y-1/2 px-2 py-1 bg-white text-gray-900 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-md">X</button>}
                            <button onClick={() => setSelectedFace("Y")} className="absolute bottom-1 left-1/2 -translate-x-1/2 px-2 py-1 bg-white text-gray-900 text-xs font-bold rounded hover:bg-[#F15A22] hover:text-white transition-colors shadow-md">Y</button>
                          </div>
                          <div className="flex justify-between items-center text-xs border-t border-gray-200 pt-2">
