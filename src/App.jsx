@@ -17,7 +17,6 @@ const LayoutWrapper = ({ children, currentPageName }) => Layout ?
 
 // Import Landing page
 import DesignCatalogue from './pages/DesignCatalogue';
-import SiteMap from './pages/SiteMap';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -45,7 +44,6 @@ const AuthenticatedApp = () => {
     <Routes>
       <Route path="/" element={<DesignCatalogue />} />
       <Route path="/DesignCatalogue" element={<DesignCatalogue />} />
-      <Route path="/SiteMap" element={<SiteMap />} />
       <Route path="/Home" element={
         <LayoutWrapper currentPageName={mainPageKey}>
           <MainPage />

@@ -35,6 +35,7 @@ import ProjectDetailsModal from "@/components/configurator/ProjectDetailsModal";
 import FurniturePanel, { FURNITURE_ITEMS } from "@/components/configurator/FurniturePanel";
 import { ZoomIn, ZoomOut } from "lucide-react";
 import { useAuth } from "@/lib/AuthContext";
+import SiteMapView from "@/components/configurator/SiteMapView";
 
 const generateId = () => `mod-${Math.random().toString(36).substr(2, 9)}`;
 const generateWallId = () => `wall-${Math.random().toString(36).substr(2, 9)}`;
@@ -96,6 +97,12 @@ export default function Configurator() {
   const [printDetails, setPrintDetails] = useState(null);
   const [detailsModalMode, setDetailsModalMode] = useState(null); // 'estimate' or 'print'
   const [viewMode, setViewMode] = useState("2d");
+  const [siteAddress, setSiteAddress] = useState(() => {
+    try { return localStorage.getItem('sitemap_address') ?? ''; } catch { return ''; }
+  });
+  const [siteCoordinates, setSiteCoordinates] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('sitemap_coordinates')) ?? null; } catch { return null; }
+  });
   const [loadCounter, setLoadCounter] = useState(0);
   const [wallToReplace, setWallToReplace] = useState(null);
   const [gridZoom, setGridZoom] = useState(100);
@@ -977,9 +984,9 @@ export default function Configurator() {
               <button onClick={() => setDetailsModalMode('save')} disabled={placedModules.length === 0 || saveMutation.isPending} className={`flex items-center gap-1.5 px-3 py-1.5 text-xs transition-all ${placedModules.length === 0 || saveMutation.isPending ? "bg-white text-gray-400 opacity-40" : "bg-white text-gray-600 border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22]"}`} style={{ clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 50%, calc(100% - 6px) 100%, 0 100%)" }}>
                 <Save size={13} /> {saveMutation.isPending ? "Saving…" : "Save"}
               </button>
-              <Link to="/SiteMap" className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-gray-600 bg-white border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22] transition-all" style={{ clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 50%, calc(100% - 6px) 100%, 0 100%)" }}>
+              <button onClick={() => setViewMode("sitemap")} className={`flex items-center gap-1.5 px-3 py-1.5 text-xs transition-all ${viewMode === "sitemap" ? "bg-[#F15A22] text-white" : "bg-white text-gray-600 hover:text-[#F15A22]"}`} style={{ clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 50%, calc(100% - 6px) 100%, 0 100%)" }}>
                 <Map size={13} /> Site Map
-              </Link>
+              </button>
                <button onClick={() => setDetailsModalMode('estimate')} disabled={placedModules.length === 0} className={`flex items-center gap-1.5 px-3 py-1.5 text-xs transition-all ${placedModules.length === 0 ? "bg-white text-gray-400 opacity-40" : "bg-white text-gray-600 border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22]"}`} style={{ clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 50%, calc(100% - 6px) 100%, 0 100%)" }}>
                   Get Estimate
                 </button>
@@ -1128,7 +1135,25 @@ export default function Configurator() {
 
       {/* ── WORKSPACE ── */}
       <div className={`flex-1 relative overflow-auto ${isMobile ? "pt-12" : "pt-16"}`}>
-        {viewMode === "elevations" ? (
+        {viewMode === "sitemap" ? (
+          <SiteMapView
+            design={{ grid: placedModules, walls, furniture }}
+            siteAddress={siteAddress}
+            setSiteAddress={setSiteAddress}
+            coordinates={siteCoordinates}
+            setCoordinates={setSiteCoordinates}
+            saveDetails={(() => {
+              try {
+                return JSON.parse(localStorage.getItem("connectapod_save_details")) || { projectName: '', clientName: '', address: '' };
+              } catch {
+                return { projectName: '', clientName: '', address: '' };
+              }
+            })()}
+            setSaveDetails={(details) => {
+              localStorage.setItem("connectapod_save_details", JSON.stringify(details));
+            }}
+          />
+        ) : viewMode === "elevations" ? (
           <div style={{ transform: `scale(${elevationZoom / 100})`, transformOrigin: "top center", display: "inline-block", width: "100%" }}>
             <CombinedElevations 
               walls={walls} 
