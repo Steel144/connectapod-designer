@@ -288,7 +288,7 @@ export default function PrintableElevationsSheet({ walls = [], placedModules = [
                </div>
             )}
             <div style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
-              {(pavNum === 2 ? ["Z", "X"] : ["Y", "W"]).map(face => {
+              {["W", "Y", "Z", "X"].map(face => {
                 const hasAny = mods.some(mod => findWall(mod, face));
                 if (!hasAny) return null;
                 const faceLabels = { Y: "Y Face (Outside / Top)", W: "W Face (Outside / Bottom)", Z: "Z Face (West)", X: "X Face (East)" };
