@@ -114,7 +114,7 @@ export default function SiteMap() {
     const savedCoords = localStorage.getItem('sitemap_coordinates');
     if (savedCoords) return;
 
-    const savedDetails = localStorage.getItem('connectapod_print_details');
+    const savedDetails = localStorage.getItem('connectapod_save_details');
     if (savedDetails) {
       try {
         const details = JSON.parse(savedDetails);
