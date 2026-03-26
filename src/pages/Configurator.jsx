@@ -711,23 +711,23 @@ export default function Configurator() {
   const handlePlaceWallOnFace = (wallTemplate, module, face) => {
     pushHistory(placedModules, walls);
     const wallThickness = wallTemplate.thickness || 0.31;
+    const isRotated180 = (module.rotation || 0) === 180;
 
+    // When module is rotated 180°, W↔Y and Z↔X are visually swapped,
+    // but the face labels on the buttons already account for the swap.
+    // We must place the wall at the correct physical grid position for the given face label.
     let x, y;
     if (face === "W") {
-      // Top face — horizontal wall above module
       x = module.x;
-      y = module.y - wallThickness;
+      y = isRotated180 ? module.y + module.h : module.y - wallThickness;
     } else if (face === "Y") {
-      // Bottom face — horizontal wall below module
       x = module.x;
-      y = module.y + module.h;
+      y = isRotated180 ? module.y - wallThickness : module.y + module.h;
     } else if (face === "Z") {
-      // Left face — vertical wall left of module
-      x = module.x;
+      x = isRotated180 ? module.x + module.w - wallThickness : module.x;
       y = module.y;
     } else if (face === "X") {
-      // Right face — vertical wall right of module
-      x = module.x + module.w - wallThickness;
+      x = isRotated180 ? module.x : module.x + module.w - wallThickness;
       y = module.y;
     }
 

@@ -32,7 +32,10 @@ const ElevationSlot = memo(function ElevationSlot({
             height: "100%",
             objectFit,
             display: "block",
-            transform: wall.flipped ? "scaleX(-1)" : undefined,
+            transform: [
+              wall.flipped ? "scaleX(-1)" : "",
+              wall.rotation ? `rotate(${wall.rotation}deg)` : "",
+            ].filter(Boolean).join(" ") || undefined,
           }}
         />
       ) : (
