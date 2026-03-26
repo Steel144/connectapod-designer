@@ -920,6 +920,7 @@ export default function SiteMap() {
         mapContainerRef={mapRef}
         siteAddress={address}
         saveDetails={saveDetails}
+        floorPlanImage={floorPlanOverlay}
       />
     </div>
     </>

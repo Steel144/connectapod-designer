@@ -7,7 +7,7 @@ import { Loader2, Download } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
 
-export default function PrintSiteMapModal({ open, onOpenChange, mapContainerRef, siteAddress, saveDetails }) {
+export default function PrintSiteMapModal({ open, onOpenChange, mapContainerRef, siteAddress, saveDetails, floorPlanImage }) {
   const [loading, setLoading] = useState(false);
   const [fileName, setFileName] = useState('site-plan');
 
@@ -46,6 +46,14 @@ export default function PrintSiteMapModal({ open, onOpenChange, mapContainerRef,
         const maxWidth = pageWidth - 28;
         const lines = pdf.splitTextToSize(addressText, maxWidth);
         pdf.text(lines, 14, detailY);
+      }
+
+      // Add floor plan image if available
+      if (floorPlanImage) {
+        const imgWidth = pageWidth - 28;
+        const imgHeight = (imgWidth / 16) * 9; // 16:9 aspect ratio
+        const imgY = 50;
+        pdf.addImage(floorPlanImage, 'PNG', 14, imgY, imgWidth, imgHeight);
       }
 
       // Footer
