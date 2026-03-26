@@ -356,12 +356,22 @@ export default function SiteMap() {
       // Draw walls first (background layer)
        if (design.walls && design.walls.length > 0) {
          design.walls.forEach(wall => {
-           if (wall.x === undefined || wall.y === undefined) return;
+           // Use wall position if available, otherwise estimate from orientation/length
+           const hasCoords = wall.x !== undefined && wall.y !== undefined;
+           if (!hasCoords) return;
 
            const x = (wall.x - minX) * CANVAS_PX_PER_CELL;
            const y = (wall.y - minY) * CANVAS_PX_PER_CELL;
-           const w = wall.width ? wall.width / 1000 * CANVAS_PX_PER_CELL : (wall.length || 1) * CANVAS_PX_PER_CELL;
-           const h = wall.height ? wall.height / 1000 * CANVAS_PX_PER_CELL : 2 * CANVAS_PX_PER_CELL;
+
+           // Calculate width and height based on orientation and dimensions
+           let w, h;
+           if (wall.orientation === 'horizontal') {
+             w = (wall.length || wall.width / 1000 || 1) * CANVAS_PX_PER_CELL;
+             h = (wall.thickness || 0.15) * CANVAS_PX_PER_CELL;
+           } else {
+             w = (wall.thickness || 0.15) * CANVAS_PX_PER_CELL;
+             h = (wall.length || wall.height / 1000 || 1) * CANVAS_PX_PER_CELL;
+           }
 
            ctx.save();
            ctx.translate(x + w / 2, y + h / 2);
@@ -369,10 +379,10 @@ export default function SiteMap() {
            if (wall.flipped) ctx.scale(-1, 1);
            ctx.translate(-w / 2, -h / 2);
 
-           ctx.fillStyle = '#C4C4C4';
+           ctx.fillStyle = '#A0A0A0';
            ctx.fillRect(0, 0, w, h);
-           ctx.strokeStyle = '#999999';
-           ctx.lineWidth = 1;
+           ctx.strokeStyle = '#666666';
+           ctx.lineWidth = 0.5;
            ctx.strokeRect(0, 0, w, h);
 
            ctx.restore();
