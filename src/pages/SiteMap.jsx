@@ -139,16 +139,13 @@ export default function SiteMap() {
          if (designs.length > 0) {
            console.log('Design loaded:', designs[0].name, 'Furniture:', designs[0].furniture);
            setDesign(designs[0]);
-          if (coordinates) {
-            setOverlayPos({ lat: coordinates[0], lng: coordinates[1] });
-          }
-        }
-      } catch (err) {
-        console.error('Failed to load design:', err);
-      }
-    };
-    loadDesign();
-  }, [coordinates]);
+         }
+       } catch (err) {
+         console.error('Failed to load design:', err);
+       }
+     };
+     loadDesign();
+   }, [coordinates]);
 
   const geocodeAddress = async () => {
     if (!address.trim()) return;
