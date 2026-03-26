@@ -52,7 +52,7 @@ export default function SiteMap() {
     return [coordinates[0] + rotatedLat, coordinates[1] + rotatedLng];
   };
 
-  // Load address from print details on mount
+  // Load address from print details on mount and auto-geocode
   useEffect(() => {
     const savedDetails = localStorage.getItem('connectapod_print_details');
     if (savedDetails) {
@@ -60,6 +60,19 @@ export default function SiteMap() {
         const details = JSON.parse(savedDetails);
         if (details.address) {
           setAddress(details.address);
+          // Auto-geocode the address
+          setLoading(true);
+          base44.functions.invoke('geocodeAddress', { query: details.address, limit: 1 })
+            .then(response => {
+              const data = response.data.results;
+              if (data && data.length > 0) {
+                const { lat, lon } = data[0];
+                setCoordinates([parseFloat(lat), parseFloat(lon)]);
+                setPositionOffset({ lat: 0, lng: 0 });
+              }
+            })
+            .catch(err => console.error('Auto-geocoding error:', err))
+            .finally(() => setLoading(false));
         }
       } catch (err) {
         console.error('Failed to load saved address:', err);
