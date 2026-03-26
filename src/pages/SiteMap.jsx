@@ -79,7 +79,7 @@ export default function SiteMap() {
               if (data && data.length > 0) {
                 const { lat, lon } = data[0];
                 setCoordinates([parseFloat(lat), parseFloat(lon)]);
-                setPositionOffset({ lat: 0, lng: 0 });
+                // Don't reset positionOffset here — restore saved position
               }
             })
             .catch(err => console.error('Auto-geocoding error:', err))
