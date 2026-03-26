@@ -245,14 +245,21 @@ export default function SiteMap() {
     const deltaX = e.clientX - dragStartRef.current.x;
     const deltaY = e.clientY - dragStartRef.current.y;
     
-    const rad = (overlayRotation * Math.PI) / 180;
+    // Step 1: screen pixels → map-div pixels (undo CSS scale(2))
+    const mapDx = deltaX / 2;
+    const mapDy = deltaY / 2;
+
+    // Step 2: map-div pixels → degrees (Leaflet tile math)
     const metersPerPixel = 156543.03392 * Math.cos((coordinates?.[0] ?? 0) * Math.PI / 180) / Math.pow(2, mapZoom);
     const degreesPerPixel = metersPerPixel / 111320;
-    // CSS scale(2) means 1 visual pixel = 0.5 map pixels
-    const movementScale = degreesPerPixel / 2;
-    // Rotate screen delta into map coordinate space (un-rotate by overlay rotation)
-    const rotatedDeltaLat = -(deltaY * Math.cos(rad) - deltaX * Math.sin(rad)) * movementScale;
-    const rotatedDeltaLng =  (deltaX * Math.cos(rad) + deltaY * Math.sin(rad)) * movementScale;
+
+    // Step 3: un-rotate from map-div space (which is CSS-rotated) back to north-up lat/lng space
+    const rad = (overlayRotation * Math.PI) / 180;
+    // Dragging right (positive mapDx) should move map east (positive lng)
+    // Dragging down (positive mapDy) should move map south (negative lat)
+    // After un-rotation: apply -rad to go from rotated-screen to north-up
+    const rotatedDeltaLng = ( mapDx * Math.cos(-rad) - mapDy * Math.sin(-rad)) * degreesPerPixel;
+    const rotatedDeltaLat = -( mapDx * Math.sin(-rad) + mapDy * Math.cos(-rad)) * degreesPerPixel;
 
     const newOffset = {
       lat: liveOffsetRef.current.lat + rotatedDeltaLat,
