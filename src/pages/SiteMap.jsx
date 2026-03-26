@@ -468,18 +468,12 @@ export default function SiteMap() {
          if (furn.rotation) ctx.rotate((furn.rotation * Math.PI) / 180);
          ctx.translate(-w / 2, -h / 2);
 
+         // Draw background
+         ctx.fillStyle = 'white';
+         ctx.fillRect(0, 0, w, h);
+
          if (furnImg) {
-           // Scale image to fit within bounds while maintaining aspect ratio
-           const imgW = furnImg.width;
-           const imgH = furnImg.height;
-           const scaleX = w / imgW;
-           const scaleY = h / imgH;
-           const scale = Math.min(scaleX, scaleY);
-           const scaledW = imgW * scale;
-           const scaledH = imgH * scale;
-           const offsetX = (w - scaledW) / 2;
-           const offsetY = (h - scaledH) / 2;
-           ctx.drawImage(furnImg, offsetX, offsetY, scaledW, scaledH);
+           ctx.drawImage(furnImg, 0, 0, w, h);
          } else {
            // Fallback: simple colored box if no image
            ctx.fillStyle = '#D4A574';
