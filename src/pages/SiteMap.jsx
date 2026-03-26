@@ -116,20 +116,24 @@ export default function SiteMap() {
 
   // Load address from print details on mount and auto-geocode (only if no saved coordinates)
   useEffect(() => {
-    // If we already have coordinates from localStorage, skip geocoding
-    const savedCoords = localStorage.getItem('sitemap_coordinates');
-    if (savedCoords) return;
-
     const savedDetails = localStorage.getItem('connectapod_save_details');
     if (savedDetails) {
       try {
         const details = JSON.parse(savedDetails);
         // Restore form fields
-        if (details.projectName || details.clientName) {
+        if (details.projectName || details.clientName || details.address) {
           setSaveDetails(details);
         }
+        // Always populate the address field from saved details
         if (details.address) {
           setAddress(details.address);
+        }
+        // If we already have coordinates from localStorage, skip geocoding
+        const savedCoords = localStorage.getItem('sitemap_coordinates');
+        if (savedCoords) return;
+
+        // Auto-geocode the saved address
+        if (details.address) {
           setLoading(true);
           base44.functions.invoke('geocodeAddress', { query: details.address, limit: 1 })
             .then(response => {
