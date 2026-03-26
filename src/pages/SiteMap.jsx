@@ -152,13 +152,36 @@ export default function SiteMap() {
     }
   }, []);
 
-  // Load most recent design
+  // Load most recent design - try localStorage first, then database
   useEffect(() => {
     const loadDesign = async () => {
       try {
+        // First try localStorage (most recent from Configurator)
+        const localStorageModules = JSON.parse(localStorage.getItem('configurator_modules') || '[]');
+        const localStorageWalls = JSON.parse(localStorage.getItem('configurator_walls') || '[]');
+        const localStorageFurniture = JSON.parse(localStorage.getItem('configurator_furniture') || '[]');
+        
+        if (localStorageModules.length > 0) {
+          // Calculate dimensions and price from localStorage data
+          const totalSqm = localStorageModules.reduce((s, m) => s + (m.sqm || 0), 0);
+          const estimatedPrice = localStorageModules.reduce((s, m) => s + (m.price || 0), 0) + localStorageWalls.reduce((s, w) => s + (w.price || 0), 0);
+          
+          setDesign({
+            name: localStorage.getItem('configurator_last_saved_name') || 'Current Design',
+            grid: localStorageModules,
+            walls: localStorageWalls,
+            furniture: localStorageFurniture,
+            totalSqm,
+            estimatedPrice,
+            moduleCount: localStorageModules.length
+          });
+          return;
+        }
+        
+        // Fallback to database
         const designs = await base44.entities.HomeDesign.list('-updated_date', 1);
         if (designs.length > 0) {
-          console.log('Design loaded:', designs[0].name, 'Furniture:', designs[0].furniture);
+          console.log('Design loaded from DB:', designs[0].name, 'Furniture:', designs[0].furniture);
           setDesign(designs[0]);
         }
       } catch (err) {
