@@ -14,12 +14,19 @@ import { useQuery } from '@tanstack/react-query';
 
 const FLOOR_PLAN_SCALE = 0.32;
 
-function MapSync({ center, zoom }) {
+function MapSync({ center, zoom, skipRef }) {
   const map = useMap();
   const prevCenter = useRef(null);
   const prevZoom = useRef(null);
   useEffect(() => {
     if (!center) return;
+    // If flagged as a silent update (post-drag commit), skip setView
+    if (skipRef && skipRef.current) {
+      skipRef.current = false;
+      prevCenter.current = center;
+      prevZoom.current = zoom;
+      return;
+    }
     const centerChanged = !prevCenter.current ||
       Math.abs(prevCenter.current[0] - center[0]) > 1e-10 ||
       Math.abs(prevCenter.current[1] - center[1]) > 1e-10;
@@ -73,6 +80,7 @@ export default function SiteMap() {
   const isDraggingRef = useRef(false);
   const dragStartRef = useRef(null);
   const liveOffsetRef = useRef(null); // tracks offset during drag without re-renders
+  const silentOffsetUpdate = useRef(false);
   const [showLabels, setShowLabels] = useState(true);
 
   const { data: designs = [] } = useQuery({
@@ -268,7 +276,15 @@ export default function SiteMap() {
 
   const handleMapMouseUp = () => {
     if (isDraggingRef.current && liveOffsetRef.current) {
-      // Commit final offset to state only once on release
+      // Persist to localStorage directly without triggering MapSync setView
+      const offset = liveOffsetRef.current;
+      localStorage.setItem('sitemap_offset', JSON.stringify(offset));
+      if (coordinates) {
+        const newCenter = [coordinates[0] + offset.lat, coordinates[1] + offset.lng];
+        localStorage.setItem('sitemap_mapCenter', JSON.stringify(newCenter));
+      }
+      // Use a silent update: bypass the useEffect that would call setView
+      silentOffsetUpdate.current = true;
       setPositionOffset(liveOffsetRef.current);
     }
     isDraggingRef.current = false;
@@ -506,7 +522,7 @@ export default function SiteMap() {
               className="w-full h-full"
               ref={mapRef}
             >
-              <MapSync center={mapCenter || getAdjustedCenter()} zoom={mapZoom} />
+              <MapSync center={mapCenter || getAdjustedCenter()} zoom={mapZoom} skipRef={silentOffsetUpdate} />
                 <TileLayer
                   url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
                   attribution='&copy; Esri, DigitalGlobe, Earthstar Geographics'
