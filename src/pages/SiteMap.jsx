@@ -353,44 +353,67 @@ export default function SiteMap() {
     });
 
     Promise.all(design.grid.map(loadImageForMod)).then((results) => {
-      // Draw walls first (background layer)
-      if (design.walls && design.walls.length > 0) {
-        design.walls.forEach(wall => {
-          const x = (wall.x - minX) * CANVAS_PX_PER_CELL;
-          const y = (wall.y - minY) * CANVAS_PX_PER_CELL;
-          const w = wall.width ? wall.width / 1000 * CANVAS_PX_PER_CELL : (wall.length || 1) * CANVAS_PX_PER_CELL;
-          const h = wall.height ? wall.height / 1000 * CANVAS_PX_PER_CELL : 2 * CANVAS_PX_PER_CELL;
-          
-          ctx.fillStyle = '#C4C4C4';
-          ctx.fillRect(x, y, w, h);
-          ctx.strokeStyle = '#999999';
-          ctx.lineWidth = 1;
-          ctx.strokeRect(x, y, w, h);
-        });
-      }
-      
-      // Draw modules (foreground layer)
-      results.forEach(({ mod, img }) => {
-        const x = (mod.x - minX) * CANVAS_PX_PER_CELL;
-        const y = (mod.y - minY) * CANVAS_PX_PER_CELL;
-        const w = mod.w * CANVAS_PX_PER_CELL;
-        const h = mod.h * CANVAS_PX_PER_CELL;
-        
-        ctx.save();
-        ctx.translate(x + w / 2, y + h / 2);
-        if (mod.rotation) ctx.rotate((mod.rotation * Math.PI) / 180);
-        if (mod.flipped) ctx.scale(-1, 1);
-        ctx.translate(-w / 2, -h / 2);
-        
-        ctx.fillStyle = mod.color || '#FDF0EB';
-        ctx.fillRect(0, 0, w, h);
-        if (img) ctx.drawImage(img, 0, 0, w, h);
-        
-        ctx.restore();
-      });
-      
-      setFloorPlanOverlay(canvas.toDataURL());
-    });
+       // Draw walls first (background layer)
+       if (design.walls && design.walls.length > 0) {
+         design.walls.forEach(wall => {
+           const x = (wall.x - minX) * CANVAS_PX_PER_CELL;
+           const y = (wall.y - minY) * CANVAS_PX_PER_CELL;
+           const w = wall.width ? wall.width / 1000 * CANVAS_PX_PER_CELL : (wall.length || 1) * CANVAS_PX_PER_CELL;
+           const h = wall.height ? wall.height / 1000 * CANVAS_PX_PER_CELL : 2 * CANVAS_PX_PER_CELL;
+
+           ctx.fillStyle = '#C4C4C4';
+           ctx.fillRect(x, y, w, h);
+           ctx.strokeStyle = '#999999';
+           ctx.lineWidth = 1;
+           ctx.strokeRect(x, y, w, h);
+         });
+       }
+
+       // Draw modules (foreground layer)
+       results.forEach(({ mod, img }) => {
+         const x = (mod.x - minX) * CANVAS_PX_PER_CELL;
+         const y = (mod.y - minY) * CANVAS_PX_PER_CELL;
+         const w = mod.w * CANVAS_PX_PER_CELL;
+         const h = mod.h * CANVAS_PX_PER_CELL;
+
+         ctx.save();
+         ctx.translate(x + w / 2, y + h / 2);
+         if (mod.rotation) ctx.rotate((mod.rotation * Math.PI) / 180);
+         if (mod.flipped) ctx.scale(-1, 1);
+         ctx.translate(-w / 2, -h / 2);
+
+         ctx.fillStyle = mod.color || '#FDF0EB';
+         ctx.fillRect(0, 0, w, h);
+         if (img) ctx.drawImage(img, 0, 0, w, h);
+
+         ctx.restore();
+       });
+
+       // Draw furniture (top layer)
+       if (design.furniture && design.furniture.length > 0) {
+         design.furniture.forEach(furn => {
+           const x = (furn.x - minX) * CANVAS_PX_PER_CELL;
+           const y = (furn.y - minY) * CANVAS_PX_PER_CELL;
+           const w = furn.width * CANVAS_PX_PER_CELL;
+           const h = furn.depth * CANVAS_PX_PER_CELL;
+
+           ctx.save();
+           ctx.translate(x + w / 2, y + h / 2);
+           if (furn.rotation) ctx.rotate((furn.rotation * Math.PI) / 180);
+           ctx.translate(-w / 2, -h / 2);
+
+           ctx.fillStyle = '#D4A574';
+           ctx.fillRect(0, 0, w, h);
+           ctx.strokeStyle = '#8B6F47';
+           ctx.lineWidth = 1;
+           ctx.strokeRect(0, 0, w, h);
+
+           ctx.restore();
+         });
+       }
+
+       setFloorPlanOverlay(canvas.toDataURL());
+     });
   }, [design]);
 
   // Calculate overlay bounds based on design dimensions
