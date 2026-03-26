@@ -6,6 +6,7 @@ import 'leaflet/dist/leaflet.css';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Loader2, X, Map as MapIcon, ChevronLeft, ZoomIn, ZoomOut, Settings, Eye, LayoutTemplate, FolderOpen, Grid2X2, Image, Save, Undo2, Check, FileText, Printer, BookOpen } from 'lucide-react';
+import { toast } from 'sonner';
 import { base44 } from '@/api/base44Client';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/lib/AuthContext';
@@ -912,6 +913,7 @@ export default function SiteMap() {
             <button
               onClick={() => {
                 localStorage.setItem('connectapod_save_details', JSON.stringify({ ...saveDetails, address }));
+                toast.success('Site details saved');
                 setShowSaveModal(false);
               }}
               className="px-3 py-1.5 text-sm bg-[#F15A22] text-white rounded hover:bg-[#d94e1a] transition-all"
