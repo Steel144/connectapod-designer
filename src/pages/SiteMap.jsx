@@ -373,10 +373,13 @@ export default function SiteMap() {
       ...(design.walls || []).map(loadImageForWall),
       ...(design.furniture || []).map(loadImageForFurniture)
     ]).then((results) => {
-       // Draw walls first (background layer)
-       design.walls?.forEach(wallResult => {
-         const wall = wallResult.wall || wallResult;
-         const wallImg = wallResult.img;
+        // Filter to get just module, wall, and furniture results
+        const modResults = results.slice(0, design.grid.length);
+        const wallResults = results.slice(design.grid.length, design.grid.length + (design.walls?.length || 0));
+        const furnResults = results.slice(design.grid.length + (design.walls?.length || 0));
+
+        // Draw walls first (background layer)
+        wallResults.forEach(({ wall, img: wallImg }) => {
 
          // Use wall position if available, otherwise find attached module
          let x, y, w, h;
@@ -422,14 +425,9 @@ export default function SiteMap() {
          ctx.strokeRect(0, 0, w, h);
 
          ctx.restore();
-       });
+         });
 
-        // Filter to get just module, wall, and furniture results
-         const modResults = results.slice(0, design.grid.length);
-         const wallResults = results.slice(design.grid.length, design.grid.length + (design.walls?.length || 0));
-         const furnResults = results.slice(design.grid.length + (design.walls?.length || 0));
-
-        // Draw modules (foreground layer)
+         // Draw modules (foreground layer)
         modResults.forEach(({ mod, img }) => {
          const x = (mod.x - minX) * CANVAS_PX_PER_CELL;
          const y = (mod.y - minY) * CANVAS_PX_PER_CELL;
