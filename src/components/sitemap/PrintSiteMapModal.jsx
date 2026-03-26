@@ -14,19 +14,8 @@ export default function PrintSiteMapModal({ open, onOpenChange, mapContainerRef,
   const handlePrint = async () => {
     setLoading(true);
     try {
-      // Take a screenshot of the viewport
-      const canvas = await html2canvas(document.body, {
-        allowTaint: true,
-        useCORS: false,
-        scale: 0.8,
-        backgroundColor: '#ffffff',
-        logging: false
-      });
-
-      const imgData = canvas.toDataURL('image/png');
-      
       const pdf = new jsPDF({
-        orientation: 'portrait',
+        orientation: 'landscape',
         unit: 'mm',
         format: 'a4'
       });
@@ -34,46 +23,41 @@ export default function PrintSiteMapModal({ open, onOpenChange, mapContainerRef,
       const pageWidth = pdf.internal.pageSize.getWidth();
       const pageHeight = pdf.internal.pageSize.getHeight();
 
-      // Title block (top section)
-      const titleBlockHeight = 60;
-      pdf.setFillColor(245, 90, 34); // #F15A22
-      pdf.rect(0, 0, pageWidth, titleBlockHeight, 'F');
+      // Orange title block
+      pdf.setFillColor(245, 90, 34);
+      pdf.rect(0, 0, pageWidth, 45, 'F');
 
-      // Title
+      // White title text
       pdf.setTextColor(255, 255, 255);
-      pdf.setFontSize(24);
-      pdf.text('SITE PLAN', pageWidth / 2, 18, { align: 'center' });
+      pdf.setFontSize(28);
+      pdf.text('SITE PLAN', pageWidth / 2, 20, { align: 'center' });
 
-      // Details in white text
+      // Project details
       pdf.setFontSize(11);
       let detailY = 32;
       
       if (saveDetails?.projectName) {
         pdf.text(`Project: ${saveDetails.projectName}`, 14, detailY);
-        detailY += 8;
+        detailY += 7;
       }
       
       if (siteAddress) {
-        pdf.text(`Site Address: ${siteAddress}`, 14, detailY);
-        detailY += 8;
+        const addressText = `Address: ${siteAddress}`;
+        const maxWidth = pageWidth - 28;
+        const lines = pdf.splitTextToSize(addressText, maxWidth);
+        pdf.text(lines, 14, detailY);
       }
 
-      pdf.text(`Generated: ${new Date().toLocaleString()}`, 14, detailY);
+      // Footer
+      pdf.setFontSize(8);
+      pdf.setTextColor(150, 150, 150);
+      pdf.text(`Generated: ${new Date().toLocaleString('en-NZ')}`, pageWidth / 2, pageHeight - 5, { align: 'center' });
 
-      // Screenshot below title block
-      const screenshotWidth = pageWidth;
-      const screenshotHeight = (canvas.height * screenshotWidth) / canvas.width;
-      const maxScreenshotHeight = pageHeight - titleBlockHeight - 5;
-      
-      const finalHeight = Math.min(screenshotHeight, maxScreenshotHeight);
-      pdf.addImage(imgData, 'PNG', 0, titleBlockHeight, screenshotWidth, finalHeight);
-
-      // Download
       pdf.save(`${fileName}.pdf`);
       onOpenChange(false);
     } catch (error) {
       console.error('Print error:', error);
-      alert('Failed to generate PDF. Please try again.');
+      alert('Failed to generate PDF');
     } finally {
       setLoading(false);
     }
