@@ -539,11 +539,11 @@ export default function SiteMap() {
   return (
     <>
     <div className="w-full h-screen flex flex-col bg-white">
-      {/* ── TOP BAR ── */}
+      {/* ── TOP BAR (SHARED WITH CONFIGURATOR) ── */}
       <div className="flex items-center px-4 py-4 bg-white border-b border-gray-200 overflow-x-auto gap-4 min-w-0 z-30">
         <div className="shrink-0 flex flex-col gap-0.5">
           <img src="https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/1a43e85d2_Connectapod-01.png" alt="connectapod" style={{ height: "25px", width: "auto" }} />
-          <span className="text-[10px] text-gray-400 tracking-widest uppercase">Site Map</span>
+          <span className="text-[10px] text-gray-400 tracking-widest uppercase">Design Studio</span>
         </div>
 
         <div className="flex items-center gap-2 ml-auto shrink-0">
@@ -590,11 +590,6 @@ export default function SiteMap() {
           {/* Site Map (current) */}
           <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-white text-gray-600 border border-gray-200 border-[#F15A22] text-[#F15A22] transition-all" style={{ clipPath: "polygon(0 0, calc(100% - 8px) 0, 100% 50%, calc(100% - 8px) 100%, 0 100%)" }}>
             <MapIcon size={13} /> Site Map
-          </button>
-
-          {/* Undo button */}
-          <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-gray-600 bg-white border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22] disabled:opacity-30 transition-all" style={{ clipPath: "polygon(0 0, calc(100% - 8px) 0, 100% 50%, calc(100% - 8px) 100%, 0 100%)" }}>
-            <Undo2 size={13} /> Undo
           </button>
 
           {/* Settings dropdown */}
