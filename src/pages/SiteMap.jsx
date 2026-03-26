@@ -447,10 +447,14 @@ export default function SiteMap() {
 
          if (furn.x === undefined || furn.y === undefined || !furn.width || !furn.depth) return;
 
+         // Furniture coords are in grid cells, dimensions are in meters — convert to grid cells
+         const furnWidthCells = (furn.width || 1) / CELL_M;
+         const furnDepthCells = (furn.depth || 1) / CELL_M;
+
          const x = (furn.x - minX) * CANVAS_PX_PER_CELL;
          const y = (furn.y - minY) * CANVAS_PX_PER_CELL;
-         const w = (furn.width || 1) * CANVAS_PX_PER_CELL;
-         const h = (furn.depth || 1) * CANVAS_PX_PER_CELL;
+         const w = furnWidthCells * CANVAS_PX_PER_CELL;
+         const h = furnDepthCells * CANVAS_PX_PER_CELL;
 
          ctx.save();
          ctx.translate(x + w / 2, y + h / 2);
