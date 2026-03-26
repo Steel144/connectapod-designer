@@ -16,11 +16,22 @@ const FLOOR_PLAN_SCALE = 0.32;
 
 function MapSync({ center, zoom }) {
   const map = useMap();
+  const prevCenter = useRef(null);
+  const prevZoom = useRef(null);
   useEffect(() => {
-    if (center) map.setView(center, zoom, { animate: false });
-  }, [center, zoom]);
+    if (!center) return;
+    const centerChanged = !prevCenter.current ||
+      Math.abs(prevCenter.current[0] - center[0]) > 1e-10 ||
+      Math.abs(prevCenter.current[1] - center[1]) > 1e-10;
+    const zoomChanged = prevZoom.current !== zoom;
+    if (centerChanged || zoomChanged) {
+      map.setView(center, zoom, { animate: false });
+      prevCenter.current = center;
+      prevZoom.current = zoom;
+    }
+  });
   return null;
-} // Adjusted for proper overlay size
+}
 
 export default function SiteMap() {
   const { user } = useAuth();
@@ -59,8 +70,9 @@ export default function SiteMap() {
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
 
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragStart, setDragStart] = useState(null);
+  const isDraggingRef = useRef(false);
+  const dragStartRef = useRef(null);
+  const liveOffsetRef = useRef(null); // tracks offset during drag without re-renders
   const [showLabels, setShowLabels] = useState(true);
 
   const { data: designs = [] } = useQuery({
@@ -222,39 +234,45 @@ export default function SiteMap() {
   };
 
   const handleMapMouseDown = (e) => {
-    setIsDragging(true);
-    setDragStart({ x: e.clientX, y: e.clientY });
+    isDraggingRef.current = true;
+    dragStartRef.current = { x: e.clientX, y: e.clientY };
+    liveOffsetRef.current = { ...positionOffset };
   };
 
   const handleMapMouseMove = (e) => {
-    if (!isDragging || !dragStart) return;
+    if (!isDraggingRef.current || !dragStartRef.current) return;
     
-    const deltaX = e.clientX - dragStart.x;
-    const deltaY = e.clientY - dragStart.y;
+    const deltaX = e.clientX - dragStartRef.current.x;
+    const deltaY = e.clientY - dragStartRef.current.y;
     
-    // Rotate the mouse delta by the map rotation so dragging always
-    // moves the map in the direction the mouse moves on screen.
     const rad = (overlayRotation * Math.PI) / 180;
-    // At zoom 21, 1 degree ≈ ~74000px on screen. We want ~1px mouse = ~1px map movement.
-    // degrees per pixel ≈ 360 / (256 * 2^zoom) = 360 / (256 * 2097152) ≈ 6.7e-9 at zoom 21
-    // But we also have scale(2) CSS, so halve it.
     const metersPerPixel = 156543.03392 * Math.cos((coordinates?.[0] ?? 0) * Math.PI / 180) / Math.pow(2, mapZoom);
     const degreesPerPixel = metersPerPixel / 111320;
-    const movementScale = degreesPerPixel / 2; // /2 for the CSS scale(2)
+    const movementScale = degreesPerPixel / 2;
     const rotatedDeltaLat = (deltaY * Math.cos(-rad) + deltaX * Math.sin(-rad)) * movementScale;
     const rotatedDeltaLng = (-deltaX * Math.cos(-rad) + deltaY * Math.sin(-rad)) * movementScale;
 
-    setPositionOffset(prev => ({
-      lat: prev.lat + rotatedDeltaLat,
-      lng: prev.lng + rotatedDeltaLng
-    }));
-    
-    setDragStart({ x: e.clientX, y: e.clientY });
+    const newOffset = {
+      lat: liveOffsetRef.current.lat + rotatedDeltaLat,
+      lng: liveOffsetRef.current.lng + rotatedDeltaLng,
+    };
+    liveOffsetRef.current = newOffset;
+    dragStartRef.current = { x: e.clientX, y: e.clientY };
+
+    // Move the map directly without triggering React re-render
+    if (mapRef.current && coordinates) {
+      const newCenter = [coordinates[0] + newOffset.lat, coordinates[1] + newOffset.lng];
+      mapRef.current.setView(newCenter, mapZoom, { animate: false });
+    }
   };
 
   const handleMapMouseUp = () => {
-    setIsDragging(false);
-    setDragStart(null);
+    if (isDraggingRef.current && liveOffsetRef.current) {
+      // Commit final offset to state only once on release
+      setPositionOffset(liveOffsetRef.current);
+    }
+    isDraggingRef.current = false;
+    dragStartRef.current = null;
   };
 
 
