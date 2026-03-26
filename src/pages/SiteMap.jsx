@@ -356,6 +356,8 @@ export default function SiteMap() {
       // Draw walls first (background layer)
        if (design.walls && design.walls.length > 0) {
          design.walls.forEach(wall => {
+           if (wall.x === undefined || wall.y === undefined) return;
+
            const x = (wall.x - minX) * CANVAS_PX_PER_CELL;
            const y = (wall.y - minY) * CANVAS_PX_PER_CELL;
            const w = wall.width ? wall.width / 1000 * CANVAS_PX_PER_CELL : (wall.length || 1) * CANVAS_PX_PER_CELL;
