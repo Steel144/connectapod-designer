@@ -105,8 +105,10 @@ export default function ProjectDetailsModal({
 
   const saved = loadDetails();
   const [projectName, setProjectName] = useState(saved.projectName || "");
-  const [clientName, setClientName] = useState(saved.clientName || "");
-  const [address, setAddress] = useState(saved.address || "");
+  const [clientFirstName, setClientFirstName] = useState(saved.clientFirstName || "");
+  const [clientFamilyName, setClientFamilyName] = useState(saved.clientFamilyName || "");
+  const [homeAddress, setHomeAddress] = useState(saved.homeAddress || "");
+  const [siteAddress, setSiteAddress] = useState(saved.siteAddress || "");
   const [email, setEmail] = useState(saved.email || "");
   const [phone, setPhone] = useState(saved.phone || "");
   const [generating, setGenerating] = useState(false);
@@ -115,15 +117,17 @@ export default function ProjectDetailsModal({
     if (open) {
       const s = loadDetails();
       setProjectName(s.projectName || "");
-      setClientName(s.clientName || "");
-      setAddress(s.address || "");
+      setClientFirstName(s.clientFirstName || "");
+      setClientFamilyName(s.clientFamilyName || "");
+      setHomeAddress(s.homeAddress || "");
+      setSiteAddress(s.siteAddress || "");
       setEmail(s.email || "");
       setPhone(s.phone || "");
     }
   }, [open]);
 
   const handleSaveDetails = () => {
-    const details = { projectName, clientName, address, email, phone };
+    const details = { projectName, clientFirstName, clientFamilyName, homeAddress, siteAddress, email, phone };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(details));
     return details;
   };
@@ -197,12 +201,13 @@ export default function ProjectDetailsModal({
     y += 10;
 
     // Client info
-    if (clientName || projectName || address || phone || email) {
+    const fullClientName = `${clientFirstName} ${clientFamilyName}`.trim();
+    if (fullClientName || projectName || siteAddress || phone || email) {
       const infoLines = [];
-      if (clientName) infoLines.push(`Client: ${clientName}`);
+      if (fullClientName) infoLines.push(`Client: ${fullClientName}`);
       if (phone) infoLines.push(`Phone: ${phone}`);
       if (email) infoLines.push(`Email: ${email}`);
-      if (address) infoLines.push(`Address: ${address}`);
+      if (siteAddress) infoLines.push(`Site Address: ${siteAddress}`);
       
       const boxHeight = 8 + infoLines.length * 5;
       doc.setFillColor(248, 248, 248);
@@ -408,9 +413,15 @@ export default function ProjectDetailsModal({
             <Label className="text-xs text-gray-600">Project / Design Name</Label>
             <Input value={projectName} onChange={e => setProjectName(e.target.value)} placeholder="e.g. Beach House" className="mt-1 rounded-none text-sm h-9" />
           </div>
-          <div>
-            <Label className="text-xs text-gray-600">Client Name</Label>
-            <Input value={clientName} onChange={e => setClientName(e.target.value)} placeholder="e.g. Jane Smith" className="mt-1 rounded-none text-sm h-9" />
+          <div className="grid grid-cols-2 gap-2">
+            <div>
+              <Label className="text-xs text-gray-600">Client First Name</Label>
+              <Input value={clientFirstName} onChange={e => setClientFirstName(e.target.value)} placeholder="e.g. Jane" className="mt-1 rounded-none text-sm h-9" />
+            </div>
+            <div>
+              <Label className="text-xs text-gray-600">Client Family Name</Label>
+              <Input value={clientFamilyName} onChange={e => setClientFamilyName(e.target.value)} placeholder="e.g. Smith" className="mt-1 rounded-none text-sm h-9" />
+            </div>
           </div>
           <div>
             <Label className="text-xs text-gray-600">Client Phone</Label>
@@ -421,8 +432,12 @@ export default function ProjectDetailsModal({
             <Input value={email} onChange={e => setEmail(e.target.value)} placeholder="e.g. jane@example.com" className="mt-1 rounded-none text-sm h-9" />
           </div>
           <div>
+            <Label className="text-xs text-gray-600">Home Address</Label>
+            <AddressAutocomplete value={homeAddress} onChange={setHomeAddress} />
+          </div>
+          <div>
             <Label className="text-xs text-gray-600">Site Address</Label>
-            <AddressAutocomplete value={address} onChange={setAddress} />
+            <AddressAutocomplete value={siteAddress} onChange={setSiteAddress} />
           </div>
         </div>
 

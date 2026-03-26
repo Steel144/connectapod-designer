@@ -1526,8 +1526,10 @@ export default function Configurator() {
             setDetailsModalMode(null);
           } else if (detailsModalMode === 'save') {
             handleSave(details.projectName, { 
-              clientName: details.clientName, 
-              address: details.address, 
+              clientFirstName: details.clientFirstName,
+              clientFamilyName: details.clientFamilyName,
+              homeAddress: details.homeAddress,
+              siteAddress: details.siteAddress, 
               email: details.email, 
               phone: details.phone 
             });
