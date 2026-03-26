@@ -378,56 +378,7 @@ export default function SiteMap() {
         const wallResults = results.slice(design.grid.length, design.grid.length + (design.walls?.length || 0));
         const furnResults = results.slice(design.grid.length + (design.walls?.length || 0));
 
-        // Draw walls first (background layer)
-        wallResults.forEach(({ wall, img: wallImg }) => {
-
-         // Use wall position if available, otherwise find attached module
-         let x, y, w, h;
-
-         if (wall.x !== undefined && wall.y !== undefined) {
-           x = (wall.x - minX) * CANVAS_PX_PER_CELL;
-           y = (wall.y - minY) * CANVAS_PX_PER_CELL;
-
-           if (wall.orientation === 'horizontal') {
-             w = (wall.length || wall.width / 1000 || 1) * CANVAS_PX_PER_CELL;
-             h = (wall.thickness || 0.15) * CANVAS_PX_PER_CELL;
-           } else {
-             w = (wall.thickness || 0.15) * CANVAS_PX_PER_CELL;
-             h = (wall.length || wall.height / 1000 || 1) * CANVAS_PX_PER_CELL;
-           }
-         } else {
-           // Find module this wall is attached to
-           const attachedMod = design.grid?.find(m => {
-             if (!wall.moduleId && !wall.groupKey) return false;
-             return m.id === wall.moduleId || m.groupKey === wall.groupKey;
-           });
-           if (!attachedMod) return;
-
-           x = (attachedMod.x - minX) * CANVAS_PX_PER_CELL;
-           y = (attachedMod.y - minY) * CANVAS_PX_PER_CELL;
-           w = attachedMod.w * CANVAS_PX_PER_CELL;
-           h = attachedMod.h * CANVAS_PX_PER_CELL;
-         }
-
-         ctx.save();
-         ctx.translate(x + w / 2, y + h / 2);
-         if (wall.rotation) ctx.rotate((wall.rotation * Math.PI) / 180);
-         if (wall.flipped) ctx.scale(-1, 1);
-         ctx.translate(-w / 2, -h / 2);
-
-         ctx.fillStyle = '#A0A0A0';
-         ctx.fillRect(0, 0, w, h);
-         if (wallImg) {
-           ctx.drawImage(wallImg, 0, 0, w, h);
-         }
-         ctx.strokeStyle = '#666666';
-         ctx.lineWidth = 0.5;
-         ctx.strokeRect(0, 0, w, h);
-
-         ctx.restore();
-         });
-
-         // Draw modules (foreground layer)
+        // Draw modules (base layer)
         modResults.forEach(({ mod, img }) => {
          const x = (mod.x - minX) * CANVAS_PX_PER_CELL;
          const y = (mod.y - minY) * CANVAS_PX_PER_CELL;
@@ -479,9 +430,55 @@ export default function SiteMap() {
          }
 
          ctx.restore();
-        })
-      
-      setFloorPlanOverlay(canvas.toDataURL());
+         })
+
+         // Draw walls (top layer)
+         wallResults.forEach(({ wall, img: wallImg }) => {
+         let x, y, w, h;
+
+         if (wall.x !== undefined && wall.y !== undefined) {
+           x = (wall.x - minX) * CANVAS_PX_PER_CELL;
+           y = (wall.y - minY) * CANVAS_PX_PER_CELL;
+
+           if (wall.orientation === 'horizontal') {
+             w = (wall.length || wall.width / 1000 || 1) * CANVAS_PX_PER_CELL;
+             h = (wall.thickness || 0.15) * CANVAS_PX_PER_CELL;
+           } else {
+             w = (wall.thickness || 0.15) * CANVAS_PX_PER_CELL;
+             h = (wall.length || wall.height / 1000 || 1) * CANVAS_PX_PER_CELL;
+           }
+         } else {
+           const attachedMod = design.grid?.find(m => {
+             if (!wall.moduleId && !wall.groupKey) return false;
+             return m.id === wall.moduleId || m.groupKey === wall.groupKey;
+           });
+           if (!attachedMod) return;
+
+           x = (attachedMod.x - minX) * CANVAS_PX_PER_CELL;
+           y = (attachedMod.y - minY) * CANVAS_PX_PER_CELL;
+           w = attachedMod.w * CANVAS_PX_PER_CELL;
+           h = attachedMod.h * CANVAS_PX_PER_CELL;
+         }
+
+         ctx.save();
+         ctx.translate(x + w / 2, y + h / 2);
+         if (wall.rotation) ctx.rotate((wall.rotation * Math.PI) / 180);
+         if (wall.flipped) ctx.scale(-1, 1);
+         ctx.translate(-w / 2, -h / 2);
+
+         ctx.fillStyle = '#A0A0A0';
+         ctx.fillRect(0, 0, w, h);
+         if (wallImg) {
+           ctx.drawImage(wallImg, 0, 0, w, h);
+         }
+         ctx.strokeStyle = '#666666';
+         ctx.lineWidth = 0.5;
+         ctx.strokeRect(0, 0, w, h);
+
+         ctx.restore();
+         })
+
+         setFloorPlanOverlay(canvas.toDataURL());
     });
   }, [design]);
 
