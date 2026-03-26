@@ -5,7 +5,7 @@ import { useEffect as useMapEffect } from 'react';
 import 'leaflet/dist/leaflet.css';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Loader2, X, Map as MapIcon, ChevronLeft, ZoomIn, ZoomOut, Settings, Eye, LayoutTemplate, FolderOpen, Grid2X2, Image, Save, Undo2, Check, FileText, Printer } from 'lucide-react';
+import { Loader2, X, Map as MapIcon, ChevronLeft, ZoomIn, ZoomOut, Settings, Eye, LayoutTemplate, FolderOpen, Grid2X2, Image, Save, Undo2, Check, FileText, Printer, BookOpen } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/lib/AuthContext';
@@ -369,6 +369,29 @@ export default function SiteMap() {
               <ZoomIn size={13} />
             </button>
           </div>
+
+          {/* Admin dropdown */}
+          {user?.role === "admin" && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-white bg-red-600 hover:bg-red-700 border border-red-700 transition-all">
+                  ⚙ Admin
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuItem asChild>
+                  <Link to="/Catalogue" className="flex items-center gap-2 cursor-pointer">
+                    <BookOpen size={13} /> Floor Catalogue
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/WallCatalogue" className="flex items-center gap-2 cursor-pointer">
+                    <BookOpen size={13} /> Wall Catalogue
+                  </Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
 
           {/* Settings dropdown */}
           <DropdownMenu>
