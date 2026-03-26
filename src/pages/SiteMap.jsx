@@ -588,7 +588,7 @@ export default function SiteMap() {
           </div>
 
           {/* Site Map (current) */}
-          <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-white text-gray-600 border border-gray-200 border-[#F15A22] text-[#F15A22] transition-all" style={{ clipPath: "polygon(0 0, calc(100% - 8px) 0, 100% 50%, calc(100% - 8px) 100%, 0 100%)" }}>
+          <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-white text-gray-600 border border-gray-200 border-[#F15A22] text-[#F15A22] transition-all shrink-0" style={{ clipPath: "polygon(0 0, calc(100% - 8px) 0, 100% 50%, calc(100% - 8px) 100%, 0 100%)" }}>
             <MapIcon size={13} /> Site Map
           </button>
 
