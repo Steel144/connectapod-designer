@@ -124,7 +124,7 @@ export default function ProjectDetailsModal({
       setEmail(s.email || "");
       setPhone(s.phone || "");
     }
-  }, [open]);
+  }, [open, mode]);
 
   const handleSaveDetails = () => {
     const fullClientName = `${clientFirstName} ${clientFamilyName}`.trim();
