@@ -124,7 +124,7 @@ export default function Configurator() {
     return () => ro.disconnect();
   }, [viewMode, isMobile]);
 
-  // Load template from catalogue if set
+  // Load template from catalogue if set (sessionStorage path — legacy)
   useEffect(() => {
     const raw = sessionStorage.getItem("load_template");
     if (raw) {
@@ -135,6 +135,22 @@ export default function Configurator() {
       } catch {}
     }
   }, []);
+
+  // Load starter design selected from Catalogue page
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem("connectapod:selectedTemplate");
+      if (!raw) return;
+      localStorage.removeItem("connectapod:selectedTemplate");
+      const selected = JSON.parse(raw);
+      if (!selected?.code) return;
+      // Find the matching HomeDesign template by name/code and load it
+      const match = designs.find(
+        (d) => d.is_template && (d.name === selected.name || d.name === selected.code)
+      );
+      if (match) handleLoad(match);
+    } catch {}
+  }, [designs]);
   const { data: customWalls = [] } = useQuery({
     queryKey: ["wallEntries"],
     queryFn: async () => { try { const r = await base44.entities.WallEntry.list(); return Array.isArray(r) ? r : []; } catch { return []; } },
