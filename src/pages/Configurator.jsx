@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import ModulePanel, { MODULE_TYPES } from "@/components/configurator/ModulePanel";
 import ConfigGrid from "@/components/configurator/ConfigGrid";
 import DesignSummary from "@/components/configurator/DesignSummary";
-import SavedDesigns from "@/components/configurator/SavedDesigns.jsx";
+import SavedDesigns from "@/components/configurator/SavedDesigns";
 import SaveDesignModal from "@/components/configurator/SaveDesignModal";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
