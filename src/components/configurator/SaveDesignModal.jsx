@@ -107,7 +107,7 @@ export default function SaveDesignModal({ open, onClose, onConfirm, isSaving, la
               <div className="flex gap-2 justify-between">
                 <div className="flex gap-2">
                   <Button variant="outline" onClick={onClose} className="rounded-xl">Cancel</Button>
-                  {!isSaveAs && (
+                  {originalName && !isSaveAs && (
                     <Button variant="outline" onClick={() => setIsSaveAs(true)} className="rounded-xl text-slate-600">
                       Save As...
                     </Button>

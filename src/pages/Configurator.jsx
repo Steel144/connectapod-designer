@@ -124,7 +124,7 @@ export default function Configurator() {
     return () => ro.disconnect();
   }, [viewMode, isMobile]);
 
-  // Load template from catalogue if set (sessionStorage path — legacy)
+  // Load template from catalogue if set
   useEffect(() => {
     const raw = sessionStorage.getItem("load_template");
     if (raw) {
@@ -135,8 +135,6 @@ export default function Configurator() {
       } catch {}
     }
   }, []);
-
-
   const { data: customWalls = [] } = useQuery({
     queryKey: ["wallEntries"],
     queryFn: async () => { try { const r = await base44.entities.WallEntry.list(); return Array.isArray(r) ? r : []; } catch { return []; } },
@@ -185,22 +183,6 @@ export default function Configurator() {
     queryKey: ["homeDesigns"],
     queryFn: async () => { try { const r = await base44.entities.HomeDesign.list("-created_date"); return Array.isArray(r) ? r : []; } catch { return []; } },
   });
-
-  // Load starter design selected from Catalogue page
-  useEffect(() => {
-    if (!designs.length) return;
-    try {
-      const raw = localStorage.getItem("connectapod:selectedTemplate");
-      if (!raw) return;
-      localStorage.removeItem("connectapod:selectedTemplate");
-      const selected = JSON.parse(raw);
-      if (!selected?.code) return;
-      const match = designs.find(
-        (d) => d.is_template && (d.name === selected.name || d.name === selected.code)
-      );
-      if (match) handleLoad(match);
-    } catch {}
-  }, [designs]);
 
   const wallImagesRef = useRef({});
   const floorPlanImagesRef = useRef({});

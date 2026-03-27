@@ -1,401 +1,642 @@
-import React, { useMemo, useState } from "react";
+import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { ChevronLeft, Pencil, Upload, X, Loader2, Plus, Trash2, Copy, Printer } from "lucide-react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
-import { Search, Home, Briefcase, BedDouble, Users, Plus, ArrowRight } from "lucide-react";
+import { toast } from "sonner";
+import AddModuleModal from "@/components/catalogue/AddModuleModal";
+import EditModuleModal from "@/components/catalogue/EditModuleModal";
+import PrintableCatalogue from "@/components/catalogue/PrintableCatalogue";
+import BulkUploadModal from "@/components/catalogue/BulkUploadModal";
 
-const useCaseCards = [
-  { key: "sleepout", title: "Sleepouts", description: "Compact extra space, usually under 30sqm", icon: Home },
-  { key: "office", title: "Office Space", description: "Work-from-home pods and backyard offices", icon: Briefcase },
-  { key: "granny-flat", title: "Granny Flats", description: "Flexible minor dwellings up to 70sqm", icon: Users },
-  { key: "1-bedroom", title: "1 Bedroom", description: "Efficient compact living", icon: BedDouble },
-  { key: "2-bedroom", title: "2 Bedroom", description: "Balanced layouts for couples and rentals", icon: BedDouble },
-  { key: "3-bedroom", title: "3 Bedroom", description: "Family-friendly starter plans", icon: BedDouble },
-  { key: "4-bedroom", title: "4 Bedroom", description: "Larger family layouts", icon: BedDouble },
-  { key: "5-plus", title: "5 Bedroom+", description: "Large homes and rural accommodation", icon: BedDouble },
-  { key: "rural", title: "Rural Accommodation", description: "Lifestyle block and worker accommodation", icon: Home },
+// Category structure for organizing custom modules — all built-in modules hidden
+const CATALOGUE = [
+  { category: "Living", description: "Standard open modules with no internal partitions. Used for living, dining, sleeping areas.", modules: [] },
+  { category: "Bedroom", description: "End-of-row modules with finished end walls. Available in left-hand (LF/LR) and right-hand (RF/RR) configurations.", modules: [] },
+  { category: "Bathroom", description: "Standard bathroom module with shower, vanity, and toilet.", modules: [] },
+  { category: "Laundry", description: "Modules with offset wall panels to create corner connections between perpendicular rows.", modules: [] },
+  { category: "Kitchen", description: "End-of-row kitchen modules with finished end wall and full cabinetry layout.", modules: [] },
+  { category: "Connection", description: "Modules that connect separate pavilions or buildings.", modules: [] },
+  { category: "Soffit", description: "Soffit-only modules.", modules: [] },
+  { category: "Deck", description: "Outdoor deck modules with wall panels and soffit options.", modules: [] },
 ];
 
-const sizeOptions = [
-  { key: "all", label: "All sizes" },
-  { key: "under30", label: "Under 30sqm" },
-  { key: "30to70", label: "30–70sqm" },
-  { key: "70to120", label: "70–120sqm" },
-  { key: "120plus", label: "120sqm+" },
-];
-
-const bedroomOptions = [
-  { key: "all", label: "Any bedrooms" },
-  { key: "studio", label: "Studio" },
-  { key: "1", label: "1 Bedroom" },
-  { key: "2", label: "2 Bedroom" },
-  { key: "3", label: "3 Bedroom" },
-  { key: "4", label: "4 Bedroom" },
-  { key: "5plus", label: "5+ Bedroom" },
-];
-
-function normalise(str) {
-  return String(str || "").trim().toLowerCase();
-}
-
-function asArray(value) {
-  if (Array.isArray(value)) return value.map(normalise);
-  if (typeof value === "string" && value.trim()) {
-    return value.split(",").map((x) => normalise(x)).filter(Boolean);
-  }
-  return [];
-}
-
-function getSizeSqm(item) {
-  if (typeof item.size_sqm === "number") return item.size_sqm;
-  if (typeof item.sizeSqm === "number") return item.sizeSqm;
-  if (typeof item.area === "number") return item.area;
-  if (typeof item.width === "number" && typeof item.depth === "number") {
-    return Number((item.width * item.depth).toFixed(1));
-  }
-  return null;
-}
-
-function getBedrooms(item) {
-  if (typeof item.bedrooms === "number") return item.bedrooms;
-  if (typeof item.bedroom_count === "number") return item.bedroom_count;
-  if (typeof item.bedroomCount === "number") return item.bedroomCount;
-  return null;
-}
-
-function getPrice(item) {
-  if (typeof item.starting_price === "number") return item.starting_price;
-  if (typeof item.startingPrice === "number") return item.startingPrice;
-  if (typeof item.price === "number") return item.price;
-  return null;
-}
-
-function formatPrice(value) {
-  if (typeof value !== "number") return "Price on request";
-  return new Intl.NumberFormat("en-NZ", { style: "currency", currency: "NZD", maximumFractionDigits: 0 }).format(value);
-}
-
-function inSizeBucket(size, bucket) {
-  if (bucket === "all") return true;
-  if (typeof size !== "number") return false;
-  if (bucket === "under30") return size < 30;
-  if (bucket === "30to70") return size >= 30 && size <= 70;
-  if (bucket === "70to120") return size > 70 && size <= 120;
-  if (bucket === "120plus") return size > 120;
-  return true;
-}
-
-function inBedroomBucket(bedrooms, bucket) {
-  if (bucket === "all") return true;
-  if (bucket === "studio") return bedrooms === 0;
-  if (typeof bedrooms !== "number") return false;
-  if (bucket === "5plus") return bedrooms >= 5;
-  return bedrooms === Number(bucket);
-}
-
-function inferTags(item) {
-  const tags = new Set([
-    ...asArray(item.categories),
-    ...asArray(item.category),
-    ...asArray(item.tags),
-    ...asArray(item.use_cases),
-    ...asArray(item.useCases),
-    normalise(item.designType),
-    normalise(item.design_type),
-    normalise(item.type),
-  ]);
-
-  const bedrooms = getBedrooms(item);
-  const size = getSizeSqm(item);
-  const name = normalise(item.name);
-  const code = normalise(item.code);
-
-  if (bedrooms === 1) tags.add("1-bedroom");
-  if (bedrooms === 2) tags.add("2-bedroom");
-  if (bedrooms === 3) tags.add("3-bedroom");
-  if (bedrooms === 4) tags.add("4-bedroom");
-  if (typeof bedrooms === "number" && bedrooms >= 5) tags.add("5-plus");
-  if (size !== null && size < 30) tags.add("sleepout");
-  if (size !== null && size <= 70) tags.add("granny-flat");
-  if (name.includes("office") || code.includes("office")) tags.add("office");
-  if (name.includes("sleepout")) tags.add("sleepout");
-  if (name.includes("granny")) tags.add("granny-flat");
-  if (name.includes("rural")) tags.add("rural");
-
-  return Array.from(tags).filter(Boolean);
-}
-
-function pickImage(item, floorPlanImages) {
-  return (
-    item.heroImage ||
-    item.hero_image ||
-    item.image ||
-    item.imageUrl ||
-    item.thumbnail ||
-    floorPlanImages?.[item.code] ||
-    null
-  );
-}
-
-function TemplateCard({ item, onOpen }) {
-  return (
-    <div className="overflow-hidden rounded-3xl border border-neutral-200 bg-white shadow-sm">
-      <div className="aspect-[16/10] bg-neutral-100">
-        {item._image ? (
-          <img src={item._image} alt={item.name} className="h-full w-full object-cover" />
-        ) : (
-          <div className="flex h-full items-center justify-center text-sm text-neutral-400">No preview image</div>
-        )}
-      </div>
-      <div className="p-5">
-        <div className="mb-2 flex items-start justify-between gap-3">
-          <div>
-            <h4 className="text-lg font-semibold text-neutral-900">{item.name || item.code}</h4>
-            <p className="text-xs uppercase tracking-wide text-neutral-400">{item.code}</p>
-          </div>
-        </div>
-        <div className="mb-3 flex flex-wrap gap-2 text-xs text-neutral-600">
-          {typeof item._sizeSqm === "number" && (
-            <span className="rounded-full bg-neutral-100 px-3 py-1">{item._sizeSqm} sqm</span>
-          )}
-          {typeof item._bedrooms === "number" && (
-            <span className="rounded-full bg-neutral-100 px-3 py-1">
-              {item._bedrooms === 0 ? "Studio" : `${item._bedrooms} bed`}
-            </span>
-          )}
-        </div>
-        <p className="mb-4 min-h-[40px] text-sm text-neutral-600">
-          {item.short_description || item.shortDescription || item.description || "Fully customisable starting design."}
-        </p>
-        <div className="mb-4 text-lg font-semibold text-neutral-900">{formatPrice(item._price)}</div>
-        <button
-          onClick={() => onOpen(item)}
-          className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-neutral-900 px-4 py-3 text-sm font-semibold text-white hover:bg-black"
-        >
-          Customise this design
-          <ArrowRight className="h-4 w-4" />
-        </button>
-      </div>
-    </div>
-  );
-}
+const CATEGORY_COLORS = {
+  "Living": "#E8F4FD",
+  "Bedroom": "#F0FDF4",
+  "Bathroom": "#F0F9FF",
+  "Laundry": "#F5F3FF",
+  "Kitchen": "#FFF1F2",
+  "Soffit": "#F8FAFC",
+  "Deck": "#F8FAFC",
+};
 
 export default function Catalogue() {
   const navigate = useNavigate();
-
   const [search, setSearch] = useState("");
-  const [activeUseCase, setActiveUseCase] = useState("all");
-  const [sizeFilter, setSizeFilter] = useState("all");
-  const [bedroomFilter, setBedroomFilter] = useState("all");
-  const [sortBy, setSortBy] = useState("recommended");
+  const [activeCategory, setActiveCategory] = useState("All");
+  const [editMode, setEditMode] = useState(false);
+  const [uploading, setUploading] = useState(null);
+  const [addingToCategory, setAddingToCategory] = useState(null);
+  const [editingModule, setEditingModule] = useState(null);
+  const [printMode, setPrintMode] = useState(false);
+  const [bulkUploadOpen, setBulkUploadOpen] = useState(false);
+  const queryClient = useQueryClient();
+  const fileInputRef = useRef(null);
+  const [pendingUploadCode, setPendingUploadCode] = useState(null);
 
-  const { data: moduleEntries = [], isLoading: loadingModules } = useQuery({
+  const { data: customModules = [] } = useQuery({
     queryKey: ["moduleEntries"],
     queryFn: () => base44.entities.ModuleEntry.list(),
   });
 
-  const { data: floorPlanImages = {}, isLoading: loadingImages } = useQuery({
+  const { data: deletedModules = [] } = useQuery({
+    queryKey: ["deletedModules"],
+    queryFn: () => base44.entities.DeletedModule.list(),
+  });
+  const deletedCodes = new Set(deletedModules.map(d => d.moduleCode));
+
+  const handleAddModule = async (data) => {
+    await base44.entities.ModuleEntry.create(data);
+    queryClient.invalidateQueries({ queryKey: ["moduleEntries"] });
+    setAddingToCategory(null);
+    toast.success("Module added");
+  };
+
+  const handleDeleteModule = async (entryId) => {
+    try {
+      await base44.entities.ModuleEntry.delete(entryId);
+      queryClient.invalidateQueries({ queryKey: ["moduleEntries"] });
+      toast.success("Module removed");
+    } catch (error) {
+      toast.error("Failed to remove module");
+    }
+  };
+
+  const handleDeleteBuiltinModule = async (code) => {
+    await base44.entities.DeletedModule.create({ moduleCode: code });
+    queryClient.invalidateQueries({ queryKey: ["deletedModules"] });
+    toast.success("Module hidden");
+  };
+
+  const handleRestoreModule = async (code) => {
+    const entry = deletedModules.find(d => d.moduleCode === code);
+    if (entry) {
+      await base44.entities.DeletedModule.delete(entry.id);
+      queryClient.invalidateQueries({ queryKey: ["deletedModules"] });
+      toast.success("Module restored");
+    }
+  };
+
+  const handlePermanentlyDeleteModule = async (code) => {
+    try {
+      // If it's a custom module, delete the ModuleEntry entirely
+      const customModule = customModules.find(m => m.code === code);
+      if (customModule) {
+        await base44.entities.ModuleEntry.delete(customModule.id);
+      }
+      
+      // Remove associated DeletedModule record if it exists
+      const deleted = await base44.entities.DeletedModule.filter({ moduleCode: code });
+      if (deleted.length > 0) {
+        await base44.entities.DeletedModule.delete(deleted[0].id);
+      }
+      
+      // Always remove images
+      const images = await base44.entities.FloorPlanImage.filter({ moduleType: code });
+      for (const img of images) {
+        await base44.entities.FloorPlanImage.delete(img.id);
+      }
+      
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["moduleEntries"] }),
+        queryClient.invalidateQueries({ queryKey: ["deletedModules"] }),
+        queryClient.invalidateQueries({ queryKey: ["floorPlanImages"] })
+      ]);
+      toast.success("Module purged forever");
+    } catch (error) {
+      console.error("Purge failed:", error);
+      toast.error("Failed to purge module");
+    }
+  };
+
+  const handleEditModule = async (data) => {
+    // If code changed, migrate any associated image to the new code
+    if (editingModule.code !== data.code) {
+      const oldImage = await base44.entities.FloorPlanImage.filter({ moduleType: editingModule.code });
+      if (oldImage.length > 0) {
+        await base44.entities.FloorPlanImage.update(oldImage[0].id, { moduleType: data.code });
+      }
+    }
+
+    // For Connection modules, ensure category is set to "Connection"
+    let finalData = { ...data };
+    const isConnection = data.variants && data.variants.includes("Connection");
+    if (isConnection) {
+      finalData.category = "Connection";
+    }
+
+    // Get the full module from customModules to preserve all fields
+    const fullModule = editingModule._custom 
+      ? customModules.find(m => m.id === editingModule._id)
+      : customModules.find(c => c.originalCode === editingModule.code);
+
+    if (editingModule._custom && fullModule) {
+      // For custom modules, update directly
+      await base44.entities.ModuleEntry.update(editingModule._id, {
+        ...finalData,
+        originalCode: editingModule.originalCode || undefined,
+      });
+    } else {
+      // For builtin modules, we need to create/update an override
+      const existingOverride = customModules.find(c => c.originalCode === editingModule.code);
+      if (existingOverride) {
+        // Update existing override
+        await base44.entities.ModuleEntry.update(existingOverride.id, {
+          ...finalData,
+          categories: existingOverride.categories || [],
+          originalCode: editingModule.code,
+        });
+      } else {
+        // Create new override and hide the builtin
+        await Promise.all([
+          base44.entities.DeletedModule.create({ moduleCode: editingModule.code }),
+          base44.entities.ModuleEntry.create({
+            ...finalData,
+            categories: [],
+            originalCode: editingModule.code,
+          }),
+        ]);
+      }
+    }
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: ["moduleEntries"] }),
+      queryClient.invalidateQueries({ queryKey: ["deletedModules"] }),
+      queryClient.invalidateQueries({ queryKey: ["floorPlanImages"] }),
+    ]);
+    setEditingModule(null);
+    toast.success("Module updated");
+  };
+
+  const { data: floorPlanImages = {} } = useQuery({
     queryKey: ["floorPlanImages"],
     queryFn: async () => {
       const images = await base44.entities.FloorPlanImage.list();
-      return Object.fromEntries(images.map((img) => [img.moduleType, img.imageUrl]));
+      return Object.fromEntries(images.map(img => [img.moduleType, img.imageUrl]));
     },
   });
 
-  const templates = useMemo(() => {
-    return moduleEntries
-      .filter((item) => {
-        const tags = inferTags(item);
-        return (
-          item.isTemplate === true ||
-          item.is_template === true ||
-          item.template === true ||
-          item.starterDesign === true ||
-          item.starter_design === true ||
-          tags.some((t) => ["sleepout","office","granny-flat","1-bedroom","2-bedroom","3-bedroom","4-bedroom","5-plus","rural"].includes(t))
-        );
-      })
-      .map((item) => ({
-        ...item,
-        _sizeSqm: getSizeSqm(item),
-        _bedrooms: getBedrooms(item),
-        _price: getPrice(item),
-        _tags: inferTags(item),
-        _image: pickImage(item, floorPlanImages),
+  const handleUploadClick = (code) => {
+    setPendingUploadCode(code);
+    fileInputRef.current.click();
+  };
+
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file || !pendingUploadCode) return;
+    e.target.value = "";
+    setUploading(pendingUploadCode);
+    const { file_url } = await base44.integrations.Core.UploadFile({ file });
+    const existing = await base44.entities.FloorPlanImage.filter({ moduleType: pendingUploadCode });
+    if (existing.length > 0) {
+      await base44.entities.FloorPlanImage.update(existing[0].id, { imageUrl: file_url });
+    } else {
+      await base44.entities.FloorPlanImage.create({ moduleType: pendingUploadCode, imageUrl: file_url });
+    }
+    queryClient.invalidateQueries({ queryKey: ["floorPlanImages"] });
+    setUploading(null);
+    toast.success("Image updated");
+  };
+
+  const handleRemoveImage = async (code) => {
+    const existing = await base44.entities.FloorPlanImage.filter({ moduleType: code });
+    if (existing.length > 0) {
+      await base44.entities.FloorPlanImage.delete(existing[0].id);
+      queryClient.invalidateQueries({ queryKey: ["floorPlanImages"] });
+      toast.success("Image removed");
+    }
+  };
+
+  const handleDuplicateModule = async (mod, category) => {
+    // Generate a new code with suffix
+    const baseCodes = customModules.filter(m => m.code.startsWith(mod.code)).map(m => m.code);
+    const nextSuffix = baseCodes.length > 0 ? String.fromCharCode(97 + baseCodes.length) : "a"; // a, b, c...
+    const newCode = `${mod.code}${nextSuffix}`;
+
+    // Find the full module data to preserve all fields
+    const fullMod = customModules.find(m => m.code === mod.code);
+    const newModule = {
+      category,
+      code: newCode,
+      name: mod.name,
+      width: mod.width,
+      depth: mod.depth,
+      description: mod.description,
+      price: mod.price,
+      variants: fullMod?.variants || mod.variants || [],
+      wallElevations_list: fullMod?.wallElevations_list || mod.wallElevations_list || [],
+      categories: fullMod?.categories || [],
+    };
+
+    await base44.entities.ModuleEntry.create(newModule);
+    queryClient.invalidateQueries({ queryKey: ["moduleEntries"] });
+    toast.success(`Duplicated as ${newCode}`);
+  };
+
+  const validCategories = Array.from(new Set([...CATALOGUE.map(c => c.category), "Connection"]));
+  const categories = ["All", ...validCategories, "Uncategorized"];
+
+  // Codes that have a custom override via originalCode
+  const overriddenModuleCodes = new Set(customModules.filter(c => c.originalCode).map(c => c.originalCode));
+
+  const moduleCodeNum = (code) => {
+    const m = String(code).match(/\d+/);
+    return m ? parseInt(m[0], 10) : 9999;
+  };
+
+  // Merge hardcoded + custom modules per category, combining duplicate categories
+  const catalogueByCategory = CATALOGUE.reduce((acc, cat) => {
+    const existing = acc.find(c => c.category === cat.category);
+    if (existing) {
+      existing.modules = [...existing.modules, ...cat.modules];
+      existing.description = existing.description || cat.description;
+    } else {
+      acc.push({ ...cat });
+    }
+    return acc;
+  }, []);
+
+  // Add Uncategorized section for custom modules without matching descriptions
+  const uncategorizedCustoms = customModules.filter(c => {
+    const descriptions = (c.description || "").split(",").map(s => s.trim()).filter(Boolean);
+    return descriptions.length === 0 || !descriptions.some(d => validCategories.includes(d));
+  });
+  if (uncategorizedCustoms.length > 0) {
+    catalogueByCategory.push({
+      category: "Uncategorized",
+      description: "Modules without category assignments",
+      modules: []
+    });
+  }
+
+  const allCatalogue = catalogueByCategory.map(cat => {
+    let customs = [];
+
+    if (cat.category === "Uncategorized") {
+      // For uncategorized, get modules without valid category assignments
+      customs = uncategorizedCustoms.map(c => ({
+        code: c.code, name: c.name, width: c.width || 3.0, depth: c.depth || 4.8,
+        sqm: c.sqm || parseFloat(((c.width || 3.0) * (c.depth || 4.8)).toFixed(1)),
+        description: c.description || "",
+        chassisCodes: c.chassisCodes || [],
+        variants: c.variants || [],
+        wallElevations_list: c.wallElevations_list || [],
+        wallElevations: { Z: c.wallElevationZ || "N/A", W: c.wallElevationW || "", Y: c.wallElevationY || "", X: c.wallElevationX || "N/A" },
+        originalCode: c.originalCode || undefined,
+        _custom: true, _id: c.id, _deleted: false,
       }));
-  }, [moduleEntries, floorPlanImages]);
+    } else {
+      // For other categories, get custom modules via description or categories field
+      customs = customModules.filter(c => {
+        const descriptions = (c.description || "").split(",").map(s => s.trim()).filter(Boolean);
+        const categories = Array.isArray(c.categories) ? c.categories : [];
+        const variants = Array.isArray(c.variants) ? c.variants.map(v => v.toLowerCase()) : [];
+        const isConnection = variants.some(v => v.includes("connection"));
 
-  const filteredTemplates = useMemo(() => {
-    let rows = [...templates];
+        if (cat.category === "Connection") {
+          return isConnection || c.category === "Connection" || descriptions.includes("Connection");
+        }
 
-    if (search.trim()) {
-      const q = normalise(search);
-      rows = rows.filter((item) =>
-        [item.name, item.code, item.description, item.short_description, item.shortDescription, ...(item._tags || [])]
-          .filter(Boolean)
-          .some((value) => normalise(value).includes(q))
-      );
+        return descriptions.includes(cat.category) || c.category === cat.category || categories.includes(cat.category);
+      }).map(c => ({
+          code: c.code, name: c.name, width: c.width || 3.0, depth: c.depth || 4.8,
+          sqm: c.sqm || parseFloat(((c.width || 3.0) * (c.depth || 4.8)).toFixed(1)),
+          description: c.description || "",
+          chassisCodes: c.chassisCodes || [],
+          variants: c.variants || [],
+          wallElevations_list: c.wallElevations_list || [],
+          wallElevations: { Z: c.wallElevationZ || "N/A", W: c.wallElevationW || "", Y: c.wallElevationY || "", X: c.wallElevationX || "N/A" },
+          originalCode: c.originalCode || undefined,
+          _custom: true, _id: c.id, _deleted: false,
+        }));
     }
 
-    if (activeUseCase !== "all") rows = rows.filter((item) => item._tags.includes(activeUseCase));
-    rows = rows.filter((item) => inSizeBucket(item._sizeSqm, sizeFilter));
-    rows = rows.filter((item) => inBedroomBucket(item._bedrooms, bedroomFilter));
+    const builtins = cat.category !== "Uncategorized" ? cat.modules
+      .filter(m => {
+        if (overriddenModuleCodes.has(m.code)) return false;
+        if (!deletedCodes.has(m.code)) return true;
+        return editMode; // Only show deleted modules in edit mode
+      })
+      .map(m => ({ ...m, _custom: false, _deleted: deletedCodes.has(m.code) })) : [];
 
-    rows.sort((a, b) => {
-      if (sortBy === "smallest") return (a._sizeSqm ?? 9999) - (b._sizeSqm ?? 9999);
-      if (sortBy === "largest") return (b._sizeSqm ?? -1) - (a._sizeSqm ?? -1);
-      if (sortBy === "cheapest") return (a._price ?? 999999999) - (b._price ?? 999999999);
-      if (sortBy === "name") return String(a.name || "").localeCompare(String(b.name || ""));
-      return 0;
-    });
+    const merged = [...builtins, ...customs];
+    merged.sort((a, b) => moduleCodeNum(a.originalCode || a.code) - moduleCodeNum(b.originalCode || b.code));
+    return { ...cat, modules: merged };
+  });
 
-    return rows;
-  }, [templates, search, activeUseCase, sizeFilter, bedroomFilter, sortBy]);
+  const totalModules = allCatalogue.reduce((s, c) => s + c.modules.length, 0);
 
-  const featured = useMemo(() => templates.slice(0, 6), [templates]);
+  const filtered = allCatalogue
+    .filter(cat => activeCategory === "All" || cat.category === activeCategory)
+    .map(cat => ({
+      ...cat,
+      modules: cat.modules.filter(m =>
+        m.name.toLowerCase().includes(search.toLowerCase()) ||
+        m.code.toLowerCase().includes(search.toLowerCase()) ||
+        (m.description || "").toLowerCase().includes(search.toLowerCase())
+      ),
+    }))
+    .filter(cat => cat.modules.length > 0 || editMode);
 
-  function handleOpenTemplate(template) {
-    localStorage.setItem("connectapod:selectedTemplate", JSON.stringify({
-      id: template.id,
-      code: template.code,
-      name: template.name,
-      source: "catalogue",
-      selectedAt: new Date().toISOString(),
+  if (printMode) {
+    const printCategories = filtered.map(cat => ({
+      name: cat.category,
+      description: cat.description,
+      items: cat.modules.map(m => ({
+        code: m.code,
+        name: m.name,
+        specs: `${m.width}m × ${m.depth}m (${m.sqm.toFixed(1)} m²)`,
+        description: m.description || "—",
+        variants: m.variants || [],
+        imageUrl: floorPlanImages[m.code] || floorPlanImages[m.originalCode] || null,
+      })),
     }));
-    navigate("/Configurator");
-  }
 
-  function handleStartFromScratch() {
-    localStorage.removeItem("connectapod:selectedTemplate");
-    navigate("/Configurator");
+    return (
+      <PrintableCatalogue
+        title="Module Catalogue"
+        categories={printCategories}
+        onClose={() => setPrintMode(false)}
+      />
+    );
   }
-
-  const loading = loadingModules || loadingImages;
 
   return (
-    <div className="min-h-screen bg-neutral-50">
-      <div className="mx-auto max-w-7xl px-4 py-6 md:px-6 md:py-8">
-        {/* Header */}
-        <div className="mb-6 flex flex-col gap-4 rounded-3xl bg-white p-6 shadow-sm md:flex-row md:items-center md:justify-between">
-          <div>
-            <p className="mb-2 text-sm font-semibold uppercase tracking-wide text-orange-600">Connectapod</p>
-            <h1 className="text-3xl font-bold tracking-tight text-neutral-900">Choose a starting point</h1>
-            <p className="mt-2 max-w-2xl text-sm text-neutral-600 md:text-base">
-              Start with a proven design and customise it inside the configurator.
-            </p>
+    <div className="min-h-screen bg-[#F5F5F3]">
+      {/* Header */}
+      <div className="sticky top-0 z-30 bg-white/80 backdrop-blur border-b border-gray-200 px-6 py-2.5">
+        <div className="max-w-7xl mx-auto flex items-center gap-4">
+          <div className="shrink-0 flex items-center gap-3">
+            <img src="https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/1a43e85d2_Connectapod-01.png" alt="connectapod" className="h-8 w-auto" />
+            <span className="text-xs text-gray-400">Module Catalogue</span>
           </div>
-          <button
-            onClick={handleStartFromScratch}
-            className="inline-flex items-center justify-center gap-2 rounded-2xl bg-orange-500 px-5 py-3 text-sm font-semibold text-white hover:bg-orange-600"
-          >
-            <Plus className="h-4 w-4" />
-            Start from scratch
-          </button>
-        </div>
-
-        {/* Use case cards */}
-        <div className="mb-8 grid gap-4 md:grid-cols-3 xl:grid-cols-4">
-          {useCaseCards.map((card) => {
-            const Icon = card.icon;
-            const active = activeUseCase === card.key;
-            return (
-              <button
-                key={card.key}
-                onClick={() => setActiveUseCase(active ? "all" : card.key)}
-                className={`rounded-3xl border p-5 text-left transition ${active ? "border-orange-400 bg-orange-50 shadow-sm" : "border-neutral-200 bg-white hover:border-orange-300"}`}
-              >
-                <div className="mb-4 inline-flex rounded-2xl bg-neutral-100 p-3">
-                  <Icon className="h-5 w-5 text-neutral-700" />
-                </div>
-                <h2 className="text-lg font-semibold text-neutral-900">{card.title}</h2>
-                <p className="mt-2 text-sm text-neutral-600">{card.description}</p>
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Filters */}
-        <div className="mb-6 grid gap-3 rounded-3xl border border-neutral-200 bg-white p-4 md:grid-cols-4">
-          <div className="md:col-span-4">
-            <label className="mb-2 block text-sm font-medium text-neutral-700">Search</label>
-            <div className="relative">
-              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
-              <input
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search by name, code, use case..."
-                className="w-full rounded-2xl border border-neutral-200 bg-white py-3 pl-10 pr-4 text-sm outline-none focus:border-orange-400"
-              />
-            </div>
-          </div>
-          <div>
-            <label className="mb-2 block text-sm font-medium text-neutral-700">Size</label>
-            <select value={sizeFilter} onChange={(e) => setSizeFilter(e.target.value)} className="w-full rounded-2xl border border-neutral-200 bg-white px-3 py-3 text-sm">
-              {sizeOptions.map((o) => <option key={o.key} value={o.key}>{o.label}</option>)}
-            </select>
-          </div>
-          <div>
-            <label className="mb-2 block text-sm font-medium text-neutral-700">Bedrooms</label>
-            <select value={bedroomFilter} onChange={(e) => setBedroomFilter(e.target.value)} className="w-full rounded-2xl border border-neutral-200 bg-white px-3 py-3 text-sm">
-              {bedroomOptions.map((o) => <option key={o.key} value={o.key}>{o.label}</option>)}
-            </select>
-          </div>
-          <div>
-            <label className="mb-2 block text-sm font-medium text-neutral-700">Sort</label>
-            <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} className="w-full rounded-2xl border border-neutral-200 bg-white px-3 py-3 text-sm">
-              <option value="recommended">Recommended</option>
-              <option value="smallest">Smallest first</option>
-              <option value="largest">Largest first</option>
-              <option value="cheapest">Cheapest first</option>
-              <option value="name">Name</option>
-            </select>
-          </div>
-          <div className="flex items-end">
+          <div className="flex items-center gap-2 ml-auto">
             <button
-              onClick={() => { setSearch(""); setActiveUseCase("all"); setSizeFilter("all"); setBedroomFilter("all"); setSortBy("recommended"); }}
-              className="w-full rounded-2xl border border-neutral-200 px-4 py-3 text-sm font-medium text-neutral-700 hover:border-orange-300"
+              onClick={() => setBulkUploadOpen(true)}
+              className="flex items-center gap-2 px-3 py-1.5 text-xs text-gray-600 border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22] transition-all"
+              title="Bulk upload floor plan images"
             >
-              Clear filters
+              <Upload size={14} />
+              Bulk Upload
+            </button>
+            <button
+              onClick={() => setPrintMode(true)}
+              className="flex items-center gap-2 px-3 py-1.5 text-xs text-gray-600 border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22] transition-all"
+              title="Print catalogue as PDF"
+            >
+              <Printer size={14} />
+              Print
+            </button>
+            <button
+              onClick={() => setEditMode(e => !e)}
+              className={`flex items-center gap-2 px-3 py-1.5 text-xs border transition-all ${editMode ? "bg-[#F15A22] text-white border-[#F15A22]" : "text-gray-600 border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22]"}`}
+            >
+              <Pencil size={13} />
+              {editMode ? "Done Editing" : "Edit Catalogue"}
+            </button>
+            <button
+              onClick={() => navigate("/Configurator")}
+              className="flex items-center gap-2 px-3 py-1.5 text-xs text-gray-600 border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22] transition-all"
+            >
+              <ChevronLeft size={16} />
+              Exit
             </button>
           </div>
+          <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-6 py-8">
+        {/* Search + Stats */}
+        <div className="flex flex-col sm:flex-row gap-4 mb-8">
+          <input
+            type="text"
+            placeholder="Search modules by name, code or description..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            className="flex-1 border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:border-[#F15A22]"
+          />
+          <div className="flex items-center gap-2 text-sm text-gray-500 bg-white border border-gray-200 px-4 py-2.5">
+            <span className="font-bold text-gray-800">{totalModules}</span> module layouts across
+            <span className="font-bold text-gray-800">{categories.length - 1}</span> categories
+          </div>
         </div>
 
-        {/* Featured */}
-        {!loading && featured.length > 0 && activeUseCase === "all" && !search && (
-          <div className="mb-8">
-            <div className="mb-4">
-              <h3 className="text-xl font-semibold text-neutral-900">Featured starter designs</h3>
-              <p className="text-sm text-neutral-600">Quick starting points your customers can edit.</p>
-            </div>
-            <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-              {featured.map((item) => (
-                <TemplateCard key={`featured-${item.id}`} item={item} onOpen={handleOpenTemplate} />
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* All results */}
-        <div className="mb-4">
-          <h3 className="text-xl font-semibold text-neutral-900">Starter designs</h3>
-          <p className="text-sm text-neutral-600">
-            {loading ? "Loading..." : `${filteredTemplates.length} design${filteredTemplates.length === 1 ? "" : "s"} found`}
-          </p>
+        {/* Category filter */}
+        <div className="flex flex-wrap gap-2 mb-8">
+          {categories.map(cat => (
+            <button
+              key={cat}
+              onClick={() => setActiveCategory(cat)}
+              className={`px-3 py-1.5 text-xs font-medium border transition-all ${activeCategory === cat ? "bg-[#F15A22] text-white border-[#F15A22]" : "bg-white text-gray-600 border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22]"}`}
+            >
+              {cat}
+            </button>
+          ))}
         </div>
 
-        {loading ? (
-          <div className="rounded-3xl border border-neutral-200 bg-white p-8 text-sm text-neutral-600">Loading designs...</div>
-        ) : filteredTemplates.length === 0 ? (
-          <div className="rounded-3xl border border-neutral-200 bg-white p-8 text-sm text-neutral-600">
-            No matching starter designs found. Try clearing filters or start from scratch.
-          </div>
-        ) : (
-          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-            {filteredTemplates.map((item) => (
-              <TemplateCard key={item.id} item={item} onOpen={handleOpenTemplate} />
-            ))}
+        {bulkUploadOpen && (
+          <BulkUploadModal
+            existingModules={allCatalogue.flatMap(c => c.modules)}
+            onClose={() => setBulkUploadOpen(false)}
+            onDone={() => {
+              queryClient.invalidateQueries({ queryKey: ["moduleEntries"] });
+              queryClient.invalidateQueries({ queryKey: ["floorPlanImages"] });
+              setBulkUploadOpen(false);
+              toast.success("Bulk upload complete");
+            }}
+          />
+        )}
+
+        {editingModule && (
+          <EditModuleModal
+            module={editingModule}
+            onSave={handleEditModule}
+            onClose={() => setEditingModule(null)}
+          />
+        )}
+
+        {addingToCategory && (
+          <AddModuleModal
+            category={addingToCategory.category}
+            onSave={handleAddModule}
+            onClose={() => setAddingToCategory(null)}
+          />
+        )}
+
+        {/* Catalogue Sections */}
+        <div className="space-y-10">
+          {filtered.map(cat => (
+            <div key={cat.category}>
+              <div className="mb-4 flex items-start justify-between gap-4">
+                <div>
+                  <h2 className="text-lg font-bold text-gray-900">{cat.category}</h2>
+                  <p className="text-sm text-gray-500 mt-0.5">{cat.description}</p>
+                </div>
+                {editMode && (
+                  <button
+                    onClick={() => setAddingToCategory(cat)}
+                    className="shrink-0 flex items-center gap-1 px-2 py-1 text-xs text-[#F15A22] border border-[#F15A22] hover:bg-[#F15A22] hover:text-white transition-colors"
+                  >
+                    <Plus size={11} /> Add Module
+                  </button>
+                )}
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {cat.modules.map((mod, idx) => (
+                    <div
+                      key={`${mod.code}-${idx}`}
+                      className={`bg-white border p-4 transition-all group relative ${mod._deleted ? "border-red-200 opacity-50" : "border-gray-200 hover:shadow-md hover:border-[#F15A22]"}`}
+                    >
+                    {editMode && (
+                       <div className="absolute top-2 right-2 flex items-center gap-1 z-10">
+                         {mod._deleted ? (
+                           <>
+                             <button
+                               onClick={() => handleRestoreModule(mod.code)}
+                               className="text-xs text-green-600 hover:underline"
+                             >Restore</button>
+                             <button
+                               onClick={(e) => {
+                                 e.stopPropagation();
+                                 handlePermanentlyDeleteModule(mod.code);
+                               }}
+                               className="text-xs text-red-600 hover:underline"
+                             >Purge</button>
+                           </>
+                         ) : (
+                           <>
+                             <button
+                               onClick={() => handleDuplicateModule(mod, cat.category)}
+                               className="text-gray-300 hover:text-blue-500 transition-colors"
+                               title="Duplicate module"
+                             >
+                               <Copy size={13} />
+                             </button>
+                             <button
+                               onClick={() => {
+                                 const fullMod = customModules.find(m => m.code === mod.code) || mod;
+                                 setEditingModule({ ...fullMod, category: cat.category, _custom: mod._custom, _id: mod._id });
+                               }}
+                               className="text-gray-300 hover:text-[#F15A22] transition-colors"
+                               title="Edit module"
+                             >
+                               <Pencil size={13} />
+                             </button>
+                             <button
+                               onClick={() => mod._custom ? handleDeleteModule(mod._id) : handleDeleteBuiltinModule(mod.code)}
+                               className="text-gray-300 hover:text-red-500 transition-colors"
+                               title="Remove module"
+                             >
+                               <Trash2 size={13} />
+                             </button>
+                           </>
+                         )}
+                       </div>
+                     )}
+
+                    {/* Visual preview */}
+                     <div
+                       className="w-full mb-3 relative flex items-center justify-center border border-gray-100"
+                       style={{ height: "240px", backgroundColor: CATEGORY_COLORS[cat.category] || "#F5F5F3" }}
+                     >
+                       {uploading === mod.code ? (
+                         <Loader2 size={20} className="animate-spin text-[#F15A22]" />
+                       ) : (floorPlanImages[mod.code] || floorPlanImages[mod.originalCode]) ? (
+                         <>
+                           <img src={floorPlanImages[mod.code] || floorPlanImages[mod.originalCode]} alt={mod.name} className="w-auto h-full object-contain" style={{ backgroundColor: 'white' }} />
+                           {floorPlanImages[mod.code] && (
+                             <div className="absolute top-2 right-2 bg-green-500 text-white text-[10px] px-1.5 py-0.5 rounded flex items-center gap-1">
+                               <span>✓</span> Matched
+                             </div>
+                           )}
+                           {!floorPlanImages[mod.code] && floorPlanImages[mod.originalCode] && (
+                             <div className="absolute top-2 right-2 bg-yellow-500 text-white text-[10px] px-1.5 py-0.5 rounded flex items-center gap-1" title="Using original code image">
+                               <span>⚠</span> Original
+                             </div>
+                           )}
+                         </>
+                      ) : (
+                        <div
+                          className="bg-white border-2 border-gray-300 group-hover:border-[#F15A22] transition-colors flex items-center justify-center"
+                          style={{ width: `${(mod.width / 3) * 60}%`, height: "80%" }}
+                        >
+                          <span className="text-xs font-mono text-gray-400 group-hover:text-[#F15A22]">
+                            {mod.width}×{mod.depth}
+                          </span>
+                        </div>
+                      )}
+                       {editMode && uploading !== mod.code && (
+                        <div className="absolute inset-0 bg-black/40 items-center justify-center gap-2 hidden group-hover:flex pointer-events-none">
+                          <button
+                            onClick={() => handleUploadClick(mod.code)}
+                            className="flex items-center gap-1 px-2 py-1 bg-white text-gray-800 text-xs font-medium hover:bg-[#F15A22] hover:text-white transition-colors pointer-events-auto"
+                          >
+                            <Upload size={11} /> Upload
+                          </button>
+                          {(floorPlanImages[mod.code] || floorPlanImages[mod.originalCode]) && (
+                            <button
+                              onClick={() => handleRemoveImage(mod.code)}
+                              className="flex items-center gap-1 px-2 py-1 bg-white text-red-600 text-xs font-medium hover:bg-red-600 hover:text-white transition-colors pointer-events-auto"
+                            >
+                              <X size={11} /> Remove
+                            </button>
+                          )}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="flex items-start justify-between gap-2 mb-1">
+                      <h3 className="text-sm font-bold text-gray-800 leading-tight">{mod.name}</h3>
+                      <span className="text-xs font-mono text-[#F15A22] bg-orange-50 px-1.5 py-0.5 shrink-0">{mod.code}</span>
+                    </div>
+                    {mod.description && <p className="text-xs text-gray-500 leading-relaxed mb-2">{mod.description}</p>}
+                    {editMode && (
+                      <button
+                        onClick={() => {
+                           const fullMod = customModules.find(m => m.code === mod.code) || mod;
+                           setEditingModule({ ...fullMod, category: cat.category, _custom: mod._custom, _id: mod._id });
+                         }}
+                        className="text-xs text-gray-400 hover:text-[#F15A22] mb-2 transition-colors flex items-center gap-1"
+                        title="Edit module details"
+                      >
+                        <Pencil size={12} /> Edit
+                      </button>
+                    )}
+
+                    <div className="flex gap-3 text-xs text-gray-500 border-t border-gray-100 pt-2.5 mb-3">
+                      <span><span className="font-semibold text-gray-700">{mod.width}m</span> wide</span>
+                      <span><span className="font-semibold text-gray-700">{mod.depth}m</span> deep</span>
+                      <span><span className="font-semibold text-gray-700">{mod.sqm.toFixed(1)}</span> m²</span>
+                    </div>
+
+
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {filtered.length === 0 && (
+          <div className="text-center py-16 text-gray-400">
+            <p className="text-3xl mb-3">🔍</p>
+            <p className="font-medium">No modules found for "{search}"</p>
           </div>
         )}
+      </div>
+      <div className="text-center py-6 text-xs text-gray-400 border-t border-gray-200 bg-white mt-4">
+        © {new Date().getFullYear()} connectapod. All rights reserved.
       </div>
     </div>
   );
