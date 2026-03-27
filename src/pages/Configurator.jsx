@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import ModulePanel, { MODULE_TYPES } from "@/components/configurator/ModulePanel";
 import ConfigGrid from "@/components/configurator/ConfigGrid";
 import DesignSummary from "@/components/configurator/DesignSummary";
-import SavedDesigns from "@/components/configurator/SavedDesigns";
+
 import SaveDesignModal from "@/components/configurator/SaveDesignModal";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
@@ -39,6 +39,58 @@ import SiteMapView from "@/components/configurator/SiteMapView";
 
 const generateId = () => `mod-${Math.random().toString(36).substr(2, 9)}`;
 const generateWallId = () => `wall-${Math.random().toString(36).substr(2, 9)}`;
+
+function SavedDesigns({ designs, onLoad, onDelete }) {
+  const [confirmDeleteId, setConfirmDeleteId] = React.useState(null);
+  if (designs.length === 0) {
+    return (
+      <div className="text-center py-16 text-gray-400">
+        <p className="text-4xl mb-3">🏡</p>
+        <p className="font-medium text-gray-500">No saved designs yet</p>
+        <p className="text-sm mt-1">Start building in the Configurator tab</p>
+      </div>
+    );
+  }
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      {designs.map((d) => (
+        <div key={d.id} className="bg-white border border-gray-200 p-5 hover:shadow-md transition-all group">
+          <div className="flex items-start justify-between mb-3">
+            <h3 className="font-semibold text-gray-800 text-base leading-tight">{d.name}</h3>
+            {confirmDeleteId === d.id ? (
+              <div className="flex items-center gap-1 shrink-0">
+                <span className="text-xs text-gray-500 mr-1">Delete?</span>
+                <button onClick={() => { onDelete(d.id); setConfirmDeleteId(null); }} className="p-1 text-red-500 hover:bg-red-50 rounded transition-colors" title="Confirm delete"><Check size={13} /></button>
+                <button onClick={() => setConfirmDeleteId(null)} className="p-1 text-gray-400 hover:bg-gray-100 rounded transition-colors" title="Cancel"><X size={13} /></button>
+              </div>
+            ) : (
+              <button className="h-7 w-7 flex items-center justify-center opacity-0 group-hover:opacity-100 text-gray-300 hover:text-red-400 transition-all" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setConfirmDeleteId(d.id); }}>
+                <Trash2 size={13} />
+              </button>
+            )}
+          </div>
+          <div className="grid grid-cols-3 gap-2 mb-4">
+            <div className="bg-gray-50 border border-gray-100 p-2 text-center">
+              <p className="text-sm font-bold text-gray-700">{d.moduleCount || 0}</p>
+              <p className="text-xs text-gray-400">Modules</p>
+            </div>
+            <div className="bg-gray-50 border border-gray-100 p-2 text-center">
+              <p className="text-sm font-bold text-gray-700">{d.totalSqm || 0}</p>
+              <p className="text-xs text-gray-400">m²</p>
+            </div>
+            <div className="bg-gray-50 border border-gray-100 p-2 text-center">
+              <p className="text-sm font-bold text-gray-700">${((d.estimatedPrice || 0) / 1000).toFixed(0)}k</p>
+              <p className="text-xs text-gray-400">Est.</p>
+            </div>
+          </div>
+          <button onClick={() => onLoad(d)} className="w-full h-8 text-xs bg-[#F15A22] hover:bg-[#d94e1a] text-white flex items-center justify-center gap-1.5">
+            Open in Configurator <ChevronRight size={12} />
+          </button>
+        </div>
+      ))}
+    </div>
+  );
+}
 
 export default function Configurator() {
   const { user } = useAuth();
