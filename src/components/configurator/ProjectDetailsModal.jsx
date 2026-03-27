@@ -472,16 +472,29 @@ export default function ProjectDetailsModal({
               {generating ? "Generating..." : "Download PDF"}
             </Button>
           ) : isSave ? (
-            <Button 
-              onClick={() => {
-                const details = handleSaveDetails();
-                const isDuplicate = designs.some(d => d.name?.toLowerCase() === details.projectName?.toLowerCase()?.trim());
-                onConfirm(details, isDuplicate);
-              }} 
-              className="flex-1 bg-[#F15A22] hover:bg-[#d94e1a] text-white rounded-none h-9"
-            >
-              <FileText size={14} className="mr-1.5" /> Save
-            </Button>
+            <>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  const details = handleSaveDetails();
+                  // Save As: always create a new copy (never replace)
+                  onConfirm({ ...details, projectName: details.projectName + (designs.some(d => d.name?.toLowerCase() === details.projectName?.toLowerCase()?.trim()) ? " (Copy)" : "") }, false);
+                }}
+                className="flex-1 rounded-none border-gray-300 text-gray-600 h-9 text-xs"
+              >
+                Save As
+              </Button>
+              <Button 
+                onClick={() => {
+                  const details = handleSaveDetails();
+                  const isDuplicate = designs.some(d => d.name?.toLowerCase() === details.projectName?.toLowerCase()?.trim());
+                  onConfirm(details, isDuplicate);
+                }} 
+                className="flex-1 bg-[#F15A22] hover:bg-[#d94e1a] text-white rounded-none h-9"
+              >
+                <FileText size={14} className="mr-1.5" /> Save
+              </Button>
+            </>
           ) : (
             <Button onClick={handlePrint} className="flex-1 bg-[#F15A22] hover:bg-[#d94e1a] text-white rounded-none h-9">
               <Printer size={14} className="mr-1.5" /> Print
