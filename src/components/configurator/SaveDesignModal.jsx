@@ -4,13 +4,14 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { LayoutTemplate } from "lucide-react";
 
-export default function SaveDesignModal({ open, onClose, onConfirm, isSaving, lastSavedName = "", projectName = "" }) {
+export default function SaveDesignModal({ open, onClose, onConfirm, isSaving, lastSavedName = "", projectName = "", designs = [] }) {
   const [name, setName] = useState("");
   const [originalName, setOriginalName] = useState("");
   const [saveToCatalogue, setSaveToCatalogue] = useState(false);
   const [description, setDescription] = useState("");
   const [tags, setTags] = useState("");
   const [isSaveAs, setIsSaveAs] = useState(false);
+  const [showDuplicateWarning, setShowDuplicateWarning] = useState(false);
 
   useEffect(() => {
     if (open && !isSaveAs) {
@@ -37,20 +38,31 @@ export default function SaveDesignModal({ open, onClose, onConfirm, isSaving, la
       setSaveToCatalogue(false);
       setDescription("");
       setTags("");
+      setShowDuplicateWarning(false);
     }
   }, [open]);
 
-  const handleConfirm = (asCatalogue) => {
+  const handleConfirm = (asCatalogue, forceKeepBoth = false) => {
     if (!name.trim()) return;
+    const trimmedName = name.trim();
+    // Check for duplicate name (excluding current design being updated)
+    const isDuplicate = !forceKeepBoth && designs.some(d => 
+      d.name?.toLowerCase() === trimmedName.toLowerCase() && d.name !== originalName
+    );
+    if (isDuplicate) {
+      setShowDuplicateWarning(true);
+      return;
+    }
     const extra = asCatalogue
       ? { is_template: true, description: description.trim() || undefined, tags: tags.split(",").map(t => t.trim()).filter(Boolean) }
       : {};
-    onConfirm(name.trim(), extra);
+    onConfirm(trimmedName, extra);
     setName("");
     setDescription("");
     setTags("");
     setSaveToCatalogue(false);
     setIsSaveAs(false);
+    setShowDuplicateWarning(false);
   };
 
   return (
@@ -62,43 +74,51 @@ export default function SaveDesignModal({ open, onClose, onConfirm, isSaving, la
           </DialogTitle>
         </DialogHeader>
         <div className="mt-2 space-y-3">
-          {originalName && !isSaveAs && (
-            <div className="text-xs text-slate-600 bg-slate-50 p-2 rounded-lg border border-slate-200">
-              Saving as: <span className="font-semibold text-slate-800">"{originalName}"</span>
-            </div>
-          )}
-          <Input
-            placeholder="e.g. My Dream Home"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && !saveToCatalogue && handleConfirm(false)}
-            className="rounded-xl border-slate-200 h-10"
-            autoFocus
-          />
-
-
-
-          <div className="flex gap-2 justify-between">
-            <div className="flex gap-2">
-              <Button variant="outline" onClick={onClose} className="rounded-xl">Cancel</Button>
+          {showDuplicateWarning ? (
+            <>
+              <div className="text-xs text-amber-700 bg-amber-50 p-3 rounded-lg border border-amber-200">
+                A design named <span className="font-semibold">"{name.trim()}"</span> already exists. What would you like to do?
+              </div>
+              <div className="flex gap-2 justify-end">
+                <Button variant="outline" onClick={() => setShowDuplicateWarning(false)} className="rounded-xl">Back</Button>
+                <Button variant="outline" onClick={() => handleConfirm(false, true)} className="rounded-xl text-slate-600">Keep Both</Button>
+                <Button onClick={() => { setShowDuplicateWarning(false); onConfirm(name.trim(), {}, true); }} disabled={isSaving} className="rounded-xl bg-slate-900 hover:bg-slate-700 text-white">Replace</Button>
+              </div>
+            </>
+          ) : (
+            <>
               {originalName && !isSaveAs && (
-                <Button
-                  variant="outline"
-                  onClick={() => setIsSaveAs(true)}
-                  className="rounded-xl text-slate-600"
-                >
-                  Save As...
-                </Button>
+                <div className="text-xs text-slate-600 bg-slate-50 p-2 rounded-lg border border-slate-200">
+                  Saving as: <span className="font-semibold text-slate-800">"{originalName}"</span>
+                </div>
               )}
-            </div>
-            <Button
-               onClick={() => handleConfirm(false)}
-               disabled={!name.trim() || isSaving}
-               className="rounded-xl bg-slate-900 hover:bg-slate-700 text-white"
-             >
-               {isSaving ? "Saving..." : isSaveAs ? "Save As" : "Update"}
-             </Button>
-          </div>
+              <Input
+                placeholder="e.g. My Dream Home"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && !saveToCatalogue && handleConfirm(false)}
+                className="rounded-xl border-slate-200 h-10"
+                autoFocus
+              />
+              <div className="flex gap-2 justify-between">
+                <div className="flex gap-2">
+                  <Button variant="outline" onClick={onClose} className="rounded-xl">Cancel</Button>
+                  {originalName && !isSaveAs && (
+                    <Button variant="outline" onClick={() => setIsSaveAs(true)} className="rounded-xl text-slate-600">
+                      Save As...
+                    </Button>
+                  )}
+                </div>
+                <Button
+                  onClick={() => handleConfirm(false)}
+                  disabled={!name.trim() || isSaving}
+                  className="rounded-xl bg-slate-900 hover:bg-slate-700 text-white"
+                >
+                  {isSaving ? "Saving..." : isSaveAs ? "Save As" : "Update"}
+                </Button>
+              </div>
+            </>
+          )}
         </div>
       </DialogContent>
     </Dialog>
