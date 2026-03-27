@@ -755,14 +755,7 @@ export default function Configurator() {
     setSelectedModule(null);
   };
 
-  const handleSave = (name, extra = {}, replace = false) => {
-    if (replace) {
-      // Delete the existing design with the same name first
-      const existing = designs.find(d => d.name?.toLowerCase() === name.toLowerCase());
-      if (existing) {
-        deleteMutation.mutate(existing.id);
-      }
-    }
+  const handleSave = async (name, extra = {}, replace = false) => {
     const totalSqm = placedModules.reduce((s, m) => s + (m.sqm || 0), 0);
     const estimatedPrice = placedModules.reduce((s, m) => s + (m.price || 0), 0) + walls.reduce((s, w) => s + (w.price || 0), 0);
     const gridToSave = placedModules.map(m => {
@@ -814,7 +807,7 @@ export default function Configurator() {
       ...existing,
       projectName: name,
     }));
-    saveMutation.mutate({
+    const payload = {
       name,
       grid: gridToSave,
       walls: wallsToSave,
@@ -823,7 +816,22 @@ export default function Configurator() {
       estimatedPrice,
       moduleCount: placedModules.length,
       ...extra,
-    });
+    };
+
+    if (replace) {
+      const existing = designs.find(d => d.name?.toLowerCase() === name.toLowerCase());
+      if (existing) {
+        await base44.entities.HomeDesign.update(existing.id, payload);
+        queryClient.invalidateQueries({ queryKey: ["homeDesigns"] });
+        toast.success("Design updated!");
+        setLastSavedName(name);
+        localStorage.setItem("configurator_last_saved_name", name);
+        setSaveModalOpen(false);
+        return;
+      }
+    }
+
+    saveMutation.mutate(payload);
   };
 
   const handleLoad = (design) => {
