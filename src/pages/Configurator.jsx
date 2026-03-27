@@ -1550,6 +1550,7 @@ export default function Configurator() {
         open={!!detailsModalMode}
         mode={detailsModalMode}
         onClose={() => setDetailsModalMode(null)}
+        designs={designs}
         placedModules={placedModules}
         walls={walls}
         printMode={pendingPrintMode}
