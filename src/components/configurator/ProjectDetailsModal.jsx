@@ -121,7 +121,6 @@ export default function ProjectDetailsModal({
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [generating, setGenerating] = useState(false);
-  const [showDuplicateWarning, setShowDuplicateWarning] = useState(false);
 
   useEffect(() => {
     if (open) {
@@ -133,7 +132,6 @@ export default function ProjectDetailsModal({
       setSiteAddress(saved.siteAddress || "");
       setEmail(saved.email || "");
       setPhone(saved.phone || "");
-      setShowDuplicateWarning(false);
     }
   }, [open]);
 
@@ -460,16 +458,6 @@ export default function ProjectDetailsModal({
           </div>
         </div>
 
-        {showDuplicateWarning && isSave && (
-          <div className="bg-amber-50 border border-amber-200 rounded p-3 text-xs text-amber-700">
-            A design named <span className="font-semibold">"{projectName}"</span> already exists. Saving will create a duplicate. Continue anyway?
-            <div className="flex gap-2 mt-2">
-              <Button variant="outline" size="sm" onClick={() => setShowDuplicateWarning(false)} className="h-7 text-xs rounded-none">Cancel</Button>
-              <Button size="sm" onClick={() => { setShowDuplicateWarning(false); onConfirm(handleSaveDetails(), {}, true); }} className="h-7 text-xs rounded-none bg-[#F15A22] hover:bg-[#d94e1a] text-white">Save Anyway</Button>
-            </div>
-          </div>
-        )}
-
         <div className="flex gap-2 pt-1">
           <Button variant="outline" onClick={onClose} className="flex-1 rounded-none border-gray-200 text-gray-500 h-9">
             <X size={14} className="mr-1.5" /> Cancel
@@ -488,11 +476,7 @@ export default function ProjectDetailsModal({
               onClick={() => {
                 const details = handleSaveDetails();
                 const isDuplicate = designs.some(d => d.name?.toLowerCase() === details.projectName?.toLowerCase()?.trim());
-                if (isDuplicate && !showDuplicateWarning) {
-                  setShowDuplicateWarning(true);
-                } else {
-                  onConfirm(details);
-                }
+                onConfirm(details, isDuplicate);
               }} 
               className="flex-1 bg-[#F15A22] hover:bg-[#d94e1a] text-white rounded-none h-9"
             >

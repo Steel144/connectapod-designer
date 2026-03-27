@@ -45,18 +45,22 @@ export default function SaveDesignModal({ open, onClose, onConfirm, isSaving, la
   const handleConfirm = (asCatalogue, forceKeepBoth = false) => {
     if (!name.trim()) return;
     const trimmedName = name.trim();
-    // Check for duplicate name (excluding current design being updated)
-    const isDuplicate = !forceKeepBoth && designs.some(d => 
-      d.name?.toLowerCase() === trimmedName.toLowerCase() && d.name !== originalName
-    );
-    if (isDuplicate) {
-      setShowDuplicateWarning(true);
-      return;
-    }
     const extra = asCatalogue
       ? { is_template: true, description: description.trim() || undefined, tags: tags.split(",").map(t => t.trim()).filter(Boolean) }
       : {};
-    onConfirm(trimmedName, extra);
+
+    if (!forceKeepBoth && isSaveAs) {
+      // In "Save As" mode: check for duplicate and warn
+      const isDuplicate = designs.some(d => d.name?.toLowerCase() === trimmedName.toLowerCase());
+      if (isDuplicate) {
+        setShowDuplicateWarning(true);
+        return;
+      }
+    }
+
+    // Regular save: if same name exists, replace it (pass replace=true)
+    const isReplace = !isSaveAs && !forceKeepBoth && designs.some(d => d.name?.toLowerCase() === trimmedName.toLowerCase());
+    onConfirm(trimmedName, extra, isReplace);
     setName("");
     setDescription("");
     setTags("");
@@ -77,11 +81,11 @@ export default function SaveDesignModal({ open, onClose, onConfirm, isSaving, la
           {showDuplicateWarning ? (
             <>
               <div className="text-xs text-amber-700 bg-amber-50 p-3 rounded-lg border border-amber-200">
-                A design named <span className="font-semibold">"{name.trim()}"</span> already exists. What would you like to do?
+                A design named <span className="font-semibold">"{name.trim()}"</span> already exists. Replace it or keep both?
               </div>
               <div className="flex gap-2 justify-end">
                 <Button variant="outline" onClick={() => setShowDuplicateWarning(false)} className="rounded-xl">Back</Button>
-                <Button variant="outline" onClick={() => handleConfirm(false, true)} className="rounded-xl text-slate-600">Keep Both</Button>
+                <Button variant="outline" onClick={() => { setShowDuplicateWarning(false); handleConfirm(false, true); }} className="rounded-xl text-slate-600">Keep Both</Button>
                 <Button onClick={() => { setShowDuplicateWarning(false); onConfirm(name.trim(), {}, true); }} disabled={isSaving} className="rounded-xl bg-slate-900 hover:bg-slate-700 text-white">Replace</Button>
               </div>
             </>

@@ -1554,7 +1554,7 @@ export default function Configurator() {
         placedModules={placedModules}
         walls={walls}
         printMode={pendingPrintMode}
-        onConfirm={(details) => {
+        onConfirm={(details, replace = false) => {
           if (detailsModalMode === 'print') {
             setPrintDetails(details);
             setPrintMode(pendingPrintMode);
@@ -1568,7 +1568,7 @@ export default function Configurator() {
               siteAddress: details.siteAddress, 
               email: details.email, 
               phone: details.phone 
-            });
+            }, replace);
             setDetailsModalMode(null);
           }
         }}
