@@ -121,6 +121,8 @@ export default function ProjectDetailsModal({
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [generating, setGenerating] = useState(false);
+  const [saveAsMode, setSaveAsMode] = useState(false);
+  const [saveAsName, setSaveAsName] = useState("");
 
   useEffect(() => {
     if (open) {
@@ -132,6 +134,8 @@ export default function ProjectDetailsModal({
       setSiteAddress(saved.siteAddress || "");
       setEmail(saved.email || "");
       setPhone(saved.phone || "");
+      setSaveAsMode(false);
+      setSaveAsName("");
     }
   }, [open]);
 
@@ -458,6 +462,28 @@ export default function ProjectDetailsModal({
           </div>
         </div>
 
+        {saveAsMode && (
+          <div className="border border-[#F15A22]/30 bg-orange-50 p-3 space-y-1.5">
+            <Label className="text-xs text-gray-700 font-semibold">New design name</Label>
+            <Input
+              autoFocus
+              value={saveAsName}
+              onChange={e => setSaveAsName(e.target.value)}
+              onKeyDown={e => {
+                if (e.key === "Enter" && saveAsName.trim()) {
+                  const details = handleSaveDetails();
+                  onConfirm({ ...details, projectName: saveAsName.trim() }, false);
+                  setSaveAsMode(false);
+                }
+                if (e.key === "Escape") setSaveAsMode(false);
+              }}
+              placeholder="e.g. Beach House v2"
+              className="rounded-none text-sm h-9"
+            />
+            <p className="text-[10px] text-gray-500">This will save as a new separate design.</p>
+          </div>
+        )}
+
         <div className="flex gap-2 pt-1">
           <Button variant="outline" onClick={onClose} className="flex-1 rounded-none border-gray-200 text-gray-500 h-9">
             <X size={14} className="mr-1.5" /> Cancel
@@ -473,27 +499,43 @@ export default function ProjectDetailsModal({
             </Button>
           ) : isSave ? (
             <>
-              <Button
-                variant="outline"
-                onClick={() => {
-                  const details = handleSaveDetails();
-                  // Save As: always create a new copy (never replace)
-                  onConfirm({ ...details, projectName: details.projectName + (designs.some(d => d.name?.toLowerCase() === details.projectName?.toLowerCase()?.trim()) ? " (Copy)" : "") }, false);
-                }}
-                className="flex-1 rounded-none border-gray-300 text-gray-600 h-9 text-xs"
-              >
-                Save As
-              </Button>
-              <Button 
-                onClick={() => {
-                  const details = handleSaveDetails();
-                  const isDuplicate = designs.some(d => d.name?.toLowerCase() === details.projectName?.toLowerCase()?.trim());
-                  onConfirm(details, isDuplicate);
-                }} 
-                className="flex-1 bg-[#F15A22] hover:bg-[#d94e1a] text-white rounded-none h-9"
-              >
-                <FileText size={14} className="mr-1.5" /> Save
-              </Button>
+              {saveAsMode ? (
+                <Button
+                  onClick={() => {
+                    if (!saveAsName.trim()) return;
+                    const details = handleSaveDetails();
+                    onConfirm({ ...details, projectName: saveAsName.trim() }, false);
+                    setSaveAsMode(false);
+                  }}
+                  disabled={!saveAsName.trim()}
+                  className="flex-1 bg-[#F15A22] hover:bg-[#d94e1a] text-white rounded-none h-9"
+                >
+                  <FileText size={14} className="mr-1.5" /> Save Copy
+                </Button>
+              ) : (
+                <>
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setSaveAsName(projectName ? projectName + " (Copy)" : "");
+                      setSaveAsMode(true);
+                    }}
+                    className="flex-1 rounded-none border-gray-300 text-gray-600 h-9 text-xs"
+                  >
+                    Save As
+                  </Button>
+                  <Button 
+                    onClick={() => {
+                      const details = handleSaveDetails();
+                      const isDuplicate = designs.some(d => d.name?.toLowerCase() === details.projectName?.toLowerCase()?.trim());
+                      onConfirm(details, isDuplicate);
+                    }} 
+                    className="flex-1 bg-[#F15A22] hover:bg-[#d94e1a] text-white rounded-none h-9"
+                  >
+                    <FileText size={14} className="mr-1.5" /> Save
+                  </Button>
+                </>
+              )}
             </>
           ) : (
             <Button onClick={handlePrint} className="flex-1 bg-[#F15A22] hover:bg-[#d94e1a] text-white rounded-none h-9">
