@@ -1,0 +1,164 @@
+{
+  "name": "DesignTemplate",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Customer-facing design name (e.g. '1 Bedroom Granny Flat 60sqm')"
+    },
+    "slug": {
+      "type": "string",
+      "description": "URL-friendly identifier (e.g. '1-bedroom-granny-flat-60sqm')"
+    },
+    "description": {
+      "type": "string",
+      "description": "Customer-facing description of the design"
+    },
+    "heroImage": {
+      "type": "string",
+      "description": "URL of the main hero image"
+    },
+    "gallery": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Array of gallery image URLs"
+    },
+    "size_sqm": {
+      "type": "number",
+      "description": "Total area in square metres"
+    },
+    "width_m": {
+      "type": "number",
+      "description": "Building width in metres"
+    },
+    "depth_m": {
+      "type": "number",
+      "description": "Building depth in metres"
+    },
+    "bedrooms": {
+      "type": "number",
+      "description": "Number of bedrooms"
+    },
+    "bathrooms": {
+      "type": "number",
+      "description": "Number of bathrooms"
+    },
+    "starting_price": {
+      "type": "number",
+      "description": "Starting price in NZD"
+    },
+    "use_cases": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "rental_income",
+          "family",
+          "home_office",
+          "guest_accommodation",
+          "multi_generational",
+          "bach"
+        ]
+      },
+      "description": "Intended use cases"
+    },
+    "categories": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "granny_flat",
+          "minor_dwelling",
+          "standalone_home",
+          "studio",
+          "multi_unit"
+        ]
+      },
+      "description": "Design categories"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Freeform tags (e.g. 'nz', 'prefab', 'steel_frame')"
+    },
+    "build_type": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "modular",
+          "kitset",
+          "turnkey"
+        ]
+      },
+      "description": "Available build types for this design"
+    },
+    "budget_range": {
+      "type": "string",
+      "enum": [
+        "under_100k",
+        "100k-200k",
+        "200k-300k",
+        "300k-400k",
+        "400k+"
+      ],
+      "description": "Budget bracket"
+    },
+    "is_featured": {
+      "type": "boolean",
+      "default": false,
+      "description": "Show this design prominently in the catalogue"
+    },
+    "sort_order": {
+      "type": "number",
+      "default": 0,
+      "description": "Display order (lower = first)"
+    },
+    "template_payload": {
+      "type": "object",
+      "description": "Configurator data: modules, layout, metadata",
+      "properties": {
+        "modules": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of module codes (e.g. MOD-001)"
+        },
+        "layout": {
+          "type": "object",
+          "description": "Grid layout data for the configurator"
+        },
+        "metadata": {
+          "type": "object",
+          "description": "Additional template metadata"
+        }
+      }
+    }
+  },
+  "required": [
+    "name"
+  ],
+  "rls": {
+    "read": {},
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
