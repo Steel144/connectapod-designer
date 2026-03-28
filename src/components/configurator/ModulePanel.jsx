@@ -160,6 +160,7 @@ export { MODULE_TYPES, GROUP_ICONS, WALL_TYPES };
 export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, selectedModule, placedModules = [], onModuleImageUpdate, onWallImageUpdate, onWallTypesLoaded, floorPlanImages = {}, wallImages = {}, onWallSelected, highlightWallType, onWallHover, showTooltips = true }) {
    const [openGroup, setOpenGroup] = useState(null);
    const [expandedSizes, setExpandedSizes] = useState({});
+   const [collapsedGroups, setCollapsedGroups] = useState(new Set());
    const [hoveredModule, setHoveredModule] = useState(null);
    const [hoveredWall, setHoveredWall] = useState(null);
    const [showWallSuggestions, setShowWallSuggestions] = useState(true);
