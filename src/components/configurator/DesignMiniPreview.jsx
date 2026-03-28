@@ -145,6 +145,15 @@ export default function DesignMiniPreview({ grid = [], walls = [], furniture = [
               onMouseLeave={() => setHoveredModule(null)}
               style={{ cursor: "default" }}
             >
+              {imgUrl && (
+                <rect
+                  x={toX(m.x)}
+                  y={toY(m.y)}
+                  width={(m.w || 5) * CELL}
+                  height={(m.h || 8) * CELL}
+                  fill="#ffffff"
+                />
+              )}
               <rect
                 x={toX(m.x)}
                 y={toY(m.y)}
