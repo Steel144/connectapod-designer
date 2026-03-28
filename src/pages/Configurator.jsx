@@ -1356,7 +1356,7 @@ export default function Configurator() {
           {/* Floating right panel — Design summary */}
           {placedModules.length > 0 && (
             <div
-              className="absolute z-20"
+              className="absolute z-[60]"
               style={{ left: `${summaryPos.x}px`, top: `${summaryPos.y}px`, cursor: draggingSummary ? "grabbing" : "default", width: "260px" }}
             >
               <div className="bg-white border border-gray-200 shadow-xl overflow-hidden" onMouseDown={handleSummaryMouseDown}>
@@ -1521,7 +1521,7 @@ export default function Configurator() {
       {/* ── DESIGN SUMMARY FOR ELEVATIONS MODE ── */}
       {!isMobile && viewMode === "elevations" && placedModules.length > 0 && (
         <div
-          className="absolute z-20"
+          className="absolute z-[60]"
           style={{ left: `${summaryPos.x}px`, top: `${summaryPos.y}px`, cursor: draggingSummary ? "grabbing" : "default", width: "260px" }}
         >
           <div className="bg-white border border-gray-200 shadow-xl overflow-hidden" onMouseDown={handleSummaryMouseDown}>
