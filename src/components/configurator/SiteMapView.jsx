@@ -460,7 +460,24 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
 
           </div>
 
-
+          <div>
+            <label className="text-xs font-semibold text-gray-600 block mb-2">Zoom</label>
+            <div className="flex items-center gap-2">
+              <input
+                type="range"
+                min="10"
+                max="22"
+                step="1"
+                value={mapZoom}
+                onChange={(e) => setMapZoom(parseInt(e.target.value))}
+                className="flex-1"
+                style={{
+                  accentColor: '#F15A22'
+                }}
+              />
+              <span className="text-xs text-gray-600 w-6 text-right">{mapZoom}</span>
+            </div>
+          </div>
 
           <div>
             <label className="text-xs font-semibold text-gray-600 block mb-2">Rotation</label>
