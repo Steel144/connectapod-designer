@@ -5,7 +5,7 @@ import HeroSection from "@/components/landing/HeroSection";
 import DesignQuiz from "@/components/landing/DesignQuiz";
 import DesignCard from "@/components/landing/DesignCard";
 import DesignDetail from "@/components/landing/DesignDetail";
-import { ArrowRight, SlidersHorizontal } from "lucide-react";
+import { ArrowRight, SlidersHorizontal, HardHat } from "lucide-react";
 
 // Score a design against quiz answers (higher = better match)
 function scoreDesign(design, answers) {
@@ -136,7 +136,7 @@ export default function Landing() {
           </div>
         ) : sortedDesigns.length === 0 ? (
           <div className="text-center py-24 text-gray-400">
-            <p className="text-6xl mb-4">🏗️</p>
+            <HardHat size={48} className="text-[#F15A22] mx-auto mb-4" />
             <p className="text-lg font-medium text-gray-500">Designs coming soon</p>
             <p className="text-sm mt-1">Check back shortly — we're adding new designs regularly</p>
           </div>

@@ -1,36 +1,36 @@
 import React, { useState } from "react";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, BedDouble, TrendingUp, Users, DoorOpen, Briefcase, Palmtree, Banknote, Coins, CircleDollarSign, Trophy, Home } from "lucide-react";
 
 const STEPS = [
   {
     id: "bedrooms",
     question: "How many bedrooms do you need?",
     options: [
-      { label: "Studio / 0 bed", value: 0, icon: "🛏️" },
-      { label: "1 Bedroom", value: 1, icon: "🛏️" },
-      { label: "2 Bedrooms", value: 2, icon: "🛏️🛏️" },
-      { label: "3+ Bedrooms", value: 3, icon: "🏠" },
+      { label: "Studio / 0 bed", value: 0, Icon: Home },
+      { label: "1 Bedroom", value: 1, Icon: BedDouble },
+      { label: "2 Bedrooms", value: 2, Icon: BedDouble },
+      { label: "3+ Bedrooms", value: 3, Icon: BedDouble },
     ],
   },
   {
     id: "use_case",
     question: "What will you use it for?",
     options: [
-      { label: "Rental Income", value: "rental_income", icon: "💰" },
-      { label: "Family / Extended Family", value: "family", icon: "👨‍👩‍👧" },
-      { label: "Guest Accommodation", value: "guest_accommodation", icon: "🛎️" },
-      { label: "Home Office / Studio", value: "home_office", icon: "💻" },
-      { label: "Holiday Bach", value: "bach", icon: "🏖️" },
+      { label: "Rental Income", value: "rental_income", Icon: TrendingUp },
+      { label: "Family / Extended Family", value: "family", Icon: Users },
+      { label: "Guest Accommodation", value: "guest_accommodation", Icon: DoorOpen },
+      { label: "Home Office / Studio", value: "home_office", Icon: Briefcase },
+      { label: "Holiday Bach", value: "bach", Icon: Palmtree },
     ],
   },
   {
     id: "budget",
     question: "What's your rough budget?",
     options: [
-      { label: "Under $100k", value: "under_100k", icon: "💵" },
-      { label: "$100k – $200k", value: "100k-200k", icon: "💵💵" },
-      { label: "$200k – $300k", value: "200k-300k", icon: "💵💵💵" },
-      { label: "$300k+", value: "300k-400k", icon: "🏆" },
+      { label: "Under $100k", value: "under_100k", Icon: Coins },
+      { label: "$100k – $200k", value: "100k-200k", Icon: Banknote },
+      { label: "$200k – $300k", value: "200k-300k", Icon: CircleDollarSign },
+      { label: "$300k+", value: "300k-400k", Icon: Trophy },
     ],
   },
 ];
@@ -92,7 +92,7 @@ export default function DesignQuiz({ onComplete, onSkip }) {
               onClick={() => handleSelect(opt.value)}
               className="flex items-center gap-4 px-5 py-4 bg-white border-2 border-gray-200 hover:border-[#F15A22] hover:bg-orange-50 text-left transition-all group"
             >
-              <span className="text-2xl">{opt.icon}</span>
+              <opt.Icon size={18} className="text-[#F15A22] shrink-0" />
               <span className="font-medium text-gray-800 group-hover:text-[#F15A22] transition-colors">{opt.label}</span>
             </button>
           ))}
