@@ -330,7 +330,17 @@ export default function Catalogue() {
       .map(m => ({ ...m, _custom: false, _deleted: deletedCodes.has(m.code) })) : [];
 
     const merged = [...builtins, ...customs];
-    merged.sort((a, b) => moduleCodeNum(a.originalCode || a.code) - moduleCodeNum(b.originalCode || b.code));
+    const variantOrder = (m) => {
+      const v = (m.variants || []).map(x => x.toLowerCase());
+      if (v.includes("end")) return 0;
+      if (v.includes("standard")) return 1;
+      return 2;
+    };
+    merged.sort((a, b) => {
+      const vo = variantOrder(a) - variantOrder(b);
+      if (vo !== 0) return vo;
+      return (b.sqm || 0) - (a.sqm || 0);
+    });
     return { ...cat, modules: merged };
   });
 
