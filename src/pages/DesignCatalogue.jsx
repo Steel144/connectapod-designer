@@ -209,7 +209,7 @@ export default function DesignCatalogue() {
 
                     {/* Description */}
                     {template.description && (
-                      <p className="text-xs text-gray-500 mb-3 leading-relaxed line-clamp-2">{template.description}</p>
+                      <p className="text-xs text-gray-500 mb-3 leading-relaxed">{template.description}</p>
                     )}
 
                     {/* Specs */}
