@@ -76,6 +76,11 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
 
   const isDragging = useRef(false);
   const dragLast = useRef(null);
+  const panelDragging = useRef(false);
+  const panelDragLast = useRef(null);
+  const [panelPosition, setPanelPosition] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('sitemap_panelPos')) ?? { top: 'auto', right: 16, bottom: 16, left: 'auto' }; } catch { return { top: 'auto', right: 16, bottom: 16, left: 'auto' }; }
+  });
 
   const CANVAS_PX_PER_CELL = 20;
   const CELL_M = 0.6;
@@ -89,6 +94,7 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
   useEffect(() => { localStorage.setItem('sitemap_scale', JSON.stringify(planScaleMultiplier)); }, [planScaleMultiplier]);
   useEffect(() => { if (coordinates) localStorage.setItem('sitemap_coordinates', JSON.stringify(coordinates)); }, [coordinates]);
   useEffect(() => { if (siteAddress) localStorage.setItem('sitemap_address', siteAddress); }, [siteAddress]);
+  useEffect(() => { localStorage.setItem('sitemap_panelPos', JSON.stringify(panelPosition)); }, [panelPosition]);
 
   const getAdjustedCenter = () => {
     if (!coordinates) return [0, 0];
@@ -208,6 +214,29 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
   const handleDragEnd = () => {
     isDragging.current = false;
     dragLast.current = null;
+  };
+
+  const handlePanelDragStart = (e) => {
+    panelDragging.current = true;
+    panelDragLast.current = { x: e.clientX, y: e.clientY };
+  };
+
+  const handlePanelDragMove = (e) => {
+    if (!panelDragging.current || !panelDragLast.current) return;
+    const dx = e.clientX - panelDragLast.current.x;
+    const dy = e.clientY - panelDragLast.current.y;
+    panelDragLast.current = { x: e.clientX, y: e.clientY };
+    setPanelPosition(prev => ({
+      top: prev.top === 'auto' ? 'auto' : (prev.top + dy),
+      right: prev.right === 'auto' ? 'auto' : (prev.right - dx),
+      bottom: prev.bottom === 'auto' ? 'auto' : (prev.bottom - dy),
+      left: prev.left === 'auto' ? 'auto' : (prev.left + dx),
+    }));
+  };
+
+  const handlePanelDragEnd = () => {
+    panelDragging.current = false;
+    panelDragLast.current = null;
   };
 
   // Generate floor plan canvas overlay
@@ -376,7 +405,19 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
 
       {/* Floating Config Panel */}
       {design && (
-        <div className="absolute bottom-4 right-4 z-[9999] bg-white rounded-lg shadow-lg p-4 border border-gray-200 max-w-xs space-y-4">
+        <div 
+          className="absolute z-[9999] bg-white rounded-lg shadow-lg p-4 border border-gray-200 max-w-xs space-y-4 cursor-move select-none"
+          style={{
+            top: panelPosition.top === 'auto' ? 'auto' : `${panelPosition.top}px`,
+            right: panelPosition.right === 'auto' ? 'auto' : `${panelPosition.right}px`,
+            bottom: panelPosition.bottom === 'auto' ? 'auto' : `${panelPosition.bottom}px`,
+            left: panelPosition.left === 'auto' ? 'auto' : `${panelPosition.left}px`,
+          }}
+          onMouseDown={handlePanelDragStart}
+          onMouseMove={handlePanelDragMove}
+          onMouseUp={handlePanelDragEnd}
+          onMouseLeave={handlePanelDragEnd}
+        >
           <div>
             <label className="text-xs font-semibold text-gray-700 block mb-2">Site Address</label>
             <div className="flex gap-2">
