@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect } from "react";
 import { X } from "lucide-react";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
+import L from "leaflet";
 
 export default function PrintSiteMapModal({ onClose, placedModules, walls, siteAddress, coordinates, mapZoom, overlayRotation, planScaleMultiplier, positionOffset }) {
   const contentRef = useRef(null);
@@ -22,7 +23,6 @@ export default function PrintSiteMapModal({ onClose, placedModules, walls, siteA
     mapElement.style.visibility = 'hidden';
     document.body.appendChild(mapElement);
 
-    const L = require('leaflet');
     const map = L.map(mapElement).setView(
       [coordinates[0] + (positionOffset?.lat || 0), coordinates[1] + (positionOffset?.lng || 0)],
       mapZoom
