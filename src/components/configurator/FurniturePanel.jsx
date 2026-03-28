@@ -99,7 +99,7 @@ export default function FurniturePanel({ onDragStart, onDragEnd }) {
         <span className="flex items-center justify-center w-5 h-5 shrink-0">
           {getFurnitureIcon("sofa", 18)}
         </span>
-        <span className="flex-1 text-sm font-semibold text-gray-800">Furniture</span>
+        <span className="flex-1 text-xs font-semibold text-gray-400 uppercase tracking-widest">Furniture</span>
         <span className="text-gray-400 shrink-0">
           {isOpen ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
         </span>
