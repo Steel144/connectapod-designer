@@ -382,7 +382,7 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
                     style={{
                       width: `${(maxX - minX) * CANVAS_PX_PER_CELL}px`,
                       height: `${(maxY - minY) * CANVAS_PX_PER_CELL}px`,
-                      transform: `scale(${cssScale}) rotate(${-overlayRotation}deg)`,
+                      transform: `scale(${cssScale})`,
                       transformOrigin: 'center',
                       transition: 'transform 0.1s ease-out',
                       imageRendering: 'pixelated',
