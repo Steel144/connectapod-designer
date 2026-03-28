@@ -1,10 +1,10 @@
 import React, { useState, useMemo } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 import HeroSection from "@/components/landing/HeroSection";
 import DesignQuiz from "@/components/landing/DesignQuiz";
 import DesignCard from "@/components/landing/DesignCard";
-import DesignDetail from "@/components/landing/DesignDetail";
 import { ArrowRight, SlidersHorizontal, HardHat } from "lucide-react";
 
 // Score a design against quiz answers (higher = better match)
@@ -22,9 +22,9 @@ function scoreDesign(design, answers) {
 }
 
 export default function Landing() {
-  const [phase, setPhase] = useState("hero"); // hero | quiz | results | detail
+  const navigate = useNavigate();
+  const [phase, setPhase] = useState("hero"); // hero | quiz | results
   const [quizAnswers, setQuizAnswers] = useState(null);
-  const [selectedDesign, setSelectedDesign] = useState(null);
 
   const { data: designs = [], isLoading } = useQuery({
     queryKey: ["designTemplates"],
@@ -65,20 +65,16 @@ export default function Landing() {
   };
 
   const handleSelectDesign = (design) => {
-    setSelectedDesign(design);
-    setPhase("detail");
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    const payload = design.template_payload || {};
+    const templateData = {
+      name: design.name,
+      grid: payload.layout?.grid || [],
+      walls: payload.layout?.walls || [],
+      furniture: payload.layout?.furniture || [],
+    };
+    sessionStorage.setItem("load_template", JSON.stringify(templateData));
+    navigate("/Configurator");
   };
-
-  const handleBackToResults = () => {
-    setSelectedDesign(null);
-    setPhase("results");
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
-  if (phase === "detail" && selectedDesign) {
-    return <DesignDetail design={selectedDesign} onBack={handleBackToResults} />;
-  }
 
   if (phase === "quiz") {
     return <DesignQuiz onComplete={handleQuizComplete} onSkip={handleSkipQuiz} />;
