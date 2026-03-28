@@ -49,12 +49,12 @@ export default function DesignCatalogue() {
   });
 
   const floorPlanImages = useMemo(() =>
-    Object.fromEntries((floorPlanImageList).map(img => [img.moduleType, img.imageUrl])),
+    Object.fromEntries((Array.isArray(floorPlanImageList) ? floorPlanImageList : []).map(img => [img.moduleType, img.imageUrl])),
     [floorPlanImageList]
   );
 
   const wallImages = useMemo(() =>
-    Object.fromEntries((wallImageList).map(img => [img.wallType, img.imageUrl])),
+    Object.fromEntries((Array.isArray(wallImageList) ? wallImageList : []).map(img => [img.wallType, img.imageUrl])),
     [wallImageList]
   );
 
