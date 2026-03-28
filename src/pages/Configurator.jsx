@@ -159,7 +159,7 @@ export default function Configurator() {
   });
   const [loadCounter, setLoadCounter] = useState(0);
   const [wallToReplace, setWallToReplace] = useState(null);
-  const [gridZoom, setGridZoom] = useState(100);
+  const [gridZoom, setGridZoom] = useState(150);
   const [showLabels, setShowLabels] = useState(true);
   const [showFurniture, setShowFurniture] = useState(true);
   const [showPhotoImages, setShowPhotoImages] = useState(true);
