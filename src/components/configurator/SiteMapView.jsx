@@ -472,6 +472,9 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
                 value={overlayRotation}
                 onChange={(e) => setOverlayRotation(parseInt(e.target.value))}
                 className="flex-1"
+                style={{
+                  accentColor: '#F15A22'
+                }}
               />
               <span className="text-xs text-gray-600 w-8 text-right">{overlayRotation}°</span>
             </div>
@@ -488,6 +491,9 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
                 value={planScaleMultiplier}
                 onChange={(e) => setPlanScaleMultiplier(parseFloat(e.target.value))}
                 className="flex-1"
+                style={{
+                  accentColor: '#F15A22'
+                }}
               />
               <span className="text-xs text-gray-600 w-10 text-right">{planScaleMultiplier.toFixed(1)}x</span>
             </div>
