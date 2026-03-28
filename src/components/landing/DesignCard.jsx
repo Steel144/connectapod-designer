@@ -1,5 +1,6 @@
 import React from "react";
 import { Maximize2, BedDouble, Bath, ArrowRight } from "lucide-react";
+import DesignMiniPreview from "@/components/configurator/DesignMiniPreview";
 
 const CATEGORY_LABELS = {
   granny_flat: "Granny Flat",
@@ -20,7 +21,11 @@ const USE_CASE_LABELS = {
 
 export default function DesignCard({ design, onSelect, isFeatured }) {
   const primaryCategory = design.categories?.[0];
-  const heroImage = design.heroImage || "https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800&q=80";
+  const heroImage = design.heroImage;
+  const grid = design.template_payload?.layout?.grid || [];
+  const walls = design.template_payload?.layout?.walls || [];
+  const furniture = design.template_payload?.layout?.furniture || [];
+  const hasPlanPreview = grid.length > 0;
 
   return (
     <div
@@ -35,13 +40,19 @@ export default function DesignCard({ design, onSelect, isFeatured }) {
         </div>
       )}
 
-      {/* Hero image */}
-      <div className="relative h-52 overflow-hidden bg-gray-100">
-        <img
-          src={heroImage}
-          alt={design.name}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-        />
+      {/* Preview */}
+      <div className="relative h-52 overflow-hidden bg-[#F5F5F3]">
+        {hasPlanPreview ? (
+          <DesignMiniPreview grid={grid} walls={walls} furniture={furniture} />
+        ) : heroImage ? (
+          <img
+            src={heroImage}
+            alt={design.name}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-gray-300 text-xs">No preview</div>
+        )}
         {primaryCategory && (
           <span className="absolute top-3 left-3 bg-white/90 text-gray-700 text-[10px] font-semibold uppercase tracking-wider px-2.5 py-1">
             {CATEGORY_LABELS[primaryCategory] || primaryCategory}
