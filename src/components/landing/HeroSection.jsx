@@ -6,7 +6,7 @@ export default function HeroSection({ onStartQuiz }) {
       {/* Background image */}
       <div
         className="absolute inset-0 bg-cover bg-center opacity-40"
-        style={{ backgroundImage: "url('https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=1600&q=80')" }}
+        style={{ backgroundImage: "url('https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/153eb6fc1_6128cf5e-9b8d-4fb5-a8c1-57407ba32afd.png')" }}
       />
       <div className="absolute inset-0 bg-gradient-to-b from-gray-900/60 via-gray-900/40 to-gray-900/80" />
 
