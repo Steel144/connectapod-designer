@@ -615,17 +615,16 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
                                     </div>
                                     );
                                     return <div key={item.code}>{moduleElement}</div>;
-                                  })
+                                  })}
                                 </div>
                               )}
                             </div>
                           )}
                         </div>
                       );
-                    })}
-                  </div>
-                )}
-              </div>
+                      })}
+                      )}
+                      </div>
             );
           })}
         )}
