@@ -615,7 +615,7 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
                                     </div>
                                     );
                                     return <div key={item.code}>{moduleElement}</div>;
-                                  })}
+                                  })
                                 </div>
                               )}
                             </div>
@@ -629,6 +629,7 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
             );
           })}
         )}
+
       {/* Wall suggestions for selected end module */}
       {showWallSuggestions && (
         <WallSuggestions selectedModule={selectedModule} selectedWall={selectedWall} placedModules={placedModules} />
