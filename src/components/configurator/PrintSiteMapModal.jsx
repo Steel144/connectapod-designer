@@ -7,9 +7,29 @@ import L from "leaflet";
 export default function PrintSiteMapModal({ onClose, placedModules, walls, siteAddress, coordinates, mapZoom, overlayRotation, planScaleMultiplier, positionOffset, siteMapViewElement }) {
   const contentRef = useRef(null);
   const [floorPlanOverlay, setFloorPlanOverlay] = useState(null);
+  const [mapScreenshot, setMapScreenshot] = useState(null);
 
   const CANVAS_PX_PER_CELL = 20;
   const CELL_M = 0.6;
+
+  // Capture map screenshot from siteMapViewElement
+  useEffect(() => {
+    if (!siteMapViewElement) return;
+
+    setTimeout(() => {
+      html2canvas(siteMapViewElement, {
+        scale: 1.5,
+        backgroundColor: '#ffffff',
+        logging: false,
+        allowTaint: true,
+        useCORS: true,
+      }).then(canvas => {
+        setMapScreenshot(canvas.toDataURL('image/png'));
+      }).catch(err => {
+        console.warn('Could not capture map:', err.message);
+      });
+    }, 2000);
+  }, [siteMapViewElement]);
 
   // Generate floor plan overlay from placed modules
   useEffect(() => {
@@ -186,9 +206,22 @@ export default function PrintSiteMapModal({ onClose, placedModules, walls, siteA
               </p>
             </div>
 
-
-
-
+            {mapScreenshot && (
+              <div className="mb-8">
+                <h2 className="text-lg font-bold text-gray-800 mb-3">Satellite Map View</h2>
+                <div className="border-2 border-gray-300 bg-white p-4 flex items-center justify-center">
+                  <img
+                    src={mapScreenshot}
+                    alt="Site Map"
+                    style={{
+                      maxWidth: '100%',
+                      maxHeight: '300px',
+                      objectFit: 'contain',
+                    }}
+                  />
+                </div>
+              </div>
+            )}
 
             {floorPlanOverlay && placedModules.length > 0 ? (
                <div className="border-2 border-gray-300 bg-white p-8 flex items-center justify-center">
