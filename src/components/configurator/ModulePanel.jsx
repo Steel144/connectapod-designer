@@ -613,20 +613,27 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
                                         <p className="text-[10px] text-gray-400">{item.sqm}m²</p>
                                       </div>
                                     </div>
-                                    );
-                                    return <div key={item.code}>{moduleElement}</div>;
-                                  })}
-                                  </div>
-                                  )}
-                                  </div>
-                                  )}
-                                  </div>
                                   );
-                                  })}
-                                  </div>
-            );
-          })}
+                                  return <div key={item.code}>{moduleElement}</div>;
+                                })}
+                              </div>
+                            )}
+                          </div>
+                        )}
+                        </div>
+                        );
+                        });
+                        })()}
+                        </div>
+                        )}
+          </div>
+        );
+        })}
         )}
+
+
+
+
 
       {/* Wall suggestions for selected end module */}
       {showWallSuggestions && (
@@ -682,6 +689,7 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
           </div>
         </div>
       )}
+
 
     </div>
   );
