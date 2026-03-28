@@ -7,34 +7,9 @@ import L from "leaflet";
 export default function PrintSiteMapModal({ onClose, placedModules, walls, siteAddress, coordinates, mapZoom, overlayRotation, planScaleMultiplier, positionOffset, siteMapViewElement }) {
   const contentRef = useRef(null);
   const [floorPlanOverlay, setFloorPlanOverlay] = useState(null);
-  const [mapImage, setMapImage] = useState(null);
 
   const CANVAS_PX_PER_CELL = 20;
   const CELL_M = 0.6;
-
-  // Capture the site map view screenshot
-  useEffect(() => {
-    if (!siteMapViewElement) return;
-
-    // Find the actual leaflet map container inside
-    const mapContainer = siteMapViewElement.querySelector('.leaflet-container');
-    if (!mapContainer) {
-      console.warn('No map container found');
-      return;
-    }
-
-    html2canvas(mapContainer, {
-      scale: 2,
-      backgroundColor: null,
-      logging: false,
-      allowTaint: true,
-      useCORS: false,
-    }).then(canvas => {
-      setMapImage(canvas.toDataURL());
-    }).catch(err => {
-      console.error('Failed to capture site map:', err.message);
-    });
-  }, [siteMapViewElement]);
 
   // Generate floor plan overlay from placed modules
   useEffect(() => {
@@ -211,22 +186,7 @@ export default function PrintSiteMapModal({ onClose, placedModules, walls, siteA
               </p>
             </div>
 
-            {mapImage && coordinates ? (
-              <div className="border-2 border-gray-300 bg-white p-8 mb-6">
-                <p className="text-xs text-gray-600 mb-4">Site Map (Satellite View)</p>
-                <div className="flex items-center justify-center">
-                  <img
-                    src={mapImage}
-                    alt="Site Map"
-                    style={{
-                      maxWidth: '100%',
-                      maxHeight: '300px',
-                      transform: `rotate(${overlayRotation || 0}deg)`,
-                    }}
-                  />
-                </div>
-              </div>
-            ) : null}
+
 
             {floorPlanOverlay && placedModules.length > 0 ? (
                <div className="border-2 border-gray-300 bg-white p-8 flex items-center justify-center">
