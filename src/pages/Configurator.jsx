@@ -1362,7 +1362,7 @@ export default function Configurator() {
                   </button>
                 </div>
                 {!summaryCollapsed && (
-                   <div className="p-4 h-[320px] overflow-y-auto">
+                   <div className="p-4 h-[380px] overflow-y-auto">
                      {selectedModule && selectedFace ? (
                        // Face selection + wall picker
                        <div className="flex flex-col h-full gap-3">
