@@ -58,7 +58,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
   const selectedModObj = hoveredModuleId ? placedModules.find(m => m.id === hoveredModuleId) : placedModules.find(m => m.id === selectedModId);
   React.useEffect(() => { onModuleSelect && onModuleSelect(selectedModObj || null); }, [hoveredModuleId, selectedModId, placedModules]);
   
-  const [selectedFurnitureId, setSelectedFurnitureId] = useState(null);
+  const [selectedFurnitureIds, setSelectedFurnitureIds] = useState(new Set());
   // { wall, offsetX, offsetY, cursorX, cursorY }
 
   useEffect(() => {
@@ -76,15 +76,15 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
           }
           return new Set();
         });
-        if (selectedFurnitureId) {
-          onRemoveFurniture?.(selectedFurnitureId);
-          setSelectedFurnitureId(null);
+        if (selectedFurnitureIds.size > 0) {
+          selectedFurnitureIds.forEach(id => onRemoveFurniture?.(id));
+          setSelectedFurnitureIds(new Set());
         }
       }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [onRemove, onRemoveWall, onRemoveFurniture, selectedFurnitureId]);
+  }, [onRemove, onRemoveWall, onRemoveFurniture, selectedFurnitureIds]);
 
   const getCellFromClient = (clientX, clientY) => {
     const rect = gridRef.current.getBoundingClientRect();
@@ -153,6 +153,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
     setSelected(newSelected);
     setSelectedModId(mod.id);
     setSelectedWallIds(new Set()); // deselect walls when clicking a module
+    setSelectedFurnitureIds(new Set()); // deselect furniture when clicking a module
     
     setDragging({ mod, offsetX, offsetY, cursorX: e.clientX, cursorY: e.clientY, isPlaced: true, selectedIds: newSelected, wasSelected: selected.has(mod.id) });
   };
@@ -163,6 +164,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
     setSelected(new Set());
     setSelectedModId(null);
     setSelectedWallIds(new Set());
+    setSelectedFurnitureIds(new Set());
     const rect = gridRef.current.getBoundingClientRect();
     setSelectionBox({ startX: (e.clientX - rect.left) / (zoom / 100), startY: (e.clientY - rect.top) / (zoom / 100), cursorX: (e.clientX - rect.left) / (zoom / 100), cursorY: (e.clientY - rect.top) / (zoom / 100) });
   };
@@ -257,11 +259,17 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
       const rect = gridRef.current.getBoundingClientRect();
       const cursorX = dragging.cursorX - rect.left;
       const cursorY = dragging.cursorY - rect.top;
-      const exactX = (cursorX - dragging.offsetX) / scaledCellW;
-      const exactY = (cursorY - dragging.offsetY) / scaledCellH;
-      const newX = Math.max(0, Math.min(exactX, GRID_COLS - 1));
-      const newY = Math.max(0, Math.min(exactY, GRID_ROWS - 1));
-      onMoveFurniture?.(dragging.mod.id, newX, newY);
+      const deltaX = (cursorX - dragging.offsetX) / scaledCellW - dragging.mod.x;
+      const deltaY = (cursorY - dragging.offsetY) / scaledCellH - dragging.mod.y;
+      // Move all selected furniture by same delta
+      const idsToMove = dragging.selectedFurnitureIds || new Set([dragging.mod.id]);
+      idsToMove.forEach((id) => {
+        const item = furniture.find((f) => f.id === id);
+        if (!item) return;
+        const newX = Math.max(0, Math.min(item.x + deltaX, GRID_COLS - 1));
+        const newY = Math.max(0, Math.min(item.y + deltaY, GRID_ROWS - 1));
+        onMoveFurniture?.(id, newX, newY);
+      });
       setDragging(null);
       return;
     }
@@ -409,8 +417,23 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
         }
       });
       if (newSelectedWalls.size > 0) setSelectedWallIds(newSelectedWalls);
-      
       if (newSelected.size > 0) setSelected(newSelected);
+
+      // Check if any furniture is in the selection box
+      const newSelectedFurniture = new Set();
+      furniture.forEach((item) => {
+        const fw = (item.width || 1.4) / 0.6 * scaledCellW;
+        const fh = (item.depth || 1.4) / 0.6 * scaledCellH;
+        const fx1 = item.x * scaledCellW;
+        const fy1 = item.y * scaledCellH;
+        const fx2 = fx1 + fw;
+        const fy2 = fy1 + fh;
+        if (!(fx2 < minX || fx1 > maxX || fy2 < minY || fy1 > maxY)) {
+          newSelectedFurniture.add(item.id);
+        }
+      });
+      if (newSelectedFurniture.size > 0) setSelectedFurnitureIds(newSelectedFurniture);
+
       setSelectionBox(null);
       return;
     }
@@ -429,6 +452,13 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
       setDragging(null);
       return;
     }
+
+    // Move all selected furniture by same delta
+    selectedFurnitureIds.forEach((id) => {
+      const item = furniture.find((f) => f.id === id);
+      if (!item) return;
+      onMoveFurniture?.(id, item.x + deltaX, item.y + deltaY);
+    });
 
     // Move all selected modules by same delta
     dragging.selectedIds.forEach((id) => {
@@ -474,7 +504,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
       }
     });
     setDragging(null);
-  }, [dragging, draggingWall, selectionBox, placedModules, walls]);
+  }, [dragging, draggingWall, selectionBox, placedModules, walls, furniture, selectedFurnitureIds]);
 
   // ── HTML drag drop for new modules from panel ───
 
@@ -959,7 +989,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
          {showFurniture && furniture.map((item) => {
            const width = (item.width || 1.4) / 0.6;
            const height = (item.depth || 1.4) / 0.6;
-           const isSelected = selectedFurnitureId === item.id;
+           const isSelected = selectedFurnitureIds.has(item.id);
 
            return (
              <div
@@ -978,10 +1008,13 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                  setSelected(new Set());
                  setSelectedModId(null);
                  setSelectedWallIds(new Set());
+                 // Keep existing furniture selection if clicking an already-selected item, else select just this one
+                 const newFurnSelection = selectedFurnitureIds.has(item.id) ? selectedFurnitureIds : new Set([item.id]);
+                 setSelectedFurnitureIds(newFurnSelection);
                  const rect = gridRef.current.getBoundingClientRect();
                  const offsetX = e.clientX - rect.left - item.x * scaledCellW;
                  const offsetY = e.clientY - rect.top - item.y * scaledCellH;
-                 setDragging({ mod: item, offsetX, offsetY, cursorX: e.clientX, cursorY: e.clientY, isPlaced: true, selectedIds: new Set([item.id]), isFurniture: true });
+                 setDragging({ mod: item, offsetX, offsetY, cursorX: e.clientX, cursorY: e.clientY, isPlaced: true, selectedIds: new Set([item.id]), isFurniture: true, selectedFurnitureIds: newFurnSelection });
                }}
              >
                <div className="w-full h-full overflow-visible relative" style={{ transform: `rotate(${item.rotation || 0}deg)`, transformOrigin: "center" }}>
@@ -1003,7 +1036,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                    <RotateCw size={10} className="text-[#F15A22]" />
                  </button>
                  <button
-                   onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); onRemoveFurniture?.(item.id); }}
+                   onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); selectedFurnitureIds.has(item.id) ? selectedFurnitureIds.forEach(id => onRemoveFurniture?.(id)) : onRemoveFurniture?.(item.id); }}
                    className="bg-white rounded-full p-1 shadow-sm hover:bg-red-50 z-10"
                    title="Delete"
                  >
