@@ -401,7 +401,7 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
       {/* Floating Config Panel */}
       {design && (
         <div 
-          className="absolute z-[9999] bg-white rounded-lg shadow-lg p-4 border border-gray-200 max-w-xs space-y-4 cursor-move select-none font-heading"
+          className="fixed z-[9999] bg-white rounded-lg shadow-lg p-4 border border-gray-200 max-w-xs space-y-4 cursor-move select-none font-heading"
           style={{
             top: panelPosition.top === 'auto' ? 'auto' : `${panelPosition.top}px`,
             right: panelPosition.right === 'auto' ? 'auto' : `${panelPosition.right}px`,
