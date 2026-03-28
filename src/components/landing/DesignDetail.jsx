@@ -106,7 +106,7 @@ export default function DesignDetail({ design, onBack }) {
                 ))}
               </div>
             )}
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">{design.name}</h1>
+            <h1 className="font-heading text-2xl md:text-3xl font-bold text-gray-900 mb-3">{design.name}</h1>
             <p className="text-gray-600 leading-relaxed mb-6">{design.description}</p>
 
             {/* Specs */}

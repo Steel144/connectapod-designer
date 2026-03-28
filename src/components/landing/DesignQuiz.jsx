@@ -83,7 +83,7 @@ export default function DesignQuiz({ onComplete, onSkip }) {
           </button>
         )}
 
-        <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-8">{currentStep.question}</h2>
+        <h2 className="font-heading text-2xl md:text-3xl font-bold text-gray-900 mb-8">{currentStep.question}</h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {currentStep.options.map((opt) => (

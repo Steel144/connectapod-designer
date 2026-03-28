@@ -23,7 +23,7 @@ export default function HeroSection({ onStartQuiz }) {
         <p className="text-[#F15A22] text-sm font-semibold uppercase tracking-widest mb-4">
           New Zealand's Modular Home Specialists
         </p>
-        <h1 className="text-4xl md:text-6xl font-bold text-white leading-tight mb-6">
+        <h1 className="font-heading text-4xl md:text-6xl font-bold text-white leading-tight mb-6">
           Find Your Perfect
           <br />
           <span className="text-[#F15A22]">Modular Home</span>

@@ -98,13 +98,13 @@ export default function Landing() {
             {quizAnswers ? (
               <>
                 <p className="text-[#F15A22] text-sm font-semibold uppercase tracking-widest mb-2">Your Matches</p>
-                <h2 className="text-3xl font-bold text-gray-900">Designs matched to your needs</h2>
+                <h2 className="font-heading text-3xl font-bold text-gray-900">Designs matched to your needs</h2>
                 <p className="text-gray-500 mt-1">Best matches shown first based on your answers</p>
               </>
             ) : (
               <>
                 <p className="text-[#F15A22] text-sm font-semibold uppercase tracking-widest mb-2">Our Designs</p>
-                <h2 className="text-3xl font-bold text-gray-900">Browse all designs</h2>
+                <h2 className="font-heading text-3xl font-bold text-gray-900">Browse all designs</h2>
                 <p className="text-gray-500 mt-1">Click any design to explore, then customise it your way</p>
               </>
             )}
