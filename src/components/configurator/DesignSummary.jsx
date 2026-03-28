@@ -11,8 +11,11 @@ export default function DesignSummary({ placedModules, walls = [], furniture = [
   const wallCount = walls.length;
 
   return (
-    <div className="bg-white border border-gray-200 p-4">
-      <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest font-heading mb-3">Summary</p>
+    <div className="bg-white border border-gray-200">
+      <div className="w-full flex items-center justify-between p-2 hover:bg-gray-50 transition-colors text-left border-b border-gray-200 bg-white">
+        <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest">Summary</p>
+      </div>
+      <div className="p-4">
 
       {placedModules.length > 0 && (
         <div className="mb-4">
@@ -63,6 +66,7 @@ export default function DesignSummary({ placedModules, walls = [], furniture = [
           <FileText size={14} className="mr-1.5" />
           Get Estimate PDF
         </Button>
+      </div>
       </div>
     </div>
   );
