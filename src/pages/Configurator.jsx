@@ -166,6 +166,7 @@ export default function Configurator() {
   const [showDimensions, setShowDimensions] = useState(true);
   const [showTooltips, setShowTooltips] = useState(true);
   const navBarRef = useRef(null);
+  const siteMapViewRef = useRef(null);
   const [navBarHeight, setNavBarHeight] = useState(0);
 
   useEffect(() => {
@@ -1011,7 +1012,7 @@ export default function Configurator() {
   };
 
   if (printMode) {
-    return <PrintRouter mode={printMode} walls={walls} placedModules={placedModules} furniture={furniture} customWalls={customWalls} printDetails={printDetails} onClose={() => setPrintMode(null)} showLabels={showLabels} showFurniture={showFurniture} showPhotoImages={showPhotoImages} showDimensions={showDimensions} siteAddress={siteAddress} />;
+    return <PrintRouter mode={printMode} walls={walls} placedModules={placedModules} furniture={furniture} customWalls={customWalls} printDetails={printDetails} onClose={() => setPrintMode(null)} showLabels={showLabels} showFurniture={showFurniture} showPhotoImages={showPhotoImages} showDimensions={showDimensions} siteAddress={siteAddress} siteMapViewElement={siteMapViewRef.current} />;
   }
 
   return (
@@ -1205,23 +1206,25 @@ export default function Configurator() {
       {/* ── WORKSPACE ── */}
       <div className={`flex-1 relative overflow-auto ${isMobile ? "pt-12" : "pt-16"}`}>
         {viewMode === "sitemap" ? (
-          <SiteMapView
-            design={{ grid: placedModules, walls, furniture }}
-            siteAddress={siteAddress}
-            setSiteAddress={setSiteAddress}
-            coordinates={siteCoordinates}
-            setCoordinates={setSiteCoordinates}
-            saveDetails={(() => {
-              try {
-                return JSON.parse(localStorage.getItem("connectapod_save_details")) || { projectName: '', clientName: '', address: '' };
-              } catch {
-                return { projectName: '', clientName: '', address: '' };
-              }
-            })()}
-            setSaveDetails={(details) => {
-              localStorage.setItem("connectapod_save_details", JSON.stringify(details));
-            }}
-          />
+          <div ref={siteMapViewRef}>
+            <SiteMapView
+              design={{ grid: placedModules, walls, furniture }}
+              siteAddress={siteAddress}
+              setSiteAddress={setSiteAddress}
+              coordinates={siteCoordinates}
+              setCoordinates={setSiteCoordinates}
+              saveDetails={(() => {
+                try {
+                  return JSON.parse(localStorage.getItem("connectapod_save_details")) || { projectName: '', clientName: '', address: '' };
+                } catch {
+                  return { projectName: '', clientName: '', address: '' };
+                }
+              })()}
+              setSaveDetails={(details) => {
+                localStorage.setItem("connectapod_save_details", JSON.stringify(details));
+              }}
+            />
+          </div>
         ) : viewMode === "elevations" ? (
           <div style={{ transform: `scale(${elevationZoom / 100})`, transformOrigin: "top center", display: "inline-block", width: "100%" }}>
             <CombinedElevations 
