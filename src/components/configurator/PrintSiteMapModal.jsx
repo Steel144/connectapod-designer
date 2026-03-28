@@ -38,6 +38,26 @@ export default function PrintSiteMapModal({ onClose, placedModules, walls, siteA
     canvas.height = (maxY - minY) * CANVAS_PX_PER_CELL;
     const ctx = canvas.getContext('2d');
 
+    // Fill background
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Draw grid
+    ctx.strokeStyle = '#e5e7eb';
+    ctx.lineWidth = 0.5;
+    for (let i = 0; i <= (maxX - minX); i++) {
+      ctx.beginPath();
+      ctx.moveTo(i * CANVAS_PX_PER_CELL, 0);
+      ctx.lineTo(i * CANVAS_PX_PER_CELL, canvas.height);
+      ctx.stroke();
+    }
+    for (let i = 0; i <= (maxY - minY); i++) {
+      ctx.beginPath();
+      ctx.moveTo(0, i * CANVAS_PX_PER_CELL);
+      ctx.lineTo(canvas.width, i * CANVAS_PX_PER_CELL);
+      ctx.stroke();
+    }
+
     const loadImageForMod = (mod) => new Promise((resolve) => {
       if (!mod.floorPlanImage) { resolve({ mod, img: null }); return; }
       const img = new window.Image();
@@ -62,10 +82,35 @@ export default function PrintSiteMapModal({ onClose, placedModules, walls, siteA
 
         ctx.fillStyle = mod.color || '#FDF0EB';
         ctx.fillRect(0, 0, w, h);
+        ctx.strokeStyle = '#999';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(0, 0, w, h);
+        
         if (img) ctx.drawImage(img, 0, 0, w, h);
-
         ctx.restore();
       });
+
+      // Draw walls
+      if (walls && walls.length > 0) {
+        walls.forEach(wall => {
+          if (wall.x !== undefined && wall.y !== undefined) {
+            ctx.fillStyle = '#8b7355';
+            if (wall.orientation === 'horizontal') {
+              const wx = (wall.x - minX) * CANVAS_PX_PER_CELL;
+              const wy = (wall.y - minY) * CANVAS_PX_PER_CELL;
+              const ww = (wall.length || wall.width / 1000 || 1) * CANVAS_PX_PER_CELL;
+              const wh = (wall.thickness || 0.15) * CANVAS_PX_PER_CELL;
+              ctx.fillRect(wx, wy, ww, wh);
+            } else {
+              const wx = (wall.x - minX) * CANVAS_PX_PER_CELL;
+              const wy = (wall.y - minY) * CANVAS_PX_PER_CELL;
+              const ww = (wall.thickness || 0.15) * CANVAS_PX_PER_CELL;
+              const wh = (wall.length || wall.height / 1000 || 1) * CANVAS_PX_PER_CELL;
+              ctx.fillRect(wx, wy, ww, wh);
+            }
+          }
+        });
+      }
 
       setFloorPlanOverlay(canvas.toDataURL());
     });
