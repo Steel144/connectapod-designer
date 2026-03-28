@@ -49,15 +49,6 @@ export default function DesignSummary({ placedModules, walls = [], furniture = [
 
       <div className="flex gap-2 flex-col">
         <Button
-          onClick={onClear}
-          disabled={moduleCount === 0}
-          variant="outline"
-          className="w-full h-9 rounded-none border-gray-200 text-gray-500 hover:text-red-500 hover:border-red-200"
-        >
-          <Trash2 size={14} className="mr-1.5" />
-          Clear Design
-        </Button>
-        <Button
           onClick={onQuote}
           disabled={moduleCount === 0}
           variant="outline"
