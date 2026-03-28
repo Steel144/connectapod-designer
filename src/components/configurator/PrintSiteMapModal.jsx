@@ -1,10 +1,75 @@
-import React, { useRef } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { X } from "lucide-react";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 
-export default function PrintSiteMapModal({ onClose, placedModules, walls, siteAddress, floorPlanOverlay, design }) {
+export default function PrintSiteMapModal({ onClose, placedModules, walls, siteAddress }) {
   const contentRef = useRef(null);
+  const [floorPlanOverlay, setFloorPlanOverlay] = React.useState(null);
+
+  // Generate floor plan overlay from placed modules
+  React.useEffect(() => {
+    if (!placedModules || placedModules.length === 0) return;
+
+    let minX = Math.min(...placedModules.map(m => m.x));
+    let maxX = Math.max(...placedModules.map(m => m.x + m.w));
+    let minY = Math.min(...placedModules.map(m => m.y));
+    let maxY = Math.max(...placedModules.map(m => m.y + m.h));
+
+    if (walls && walls.length > 0) {
+      walls.forEach(wall => {
+        if (wall.x !== undefined && wall.y !== undefined) {
+          minX = Math.min(minX, wall.x);
+          minY = Math.min(minY, wall.y);
+          if (wall.orientation === 'horizontal') {
+            maxX = Math.max(maxX, wall.x + (wall.length || wall.width / 1000 || 1));
+            maxY = Math.max(maxY, wall.y + (wall.thickness || 0.15));
+          } else {
+            maxX = Math.max(maxX, wall.x + (wall.thickness || 0.15));
+            maxY = Math.max(maxY, wall.y + (wall.length || wall.height / 1000 || 1));
+          }
+        }
+      });
+    }
+
+    const CANVAS_PX_PER_CELL = 20;
+    const canvas = document.createElement('canvas');
+    canvas.width = (maxX - minX) * CANVAS_PX_PER_CELL;
+    canvas.height = (maxY - minY) * CANVAS_PX_PER_CELL;
+    const ctx = canvas.getContext('2d');
+
+    const loadImageForMod = (mod) => new Promise((resolve) => {
+      if (!mod.floorPlanImage) { resolve({ mod, img: null }); return; }
+      const img = new window.Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = () => resolve({ mod, img });
+      img.onerror = () => resolve({ mod, img: null });
+      img.src = mod.floorPlanImage;
+    });
+
+    Promise.all(placedModules.map(loadImageForMod)).then((results) => {
+      results.forEach(({ mod, img }) => {
+        const x = (mod.x - minX) * CANVAS_PX_PER_CELL;
+        const y = (mod.y - minY) * CANVAS_PX_PER_CELL;
+        const w = mod.w * CANVAS_PX_PER_CELL;
+        const h = mod.h * CANVAS_PX_PER_CELL;
+
+        ctx.save();
+        ctx.translate(x + w / 2, y + h / 2);
+        if (mod.rotation) ctx.rotate((mod.rotation * Math.PI) / 180);
+        if (mod.flipped) ctx.scale(-1, 1);
+        ctx.translate(-w / 2, -h / 2);
+
+        ctx.fillStyle = mod.color || '#FDF0EB';
+        ctx.fillRect(0, 0, w, h);
+        if (img) ctx.drawImage(img, 0, 0, w, h);
+
+        ctx.restore();
+      });
+
+      setFloorPlanOverlay(canvas.toDataURL());
+    });
+  }, [placedModules, walls]);
 
   const handlePrint = async () => {
     if (!contentRef.current) return;
@@ -72,48 +137,19 @@ export default function PrintSiteMapModal({ onClose, placedModules, walls, siteA
               </p>
             </div>
 
-            {floorPlanOverlay && design?.grid?.length > 0 ? (
-              (() => {
-                let minX = Math.min(...design.grid.map(m => m.x));
-                let maxX = Math.max(...design.grid.map(m => m.x + m.w));
-                let minY = Math.min(...design.grid.map(m => m.y));
-                let maxY = Math.max(...design.grid.map(m => m.y + m.h));
-
-                if (design.walls && design.walls.length > 0) {
-                  design.walls.forEach(wall => {
-                    if (wall.x !== undefined && wall.y !== undefined) {
-                      minX = Math.min(minX, wall.x);
-                      minY = Math.min(minY, wall.y);
-                      if (wall.orientation === 'horizontal') {
-                        maxX = Math.max(maxX, wall.x + (wall.length || wall.width / 1000 || 1));
-                        maxY = Math.max(maxY, wall.y + (wall.thickness || 0.15));
-                      } else {
-                        maxX = Math.max(maxX, wall.x + (wall.thickness || 0.15));
-                        maxY = Math.max(maxY, wall.y + (wall.length || wall.height / 1000 || 1));
-                      }
-                    }
-                  });
-                }
-
-                const CANVAS_PX_PER_CELL = 20;
-                const width = (maxX - minX) * CANVAS_PX_PER_CELL;
-                const height = (maxY - minY) * CANVAS_PX_PER_CELL;
-
-                return (
-                  <div className="border-2 border-gray-300 bg-white p-8 flex items-center justify-center">
-                    <img
-                      src={floorPlanOverlay}
-                      alt="Floor Plan"
-                      style={{
-                        width: `${width}px`,
-                        height: `${height}px`,
-                        imageRendering: 'pixelated',
-                      }}
-                    />
-                  </div>
-                );
-              })()
-            ) : (
+            {floorPlanOverlay && placedModules.length > 0 ? (
+               <div className="border-2 border-gray-300 bg-white p-8 flex items-center justify-center">
+                 <img
+                   src={floorPlanOverlay}
+                   alt="Floor Plan"
+                   style={{
+                     maxWidth: '100%',
+                     maxHeight: '400px',
+                     imageRendering: 'pixelated',
+                   }}
+                 />
+               </div>
+             ) : (
               <div className="border-2 border-gray-300 bg-gray-50 p-8 text-center text-gray-500 min-h-96 flex items-center justify-center">
                 <div>
                   <p className="text-lg font-semibold mb-2">Site Map Overlay</p>
