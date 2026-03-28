@@ -461,11 +461,7 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
                 {loading ? <Loader2 className="w-3 h-3 animate-spin" /> : 'Find'}
               </button>
             </div>
-            {coordinates && (
-              <p className="text-sm text-gray-600 mt-1">
-                📍 {coordinates[0].toFixed(4)}, {coordinates[1].toFixed(4)}
-              </p>
-            )}
+
           </div>
 
           {coordinates && (
