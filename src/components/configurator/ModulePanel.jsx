@@ -214,8 +214,6 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
        "Soffit": ["SO", "soffit"],
      };
 
-
-
      const knownGroupLabels = new Set(PANEL_GROUPS.map(g => g.label));
      const assignedCodes = new Set();
 
@@ -625,11 +623,8 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
                 })()}
               </div>
             )}
-
-
-
-
-
+          </div>
+        );
       })}
 
       {/* Wall suggestions for selected end module */}
@@ -686,8 +681,6 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
           </div>
         </div>
       )}
-
-
     </div>
   );
 }
