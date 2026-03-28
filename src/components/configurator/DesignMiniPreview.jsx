@@ -139,8 +139,21 @@ export default function DesignMiniPreview({ grid = [], walls = [], furniture = [
         {/* Modules */}
         {grid.map((m, i) => {
           const imgUrl = m.floorPlanImage || floorPlanImages[m.type] || (m.originalCode && floorPlanImages[m.originalCode]);
+          const mw = (m.w || 5) * CELL;
+          const mh = (m.h || 8) * CELL;
+          const cx = toX(m.x) + mw / 2;
+          const cy = toY(m.y) + mh / 2;
+          const rotation = m.rotation || 0;
+          const flipped = m.flipped || false;
+          // Build transform: rotate around center, then flip horizontally around center
+          const transforms = [];
+          if (rotation) transforms.push(`rotate(${rotation}, ${cx}, ${cy})`);
+          if (flipped) transforms.push(`scale(-1, 1) translate(${-2 * cx}, 0)`);
+          const transform = transforms.length > 0 ? transforms.join(" ") : undefined;
+
           return (
             <g key={m.id || i}
+              transform={transform}
               onMouseEnter={() => setHoveredModule({ label: m.label, type: m.type, sqm: m.sqm, price: m.price })}
               onMouseLeave={() => setHoveredModule(null)}
               style={{ cursor: "default" }}
@@ -149,16 +162,16 @@ export default function DesignMiniPreview({ grid = [], walls = [], furniture = [
                 <rect
                   x={toX(m.x)}
                   y={toY(m.y)}
-                  width={(m.w || 5) * CELL}
-                  height={(m.h || 8) * CELL}
+                  width={mw}
+                  height={mh}
                   fill="#ffffff"
                 />
               )}
               <rect
                 x={toX(m.x)}
                 y={toY(m.y)}
-                width={(m.w || 5) * CELL}
-                height={(m.h || 8) * CELL}
+                width={mw}
+                height={mh}
                 fill={imgUrl ? `url(#img-${m.id || i})` : "#FDF0EB"}
                 stroke="none"
               />
