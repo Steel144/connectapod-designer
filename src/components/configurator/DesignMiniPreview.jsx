@@ -160,8 +160,7 @@ export default function DesignMiniPreview({ grid = [], walls = [], furniture = [
                 width={(m.w || 5) * CELL}
                 height={(m.h || 8) * CELL}
                 fill={imgUrl ? `url(#img-${m.id || i})` : "#FDF0EB"}
-                stroke="#F15A22"
-                strokeWidth={0.8}
+                stroke="none"
               />
             </g>
           );
