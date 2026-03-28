@@ -1,134 +1,168 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import InstructionsModal from "@/components/InstructionsModal";
-import { HelpCircle } from "lucide-react";
+import React, { useState, useMemo } from "react";
+import { base44 } from "@/api/base44Client";
+import { useQuery } from "@tanstack/react-query";
+import HeroSection from "@/components/landing/HeroSection";
+import DesignQuiz from "@/components/landing/DesignQuiz";
+import DesignCard from "@/components/landing/DesignCard";
+import DesignDetail from "@/components/landing/DesignDetail";
+import { ArrowRight, SlidersHorizontal } from "lucide-react";
+
+// Score a design against quiz answers (higher = better match)
+function scoreDesign(design, answers) {
+  let score = 0;
+  if (answers.bedrooms != null) {
+    const bedrooms = answers.bedrooms;
+    const diff = Math.abs((design.bedrooms ?? 1) - bedrooms);
+    score += diff === 0 ? 3 : diff === 1 ? 1 : 0;
+  }
+  if (answers.use_case && design.use_cases?.includes(answers.use_case)) score += 3;
+  if (answers.budget && design.budget_range === answers.budget) score += 2;
+  if (design.is_featured) score += 1;
+  return score;
+}
 
 export default function Landing() {
-  const [formData, setFormData] = useState({ name: "", email: "", company: "" });
-  const [loading, setLoading] = useState(false);
-  const [showInstructions, setShowInstructions] = useState(false);
-  const navigate = useNavigate();
+  const [phase, setPhase] = useState("hero"); // hero | quiz | results | detail
+  const [quizAnswers, setQuizAnswers] = useState(null);
+  const [selectedDesign, setSelectedDesign] = useState(null);
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  const { data: designs = [], isLoading } = useQuery({
+    queryKey: ["designTemplates"],
+    queryFn: async () => {
+      try {
+        const r = await base44.entities.DesignTemplate.list("sort_order");
+        return Array.isArray(r) ? r : [];
+      } catch {
+        return [];
+      }
+    },
+    staleTime: 60000,
+  });
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!formData.name || !formData.email) {
-      alert("Please fill in all required fields");
-      return;
+  const sortedDesigns = useMemo(() => {
+    if (!quizAnswers) {
+      // No quiz — show featured first, then by sort_order
+      return [...designs].sort((a, b) => {
+        if (a.is_featured && !b.is_featured) return -1;
+        if (!a.is_featured && b.is_featured) return 1;
+        return (a.sort_order ?? 0) - (b.sort_order ?? 0);
+      });
     }
-    setLoading(true);
-    setTimeout(() => {
-      navigate("/Configurator");
-    }, 500);
+    // Rank by quiz match score
+    return [...designs]
+      .map(d => ({ ...d, _score: scoreDesign(d, quizAnswers) }))
+      .sort((a, b) => b._score - a._score);
+  }, [designs, quizAnswers]);
+
+  const handleQuizComplete = (answers) => {
+    setQuizAnswers(answers);
+    setPhase("results");
   };
+
+  const handleSkipQuiz = () => {
+    setQuizAnswers(null);
+    setPhase("results");
+  };
+
+  const handleSelectDesign = (design) => {
+    setSelectedDesign(design);
+    setPhase("detail");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleBackToResults = () => {
+    setSelectedDesign(null);
+    setPhase("results");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  if (phase === "detail" && selectedDesign) {
+    return <DesignDetail design={selectedDesign} onBack={handleBackToResults} />;
+  }
+
+  if (phase === "quiz") {
+    return <DesignQuiz onComplete={handleQuizComplete} onSkip={handleSkipQuiz} />;
+  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        {/* Hero Section */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-foreground mb-3">
-            Design Your Modular Home
-          </h1>
-          <p className="text-lg text-muted-foreground">
-            Create stunning modular buildings in minutes with our visual designer
-          </p>
-        </div>
+    <div className="min-h-screen bg-[#F8F7F5]">
+      {phase === "hero" && (
+        <HeroSection onStartQuiz={() => setPhase("quiz")} />
+      )}
 
-        {/* Signup Form */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Get Started</CardTitle>
-            <CardDescription>Enter your details to access the designer</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <Label htmlFor="name">Full Name *</Label>
-                <Input
-                  id="name"
-                  name="name"
-                  type="text"
-                  placeholder="John Doe"
-                  value={formData.name}
-                  onChange={handleChange}
-                  required
-                  className="mt-1"
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="email">Email Address *</Label>
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  placeholder="you@example.com"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                  className="mt-1"
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="company">Company (Optional)</Label>
-                <Input
-                  id="company"
-                  name="company"
-                  type="text"
-                  placeholder="Your company name"
-                  value={formData.company}
-                  onChange={handleChange}
-                  className="mt-1"
-                />
-              </div>
-
-              <Button
-                type="submit"
-                disabled={loading}
-                className="w-full"
+      {/* Designs section — shown after hero scroll or after quiz */}
+      <div className="max-w-7xl mx-auto px-6 py-16">
+        {/* Section header */}
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
+          <div>
+            {quizAnswers ? (
+              <>
+                <p className="text-[#F15A22] text-sm font-semibold uppercase tracking-widest mb-2">Your Matches</p>
+                <h2 className="text-3xl font-bold text-gray-900">Designs matched to your needs</h2>
+                <p className="text-gray-500 mt-1">Best matches shown first based on your answers</p>
+              </>
+            ) : (
+              <>
+                <p className="text-[#F15A22] text-sm font-semibold uppercase tracking-widest mb-2">Our Designs</p>
+                <h2 className="text-3xl font-bold text-gray-900">Browse all designs</h2>
+                <p className="text-gray-500 mt-1">Click any design to explore, then customise it your way</p>
+              </>
+            )}
+          </div>
+          <div className="flex items-center gap-3">
+            {quizAnswers && (
+              <button
+                onClick={() => setPhase("quiz")}
+                className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-sm text-gray-600 hover:border-[#F15A22] hover:text-[#F15A22] bg-white transition-colors"
               >
-                {loading ? "Loading..." : "Enter Designer"}
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
-
-        {/* Features Section */}
-        <div className="mt-8 grid grid-cols-3 gap-4 text-center">
-          <div>
-            <div className="text-2xl font-bold text-primary">Drag</div>
-            <p className="text-xs text-muted-foreground">Drop modules</p>
-          </div>
-          <div>
-            <div className="text-2xl font-bold text-primary">Design</div>
-            <p className="text-xs text-muted-foreground">Your layout</p>
-          </div>
-          <div>
-            <div className="text-2xl font-bold text-primary">Export</div>
-            <p className="text-xs text-muted-foreground">Plans</p>
+                <SlidersHorizontal size={14} /> Refine answers
+              </button>
+            )}
+            {phase === "hero" && (
+              <button
+                onClick={() => setPhase("quiz")}
+                className="flex items-center gap-2 px-5 py-2.5 bg-[#F15A22] text-white text-sm font-semibold hover:bg-[#d94e1a] transition-colors"
+              >
+                Find my match <ArrowRight size={14} />
+              </button>
+            )}
           </div>
         </div>
 
-        {/* Help Button */}
-        <button
-          onClick={() => setShowInstructions(true)}
-          className="mt-6 w-full flex items-center justify-center gap-2 px-4 py-2 text-sm text-gray-600 border border-gray-300 rounded hover:bg-gray-50 transition-colors"
-        >
-          <HelpCircle size={16} /> How to use this tool
-        </button>
+        {/* Design grid */}
+        {isLoading ? (
+          <div className="flex items-center justify-center py-24">
+            <div className="w-8 h-8 border-2 border-[#F15A22] border-t-transparent rounded-full animate-spin" />
+          </div>
+        ) : sortedDesigns.length === 0 ? (
+          <div className="text-center py-24 text-gray-400">
+            <p className="text-6xl mb-4">🏗️</p>
+            <p className="text-lg font-medium text-gray-500">Designs coming soon</p>
+            <p className="text-sm mt-1">Check back shortly — we're adding new designs regularly</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {sortedDesigns.map((design, i) => (
+              <DesignCard
+                key={design.id}
+                design={design}
+                onSelect={handleSelectDesign}
+                isFeatured={quizAnswers ? i === 0 : design.is_featured}
+              />
+            ))}
+          </div>
+        )}
       </div>
 
-      {/* Instructions Modal */}
-      <InstructionsModal open={showInstructions} onClose={() => setShowInstructions(false)} />
+      {/* Footer */}
+      <div className="border-t border-gray-200 bg-white py-8 text-center">
+        <img
+          src="https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/1a43e85d2_Connectapod-01.png"
+          alt="connectapod"
+          className="h-7 w-auto mx-auto mb-3 opacity-60"
+        />
+        <p className="text-xs text-gray-400">© {new Date().getFullYear()} Connectapod. All rights reserved.</p>
+      </div>
     </div>
   );
 }
