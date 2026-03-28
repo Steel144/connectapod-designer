@@ -437,35 +437,34 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
             </button>
 
             {isOpen && (
-                <div className="border-t border-gray-100 max-h-96 overflow-y-auto">
-                  {(() => {
-                    const bySize = {};
-                    group.items.forEach(item => {
-                      const size = `${item.width}m`;
-                      if (!bySize[size]) bySize[size] = [];
-                      bySize[size].push(item);
+              <div className="border-t border-gray-100 max-h-96 overflow-y-auto">
+                {(() => {
+                  const bySize = {};
+                  group.items.forEach(item => {
+                    const size = `${item.width}m`;
+                    if (!bySize[size]) bySize[size] = [];
+                    bySize[size].push(item);
+                  });
+                  const sizes = Object.keys(bySize).sort((a, b) => parseFloat(b) - parseFloat(a));
+
+                  return sizes.map(size => {
+                    const sizeKey = `${group.key}-${size}`;
+                    const isExpanded = expandedSizes[sizeKey] === true;
+                    const sizeItems = bySize[size];
+
+                    const endItems = sizeItems.filter(item => {
+                      const chassis = item.chassis || "SF";
+                      return chassis === "EF" || chassis === "ER" || chassis === "LF" || chassis === "RF";
                     });
-                    const sizes = Object.keys(bySize).sort((a, b) => parseFloat(b) - parseFloat(a));
+                    const standardItems = sizeItems.filter(item => {
+                      const chassis = item.chassis || "SF";
+                      return !(chassis === "EF" || chassis === "ER" || chassis === "LF" || chassis === "RF");
+                    });
 
-                    return sizes.map(size => {
-                      const sizeKey = `${group.key}-${size}`;
-                      const isExpanded = expandedSizes[sizeKey] === true;
-                      const sizeItems = bySize[size];
-                      
-                      // Split items by type: end vs standard
-                      const endItems = sizeItems.filter(item => {
-                        const chassis = item.chassis || "SF";
-                        return chassis === "EF" || chassis === "ER" || chassis === "LF" || chassis === "RF";
-                      });
-                      const standardItems = sizeItems.filter(item => {
-                        const chassis = item.chassis || "SF";
-                        return !(chassis === "EF" || chassis === "ER" || chassis === "LF" || chassis === "RF");
-                      });
+                    const hasEndModules = endItems.length > 0;
+                    const hasStandardModules = standardItems.length > 0;
 
-                      const hasEndModules = endItems.length > 0;
-                      const hasStandardModules = standardItems.length > 0;
-
-                      return (
+                    return (
                       <div key={size} className="border-b border-gray-100 last:border-0">
                         <button 
                           onClick={() => setExpandedSizes(prev => ({ ...prev, [sizeKey]: !prev[sizeKey] }))}
@@ -512,8 +511,9 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
                                     orientation: item.orientation || 1,
                                   };
                                   const variants = item.description ? item.description.split(",").map(v => v.trim()) : [];
-                                  const moduleElement = (
+                                  return (
                                     <div
+                                      key={item.code}
                                       draggable
                                       onDragStart={(e) => {
                                         e.dataTransfer.effectAllowed = "copy";
@@ -544,7 +544,6 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
                                       </div>
                                     </div>
                                   );
-                                  return <div key={item.code}>{moduleElement}</div>;
                                 })}
                               </div>
                             )}
@@ -582,8 +581,9 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
                                     orientation: item.orientation || 1,
                                   };
                                   const variants = item.description ? item.description.split(",").map(v => v.trim()) : [];
-                                  const moduleElement = (
+                                  return (
                                     <div
+                                      key={item.code}
                                       draggable
                                       onDragStart={(e) => {
                                         e.dataTransfer.effectAllowed = "copy";
@@ -614,25 +614,23 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
                                       </div>
                                     </div>
                                   );
-                                  return <div key={item.code}>{moduleElement}</div>;
-                                  })}
-                                  </div>
-                                  )}
-                                  </div>
-                                  )}
-                                  </div>
-                                  );
-                                  })}
-                                  )}
-                                  </div>
-                                  )}
-                                  </div>
-                                  );
-                                  })}
+                                })}
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  });
+                })()}
+              </div>
+            )}
 
 
 
 
+
+      })}
 
       {/* Wall suggestions for selected end module */}
       {showWallSuggestions && (
