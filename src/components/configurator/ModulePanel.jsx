@@ -160,8 +160,8 @@ export { MODULE_TYPES, GROUP_ICONS, WALL_TYPES };
 export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, selectedModule, placedModules = [], onModuleImageUpdate, onWallImageUpdate, onWallTypesLoaded, floorPlanImages = {}, wallImages = {}, onWallSelected, highlightWallType, onWallHover, showTooltips = true }) {
    const [openGroup, setOpenGroup] = useState(null);
    const [expandedSizes, setExpandedSizes] = useState({});
-   const [collapsedGroups, setCollapsedGroups] = useState(new Set());
    const [hoveredModule, setHoveredModule] = useState(null);
+   const [modulesCollapsed, setModulesCollapsed] = useState(false);
    const [hoveredWall, setHoveredWall] = useState(null);
    const [showWallSuggestions, setShowWallSuggestions] = useState(true);
 
@@ -409,9 +409,17 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
 
   return (
     <div className="flex flex-col gap-1 relative">
-      <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2">Modules</p>
+      <button 
+        onClick={() => setModulesCollapsed(!modulesCollapsed)}
+        className="w-full flex items-center justify-between p-2 hover:bg-gray-50 transition-colors text-left border border-gray-200 bg-white"
+      >
+        <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest">Modules</p>
+        <span className="text-gray-400">
+          {modulesCollapsed ? <ChevronRight size={14} /> : <ChevronDown size={14} />}
+        </span>
+      </button>
 
-      {dynamicPanelGroups.map((group) => {
+      {!modulesCollapsed && dynamicPanelGroups.map((group) => {
         const isOpen = openGroup === group.key;
         return (
           <div key={group.key} className="border border-gray-200 bg-white overflow-hidden">
@@ -620,7 +628,8 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
                         )}
           </div>
         );
-      })}
+        })}
+        )}
 
 
 
