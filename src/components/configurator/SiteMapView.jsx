@@ -374,7 +374,7 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
               const cssScale = (metresToPx / canvasPxPerMetre) * planScaleMultiplier;
 
               return (
-                <div key={`overlay-${mapZoom}`} className="absolute inset-0 flex items-center justify-center pointer-events-none" style={{ zIndex: 1000 }}>
+                <div key={`overlay-${mapZoom}`} className="absolute inset-0 flex items-center justify-center pointer-events-none" style={{ zIndex: 9999 }}>
                   <img
                     src={floorPlanOverlay}
                     alt="Floor Plan"
