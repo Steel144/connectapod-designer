@@ -33,9 +33,17 @@ export default function DesignSummary({ placedModules, walls = [], furniture = [
           <span className="text-gray-600">Total Area:</span>
           <span className="font-semibold text-gray-800">{totalSqm.toFixed(1)} m²</span>
         </div>
+        <div className="flex justify-between items-center pb-2">
+          <span className="text-gray-600">Base Price:</span>
+          <span className="font-semibold text-gray-800">${(totalPrice / 1000).toFixed(0)}k</span>
+        </div>
+        <div className="flex justify-between items-center pb-2">
+          <span className="text-gray-600">Tax & Fees (15%):</span>
+          <span className="font-semibold text-gray-800">${((totalPrice * 0.15) / 1000).toFixed(0)}k</span>
+        </div>
         <div className="flex justify-between items-center pt-2 bg-gray-50 p-2 -mx-4 px-3">
-          <span className="text-gray-700 font-semibold">Estimated Price:</span>
-          <span className="text-lg font-bold text-[#F15A22]">${(totalPrice / 1000).toFixed(0)}k</span>
+          <span className="text-gray-700 font-semibold">Total Estimate:</span>
+          <span className="text-lg font-bold text-[#F15A22]">${((totalPrice * 1.15) / 1000).toFixed(0)}k</span>
         </div>
       </div>
 
