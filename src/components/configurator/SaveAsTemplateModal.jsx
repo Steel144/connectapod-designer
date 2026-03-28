@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
-import { X, Save } from "lucide-react";
+import { X, Save, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 
 const CATEGORIES = [
@@ -43,6 +43,34 @@ export default function SaveAsTemplateModal({ open, onClose, placedModules, wall
     is_featured: false,
   });
   const [saving, setSaving] = useState(false);
+  const [suggesting, setSuggesting] = useState(false);
+
+  const handleSuggest = async () => {
+    setSuggesting(true);
+    const totalSqm = placedModules.reduce((s, m) => s + (m.sqm || 0), 0);
+    const moduleList = placedModules.map(m => m.label || m.type).join(", ");
+    const result = await base44.integrations.Core.InvokeLLM({
+      prompt: `You are helping name and describe a modular home design for Connectapod (a New Zealand modular home builder).
+Design details:
+- Modules: ${moduleList || "none"}
+- Total size: ${Math.round(totalSqm)}m²
+- Bedrooms: ${form.bedrooms || "unknown"}
+- Bathrooms: ${form.bathrooms || "unknown"}
+- Categories: ${form.categories.join(", ") || "not selected"}
+- Use cases: ${form.use_cases.join(", ") || "not selected"}
+
+Generate a concise, appealing customer-facing name (e.g. "2 Bedroom Granny Flat 75m²") and a short 1-2 sentence description for a design card. Be specific and practical.`,
+      response_json_schema: {
+        type: "object",
+        properties: {
+          name: { type: "string" },
+          description: { type: "string" },
+        },
+      },
+    });
+    setForm(f => ({ ...f, name: result.name || f.name, description: result.description || f.description }));
+    setSuggesting(false);
+  };
 
   if (!open) return null;
 
@@ -99,27 +127,37 @@ export default function SaveAsTemplateModal({ open, onClose, placedModules, wall
         </div>
 
         <div className="p-5 space-y-5">
-          {/* Name */}
-          <div>
-            <label className="text-xs font-semibold text-gray-700 uppercase tracking-widest block mb-1.5">Design Name *</label>
-            <input
-              value={form.name}
-              onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
-              placeholder="e.g. 2 Bedroom Granny Flat 75m²"
-              className="w-full px-3 py-2 text-sm border border-gray-200 focus:outline-none focus:border-[#F15A22]"
-            />
-          </div>
-
-          {/* Description */}
-          <div>
-            <label className="text-xs font-semibold text-gray-700 uppercase tracking-widest block mb-1.5">Description</label>
-            <textarea
-              value={form.description}
-              onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
-              placeholder="Short description shown on the design card..."
-              rows={2}
-              className="w-full px-3 py-2 text-sm border border-gray-200 focus:outline-none focus:border-[#F15A22] resize-none"
-            />
+          {/* Name + Description with AI suggest */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-xs font-semibold text-gray-700 uppercase tracking-widest">Name &amp; Description</span>
+              <button
+                onClick={handleSuggest}
+                disabled={suggesting}
+                className="flex items-center gap-1.5 px-2.5 py-1 text-xs text-[#F15A22] border border-[#F15A22] hover:bg-[#F15A22] hover:text-white transition-colors disabled:opacity-50"
+              >
+                <Sparkles size={11} /> {suggesting ? "Suggesting…" : "AI Suggest"}
+              </button>
+            </div>
+            <div>
+              <label className="text-xs text-gray-500 block mb-1">Design Name *</label>
+              <input
+                value={form.name}
+                onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
+                placeholder="e.g. 2 Bedroom Granny Flat 75m²"
+                className="w-full px-3 py-2 text-sm border border-gray-200 focus:outline-none focus:border-[#F15A22]"
+              />
+            </div>
+            <div>
+              <label className="text-xs text-gray-500 block mb-1">Description</label>
+              <textarea
+                value={form.description}
+                onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
+                placeholder="Short description shown on the design card..."
+                rows={2}
+                className="w-full px-3 py-2 text-sm border border-gray-200 focus:outline-none focus:border-[#F15A22] resize-none"
+              />
+            </div>
           </div>
 
           {/* Categories */}
