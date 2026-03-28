@@ -1116,7 +1116,7 @@ export default function Configurator() {
                     <Save size={13} /> Save to Design Catalogue
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link to={createPageUrl("Catalogue")} className="flex items-center gap-2 cursor-pointer">
+                    <Link to="/FloorCatalogue" className="flex items-center gap-2 cursor-pointer">
                       <BookOpen size={13} /> Floor Catalogue
                     </Link>
                   </DropdownMenuItem>
@@ -1189,7 +1189,7 @@ export default function Configurator() {
                 <button onClick={() => { handleUndo(); setMobileMenuOpen(false); }} disabled={history.length === 0} className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 border border-gray-200 rounded-sm bg-white disabled:opacity-30">
                   <Undo2 size={14} /> Undo
                 </button>
-                <Link to={createPageUrl("Catalogue")} onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 border border-gray-200 rounded-sm bg-white">
+                <Link to="/FloorCatalogue" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 border border-gray-200 rounded-sm bg-white">
                   <BookOpen size={14} /> Floor Cat.
                 </Link>
                 <Link to={createPageUrl("WallCatalogue")} onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 border border-gray-200 rounded-sm bg-white">
