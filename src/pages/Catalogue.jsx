@@ -329,7 +329,15 @@ export default function Catalogue() {
       })
       .map(m => ({ ...m, _custom: false, _deleted: deletedCodes.has(m.code) })) : [];
 
-    const merged = [...builtins, ...customs];
+    // Deduplicate by code (a module may match a category via multiple fields)
+    const seenCodes = new Set(builtins.map(m => m.code));
+    const dedupedCustoms = customs.filter(m => {
+      if (seenCodes.has(m.code)) return false;
+      seenCodes.add(m.code);
+      return true;
+    });
+
+    const merged = [...builtins, ...dedupedCustoms];
     const variantOrder = (m) => {
       const v = (m.variants || []).map(x => x.toLowerCase());
       if (v.includes("end")) return 0;
