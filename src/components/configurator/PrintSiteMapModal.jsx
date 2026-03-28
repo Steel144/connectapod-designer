@@ -12,38 +12,44 @@ export default function PrintSiteMapModal({ onClose, placedModules, walls, siteA
   const CANVAS_PX_PER_CELL = 20;
   const CELL_M = 0.6;
 
-  // Generate map image using Leaflet
+  // Generate satellite map image placeholder
   useEffect(() => {
-    if (!coordinates || !mapZoom) return;
+    if (!coordinates) return;
 
-    const mapElement = document.createElement('div');
-    mapElement.style.width = '800px';
-    mapElement.style.height = '600px';
-    mapElement.style.position = 'absolute';
-    mapElement.style.visibility = 'hidden';
-    document.body.appendChild(mapElement);
+    // Create a simple satellite map placeholder
+    const canvas = document.createElement('canvas');
+    canvas.width = 800;
+    canvas.height = 600;
+    const ctx = canvas.getContext('2d');
 
-    const map = L.map(mapElement).setView(
-      [coordinates[0] + (positionOffset?.lat || 0), coordinates[1] + (positionOffset?.lng || 0)],
-      mapZoom
-    );
+    // Blue-green satellite background
+    ctx.fillStyle = '#3b82f6';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-      attribution: '&copy; Esri',
-      maxZoom: 22,
-    }).addTo(map);
+    // Add some texture
+    ctx.fillStyle = 'rgba(100, 150, 120, 0.3)';
+    for (let i = 0; i < 50; i++) {
+      ctx.fillRect(
+        Math.random() * canvas.width,
+        Math.random() * canvas.height,
+        Math.random() * 100 + 20,
+        Math.random() * 100 + 20
+      );
+    }
 
-    L.marker(coordinates).addTo(map);
+    // Mark center point
+    ctx.fillStyle = '#ff0000';
+    ctx.beginPath();
+    ctx.arc(canvas.width / 2, canvas.height / 2, 8, 0, Math.PI * 2);
+    ctx.fill();
 
-    setTimeout(() => {
-      const canvas = map._container.querySelector('canvas');
-      if (canvas) {
-        setMapImage(canvas.toDataURL());
-      }
-      map.remove();
-      document.body.removeChild(mapElement);
-    }, 1000);
-  }, [coordinates, mapZoom, positionOffset]);
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '12px Arial';
+    ctx.fillText(`Zoom: ${mapZoom}x`, 10, 20);
+    ctx.fillText(coordinates ? `${coordinates[0].toFixed(3)}, ${coordinates[1].toFixed(3)}` : 'No coordinates', 10, 40);
+
+    setMapImage(canvas.toDataURL());
+  }, [coordinates, mapZoom]);
 
   // Generate floor plan overlay from placed modules
   useEffect(() => {
