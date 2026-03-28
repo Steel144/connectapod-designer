@@ -15,7 +15,7 @@ export default function HeroSection({ onStartQuiz }) {
         <img
           src="https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/1a43e85d2_Connectapod-01.png"
           alt="connectapod"
-          className="h-20 w-auto brightness-0 invert"
+          className="h-24 w-auto brightness-0 invert"
         />
       </div>
 
