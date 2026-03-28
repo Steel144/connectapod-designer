@@ -629,6 +629,10 @@ export default function ModulePanel({ onDragStart, onDragEnd, selectedWall, sele
             );
           })}
         )}
+      </div>
+    </div>
+  );
+}
 
 
 
