@@ -15,8 +15,13 @@ export default function DesignSummary({ placedModules, walls = [], furniture = [
       <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">Summary</p>
 
       {placedModules.length > 0 && (
-        <div className="h-32 mb-4 border border-gray-100 bg-gray-50 overflow-hidden">
-          <DesignMiniPreview grid={placedModules} walls={walls} furniture={furniture} />
+        <div className="mb-4">
+          <div className="h-32 mb-3 border border-gray-100 bg-gray-50 overflow-hidden">
+            <DesignMiniPreview grid={placedModules} walls={walls} furniture={furniture} />
+          </div>
+          <div className="text-center pb-3 border-b border-gray-100">
+            <span className="text-lg font-bold text-[#F15A22]">${((totalPrice * 1.15) / 1000).toFixed(0)}k</span>
+          </div>
         </div>
       )}
       
