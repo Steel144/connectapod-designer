@@ -66,7 +66,6 @@ export default function DesignCatalogue() {
     [wallImageList]
   );
 
-  // Enrich grid/walls inside template_payload with images
   const enrichedTemplates = useMemo(() =>
     designTemplates.map(t => {
       const payload = t.template_payload || {};
@@ -84,7 +83,6 @@ export default function DesignCatalogue() {
     [designTemplates, floorPlanImages, wallImages]
   );
 
-  // Category filter options
   const allCategories = ["All", ...new Set(enrichedTemplates.flatMap(t => t.categories || []))];
 
   const filtered = selectedCategory === "All"
@@ -212,50 +210,51 @@ export default function DesignCatalogue() {
                       <p className="text-xs text-gray-500 mb-3 leading-relaxed">{template.description}</p>
                     )}
 
-                    {/* Specs */}
-                    <div className="flex items-center flex-wrap gap-x-3 gap-y-1 mb-3 text-xs text-gray-600">
-                      {template.bedrooms > 0 && (
-                        <span className="flex items-center gap-1"><BedDouble size={11} className="text-[#F15A22]" />{template.bedrooms} bed</span>
-                      )}
-                      {template.bathrooms > 0 && (
-                        <span className="flex items-center gap-1"><Bath size={11} className="text-[#F15A22]" />{template.bathrooms} bath</span>
-                      )}
-                      {template.size_sqm > 0 && (
-                        <span className="flex items-center gap-1"><Maximize2 size={11} className="text-[#F15A22]" />{template.size_sqm}m²</span>
-                      )}
-                    </div>
-
-                    {/* Use cases */}
-                    {template.use_cases?.length > 0 && (
-                      <div className="flex flex-wrap gap-1 mb-3">
-                        {template.use_cases.map(uc => (
-                          <span key={uc} className="px-2 py-0.5 bg-orange-50 text-[#F15A22] text-[10px] border border-orange-100">
-                            {USE_CASE_LABELS[uc] || uc}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-
-                    {/* Categories */}
-                    {template.categories?.length > 0 && (
-                      <div className="flex flex-wrap gap-1 mb-3">
-                        {template.categories.map(c => (
-                          <span key={c} className="px-2 py-0.5 bg-gray-100 text-gray-500 text-[10px]">
-                            {CATEGORY_LABELS[c] || c}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-
-                    {/* Price */}
-                    {template.starting_price > 0 && (
-                      <div className="flex items-center gap-1 text-xs text-gray-700 font-semibold mb-3">
-                        <DollarSign size={11} className="text-[#F15A22]" />
-                        From ${template.starting_price.toLocaleString()} NZD
-                      </div>
-                    )}
-
+                    {/* Bottom info — pushed to end */}
                     <div className="mt-auto">
+                      {/* Specs */}
+                      <div className="flex items-center flex-wrap gap-x-3 gap-y-1 mb-3 text-xs text-gray-600">
+                        {template.bedrooms > 0 && (
+                          <span className="flex items-center gap-1"><BedDouble size={11} className="text-[#F15A22]" />{template.bedrooms} bed</span>
+                        )}
+                        {template.bathrooms > 0 && (
+                          <span className="flex items-center gap-1"><Bath size={11} className="text-[#F15A22]" />{template.bathrooms} bath</span>
+                        )}
+                        {template.size_sqm > 0 && (
+                          <span className="flex items-center gap-1"><Maximize2 size={11} className="text-[#F15A22]" />{template.size_sqm}m²</span>
+                        )}
+                      </div>
+
+                      {/* Use cases */}
+                      {template.use_cases?.length > 0 && (
+                        <div className="flex flex-wrap gap-1 mb-3">
+                          {template.use_cases.map(uc => (
+                            <span key={uc} className="px-2 py-0.5 bg-orange-50 text-[#F15A22] text-[10px] border border-orange-100">
+                              {USE_CASE_LABELS[uc] || uc}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* Categories */}
+                      {template.categories?.length > 0 && (
+                        <div className="flex flex-wrap gap-1 mb-3">
+                          {template.categories.map(c => (
+                            <span key={c} className="px-2 py-0.5 bg-gray-100 text-gray-500 text-[10px]">
+                              {CATEGORY_LABELS[c] || c}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* Price */}
+                      {template.starting_price > 0 && (
+                        <div className="flex items-center gap-1 text-xs text-gray-700 font-semibold mb-3">
+                          <DollarSign size={11} className="text-[#F15A22]" />
+                          From ${template.starting_price.toLocaleString()} NZD
+                        </div>
+                      )}
+
                       <button
                         onClick={() => handleStartDesign(template)}
                         className="w-full flex items-center justify-center gap-2 py-2 bg-[#F15A22] text-white text-xs font-semibold hover:bg-[#d94e1a] transition-colors"
