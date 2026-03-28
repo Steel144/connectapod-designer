@@ -1290,8 +1290,8 @@ export default function Configurator() {
       {/* ── DESKTOP FLOATING PANELS ── */}
       {!isMobile && viewMode !== "sitemap" && viewMode !== "elevations" && (
         <>
-          {/* Floating left panel — Module picker */}
-          <div
+           {/* Floating left panel — Module picker */}
+           <div
             className="fixed z-50 flex"
             style={{ left: `${panelPos.x}px`, top: `${panelPos.y}px`, cursor: draggingPanel ? "grabbing" : "default" }}
           >
@@ -1511,6 +1511,36 @@ export default function Configurator() {
             </div>
           )}
         </>
+      )}
+
+      {/* ── DESIGN SUMMARY FOR ELEVATIONS MODE ── */}
+      {!isMobile && viewMode === "elevations" && placedModules.length > 0 && (
+        <div
+          className="absolute z-20"
+          style={{ left: `${summaryPos.x}px`, top: `${summaryPos.y}px`, cursor: draggingSummary ? "grabbing" : "default", width: "260px" }}
+        >
+          <div className="bg-white border border-gray-200 shadow-xl overflow-hidden" onMouseDown={handleSummaryMouseDown}>
+            <div className="px-4 py-3 border-b border-gray-100 cursor-grab active:cursor-grabbing flex items-center justify-between">
+              <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest">DESIGN SUMMARY</p>
+              <button onMouseDown={e => e.stopPropagation()} onClick={() => setSummaryCollapsed(c => !c)} className="text-gray-400 hover:text-[#F15A22] transition-colors text-xs leading-none">
+                {summaryCollapsed ? "▲" : "▼"}
+              </button>
+            </div>
+            {!summaryCollapsed && (
+              <div className="p-4 h-[380px] overflow-y-auto">
+                <DesignSummary
+                  placedModules={placedModules}
+                  walls={walls}
+                  furniture={furniture}
+                  onSave={() => setSaveModalOpen(true)}
+                  onClear={handleClear}
+                  isSaving={saveMutation.isPending}
+                  onQuote={() => setDetailsModalMode('estimate')}
+                />
+              </div>
+            )}
+          </div>
+        </div>
       )}
 
       {/* ── MOBILE BOTTOM DRAWER — Module Library ── */}
