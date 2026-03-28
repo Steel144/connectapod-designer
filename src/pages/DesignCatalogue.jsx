@@ -83,11 +83,17 @@ export default function DesignCatalogue() {
     [designTemplates, floorPlanImages, wallImages]
   );
 
-  const allCategories = ["All", ...new Set(enrichedTemplates.flatMap(t => t.categories || []))];
+  // Compute categories from raw templates to avoid waiting for enrichment
+  const allCategories = useMemo(
+    () => ["All", ...new Set(designTemplates.flatMap(t => t.categories || []))],
+    [designTemplates]
+  );
 
-  const filtered = selectedCategory === "All"
-    ? enrichedTemplates
-    : enrichedTemplates.filter(t => (t.categories || []).includes(selectedCategory));
+  // Filter enriched templates by selected category
+  const filtered = useMemo(() => {
+    if (selectedCategory === "All") return enrichedTemplates;
+    return enrichedTemplates.filter(t => (t.categories || []).includes(selectedCategory));
+  }, [selectedCategory, enrichedTemplates]);
 
   const handleDelete = async (template) => {
     if (!window.confirm(`Delete "${template.name}"? This cannot be undone.`)) return;
