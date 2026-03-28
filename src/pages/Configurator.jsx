@@ -6,6 +6,7 @@ import ConfigGrid from "@/components/configurator/ConfigGrid";
 import DesignSummary from "@/components/configurator/DesignSummary";
 
 import SaveDesignModal from "@/components/configurator/SaveDesignModal";
+import SaveAsTemplateModal from "@/components/configurator/SaveAsTemplateModal";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -124,6 +125,7 @@ export default function Configurator() {
   }, []);
   const [draggingMod, setDraggingMod] = useState(null);
   const [saveModalOpen, setSaveModalOpen] = useState(false);
+  const [saveTemplateModalOpen, setSaveTemplateModalOpen] = useState(false);
   const [showSaved, setShowSaved] = useState(false);
   const [lastSavedName, setLastSavedName] = useState(() => {
     try { return localStorage.getItem("configurator_last_saved_name") || ""; } catch { return ""; }
@@ -1110,8 +1112,8 @@ export default function Configurator() {
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-48">
-                  <DropdownMenuItem onClick={() => setSaveModalOpen(true)} disabled={placedModules.length === 0 || saveMutation.isPending}>
-                    <Save size={13} /> Save to Catalogue
+                  <DropdownMenuItem onClick={() => setSaveTemplateModalOpen(true)} disabled={placedModules.length === 0}>
+                    <Save size={13} /> Save to Design Catalogue
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link to={createPageUrl("Catalogue")} className="flex items-center gap-2 cursor-pointer">
@@ -1632,6 +1634,14 @@ export default function Configurator() {
             setDetailsModalMode(null);
           }
         }}
+      />
+
+      <SaveAsTemplateModal
+        open={saveTemplateModalOpen}
+        onClose={() => setSaveTemplateModalOpen(false)}
+        placedModules={placedModules}
+        walls={walls}
+        furniture={furniture}
       />
 
       {/* Copyright footer */}
