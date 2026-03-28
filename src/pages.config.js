@@ -47,7 +47,6 @@
  *
  * The mainPage value must match a key in the PAGES object exactly.
  */
-import Catalogue from './pages/Catalogue';
 import Configurator from './pages/Configurator';
 import ElevationViewer from './pages/ElevationViewer';
 import WallCatalogue from './pages/WallCatalogue';
@@ -55,14 +54,13 @@ import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
-    "Catalogue": Catalogue,
     "Configurator": Configurator,
     "ElevationViewer": ElevationViewer,
     "WallCatalogue": WallCatalogue,
 }
 
 export const pagesConfig = {
-    mainPage: "Catalogue",
+    mainPage: "Configurator",
     Pages: PAGES,
     Layout: __Layout,
 };
