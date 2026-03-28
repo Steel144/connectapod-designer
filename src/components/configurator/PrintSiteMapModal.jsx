@@ -3,36 +3,13 @@ import { X } from "lucide-react";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import L from "leaflet";
-import { MapContainer, TileLayer, Marker, Popup, ZoomControl } from "react-leaflet";
 
 export default function PrintSiteMapModal({ onClose, placedModules, walls, siteAddress, coordinates, mapZoom, overlayRotation, planScaleMultiplier, positionOffset, siteMapViewElement }) {
   const contentRef = useRef(null);
-  const mapContainerRef = useRef(null);
   const [floorPlanOverlay, setFloorPlanOverlay] = useState(null);
-  const [mapScreenshot, setMapScreenshot] = useState(null);
 
   const CANVAS_PX_PER_CELL = 20;
   const CELL_M = 0.6;
-
-  // Capture site map screenshot from the embedded map container
-  useEffect(() => {
-    if (!mapContainerRef.current) return;
-
-    setTimeout(() => {
-      html2canvas(mapContainerRef.current, {
-        scale: 2,
-        backgroundColor: '#ffffff',
-        logging: false,
-        allowTaint: true,
-        useCORS: true,
-        removeContainer: false,
-      }).then(canvas => {
-        setMapScreenshot(canvas.toDataURL('image/png'));
-      }).catch(err => {
-        console.warn('Could not capture map screenshot:', err.message);
-      });
-    }, 1500);
-  }, [coordinates, mapZoom]);
 
   // Generate floor plan overlay from placed modules
   useEffect(() => {
@@ -209,40 +186,14 @@ export default function PrintSiteMapModal({ onClose, placedModules, walls, siteA
               </p>
             </div>
 
-            <div className="mb-8">
-              <h2 className="text-lg font-bold text-gray-800 mb-3">Satellite Map View</h2>
-              {coordinates ? (
-                <div 
-                  ref={mapContainerRef}
-                  className="border-2 border-gray-300 bg-white"
-                  style={{
-                    width: '100%',
-                    height: '400px',
-                    position: 'relative'
-                  }}
-                >
-                  <MapContainer
-                    center={coordinates}
-                    zoom={mapZoom}
-                    className="w-full h-full"
-                    zoomControl={false}
-                  >
-                    <TileLayer
-                      url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-                      attribution='&copy; Esri, DigitalGlobe, Earthstar Geographics'
-                      maxZoom={22}
-                    />
-                    <Marker position={coordinates}>
-                      <Popup>Site Location</Popup>
-                    </Marker>
-                  </MapContainer>
+            {coordinates ? (
+              <div className="mb-8">
+                <h2 className="text-lg font-bold text-gray-800 mb-3">Satellite Map View</h2>
+                <div className="border-2 border-gray-300 bg-white p-4 flex items-center justify-center min-h-96">
+                  <p className="text-sm text-gray-500">Map at coordinates: {coordinates[0].toFixed(4)}°, {coordinates[1].toFixed(4)}° (Zoom: {mapZoom})</p>
                 </div>
-              ) : (
-                <div className="border-2 border-gray-300 bg-gray-50 p-8 text-center text-gray-500 min-h-96 flex items-center justify-center">
-                  <p>No site coordinates set</p>
-                </div>
-              )}
-            </div>
+              </div>
+            ) : null}
 
 
 
