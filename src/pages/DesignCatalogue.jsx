@@ -190,7 +190,7 @@ export default function DesignCatalogue() {
                       </div>
                     )}
                     {template._grid.length > 0 ? (
-                      <DesignMiniPreview grid={template._grid} walls={template._walls} />
+                      <DesignMiniPreview grid={template._grid} walls={template._walls} furniture={template.template_payload?.layout?.furniture || []} />
                     ) : template.heroImage ? (
                       <img src={template.heroImage} alt={template.name} className="w-full h-full object-cover" />
                     ) : (
