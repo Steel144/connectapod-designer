@@ -1011,7 +1011,7 @@ export default function Configurator() {
   };
 
   if (printMode) {
-    return <PrintRouter mode={printMode} walls={walls} placedModules={placedModules} furniture={furniture} customWalls={customWalls} printDetails={printDetails} onClose={() => setPrintMode(null)} showLabels={showLabels} showFurniture={showFurniture} showPhotoImages={showPhotoImages} showDimensions={showDimensions} siteAddress={siteAddress} floorPlanOverlay={floorPlanOverlay} design={design} />;
+    return <PrintRouter mode={printMode} walls={walls} placedModules={placedModules} furniture={furniture} customWalls={customWalls} printDetails={printDetails} onClose={() => setPrintMode(null)} showLabels={showLabels} showFurniture={showFurniture} showPhotoImages={showPhotoImages} showDimensions={showDimensions} siteAddress={siteAddress} />;
   }
 
   return (
