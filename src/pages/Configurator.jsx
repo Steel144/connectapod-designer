@@ -1288,7 +1288,7 @@ export default function Configurator() {
       </div>
 
       {/* ── DESKTOP FLOATING PANELS ── */}
-      {!isMobile && viewMode !== "sitemap" && (
+      {!isMobile && viewMode !== "sitemap" && viewMode !== "elevations" && (
         <>
           {/* Floating left panel — Module picker */}
           <div
