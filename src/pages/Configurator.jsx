@@ -1229,7 +1229,11 @@ export default function Configurator() {
               placedModules={placedModules} 
               stickyTop={navBarHeight} 
               showHeader={true} 
-              onWallSelect={setSelectedWall} 
+              onWallSelect={(wall) => {
+                setSelectedWall(wall);
+                setHoveredWall(wall);
+              }}
+              onWallHover={(wall) => setHoveredWall(wall)}
               selectedWall={selectedWall}
               wallTypes={availableWallTypes}
               onWallReplace={(wallId, newWallType) => {
@@ -1240,6 +1244,7 @@ export default function Configurator() {
                     : w
                 ));
                 setSelectedWall(null);
+                setHoveredWall(null);
               }}
               onOpenWallsMenu={(wall) => {
                 setWallToReplace(wall);
@@ -1521,22 +1526,73 @@ export default function Configurator() {
         >
           <div className="bg-white border border-gray-200 shadow-xl overflow-hidden" onMouseDown={handleSummaryMouseDown}>
             <div className="px-4 py-3 border-b border-gray-100 cursor-grab active:cursor-grabbing flex items-center justify-between">
-              <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest">DESIGN SUMMARY</p>
+              <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest">{selectedWall ? `Wall: ${selectedWall.face || selectedWall.type || "Preview"}` : hoveredWall ? `Wall: ${hoveredWall.label}` : "DESIGN SUMMARY"}</p>
               <button onMouseDown={e => e.stopPropagation()} onClick={() => setSummaryCollapsed(c => !c)} className="text-gray-400 hover:text-[#F15A22] transition-colors text-xs leading-none">
                 {summaryCollapsed ? "▲" : "▼"}
               </button>
             </div>
             {!summaryCollapsed && (
               <div className="p-4 h-[380px] overflow-y-auto">
-                <DesignSummary
-                  placedModules={placedModules}
-                  walls={walls}
-                  furniture={furniture}
-                  onSave={() => setSaveModalOpen(true)}
-                  onClear={handleClear}
-                  isSaving={saveMutation.isPending}
-                  onQuote={() => setDetailsModalMode('estimate')}
-                />
+                {hoveredWall ? (
+                  <div className="flex flex-col h-full gap-2">
+                    <div>
+                      <p className="text-xs font-semibold text-gray-900 break-words">{hoveredWall.label}</p>
+                      <p className="text-[10px] text-gray-500">{hoveredWall.type}</p>
+                      {hoveredWall.description && <p className="text-[10px] text-gray-500 mt-1">{hoveredWall.description}</p>}
+                    </div>
+                    <div className="flex-1 bg-gray-50 rounded overflow-hidden flex items-center justify-center">
+                      {hoveredWall.elevationImage ? (
+                        <img src={hoveredWall.elevationImage} alt={hoveredWall.label} className="w-full h-full object-contain" />
+                      ) : (
+                        <div className="flex flex-col items-center gap-2 text-gray-400">
+                          <div className="w-16 h-24 border-2 border-gray-300 rounded flex items-center justify-center">
+                            <span className="text-2xl font-bold text-gray-300">{hoveredWall.orientation === "horizontal" ? "━" : "┃"}</span>
+                          </div>
+                          <p className="text-[10px] text-center">No elevation image</p>
+                        </div>
+                      )}
+                    </div>
+                    <div className="text-xs border-t border-gray-200 pt-2">
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">{hoveredWall.width?.toFixed ? hoveredWall.width.toFixed(1) : hoveredWall.width}m wide</span>
+                        <span className="font-semibold text-gray-800">${(hoveredWall.price || 0).toLocaleString()}</span>
+                      </div>
+                    </div>
+                  </div>
+                ) : selectedWall ? (
+                  <div className="flex flex-col h-full gap-2">
+                    <div>
+                      <p className="text-xs font-semibold text-gray-900 break-words">{selectedWall.label}</p>
+                      <p className="text-[10px] text-gray-500">{selectedWall.type}</p>
+                      {selectedWall.face && <span className="text-[10px] font-bold text-[#F15A22]">Face {selectedWall.face}</span>}
+                    </div>
+                    <div className="flex-1 bg-gray-50 rounded overflow-hidden flex items-center justify-center">
+                      {selectedWall.elevationImage ? (
+                        <img src={selectedWall.elevationImage} alt={selectedWall.label} className="w-full h-full object-contain" style={{ transform: selectedWall.flipped ? 'scaleX(-1)' : undefined }} />
+                      ) : (
+                        <div className="flex flex-col items-center gap-2 text-gray-400">
+                          <div className="w-16 h-24 border-2 border-gray-300 rounded flex items-center justify-center">
+                            <span className="text-2xl font-bold text-gray-300">{selectedWall.face || "W"}</span>
+                          </div>
+                          <p className="text-[10px] text-center">No elevation image</p>
+                        </div>
+                      )}
+                    </div>
+                    <div className="text-xs border-t border-gray-200 pt-2 text-right">
+                      <span className="font-semibold text-gray-800">${(selectedWall.price || 0).toLocaleString()}</span>
+                    </div>
+                  </div>
+                ) : (
+                  <DesignSummary
+                    placedModules={placedModules}
+                    walls={walls}
+                    furniture={furniture}
+                    onSave={() => setSaveModalOpen(true)}
+                    onClear={handleClear}
+                    isSaving={saveMutation.isPending}
+                    onQuote={() => setDetailsModalMode('estimate')}
+                  />
+                )}
               </div>
             )}
           </div>
