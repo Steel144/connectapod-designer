@@ -341,12 +341,7 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
                 <Marker position={coordinates}>
                   <Popup>Site Location</Popup>
                 </Marker>
-                {siteBounds && (
-                  <Rectangle
-                    bounds={siteBounds}
-                    pathOptions={{ color: '#3b82f6', weight: 3, opacity: 0.7, fill: true, fillOpacity: 0.1 }}
-                  />
-                )}
+
               </MapContainer>
             </div>
 
@@ -464,26 +459,7 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
 
           </div>
 
-          {coordinates && (
-            <div>
-              <label className="text-xs font-semibold text-gray-700 block mb-2">Site Boundaries</label>
-              <div className="flex gap-2">
-                <Input
-                  type="text"
-                  placeholder="lat1,lng1,lat2,lng2"
-                  value={boundaryInput}
-                  onChange={(e) => setBoundaryInput(e.target.value)}
-                  className="flex-1 text-xs"
-                />
-                <button
-                  onClick={setBoundary}
-                  className="px-2 py-1.5 text-xs border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22] transition-all rounded"
-                >
-                  Set
-                </button>
-              </div>
-            </div>
-          )}
+
 
           <div>
             <label className="text-xs font-semibold text-gray-600 block mb-2">Rotation</label>
