@@ -12,9 +12,9 @@ export default function DesignSummary({ placedModules, walls = [], furniture = [
 
   return (
     <div className="bg-white border border-gray-200">
-      <div className="w-full flex items-center justify-between p-2 hover:bg-gray-50 transition-colors text-left border-b border-gray-200 bg-white">
-        <h3 className="text-sm font-semibold text-gray-800">Design Summary</h3>
-      </div>
+      <button className="w-full flex items-center justify-between p-2 hover:bg-gray-50 transition-colors text-left border border-gray-200 bg-white">
+        <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest">Summary</p>
+      </button>
       <div className="p-4">
 
       {placedModules.length > 0 && (
