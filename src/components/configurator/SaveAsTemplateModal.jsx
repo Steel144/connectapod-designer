@@ -20,12 +20,6 @@ const USE_CASES = [
   { value: "bach", label: "Bach" },
 ];
 
-const BUILD_TYPES = [
-  { value: "modular", label: "Modular" },
-  { value: "kitset", label: "Kitset" },
-  { value: "turnkey", label: "Turnkey" },
-];
-
 const BUDGET_RANGES = [
   { value: "under_100k", label: "Under $100k" },
   { value: "100k-200k", label: "$100k – $200k" },
@@ -40,7 +34,7 @@ export default function SaveAsTemplateModal({ open, onClose, placedModules, wall
     description: "",
     categories: [],
     use_cases: [],
-    build_type: [],
+    build_type: ["modular", "turnkey"],
     budget_range: "",
     bedrooms: "",
     bathrooms: "",
@@ -163,26 +157,6 @@ export default function SaveAsTemplateModal({ open, onClose, placedModules, wall
                   }`}
                 >
                   {u.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Build Types */}
-          <div>
-            <label className="text-xs font-semibold text-gray-700 uppercase tracking-widest block mb-1.5">Available As</label>
-            <div className="flex gap-2">
-              {BUILD_TYPES.map(b => (
-                <button
-                  key={b.value}
-                  onClick={() => toggle("build_type", b.value)}
-                  className={`px-3 py-1.5 text-xs font-medium border transition-colors ${
-                    form.build_type.includes(b.value)
-                      ? "bg-[#F15A22] text-white border-[#F15A22]"
-                      : "bg-white text-gray-600 border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22]"
-                  }`}
-                >
-                  {b.label}
                 </button>
               ))}
             </div>
