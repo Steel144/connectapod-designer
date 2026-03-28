@@ -16,14 +16,23 @@ export default function PrintSiteMapModal({ onClose, placedModules, walls, siteA
   useEffect(() => {
     if (!siteMapViewElement) return;
 
-    html2canvas(siteMapViewElement, {
+    // Find the actual leaflet map container inside
+    const mapContainer = siteMapViewElement.querySelector('.leaflet-container');
+    if (!mapContainer) {
+      console.warn('No map container found');
+      return;
+    }
+
+    html2canvas(mapContainer, {
       scale: 2,
       backgroundColor: null,
       logging: false,
+      allowTaint: true,
+      useCORS: false,
     }).then(canvas => {
       setMapImage(canvas.toDataURL());
     }).catch(err => {
-      console.error('Failed to capture site map:', err);
+      console.error('Failed to capture site map:', err.message);
     });
   }, [siteMapViewElement]);
 
