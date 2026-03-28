@@ -419,7 +419,7 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
           onMouseLeave={handlePanelDragEnd}
         >
           <div>
-            <label className="text-xs font-semibold text-gray-700 block mb-2">Site Address</label>
+            <label className="text-sm font-semibold text-gray-700 block mb-2">Site Address</label>
             <div className="flex gap-2">
               <div className="flex-1 relative">
                 <Input
@@ -429,7 +429,7 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
                   onChange={handleAddressChange}
                   onKeyPress={handleKeyPress}
                   onFocus={() => setShowSuggestions(true)}
-                  className="text-xs"
+                  className="text-sm"
                 />
                 {siteAddress && (
                   <button
@@ -445,7 +445,7 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
                       <button
                         key={idx}
                         onClick={() => selectSuggestion(suggestion)}
-                        className="w-full text-left px-2 py-1 hover:bg-gray-100 text-xs text-gray-700 border-b last:border-b-0"
+                        className="w-full text-left px-2 py-1 hover:bg-gray-100 text-sm text-gray-700 border-b last:border-b-0"
                       >
                         {suggestion.display_name}
                       </button>
@@ -456,13 +456,13 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
               <button
                 onClick={geocodeAddress}
                 disabled={loading}
-                className="px-2 py-1.5 text-xs bg-orange-600 hover:bg-orange-700 text-white rounded transition-all disabled:opacity-50"
+                className="px-2 py-1.5 text-sm bg-orange-600 hover:bg-orange-700 text-white rounded transition-all disabled:opacity-50"
               >
                 {loading ? <Loader2 className="w-3 h-3 animate-spin" /> : 'Find'}
               </button>
             </div>
             {coordinates && (
-              <p className="text-xs text-gray-600 mt-1">
+              <p className="text-sm text-gray-600 mt-1">
                 📍 {coordinates[0].toFixed(4)}, {coordinates[1].toFixed(4)}
               </p>
             )}
