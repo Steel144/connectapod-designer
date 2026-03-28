@@ -217,6 +217,7 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
   };
 
   const handlePanelDragStart = (e) => {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON') return;
     panelDragging.current = true;
     panelDragLast.current = { x: e.clientX, y: e.clientY };
   };
