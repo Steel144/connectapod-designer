@@ -41,7 +41,7 @@ export default function DesignCard({ design, onSelect, isFeatured }) {
       )}
 
       {/* Preview */}
-      <div className="relative h-52 overflow-hidden bg-[#F5F5F3]">
+      <div className="relative h-64 overflow-hidden bg-[#F5F5F3]">
         {hasPlanPreview ? (
           <DesignMiniPreview grid={grid} walls={walls} furniture={furniture} />
         ) : heroImage ? (
@@ -63,7 +63,7 @@ export default function DesignCard({ design, onSelect, isFeatured }) {
       <div className="p-5">
         <h3 className="font-bold text-gray-900 text-base mb-1 leading-tight">{design.name}</h3>
         {design.description && (
-          <p className="text-xs text-gray-500 mb-4 line-clamp-2 leading-relaxed">{design.description}</p>
+          <p className="text-xs text-gray-500 mb-4 leading-relaxed">{design.description}</p>
         )}
 
         {/* Stats */}
