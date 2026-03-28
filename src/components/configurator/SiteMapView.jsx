@@ -481,24 +481,7 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
             </div>
           </div>
 
-          <div>
-            <label className="text-xs font-semibold text-gray-600 block mb-2">Plan Scale</label>
-            <div className="flex items-center gap-2">
-              <input
-                type="range"
-                min="0.1"
-                max="2"
-                step="0.1"
-                value={planScaleMultiplier}
-                onChange={(e) => setPlanScaleMultiplier(parseFloat(e.target.value))}
-                className="flex-1"
-                style={{
-                  accentColor: '#F15A22'
-                }}
-              />
-              <span className="text-xs text-gray-600 w-10 text-right">{planScaleMultiplier.toFixed(1)}x</span>
-            </div>
-          </div>
+
         </div>
       )}
     </div>
