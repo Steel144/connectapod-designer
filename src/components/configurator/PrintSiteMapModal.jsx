@@ -18,17 +18,18 @@ export default function PrintSiteMapModal({ onClose, placedModules, walls, siteA
 
     setTimeout(() => {
       html2canvas(siteMapViewElement, {
-        scale: 1,
+        scale: 2,
         backgroundColor: '#ffffff',
         logging: false,
         allowTaint: true,
-        useCORS: false,
+        useCORS: true,
+        removeContainer: false,
       }).then(canvas => {
-        setMapScreenshot(canvas.toDataURL());
+        setMapScreenshot(canvas.toDataURL('image/png'));
       }).catch(err => {
         console.warn('Could not capture map screenshot:', err.message);
       });
-    }, 500);
+    }, 1000);
   }, [siteMapViewElement]);
 
   // Generate floor plan overlay from placed modules
