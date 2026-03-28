@@ -3,12 +3,50 @@ import { X } from "lucide-react";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 
-export default function PrintSiteMapModal({ onClose, placedModules, walls, siteAddress }) {
+export default function PrintSiteMapModal({ onClose, placedModules, walls, siteAddress, coordinates, mapZoom, overlayRotation, planScaleMultiplier, positionOffset }) {
   const contentRef = useRef(null);
-  const [floorPlanOverlay, setFloorPlanOverlay] = React.useState(null);
+  const [floorPlanOverlay, setFloorPlanOverlay] = useState(null);
+  const [mapImage, setMapImage] = useState(null);
+
+  const CANVAS_PX_PER_CELL = 20;
+  const CELL_M = 0.6;
+
+  // Generate map image using Leaflet
+  useEffect(() => {
+    if (!coordinates || !mapZoom) return;
+
+    const mapElement = document.createElement('div');
+    mapElement.style.width = '800px';
+    mapElement.style.height = '600px';
+    mapElement.style.position = 'absolute';
+    mapElement.style.visibility = 'hidden';
+    document.body.appendChild(mapElement);
+
+    const L = require('leaflet');
+    const map = L.map(mapElement).setView(
+      [coordinates[0] + (positionOffset?.lat || 0), coordinates[1] + (positionOffset?.lng || 0)],
+      mapZoom
+    );
+
+    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+      attribution: '&copy; Esri',
+      maxZoom: 22,
+    }).addTo(map);
+
+    L.marker(coordinates).addTo(map);
+
+    setTimeout(() => {
+      const canvas = map._container.querySelector('canvas');
+      if (canvas) {
+        setMapImage(canvas.toDataURL());
+      }
+      map.remove();
+      document.body.removeChild(mapElement);
+    }, 1000);
+  }, [coordinates, mapZoom, positionOffset]);
 
   // Generate floor plan overlay from placed modules
-  React.useEffect(() => {
+  useEffect(() => {
     if (!placedModules || placedModules.length === 0) return;
 
     let minX = Math.min(...placedModules.map(m => m.x));
@@ -182,6 +220,23 @@ export default function PrintSiteMapModal({ onClose, placedModules, walls, siteA
               </p>
             </div>
 
+            {mapImage && coordinates ? (
+              <div className="border-2 border-gray-300 bg-white p-8 mb-6">
+                <p className="text-xs text-gray-600 mb-4">Site Map (Satellite View)</p>
+                <div className="flex items-center justify-center">
+                  <img
+                    src={mapImage}
+                    alt="Site Map"
+                    style={{
+                      maxWidth: '100%',
+                      maxHeight: '300px',
+                      transform: `rotate(${overlayRotation || 0}deg)`,
+                    }}
+                  />
+                </div>
+              </div>
+            ) : null}
+
             {floorPlanOverlay && placedModules.length > 0 ? (
                <div className="border-2 border-gray-300 bg-white p-8 flex items-center justify-center">
                  <img
@@ -189,7 +244,7 @@ export default function PrintSiteMapModal({ onClose, placedModules, walls, siteA
                    alt="Floor Plan"
                    style={{
                      maxWidth: '100%',
-                     maxHeight: '400px',
+                     maxHeight: '300px',
                      imageRendering: 'pixelated',
                    }}
                  />
