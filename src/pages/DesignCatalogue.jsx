@@ -1,11 +1,12 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowLeft, Maximize2, Layers, Play, HelpCircle, BedDouble, Bath, DollarSign, Star } from "lucide-react";
+import { ArrowLeft, Maximize2, Layers, Play, HelpCircle, BedDouble, Bath, DollarSign, Star, Pencil, Trash2 } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import DesignMiniPreview from "@/components/configurator/DesignMiniPreview";
 import InstructionsModal from "@/components/InstructionsModal";
+import EditTemplateModal from "@/components/catalogue/EditTemplateModal";
 
 const CATEGORY_LABELS = {
   granny_flat: "Granny Flat",
@@ -26,8 +27,15 @@ const USE_CASE_LABELS = {
 
 export default function DesignCatalogue() {
   const navigate = useNavigate();
+  const qc = useQueryClient();
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [showInstructions, setShowInstructions] = useState(false);
+  const [editingTemplate, setEditingTemplate] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    base44.auth.me().then(u => { if (u?.role === "admin") setIsAdmin(true); }).catch(() => {});
+  }, []);
 
   const { data: designTemplates = [], isLoading: loadingTemplates } = useQuery({
     queryKey: ["designTemplates"],
@@ -82,6 +90,12 @@ export default function DesignCatalogue() {
   const filtered = selectedCategory === "All"
     ? enrichedTemplates
     : enrichedTemplates.filter(t => (t.categories || []).includes(selectedCategory));
+
+  const handleDelete = async (template) => {
+    if (!window.confirm(`Delete "${template.name}"? This cannot be undone.`)) return;
+    await base44.entities.DesignTemplate.delete(template.id);
+    qc.invalidateQueries({ queryKey: ["designTemplates"] });
+  };
 
   const handleStartDesign = (template) => {
     const payload = template.template_payload || {};
@@ -157,6 +171,24 @@ export default function DesignCatalogue() {
                 <div key={template.id} className="bg-white border border-gray-200 overflow-hidden hover:shadow-lg transition-all group flex flex-col">
                   {/* Mini grid preview */}
                   <div className="bg-[#F5F5F3] h-48 relative overflow-hidden border-b border-gray-100">
+                    {isAdmin && (
+                      <div className="absolute top-2 left-2 flex gap-1 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button
+                          onClick={(e) => { e.stopPropagation(); setEditingTemplate(template); }}
+                          className="p-1.5 bg-white/90 hover:bg-white text-gray-600 hover:text-[#F15A22] shadow-sm transition-colors"
+                          title="Edit"
+                        >
+                          <Pencil size={13} />
+                        </button>
+                        <button
+                          onClick={(e) => { e.stopPropagation(); handleDelete(template); }}
+                          className="p-1.5 bg-white/90 hover:bg-white text-gray-600 hover:text-red-500 shadow-sm transition-colors"
+                          title="Delete"
+                        >
+                          <Trash2 size={13} />
+                        </button>
+                      </div>
+                    )}
                     {template._grid.length > 0 ? (
                       <DesignMiniPreview grid={template._grid} walls={template._walls} />
                     ) : template.heroImage ? (
@@ -240,6 +272,7 @@ export default function DesignCatalogue() {
         </div>
 
         {showInstructions && <InstructionsModal onClose={() => setShowInstructions(false)} />}
+        {editingTemplate && <EditTemplateModal template={editingTemplate} onClose={() => setEditingTemplate(null)} />}
       </div>
     </TooltipProvider>
   );
