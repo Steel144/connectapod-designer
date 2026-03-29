@@ -70,7 +70,7 @@ export default function PrintFloorPlanModal({ placedModules = [], furniture = []
           const pageWidth = pdf.internal.pageSize.getWidth();
           const pageHeight = pdf.internal.pageSize.getHeight();
 
-          pdf.addImage(LOGO_URL, 'PNG', 7, 4, 15, 12);
+          pdf.addImage(LOGO_URL, 'PNG', 7, 3, 12, 14);
           pdf.setFontSize(9); pdf.setTextColor(241, 90, 34); pdf.setFont(undefined, 'bold');
           pdf.text('www.connectapod.co.nz', pageWidth / 2, 8, { align: 'center' });
           pdf.setFontSize(7); pdf.setTextColor(136, 136, 136); pdf.setFont(undefined, 'normal');
