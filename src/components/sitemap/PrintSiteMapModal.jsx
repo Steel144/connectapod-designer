@@ -1,71 +1,67 @@
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Loader2, Download } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
 
-export default function PrintSiteMapModal({ open, onOpenChange, mapContainerRef, siteAddress, saveDetails, floorPlanImage }) {
+export default function PrintSiteMapModal({ open, onOpenChange, mapContainerRef, siteAddress, saveDetails }) {
   const [loading, setLoading] = useState(false);
   const [fileName, setFileName] = useState('site-plan');
 
   const handlePrint = async () => {
     setLoading(true);
     try {
-      const pdf = new jsPDF({
-        orientation: 'landscape',
-        unit: 'mm',
-        format: 'a4'
+      // Screenshot the actual visible map container
+      const canvas = await html2canvas(mapContainerRef.current, {
+        useCORS: true,
+        allowTaint: true,
+        scale: 1,
+        logging: false,
+        foreignObjectRendering: false,
+        ignoreElements: (el) => el.classList?.contains('sitemap-control-panel'),
       });
+      const screenshotDataUrl = canvas.toDataURL('image/png');
 
+      const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
       const pageWidth = pdf.internal.pageSize.getWidth();
       const pageHeight = pdf.internal.pageSize.getHeight();
 
       // Orange title block
-      pdf.setFillColor(245, 90, 34);
-      pdf.rect(0, 0, pageWidth, 45, 'F');
-
-      // White title text
+      pdf.setFillColor(241, 90, 34);
+      pdf.rect(0, 0, pageWidth, 18, 'F');
       pdf.setTextColor(255, 255, 255);
-      pdf.setFontSize(28);
-      pdf.text('SITE PLAN', pageWidth / 2, 20, { align: 'center' });
+      pdf.setFontSize(14);
+      pdf.text('SITE PLAN', 10, 12);
 
-      // Project details
-      pdf.setFontSize(11);
-      let detailY = 32;
-      
-      if (saveDetails?.projectName) {
-        pdf.text(`Project: ${saveDetails.projectName}`, 14, detailY);
-        detailY += 7;
-      }
-      
       if (siteAddress) {
-        const addressText = `Address: ${siteAddress}`;
-        const maxWidth = pageWidth - 28;
-        const lines = pdf.splitTextToSize(addressText, maxWidth);
-        pdf.text(lines, 14, detailY);
+        pdf.setFontSize(8);
+        const lines = pdf.splitTextToSize(siteAddress, pageWidth - 60);
+        pdf.text(lines, pageWidth / 2, 8, { align: 'center' });
       }
 
-      // Add floor plan image if available
-      if (floorPlanImage) {
-        const imgWidth = pageWidth - 28;
-        const imgHeight = (imgWidth / 16) * 9; // 16:9 aspect ratio
-        const imgY = 50;
-        pdf.addImage(floorPlanImage, 'PNG', 14, imgY, imgWidth, imgHeight);
+      if (saveDetails?.projectName) {
+        pdf.setFontSize(8);
+        pdf.text(`Project: ${saveDetails.projectName}`, pageWidth - 10, 12, { align: 'right' });
       }
+
+      // Map image fills remaining space
+      const imgY = 20;
+      const imgH = pageHeight - imgY - 8;
+      const imgW = pageWidth - 20;
+      pdf.addImage(screenshotDataUrl, 'PNG', 10, imgY, imgW, imgH);
 
       // Footer
-      pdf.setFontSize(8);
+      pdf.setFontSize(7);
       pdf.setTextColor(150, 150, 150);
-      pdf.text(`Generated: ${new Date().toLocaleString('en-NZ')}`, pageWidth / 2, pageHeight - 5, { align: 'center' });
+      pdf.text(`Generated: ${new Date().toLocaleString('en-NZ')}`, pageWidth / 2, pageHeight - 2, { align: 'center' });
 
       pdf.save(`${fileName}.pdf`);
       onOpenChange(false);
     } catch (error) {
       console.error('Print error:', error);
-      alert('Failed to generate PDF');
+      alert('Failed to generate PDF: ' + error.message);
     } finally {
       setLoading(false);
     }
@@ -94,6 +90,7 @@ export default function PrintSiteMapModal({ open, onOpenChange, mapContainerRef,
               <p className="text-sm text-gray-600">{siteAddress}</p>
             </div>
           )}
+          <p className="text-xs text-gray-400">This will capture the map exactly as displayed on screen.</p>
         </div>
         <DialogFooter>
           <button
@@ -107,17 +104,7 @@ export default function PrintSiteMapModal({ open, onOpenChange, mapContainerRef,
             disabled={loading}
             className="px-3 py-1.5 text-sm bg-[#F15A22] text-white rounded hover:bg-[#d94e1a] transition-all disabled:opacity-50 flex items-center gap-2"
           >
-            {loading ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin" />
-                Generating...
-              </>
-            ) : (
-              <>
-                <Download className="w-4 h-4" />
-                Download PDF
-              </>
-            )}
+            {loading ? <><Loader2 className="w-4 h-4 animate-spin" />Generating...</> : <><Download className="w-4 h-4" />Download PDF</>}
           </button>
         </DialogFooter>
       </DialogContent>
