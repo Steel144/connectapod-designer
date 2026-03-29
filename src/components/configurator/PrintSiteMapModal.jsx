@@ -111,50 +111,70 @@ export default function PrintSiteMapModal({ onClose, siteAddress, screenshot, pr
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999]">
-      <div className="bg-white rounded-lg shadow-2xl flex flex-col" style={{ width: '90vw', height: '90vh', maxWidth: '1400px' }}>
-        {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 shrink-0">
-          <div>
-            <h2 className="text-lg font-bold text-gray-800">Site Plan Print Preview</h2>
-            {siteAddress && <p className="text-xs text-gray-500 mt-0.5">{siteAddress}</p>}
-          </div>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600"><X size={22} /></button>
+      <div className="bg-white rounded-lg shadow-2xl flex flex-col relative" style={{ width: '90vw', height: '90vh', maxWidth: '1400px' }}>
+        {/* Modal close button */}
+        <div className="absolute top-3 right-3 z-10">
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 bg-white rounded-full p-1 shadow"><X size={18} /></button>
         </div>
 
-        {/* Preview */}
-        <div className="flex-1 overflow-hidden bg-gray-100 flex items-center justify-center">
-          {screenshot ? (
-            <img
-              src={screenshot}
-              alt="Site Plan"
-              className="max-w-full max-h-full object-contain"
-            />
-          ) : (
-            <div className="text-center text-gray-400 p-8">
-              <p className="text-lg mb-2">No site map captured</p>
-              <p className="text-sm">Go to the Site Map tab first, then click Print → Site Plan.</p>
+        {/* A3 landscape preview with title block */}
+        <div className="flex-1 overflow-auto bg-gray-200 flex items-center justify-center p-6">
+          <div className="bg-white shadow-xl flex flex-col" style={{ width: '100%', maxWidth: '960px', aspectRatio: '420/297' }}>
+
+            {/* Header */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 16px 6px', borderBottom: '2px solid #F15A22', flexShrink: 0 }}>
+              <img src={LOGO_URL} alt="Connectapod" style={{ height: '40px', width: 'auto' }} />
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ color: '#F15A22', fontSize: '9px', fontWeight: '600' }}>www.connectapod.co.nz</div>
+                <div style={{ color: '#888', fontSize: '8px' }}>hello@connectapod.co.nz · 022 396 2657</div>
+              </div>
+              <span style={{ color: '#888', fontSize: '14px', fontWeight: '700' }}>Site Plan</span>
             </div>
-          )}
+
+            {/* Map image */}
+            <div style={{ flex: 1, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f3f4f6' }}>
+              {screenshot ? (
+                <img src={screenshot} alt="Site Plan" style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
+              ) : (
+                <div style={{ textAlign: 'center', color: '#9ca3af' }}>
+                  <p style={{ fontSize: '12px' }}>No site map captured</p>
+                  <p style={{ fontSize: '10px', marginTop: '4px' }}>Go to the Site Map tab first.</p>
+                </div>
+              )}
+            </div>
+
+            {/* Footer title block */}
+            <div style={{ flexShrink: 0, borderTop: '3px solid #F15A22', display: 'grid', gridTemplateColumns: '2fr 2fr 2.5fr 1fr 1fr', fontSize: '9px' }}>
+              {[
+                { label: 'Project', value: printDetails.projectName || '—' },
+                { label: 'Client', value: printDetails.clientName || '—' },
+                { label: 'Site Address', value: siteAddress || printDetails.address || '—' },
+                { label: 'Date', value: new Date().toLocaleDateString('en-NZ') },
+                { label: 'Page', value: '1 / 1' },
+              ].map((col, i) => (
+                <div key={i} style={{ borderRight: i < 4 ? '1px solid #F15A22' : undefined, padding: '4px 10px' }}>
+                  <p style={{ fontWeight: 'bold', textTransform: 'uppercase', color: '#F15A22', fontSize: '7px' }}>{col.label}</p>
+                  <p style={{ marginTop: '1px', color: '#333', fontSize: '8px' }}>{col.value}</p>
+                  {i === 4 && <p style={{ marginTop: '2px', color: '#000', fontSize: '7px', fontWeight: '600' }}>© {new Date().getFullYear()} Connectapod Ltd.</p>}
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
 
-        {/* Footer */}
-        <div className="flex items-center justify-between gap-3 px-6 py-4 border-t border-gray-200 bg-gray-50 shrink-0">
-          <p className="text-xs text-gray-400">
-            {screenshot ? "PDF will include title block matching your elevations sheets." : "Visit the Site Map tab first to capture the view."}
-          </p>
-          <div className="flex gap-3">
-            <button onClick={onClose} className="px-4 py-2 text-sm text-gray-600 border border-gray-200 rounded hover:bg-gray-100">
-              Cancel
-            </button>
-            <button
-              onClick={handleDownloadPDF}
-              disabled={generating || !screenshot}
-              className="px-4 py-2 text-sm bg-[#F15A22] text-white rounded hover:bg-[#d94e1a] disabled:opacity-50 flex items-center gap-2"
-            >
-              {generating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
-              Download PDF
-            </button>
-          </div>
+        {/* Actions */}
+        <div className="flex items-center justify-end gap-3 px-6 py-3 border-t border-gray-200 bg-gray-50 shrink-0">
+          <button onClick={onClose} className="px-4 py-2 text-sm text-gray-600 border border-gray-200 rounded hover:bg-gray-100">
+            Cancel
+          </button>
+          <button
+            onClick={handleDownloadPDF}
+            disabled={generating || !screenshot}
+            className="px-4 py-2 text-sm bg-[#F15A22] text-white rounded hover:bg-[#d94e1a] disabled:opacity-50 flex items-center gap-2"
+          >
+            {generating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
+            Download PDF
+          </button>
         </div>
       </div>
     </div>
