@@ -118,25 +118,37 @@ export default function SiteMap() {
 
   // Load address from print details on mount and auto-geocode (only if no saved coordinates)
   useEffect(() => {
+    console.log('[SiteMap] Loading saved address from localStorage...');
+    
     const savedDetails = localStorage.getItem('connectapod_print_details');
     if (savedDetails) {
       try {
         const details = JSON.parse(savedDetails);
+        console.log('[SiteMap] Found saved details:', details);
+        
         // Restore form fields
         if (details.projectName || details.clientName || details.siteAddress) {
           setSaveDetails(details);
         }
+        
         // Always populate the address field from saved details
         if (details.siteAddress) {
+          console.log('[SiteMap] Setting address from saved details:', details.siteAddress);
           setAddress(details.siteAddress);
         }
+        
         // If we already have coordinates from localStorage, skip geocoding
         const savedCoords = localStorage.getItem('sitemap_coordinates');
-        if (savedCoords) return;
+        if (savedCoords) {
+          console.log('[SiteMap] Found saved coordinates, skipping auto-geocode');
+          return;
+        }
 
         // Auto-geocode the saved address
         if (details.siteAddress) {
+          console.log('[SiteMap] Auto-geocoding saved address...');
           setLoading(true);
+          
           fetch(
             `https://nominatim.openstreetmap.org/search?` +
             `q=${encodeURIComponent(details.siteAddress)}` +
@@ -149,15 +161,22 @@ export default function SiteMap() {
             .then(data => {
               if (data && data.length > 0) {
                 const { lat, lon } = data[0];
-                setCoordinates([parseFloat(lat), parseFloat(lon)]);
+                const coords = [parseFloat(lat), parseFloat(lon)];
+                console.log('[SiteMap] Auto-geocoded to:', coords);
+                setCoordinates(coords);
+                localStorage.setItem('sitemap_coordinates', JSON.stringify(coords));
+              } else {
+                console.log('[SiteMap] No geocoding results found');
               }
             })
-            .catch(err => console.error('Auto-geocoding error:', err))
+            .catch(err => console.error('[SiteMap] Auto-geocoding error:', err))
             .finally(() => setLoading(false));
         }
       } catch (err) {
-        console.error('Failed to load saved address:', err);
+        console.error('[SiteMap] Failed to load saved address:', err);
       }
+    } else {
+      console.log('[SiteMap] No saved details found in localStorage');
     }
   }, []);
 
@@ -204,8 +223,14 @@ export default function SiteMap() {
   }, []);
 
   const geocodeAddress = async () => {
-    if (!address.trim()) return;
+    if (!address.trim()) {
+      alert('Please enter an address first');
+      return;
+    }
+    
+    console.log('[SiteMap] Geocoding address:', address);
     setLoading(true);
+    
     try {
       // Use Nominatim API directly
       const response = await fetch(
@@ -222,25 +247,40 @@ export default function SiteMap() {
         }
       );
 
+      console.log('[SiteMap] Nominatim response status:', response.status);
+
       if (response.ok) {
         const data = await response.json();
+        console.log('[SiteMap] Nominatim data:', data);
+        
         if (data && data.length > 0) {
           const { lat, lon } = data[0];
           const newCoords = [parseFloat(lat), parseFloat(lon)];
+          
+          console.log('[SiteMap] Setting coordinates:', newCoords);
           setCoordinates(newCoords);
           setPositionOffset({ lat: 0, lng: 0 });
+          
           const newKey = `${lat}-${lon}`;
           setMapKey(newKey);
+          
+          // Save to localStorage
+          localStorage.setItem('sitemap_address', address);
+          localStorage.setItem('sitemap_coordinates', JSON.stringify(newCoords));
           localStorage.setItem('sitemap_mapkey', newKey);
+          
+          console.log('[SiteMap] Saved to localStorage');
         } else {
           alert('Address not found. Try a more specific address (e.g., "123 Queen St, Auckland, NZ")');
         }
       } else {
+        const errorText = await response.text();
+        console.error('[SiteMap] Nominatim error:', errorText);
         throw new Error(`Nominatim API error: ${response.status}`);
       }
     } catch (err) {
-      console.error('Geocoding error:', err);
-      alert('Geocoding service error. Please try again.');
+      console.error('[SiteMap] Geocoding error:', err);
+      alert('Geocoding service error. Please try again in a minute (rate limit).');
     } finally {
       setLoading(false);
     }
