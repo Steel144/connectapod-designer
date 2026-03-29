@@ -24,16 +24,26 @@ export default function BulkUploadModal({ onClose, existingModules, onDone }) {
   const handleProcess = async () => {
     setProcessing(true);
 
+    console.log(`[BulkUpload] Starting upload of ${files.length} floor plan images`);
+
+    // Fetch all images ONCE at the start
+    const allImages = await base44.entities.FloorPlanImage.list();
+    console.log(`[BulkUpload] Fetched ${allImages.length} existing floor plan images`);
+
     for (let i = 0; i < files.length; i++) {
       const item = files[i];
       setFiles(prev => prev.map((f, idx) => idx === i ? { ...f, status: "uploading" } : f));
 
       try {
+        console.log(`[Upload] Processing ${i + 1}/${files.length}: ${item.code}...`);
+        
         // Upload image
         const { file_url } = await base44.integrations.Core.UploadFile({ file: item.file });
+        console.log(`[Upload] File uploaded: ${file_url}`);
 
         // If new module, create a ModuleEntry
         if (item.isNew) {
+          console.log(`[Upload] Creating new module entry for ${item.code}`);
           await base44.entities.ModuleEntry.create({
             category: "Living",
             code: item.code,
@@ -44,20 +54,25 @@ export default function BulkUploadModal({ onClose, existingModules, onDone }) {
           });
         }
 
-        // Save or update the floor plan image
-        const existing = await base44.entities.FloorPlanImage.filter({ moduleType: item.code });
+        // Save or update the floor plan image (check in pre-fetched list)
+        const existing = allImages.filter(img => img.moduleType === item.code);
         if (existing.length > 0) {
+          console.log(`[Upload] Updating existing floor plan image ${existing[0].id}`);
           await base44.entities.FloorPlanImage.update(existing[0].id, { imageUrl: file_url });
         } else {
+          console.log(`[Upload] Creating new floor plan image`);
           await base44.entities.FloorPlanImage.create({ moduleType: item.code, imageUrl: file_url });
         }
 
+        console.log(`[Upload] Success for ${item.code}`);
         setFiles(prev => prev.map((f, idx) => idx === i ? { ...f, status: "done", message: item.isNew ? "Created + image saved" : "Image updated" } : f));
       } catch (err) {
+        console.error(`[Upload] Error for ${item.code}:`, err);
         setFiles(prev => prev.map((f, idx) => idx === i ? { ...f, status: "error", message: err.message || "Failed" } : f));
       }
     }
 
+    console.log(`[BulkUpload] Upload completed`);
     setProcessing(false);
     onDone();
   };

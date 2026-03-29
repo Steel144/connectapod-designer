@@ -11,24 +11,28 @@ export default function BulkUploadWallModal({ onClose, onDone }) {
     const selectedFiles = Array.from(e.target.files || []);
     if (!selectedFiles.length) return;
 
-    const fileItems = await Promise.all(
-      selectedFiles.map(async (file) => {
-        const code = file.name.replace(/\.(png|jpg|jpeg|svg)$/i, "");
-        
-        // Check if wall exists by listing all and filtering
-        const allWalls = await base44.entities.WallEntry.list();
-        const existing = allWalls.filter(w => w.code === code);
-        
-        return {
-          file,
-          code,
-          status: "pending",
-          isNew: existing.length === 0,
-          message: existing.length === 0 ? "Will create new wall" : "Will update image only"
-        };
-      })
-    );
+    console.log(`[BulkUpload] Selected ${selectedFiles.length} files`);
 
+    // Fetch all walls ONCE before processing files
+    const allWalls = await base44.entities.WallEntry.list();
+    console.log(`[BulkUpload] Fetched ${allWalls.length} existing walls from database`);
+
+    const fileItems = selectedFiles.map((file) => {
+      const code = file.name.replace(/\.(png|jpg|jpeg|svg)$/i, "");
+      
+      // Check if wall exists
+      const existing = allWalls.filter(w => w.code === code);
+      
+      return {
+        file,
+        code,
+        status: "pending",
+        isNew: existing.length === 0,
+        message: existing.length === 0 ? "Will create new wall" : "Will update image only"
+      };
+    });
+
+    console.log(`[BulkUpload] Prepared ${fileItems.length} files for upload`);
     setFiles(fileItems);
   };
 
@@ -36,12 +40,18 @@ export default function BulkUploadWallModal({ onClose, onDone }) {
     if (!files.length || processing) return;
     setProcessing(true);
 
+    console.log(`[Upload] Starting bulk upload of ${files.length} files`);
+
+    // Fetch all images ONCE at the start
+    const allImages = await base44.entities.WallImage.list();
+    console.log(`[Upload] Fetched ${allImages.length} existing wall images`);
+
     for (let i = 0; i < files.length; i++) {
       const item = files[i];
       setFiles(prev => prev.map((f, idx) => idx === i ? { ...f, status: "uploading", message: "Uploading..." } : f));
 
       try {
-        console.log(`[Upload] Processing ${item.code}...`);
+        console.log(`[Upload] Processing ${i + 1}/${files.length}: ${item.code}...`);
         
         // Upload the file
         const uploadResult = await base44.integrations.Core.UploadFile({ file: item.file });
@@ -62,9 +72,7 @@ export default function BulkUploadWallModal({ onClose, onDone }) {
           });
         }
 
-        // Save or update the wall image
-        console.log(`[Upload] Checking for existing wall image...`);
-        const allImages = await base44.entities.WallImage.list();
+        // Save or update the wall image (check in pre-fetched list)
         const existing = allImages.filter(img => img.wallType === item.code);
         
         if (existing.length > 0) {
@@ -83,6 +91,7 @@ export default function BulkUploadWallModal({ onClose, onDone }) {
       }
     }
 
+    console.log(`[Upload] Bulk upload completed`);
     setProcessing(false);
     onDone();
   };
