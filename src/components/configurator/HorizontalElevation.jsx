@@ -9,7 +9,8 @@ const HorizontalElevation = memo(function HorizontalElevation({
   wallHPx,
   scale,
   CELL_M,
-  PX_PER_M
+  PX_PER_M,
+  imageMap = {}
 }) {
   if (layers.length === 0) return null;
 
@@ -27,13 +28,14 @@ const HorizontalElevation = memo(function HorizontalElevation({
              const widthPx = Math.round(scale * slot.widthCells * CELL_M * PX_PER_M);
              return (
                <ElevationSlot
-                 key={`${li}-${si}`}
-                 slot={slot}
-                 leftPx={leftPx}
-                 widthPx={widthPx}
-                 heightPx={wallHPx}
-                 objectFit="cover"
-                 showLabel={false}
+                key={`${li}-${si}`}
+                slot={slot}
+                leftPx={leftPx}
+                widthPx={widthPx}
+                heightPx={wallHPx}
+                objectFit="cover"
+                showLabel={false}
+                imageMap={imageMap}
                />
              );
            });
