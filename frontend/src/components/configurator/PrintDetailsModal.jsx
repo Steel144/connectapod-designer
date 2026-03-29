@@ -46,13 +46,25 @@ function AddressAutocomplete({ value, onChange }) {
     debounceRef.current = setTimeout(async () => {
       try {
         const res = await fetch(
-          `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(val)}&format=json&addressdetails=1&limit=5&countrycodes=nz`,
-          { headers: { "Accept-Language": "en" } }
+          `https://nominatim.openstreetmap.org/search?` +
+          `q=${encodeURIComponent(val)}` +
+          `&format=json` +
+          `&addressdetails=1` +
+          `&limit=8` +
+          `&countrycodes=nz` +
+          `&accept-language=en`,
+          { 
+            headers: { 
+              "User-Agent": "Connectapod/1.0",
+              "Accept-Language": "en"
+            } 
+          }
         );
         const data = await res.json();
         setSuggestions(data);
         setOpen(data.length > 0);
-      } catch {
+      } catch (err) {
+        console.error('Address autocomplete error:', err);
         setSuggestions([]);
       }
     }, 350);
