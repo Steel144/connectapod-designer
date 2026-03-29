@@ -189,25 +189,43 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
     const ctx = outCanvas.getContext('2d');
     ctx.drawImage(mapCanvas, 0, 0);
 
-    // Floor plan overlay — centered, same scale as the visual overlay
+    // Floor plan overlay — position at the map's center pixel, scaled correctly
     const fp = floorPlanOverlayRef.current;
-    if (fp && design?.grid?.length > 0) {
+    if (fp && design?.grid?.length > 0 && coordinates) {
       const fpImg = new window.Image();
       fpImg.src = fp;
       await new Promise(r => { fpImg.onload = r; fpImg.onerror = r; });
 
+      // Convert the adjusted center lat/lng to a pixel position within the leaflet-image canvas
+      const adjustedCenter = L.latLng(
+        coordinates[0] + positionOffset.lat,
+        coordinates[1] + positionOffset.lng
+      );
+      const mapCenter = map.getCenter();
+      const zoom = map.getZoom();
+
+      // Get pixel positions at current zoom
+      const centerPx = map.project(mapCenter, zoom);
+      const overlayPx = map.project(adjustedCenter, zoom);
+
+      // Offset from canvas center
+      const offsetX = overlayPx.x - centerPx.x;
+      const offsetY = overlayPx.y - centerPx.y;
+
       const METRES_PER_PX_AT_ZOOM0 = 78271.52;
-      const lat = coordinates ? coordinates[0] : 0;
-      const metresToPx = Math.pow(2, mapZoom) / (METRES_PER_PX_AT_ZOOM0 * Math.cos(lat * Math.PI / 180));
+      const lat = coordinates[0];
+      const metresToPx = Math.pow(2, zoom) / (METRES_PER_PX_AT_ZOOM0 * Math.cos(lat * Math.PI / 180));
       const scale = (metresToPx / (CANVAS_PX_PER_CELL / CELL_M)) * planScaleMultiplier;
 
       const dw = fpImg.naturalWidth * scale;
       const dh = fpImg.naturalHeight * scale;
-      ctx.drawImage(fpImg, (W - dw) / 2, (H - dh) / 2, dw, dh);
+      const cx = W / 2 + offsetX;
+      const cy = H / 2 + offsetY;
+      ctx.drawImage(fpImg, cx - dw / 2, cy - dh / 2, dw, dh);
     }
 
     return outCanvas.toDataURL('image/png');
-  }, [design, coordinates, mapZoom, planScaleMultiplier]);
+  }, [design, coordinates, mapZoom, planScaleMultiplier, positionOffset]);
 
   // Expose screenshot capture to parent
   useEffect(() => {
