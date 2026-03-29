@@ -1,89 +1,353 @@
-from fastapi import FastAPI, APIRouter
-from dotenv import load_dotenv
-from starlette.middleware.cors import CORSMiddleware
+from fastapi import FastAPI, File, UploadFile, HTTPException, Body
+from fastapi.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
+from pydantic import BaseModel, Field
+from typing import List, Optional, Dict, Any
+from datetime import datetime
 import os
-import logging
-from pathlib import Path
-from pydantic import BaseModel, Field, ConfigDict
-from typing import List
 import uuid
-from datetime import datetime, timezone
+import shutil
+from pathlib import Path
 
+app = FastAPI(title="Connectapod API")
 
-ROOT_DIR = Path(__file__).parent
-load_dotenv(ROOT_DIR / '.env')
-
-# MongoDB connection
-mongo_url = os.environ['MONGO_URL']
-client = AsyncIOMotorClient(mongo_url)
-db = client[os.environ['DB_NAME']]
-
-# Create the main app without a prefix
-app = FastAPI()
-
-# Create a router with the /api prefix
-api_router = APIRouter(prefix="/api")
-
-
-# Define Models
-class StatusCheck(BaseModel):
-    model_config = ConfigDict(extra="ignore")  # Ignore MongoDB's _id field
-    
-    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    client_name: str
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-
-class StatusCheckCreate(BaseModel):
-    client_name: str
-
-# Add your routes to the router instead of directly to app
-@api_router.get("/")
-async def root():
-    return {"message": "Hello World"}
-
-@api_router.post("/status", response_model=StatusCheck)
-async def create_status_check(input: StatusCheckCreate):
-    status_dict = input.model_dump()
-    status_obj = StatusCheck(**status_dict)
-    
-    # Convert to dict and serialize datetime to ISO string for MongoDB
-    doc = status_obj.model_dump()
-    doc['timestamp'] = doc['timestamp'].isoformat()
-    
-    _ = await db.status_checks.insert_one(doc)
-    return status_obj
-
-@api_router.get("/status", response_model=List[StatusCheck])
-async def get_status_checks():
-    # Exclude MongoDB's _id field from the query results
-    status_checks = await db.status_checks.find({}, {"_id": 0}).to_list(1000)
-    
-    # Convert ISO string timestamps back to datetime objects
-    for check in status_checks:
-        if isinstance(check['timestamp'], str):
-            check['timestamp'] = datetime.fromisoformat(check['timestamp'])
-    
-    return status_checks
-
-# Include the router in the main app
-app.include_router(api_router)
-
+# CORS setup
 app.add_middleware(
     CORSMiddleware,
+    allow_origins=["*"],
     allow_credentials=True,
-    allow_origins=os.environ.get('CORS_ORIGINS', '*').split(','),
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
-logger = logging.getLogger(__name__)
+# MongoDB setup
+MONGO_URL = os.getenv("MONGO_URL", "mongodb://localhost:27017")
+client = AsyncIOMotorClient(MONGO_URL)
+db = client.connectapod
 
-@app.on_event("shutdown")
-async def shutdown_db_client():
-    client.close()
+# File upload directory
+UPLOAD_DIR = Path("/app/backend/uploads")
+UPLOAD_DIR.mkdir(exist_ok=True)
+
+# ============ MODELS ============
+
+class DesignTemplate(BaseModel):
+    id: Optional[str] = None
+    name: str
+    bedrooms: Optional[int] = None
+    use_cases: Optional[List[str]] = []
+    budget_range: Optional[str] = None
+    is_featured: Optional[bool] = False
+    sort_order: Optional[int] = 0
+    template_payload: Optional[Dict[str, Any]] = {}
+    created_date: Optional[datetime] = None
+
+class HomeDesign(BaseModel):
+    id: Optional[str] = None
+    name: str
+    grid: List[Dict[str, Any]] = []
+    walls: List[Dict[str, Any]] = []
+    furniture: List[Dict[str, Any]] = []
+    totalSqm: Optional[float] = 0
+    estimatedPrice: Optional[float] = 0
+    moduleCount: Optional[int] = 0
+    created_date: Optional[datetime] = None
+
+class ModuleEntry(BaseModel):
+    id: Optional[str] = None
+    category: str
+    code: str
+    name: str
+    width: float = 3.0
+    depth: float = 4.8
+    sqm: Optional[float] = None
+    price: Optional[float] = 0
+    description: Optional[str] = ""
+    variants: List[str] = []
+    wallElevations_list: List[str] = []
+    categories: List[str] = []
+    originalCode: Optional[str] = None
+
+class WallEntry(BaseModel):
+    id: Optional[str] = None
+    code: str
+    name: str
+    width: Optional[int] = 3000
+    height: Optional[int] = 2400
+    price: Optional[float] = 0
+    description: Optional[str] = ""
+    variants: List[str] = []
+
+class FloorPlanImage(BaseModel):
+    id: Optional[str] = None
+    moduleType: str
+    imageUrl: str
+
+class WallImage(BaseModel):
+    id: Optional[str] = None
+    wallType: str
+    imageUrl: str
+
+class DeletedModule(BaseModel):
+    id: Optional[str] = None
+    moduleCode: str
+
+class DeletedWall(BaseModel):
+    id: Optional[str] = None
+    wallCode: str
+
+# ============ HELPER FUNCTIONS ============
+
+def generate_id():
+    return str(uuid.uuid4())
+
+async def create_document(collection_name: str, data: dict):
+    doc = {**data, "id": generate_id(), "created_date": datetime.utcnow()}
+    doc.pop("_id", None)
+    await db[collection_name].insert_one(doc)
+    return doc
+
+async def list_documents(collection_name: str, sort_field: str = "-created_date"):
+    sort_dir = -1 if sort_field.startswith("-") else 1
+    field = sort_field.lstrip("-")
+    cursor = db[collection_name].find({}, {"_id": 0})
+    if field:
+        cursor = cursor.sort(field, sort_dir)
+    return await cursor.to_list(length=None)
+
+async def get_document(collection_name: str, doc_id: str):
+    doc = await db[collection_name].find_one({"id": doc_id}, {"_id": 0})
+    if not doc:
+        raise HTTPException(status_code=404, detail="Document not found")
+    return doc
+
+async def update_document(collection_name: str, doc_id: str, data: dict):
+    data.pop("id", None)
+    data.pop("_id", None)
+    result = await db[collection_name].update_one({"id": doc_id}, {"$set": data})
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Document not found")
+    return await get_document(collection_name, doc_id)
+
+async def delete_document(collection_name: str, doc_id: str):
+    result = await db[collection_name].delete_one({"id": doc_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Document not found")
+    return {"success": True}
+
+async def filter_documents(collection_name: str, filters: dict):
+    docs = await db[collection_name].find(filters, {"_id": 0}).to_list(length=None)
+    return docs
+
+# ============ FILE UPLOAD ============
+
+@app.post("/api/upload")
+async def upload_file(file: UploadFile = File(...)):
+    try:
+        file_id = generate_id()
+        ext = Path(file.filename).suffix
+        filename = f"{file_id}{ext}"
+        file_path = UPLOAD_DIR / filename
+        
+        with file_path.open("wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+        
+        file_url = f"/api/files/{filename}"
+        return {"file_url": file_url}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+from fastapi.responses import FileResponse
+
+@app.get("/api/files/{filename}")
+async def get_file(filename: str):
+    file_path = UPLOAD_DIR / filename
+    if not file_path.exists():
+        raise HTTPException(status_code=404, detail="File not found")
+    return FileResponse(file_path)
+
+# ============ DESIGN TEMPLATES ============
+
+@app.post("/api/entities/DesignTemplate")
+async def create_design_template(template: DesignTemplate):
+    return await create_document("design_templates", template.dict(exclude_none=True))
+
+@app.get("/api/entities/DesignTemplate")
+async def list_design_templates(sort: str = "sort_order"):
+    return await list_documents("design_templates", sort)
+
+@app.get("/api/entities/DesignTemplate/{id}")
+async def get_design_template(id: str):
+    return await get_document("design_templates", id)
+
+@app.put("/api/entities/DesignTemplate/{id}")
+async def update_design_template(id: str, template: DesignTemplate):
+    return await update_document("design_templates", id, template.dict(exclude_none=True))
+
+@app.delete("/api/entities/DesignTemplate/{id}")
+async def delete_design_template(id: str):
+    return await delete_document("design_templates", id)
+
+# ============ HOME DESIGNS ============
+
+@app.post("/api/entities/HomeDesign")
+async def create_home_design(design: HomeDesign):
+    return await create_document("home_designs", design.dict(exclude_none=True))
+
+@app.get("/api/entities/HomeDesign")
+async def list_home_designs(sort: str = "-created_date"):
+    return await list_documents("home_designs", sort)
+
+@app.get("/api/entities/HomeDesign/{id}")
+async def get_home_design(id: str):
+    return await get_document("home_designs", id)
+
+@app.put("/api/entities/HomeDesign/{id}")
+async def update_home_design(id: str, design: HomeDesign):
+    return await update_document("home_designs", id, design.dict(exclude_none=True))
+
+@app.delete("/api/entities/HomeDesign/{id}")
+async def delete_home_design(id: str):
+    return await delete_document("home_designs", id)
+
+# ============ MODULE ENTRIES ============
+
+@app.post("/api/entities/ModuleEntry")
+async def create_module_entry(module: ModuleEntry):
+    return await create_document("module_entries", module.dict(exclude_none=True))
+
+@app.get("/api/entities/ModuleEntry")
+async def list_module_entries():
+    return await list_documents("module_entries", "")
+
+@app.get("/api/entities/ModuleEntry/{id}")
+async def get_module_entry(id: str):
+    return await get_document("module_entries", id)
+
+@app.put("/api/entities/ModuleEntry/{id}")
+async def update_module_entry(id: str, module: ModuleEntry):
+    return await update_document("module_entries", id, module.dict(exclude_none=True))
+
+@app.delete("/api/entities/ModuleEntry/{id}")
+async def delete_module_entry(id: str):
+    return await delete_document("module_entries", id)
+
+# ============ WALL ENTRIES ============
+
+@app.post("/api/entities/WallEntry")
+async def create_wall_entry(wall: WallEntry):
+    return await create_document("wall_entries", wall.dict(exclude_none=True))
+
+@app.get("/api/entities/WallEntry")
+async def list_wall_entries():
+    return await list_documents("wall_entries", "")
+
+@app.get("/api/entities/WallEntry/{id}")
+async def get_wall_entry(id: str):
+    return await get_document("wall_entries", id)
+
+@app.put("/api/entities/WallEntry/{id}")
+async def update_wall_entry(id: str, wall: WallEntry):
+    return await update_document("wall_entries", id, wall.dict(exclude_none=True))
+
+@app.delete("/api/entities/WallEntry/{id}")
+async def delete_wall_entry(id: str):
+    return await delete_document("wall_entries", id)
+
+# ============ FLOOR PLAN IMAGES ============
+
+@app.post("/api/entities/FloorPlanImage")
+async def create_floor_plan_image(image: FloorPlanImage):
+    return await create_document("floor_plan_images", image.dict(exclude_none=True))
+
+@app.get("/api/entities/FloorPlanImage")
+async def list_floor_plan_images():
+    return await list_documents("floor_plan_images", "")
+
+@app.post("/api/entities/FloorPlanImage/filter")
+async def filter_floor_plan_images(filters: Dict[str, Any] = Body(...)):
+    return await filter_documents("floor_plan_images", filters)
+
+@app.get("/api/entities/FloorPlanImage/{id}")
+async def get_floor_plan_image(id: str):
+    return await get_document("floor_plan_images", id)
+
+@app.put("/api/entities/FloorPlanImage/{id}")
+async def update_floor_plan_image(id: str, image: FloorPlanImage):
+    return await update_document("floor_plan_images", id, image.dict(exclude_none=True))
+
+@app.delete("/api/entities/FloorPlanImage/{id}")
+async def delete_floor_plan_image(id: str):
+    return await delete_document("floor_plan_images", id)
+
+# ============ WALL IMAGES ============
+
+@app.post("/api/entities/WallImage")
+async def create_wall_image(image: WallImage):
+    return await create_document("wall_images", image.dict(exclude_none=True))
+
+@app.get("/api/entities/WallImage")
+async def list_wall_images():
+    return await list_documents("wall_images", "")
+
+@app.post("/api/entities/WallImage/filter")
+async def filter_wall_images(filters: Dict[str, Any] = Body(...)):
+    return await filter_documents("wall_images", filters)
+
+@app.get("/api/entities/WallImage/{id}")
+async def get_wall_image(id: str):
+    return await get_document("wall_images", id)
+
+@app.put("/api/entities/WallImage/{id}")
+async def update_wall_image(id: str, image: WallImage):
+    return await update_document("wall_images", id, image.dict(exclude_none=True))
+
+@app.delete("/api/entities/WallImage/{id}")
+async def delete_wall_image(id: str):
+    return await delete_document("wall_images", id)
+
+# ============ DELETED MODULES ============
+
+@app.post("/api/entities/DeletedModule")
+async def create_deleted_module(module: DeletedModule):
+    return await create_document("deleted_modules", module.dict(exclude_none=True))
+
+@app.get("/api/entities/DeletedModule")
+async def list_deleted_modules():
+    return await list_documents("deleted_modules", "")
+
+@app.post("/api/entities/DeletedModule/filter")
+async def filter_deleted_modules(filters: Dict[str, Any] = Body(...)):
+    return await filter_documents("deleted_modules", filters)
+
+@app.delete("/api/entities/DeletedModule/{id}")
+async def delete_deleted_module(id: str):
+    return await delete_document("deleted_modules", id)
+
+# ============ DELETED WALLS ============
+
+@app.post("/api/entities/DeletedWall")
+async def create_deleted_wall(wall: DeletedWall):
+    return await create_document("deleted_walls", wall.dict(exclude_none=True))
+
+@app.get("/api/entities/DeletedWall")
+async def list_deleted_walls():
+    return await list_documents("deleted_walls", "")
+
+@app.post("/api/entities/DeletedWall/filter")
+async def filter_deleted_walls(filters: Dict[str, Any] = Body(...)):
+    return await filter_documents("deleted_walls", filters)
+
+@app.delete("/api/entities/DeletedWall/{id}")
+async def delete_deleted_wall(id: str):
+    return await delete_document("deleted_walls", id)
+
+# ============ HEALTH CHECK ============
+
+@app.get("/api/health")
+async def health_check():
+    return {"status": "ok", "service": "Connectapod API"}
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8001)

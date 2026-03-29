@@ -1,0 +1,456 @@
+{
+  "library": "Connectapod Furniture Pack",
+  "version": "1.0.0",
+  "style": {
+    "type": "2D plan view",
+    "stroke_color": "#ff6a00",
+    "stroke_width": 24,
+    "fill": "none",
+    "snap_default": false
+  },
+  "integration_notes": {
+    "drag_behavior": "free-move",
+    "snap_to_grid": false,
+    "recommended_helpers": [
+      "soft alignment guides",
+      "rotate handle",
+      "dimension readout",
+      "collision highlight"
+    ],
+    "coordinate_system": "SVG viewBox units in millimetres"
+  },
+  "assets": [
+    {
+      "id": "sofa_2_seater",
+      "name": "Sofa 2 Seater",
+      "category": "lounge",
+      "file": "svg/sofa_2_seater.svg",
+      "units": "mm",
+      "width_mm": 1800,
+      "depth_mm": 850,
+      "origin": {
+        "x": 900.0,
+        "y": 425.0
+      },
+      "rotation_enabled": true,
+      "snapping": false,
+      "notes": "Approx 1800 x 850 overall."
+    },
+    {
+      "id": "sofa_3_seater",
+      "name": "Sofa 3 Seater",
+      "category": "lounge",
+      "file": "svg/sofa_3_seater.svg",
+      "units": "mm",
+      "width_mm": 2200,
+      "depth_mm": 900,
+      "origin": {
+        "x": 1100.0,
+        "y": 450.0
+      },
+      "rotation_enabled": true,
+      "snapping": false,
+      "notes": "Approx 2200 x 900 overall."
+    },
+    {
+      "id": "sofa_1_seater",
+      "name": "Sofa 1 Seater",
+      "category": "lounge",
+      "file": "svg/sofa_1_seater.svg",
+      "units": "mm",
+      "width_mm": 1400,
+      "depth_mm": 800,
+      "origin": {
+        "x": 700.0,
+        "y": 400.0
+      },
+      "rotation_enabled": true,
+      "snapping": false,
+      "notes": "Approx armchair footprint."
+    },
+    {
+      "id": "sofa_chaise_left",
+      "name": "Sofa Chaise Left",
+      "category": "lounge",
+      "file": "svg/sofa_chaise_left.svg",
+      "units": "mm",
+      "width_mm": 2200,
+      "depth_mm": 900,
+      "origin": {
+        "x": 1100.0,
+        "y": 450.0
+      },
+      "rotation_enabled": true,
+      "snapping": false,
+      "notes": "Overall chaise footprint represented in plan."
+    },
+    {
+      "id": "sofa_chaise_right",
+      "name": "Sofa Chaise Right",
+      "category": "lounge",
+      "file": "svg/sofa_chaise_right.svg",
+      "units": "mm",
+      "width_mm": 2200,
+      "depth_mm": 900,
+      "origin": {
+        "x": 1100.0,
+        "y": 450.0
+      },
+      "rotation_enabled": true,
+      "snapping": false,
+      "notes": "Overall chaise footprint represented in plan."
+    },
+    {
+      "id": "coffee_table_rect_1200x600",
+      "name": "Coffee Table Rect 1200X600",
+      "category": "lounge",
+      "file": "svg/coffee_table_rect_1200x600.svg",
+      "units": "mm",
+      "width_mm": 1200,
+      "depth_mm": 600,
+      "origin": {
+        "x": 600.0,
+        "y": 300.0
+      },
+      "rotation_enabled": true,
+      "snapping": false,
+      "notes": ""
+    },
+    {
+      "id": "coffee_table_round_900",
+      "name": "Coffee Table Round 900",
+      "category": "lounge",
+      "file": "svg/coffee_table_round_900.svg",
+      "units": "mm",
+      "width_mm": 900,
+      "depth_mm": 900,
+      "origin": {
+        "x": 450.0,
+        "y": 450.0
+      },
+      "rotation_enabled": true,
+      "snapping": false,
+      "notes": ""
+    },
+    {
+      "id": "ottoman_500",
+      "name": "Ottoman 500",
+      "category": "lounge",
+      "file": "svg/ottoman_500.svg",
+      "units": "mm",
+      "width_mm": 500,
+      "depth_mm": 500,
+      "origin": {
+        "x": 250.0,
+        "y": 250.0
+      },
+      "rotation_enabled": true,
+      "snapping": false,
+      "notes": ""
+    },
+    {
+      "id": "bed_single_920x1880",
+      "name": "Bed Single 920X1880",
+      "category": "bedroom",
+      "file": "svg/bed_single_920x1880.svg",
+      "units": "mm",
+      "width_mm": 920,
+      "depth_mm": 1880,
+      "origin": {
+        "x": 460.0,
+        "y": 940.0
+      },
+      "rotation_enabled": true,
+      "snapping": false,
+      "notes": ""
+    },
+    {
+      "id": "bed_queen_1530x2030",
+      "name": "Bed Queen 1530X2030",
+      "category": "bedroom",
+      "file": "svg/bed_queen_1530x2030.svg",
+      "units": "mm",
+      "width_mm": 1530,
+      "depth_mm": 2030,
+      "origin": {
+        "x": 765.0,
+        "y": 1015.0
+      },
+      "rotation_enabled": true,
+      "snapping": false,
+      "notes": ""
+    },
+    {
+      "id": "bed_king_1670x2030",
+      "name": "Bed King 1670X2030",
+      "category": "bedroom",
+      "file": "svg/bed_king_1670x2030.svg",
+      "units": "mm",
+      "width_mm": 1670,
+      "depth_mm": 2030,
+      "origin": {
+        "x": 835.0,
+        "y": 1015.0
+      },
+      "rotation_enabled": true,
+      "snapping": false,
+      "notes": ""
+    },
+    {
+      "id": "side_table_450",
+      "name": "Side Table 450",
+      "category": "bedroom",
+      "file": "svg/side_table_450.svg",
+      "units": "mm",
+      "width_mm": 450,
+      "depth_mm": 450,
+      "origin": {
+        "x": 225.0,
+        "y": 225.0
+      },
+      "rotation_enabled": true,
+      "snapping": false,
+      "notes": ""
+    },
+    {
+      "id": "wardrobe_1800x600",
+      "name": "Wardrobe 1800X600",
+      "category": "bedroom",
+      "file": "svg/wardrobe_1800x600.svg",
+      "units": "mm",
+      "width_mm": 1800,
+      "depth_mm": 600,
+      "origin": {
+        "x": 900.0,
+        "y": 300.0
+      },
+      "rotation_enabled": true,
+      "snapping": false,
+      "notes": ""
+    },
+    {
+      "id": "desk_1200x600",
+      "name": "Desk 1200X600",
+      "category": "bedroom",
+      "file": "svg/desk_1200x600.svg",
+      "units": "mm",
+      "width_mm": 1200,
+      "depth_mm": 600,
+      "origin": {
+        "x": 600.0,
+        "y": 300.0
+      },
+      "rotation_enabled": true,
+      "snapping": false,
+      "notes": ""
+    },
+    {
+      "id": "dining_rect_4_seater",
+      "name": "Dining Rect 4 Seater",
+      "category": "dining",
+      "file": "svg/dining_rect_4_seater.svg",
+      "units": "mm",
+      "width_mm": 1600,
+      "depth_mm": 1200,
+      "origin": {
+        "x": 800.0,
+        "y": 600.0
+      },
+      "rotation_enabled": true,
+      "snapping": false,
+      "notes": ""
+    },
+    {
+      "id": "dining_rect_6_seater",
+      "name": "Dining Rect 6 Seater",
+      "category": "dining",
+      "file": "svg/dining_rect_6_seater.svg",
+      "units": "mm",
+      "width_mm": 2200,
+      "depth_mm": 1300,
+      "origin": {
+        "x": 1100.0,
+        "y": 650.0
+      },
+      "rotation_enabled": true,
+      "snapping": false,
+      "notes": ""
+    },
+    {
+      "id": "dining_round_4_seater",
+      "name": "Dining Round 4 Seater",
+      "category": "dining",
+      "file": "svg/dining_round_4_seater.svg",
+      "units": "mm",
+      "width_mm": 1400,
+      "depth_mm": 1400,
+      "origin": {
+        "x": 700.0,
+        "y": 700.0
+      },
+      "rotation_enabled": true,
+      "snapping": false,
+      "notes": ""
+    },
+    {
+      "id": "dining_round_6_seater",
+      "name": "Dining Round 6 Seater",
+      "category": "dining",
+      "file": "svg/dining_round_6_seater.svg",
+      "units": "mm",
+      "width_mm": 1700,
+      "depth_mm": 1700,
+      "origin": {
+        "x": 850.0,
+        "y": 850.0
+      },
+      "rotation_enabled": true,
+      "snapping": false,
+      "notes": ""
+    },
+    {
+      "id": "vanity_750x420",
+      "name": "Vanity 750X420",
+      "category": "bathroom",
+      "file": "svg/vanity_750x420.svg",
+      "units": "mm",
+      "width_mm": 750,
+      "depth_mm": 420,
+      "origin": {
+        "x": 375.0,
+        "y": 210.0
+      },
+      "rotation_enabled": true,
+      "snapping": false,
+      "notes": ""
+    },
+    {
+      "id": "toilet_standard",
+      "name": "Toilet Standard",
+      "category": "bathroom",
+      "file": "svg/toilet_standard.svg",
+      "units": "mm",
+      "width_mm": 660,
+      "depth_mm": 700,
+      "origin": {
+        "x": 330.0,
+        "y": 350.0
+      },
+      "rotation_enabled": true,
+      "snapping": false,
+      "notes": ""
+    },
+    {
+      "id": "shower_tray_1200x900",
+      "name": "Shower Tray 1200X900",
+      "category": "bathroom",
+      "file": "svg/shower_tray_1200x900.svg",
+      "units": "mm",
+      "width_mm": 1200,
+      "depth_mm": 900,
+      "origin": {
+        "x": 600.0,
+        "y": 450.0
+      },
+      "rotation_enabled": true,
+      "snapping": false,
+      "notes": ""
+    },
+    {
+      "id": "kitchen_island_1800x700",
+      "name": "Kitchen Island 1800X700",
+      "category": "kitchen",
+      "file": "svg/kitchen_island_1800x700.svg",
+      "units": "mm",
+      "width_mm": 1800,
+      "depth_mm": 700,
+      "origin": {
+        "x": 900.0,
+        "y": 350.0
+      },
+      "rotation_enabled": true,
+      "snapping": false,
+      "notes": ""
+    },
+    {
+      "id": "fridge_700x700",
+      "name": "Fridge 700X700",
+      "category": "kitchen",
+      "file": "svg/fridge_700x700.svg",
+      "units": "mm",
+      "width_mm": 700,
+      "depth_mm": 700,
+      "origin": {
+        "x": 350.0,
+        "y": 350.0
+      },
+      "rotation_enabled": true,
+      "snapping": false,
+      "notes": ""
+    },
+    {
+      "id": "cooktop_600",
+      "name": "Cooktop 600",
+      "category": "kitchen",
+      "file": "svg/cooktop_600.svg",
+      "units": "mm",
+      "width_mm": 600,
+      "depth_mm": 600,
+      "origin": {
+        "x": 300.0,
+        "y": 300.0
+      },
+      "rotation_enabled": true,
+      "snapping": false,
+      "notes": ""
+    },
+    {
+      "id": "double_bowl_sink_900",
+      "name": "Double Bowl Sink 900",
+      "category": "kitchen",
+      "file": "svg/double_bowl_sink_900.svg",
+      "units": "mm",
+      "width_mm": 900,
+      "depth_mm": 600,
+      "origin": {
+        "x": 450.0,
+        "y": 300.0
+      },
+      "rotation_enabled": true,
+      "snapping": false,
+      "notes": ""
+    },
+    {
+      "id": "washer_600",
+      "name": "Washer 600",
+      "category": "laundry",
+      "file": "svg/washer_600.svg",
+      "units": "mm",
+      "width_mm": 600,
+      "depth_mm": 600,
+      "origin": {
+        "x": 300.0,
+        "y": 300.0
+      },
+      "rotation_enabled": true,
+      "snapping": false,
+      "notes": ""
+    },
+    {
+      "id": "dryer_600",
+      "name": "Dryer 600",
+      "category": "laundry",
+      "file": "svg/dryer_600.svg",
+      "units": "mm",
+      "width_mm": 600,
+      "depth_mm": 600,
+      "origin": {
+        "x": 300.0,
+        "y": 300.0
+      },
+      "rotation_enabled": true,
+      "snapping": false,
+      "notes": ""
+    }
+  ]
+}
