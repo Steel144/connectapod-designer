@@ -48,11 +48,15 @@ export default function PrintFloorPlanModal({ placedModules = [], furniture = []
       img.crossOrigin = 'anonymous';
       img.src = url;
       
+      let canvasWidth2 = 800;
+      let canvasHeight2 = 600;
       const screenshot = await new Promise((resolve, reject) => {
         img.onload = () => {
           const canvas = document.createElement('canvas');
           canvas.width = img.naturalWidth || 800;
           canvas.height = img.naturalHeight || 600;
+          canvasWidth2 = canvas.width;
+          canvasHeight2 = canvas.height;
           const ctx = canvas.getContext('2d');
           ctx.drawImage(img, 0, 0);
           URL.revokeObjectURL(url);
@@ -94,9 +98,9 @@ export default function PrintFloorPlanModal({ placedModules = [], furniture = []
       const imgAreaBottom = pageHeight - footerH - 2;
       const imgAreaW = pageWidth - 14;
       const imgAreaH = imgAreaBottom - imgAreaTop;
-      const scale2 = Math.min(imgAreaW / canvas.width, imgAreaH / canvas.height);
-      const drawW = canvas.width * scale2;
-      const drawH = canvas.height * scale2;
+      const scale2 = Math.min(imgAreaW / canvasWidth2, imgAreaH / canvasHeight2);
+      const drawW = canvasWidth2 * scale2;
+      const drawH = canvasHeight2 * scale2;
       const imgX = (pageWidth - drawW) / 2;
       pdf.addImage(screenshot, 'PNG', imgX, imgAreaTop, drawW, drawH);
 
