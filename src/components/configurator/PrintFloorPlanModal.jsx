@@ -42,68 +42,62 @@ export default function PrintFloorPlanModal({ placedModules = [], furniture = []
       const svg = svgRef.current;
       if (!svg) throw new Error('SVG not found');
       
-      // Create a canvas from the SVG
-      const svgCanvas = document.createElement('canvas');
-      svgCanvas.width = canvasWidth * 2;
-      svgCanvas.height = canvasHeight * 2;
-      const ctx = svgCanvas.getContext('2d');
+      // Use html2canvas to capture SVG with images
+      const canvas = await html2canvas(svg, { 
+        scale: 2,
+        backgroundColor: '#ffffff',
+        useCORS: true,
+        allowTaint: true
+      });
+      const floorPlanData = canvas.toDataURL('image/png');
       
-      const svgString = new XMLSerializer().serializeToString(svg);
-      const img = new Image();
-      img.onload = () => {
-        ctx.scale(2, 2);
-        ctx.drawImage(img, 0, 0);
-        const floorPlanData = svgCanvas.toDataURL('image/png');
-        
-        const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a3' });
-        const pageWidth = pdf.internal.pageSize.getWidth();
-        const pageHeight = pdf.internal.pageSize.getHeight();
+      const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a3' });
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
 
-        const headerH = 18;
-        const footerH = 18;
-        const imgAreaTop = headerH;
-        const imgAreaBottom = pageHeight - footerH;
-        const imgAreaH = imgAreaBottom - imgAreaTop;
-        const imgAreaW = pageWidth - 14;
+      const headerH = 18;
+      const footerH = 18;
+      const imgAreaTop = headerH;
+      const imgAreaBottom = pageHeight - footerH;
+      const imgAreaH = imgAreaBottom - imgAreaTop;
+      const imgAreaW = pageWidth - 14;
 
-        // Scale and position floor plan image
-        const scale = Math.min(imgAreaW / canvasWidth, imgAreaH / canvasHeight);
-        const imgW = canvasWidth * scale;
-        const imgH = canvasHeight * scale;
-        const imgX = (pageWidth - imgW) / 2;
-        const imgY = imgAreaTop + (imgAreaH - imgH) / 2;
+      // Scale and position floor plan image
+      const scale = Math.min(imgAreaW / canvas.width, imgAreaH / canvas.height);
+      const imgW = canvas.width * scale;
+      const imgH = canvas.height * scale;
+      const imgX = (pageWidth - imgW) / 2;
+      const imgY = imgAreaTop + (imgAreaH - imgH) / 2;
 
-        pdf.addImage(floorPlanData, 'PNG', imgX, imgY, imgW, imgH);
+      pdf.addImage(floorPlanData, 'PNG', imgX, imgY, imgW, imgH);
 
-        // Footer
-        const ftY = pageHeight - footerH;
-        pdf.setDrawColor(241, 90, 34); pdf.setLineWidth(1.2);
-        pdf.line(7, ftY, pageWidth - 7, ftY);
+      // Footer
+      const ftY = pageHeight - footerH;
+      pdf.setDrawColor(241, 90, 34); pdf.setLineWidth(1.2);
+      pdf.line(7, ftY, pageWidth - 7, ftY);
 
-        const clientInfo = [printDetails.clientName, printDetails.email, printDetails.phone].filter(Boolean).join(' · ');
-        const cols = [
-          { label: 'Project', value: printDetails.projectName || '—', x: 7, w: 70 },
-          { label: 'Client', value: clientInfo || '—', x: 77, w: 70 },
-          { label: 'Address', value: printDetails.address || '—', x: 147, w: 80 },
-          { label: 'Date', value: new Date().toLocaleDateString('en-NZ'), x: 227, w: 35 },
-          { label: 'Scale', value: '1:100', x: 262, w: 28 },
-        ];
+      const clientInfo = [printDetails.clientName, printDetails.email, printDetails.phone].filter(Boolean).join(' · ');
+      const cols = [
+        { label: 'Project', value: printDetails.projectName || '—', x: 7, w: 70 },
+        { label: 'Client', value: clientInfo || '—', x: 77, w: 70 },
+        { label: 'Address', value: printDetails.address || '—', x: 147, w: 80 },
+        { label: 'Date', value: new Date().toLocaleDateString('en-NZ'), x: 227, w: 35 },
+        { label: 'Scale', value: '1:100', x: 262, w: 28 },
+      ];
 
-        cols.forEach((col, i) => {
-          if (i > 0) { pdf.setDrawColor(241, 90, 34); pdf.setLineWidth(0.3); pdf.line(col.x - 1, ftY, col.x - 1, pageHeight - 2); }
-          pdf.setFontSize(6); pdf.setTextColor(241, 90, 34); pdf.setFont(undefined, 'bold');
-          pdf.text(col.label.toUpperCase(), col.x + 2, ftY + 5);
-          pdf.setFontSize(7); pdf.setTextColor(51, 51, 51); pdf.setFont(undefined, 'normal');
-          pdf.text(String(col.value), col.x + 2, ftY + 11, { maxWidth: col.w - 4 });
-        });
+      cols.forEach((col, i) => {
+        if (i > 0) { pdf.setDrawColor(241, 90, 34); pdf.setLineWidth(0.3); pdf.line(col.x - 1, ftY, col.x - 1, pageHeight - 2); }
+        pdf.setFontSize(6); pdf.setTextColor(241, 90, 34); pdf.setFont(undefined, 'bold');
+        pdf.text(col.label.toUpperCase(), col.x + 2, ftY + 5);
+        pdf.setFontSize(7); pdf.setTextColor(51, 51, 51); pdf.setFont(undefined, 'normal');
+        pdf.text(String(col.value), col.x + 2, ftY + 11, { maxWidth: col.w - 4 });
+      });
 
-        pdf.setFontSize(6); pdf.setTextColor(0, 0, 0); pdf.setFont(undefined, 'bold');
-        pdf.text(`© ${new Date().getFullYear()} Connectapod Ltd.`, pageWidth - 9, pageHeight - 3, { align: 'right' });
+      pdf.setFontSize(6); pdf.setTextColor(0, 0, 0); pdf.setFont(undefined, 'bold');
+      pdf.text(`© ${new Date().getFullYear()} Connectapod Ltd.`, pageWidth - 9, pageHeight - 3, { align: 'right' });
 
-        pdf.save('floor-plan.pdf');
-        setGenerating(false);
-      };
-      img.src = 'data:image/svg+xml;base64,' + btoa(svgString);
+      pdf.save('floor-plan.pdf');
+      setGenerating(false);
     } catch (error) {
       console.error('PDF error:', error);
       alert('Failed to generate PDF: ' + (error?.message || 'Unknown error'));
