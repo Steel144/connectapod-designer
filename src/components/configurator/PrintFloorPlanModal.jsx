@@ -43,6 +43,20 @@ export default function PrintFloorPlanModal({ placedModules = [], furniture = []
       const svgEl = svgRef.current;
       if (!svgEl) throw new Error('SVG element not found');
       
+      // Preload logo
+      let logoDataUrl = null;
+      try {
+        const logoRes = await fetch(LOGO_URL);
+        const logoBlob = await logoRes.blob();
+        logoDataUrl = await new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.readAsDataURL(logoBlob);
+        });
+      } catch (e) {
+        console.warn('Logo failed to load:', e);
+      }
+      
       console.log('Converting SVG to string...');
       const svgString = new XMLSerializer().serializeToString(svgEl);
       const svgWithoutImages = svgString.replace(/<image[^>]*>/g, '');
@@ -70,7 +84,7 @@ export default function PrintFloorPlanModal({ placedModules = [], furniture = []
           const pageWidth = pdf.internal.pageSize.getWidth();
           const pageHeight = pdf.internal.pageSize.getHeight();
 
-          pdf.addImage(LOGO_URL, 'PNG', 8, 4, 10, 12);
+          if (logoDataUrl) pdf.addImage(logoDataUrl, 'PNG', 8, 4, 10, 12);
           pdf.setFontSize(9); pdf.setTextColor(241, 90, 34); pdf.setFont(undefined, 'bold');
           pdf.text('www.connectapod.co.nz', pageWidth / 2, 10, { align: 'center' });
           pdf.setFontSize(7); pdf.setTextColor(136, 136, 136); pdf.setFont(undefined, 'normal');
