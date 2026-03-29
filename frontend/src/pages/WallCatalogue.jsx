@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import AddWallModal from "@/components/catalogue/AddWallModal";
 import EditWallModal from "@/components/catalogue/EditWallModal";
 import PrintableCatalogue from "@/components/catalogue/PrintableCatalogue";
+import BulkUploadWallModal from "@/components/catalogue/BulkUploadWallModal";
 
 const WALL_GROUPS = [
   {
@@ -164,6 +165,7 @@ export default function WallCatalogue() {
   const [addingToGroup, setAddingToGroup] = useState(null);
   const [editingWall, setEditingWall] = useState(null);
   const [printMode, setPrintMode] = useState(false);
+  const [showBulkUpload, setShowBulkUpload] = useState(false);
   const queryClient = useQueryClient();
   const fileInputRef = useRef(null);
   const [pendingUploadCode, setPendingUploadCode] = useState(null);
@@ -405,6 +407,14 @@ export default function WallCatalogue() {
           </div>
           <div className="flex items-center gap-2 ml-auto">
             <button
+              onClick={() => setShowBulkUpload(true)}
+              className="flex items-center gap-2 px-3 py-1.5 text-xs text-white bg-[#F15A22] hover:bg-[#D14A1A] transition-all"
+              title="Bulk upload wall elevation images"
+            >
+              <Upload size={14} />
+              Bulk Upload
+            </button>
+            <button
               onClick={() => setPrintMode(true)}
               className="flex items-center gap-2 px-3 py-1.5 text-xs text-gray-600 border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22] transition-all"
               title="Print catalogue as PDF"
@@ -628,6 +638,18 @@ export default function WallCatalogue() {
       <div className="text-center py-6 text-xs text-gray-400 border-t border-gray-200 bg-white mt-8">
         © {new Date().getFullYear()} connectapod. All rights reserved. · {totalWalls} wall panels across {WALL_GROUPS.length} series
       </div>
+
+      {/* Bulk Upload Modal */}
+      {showBulkUpload && (
+        <BulkUploadWallModal
+          onClose={() => setShowBulkUpload(false)}
+          onDone={() => {
+            queryClient.invalidateQueries({ queryKey: ["wallImages"] });
+            queryClient.invalidateQueries({ queryKey: ["wallEntries"] });
+            toast.success("Wall images uploaded successfully!");
+          }}
+        />
+      )}
     </div>
   );
 }
