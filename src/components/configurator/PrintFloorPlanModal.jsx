@@ -127,6 +127,21 @@ export default function PrintFloorPlanModal({ placedModules = [], furniture = []
         ctx.stroke();
       }
 
+      // Draw walls first (background)
+      walls.forEach((wall, idx) => {
+        const wallW = wall.orientation === "horizontal" ? wall.length * CELL_SIZE : wall.thickness * CELL_SIZE;
+        const wallH = wall.orientation === "vertical" ? wall.length * CELL_SIZE : wall.thickness * CELL_SIZE;
+        const wx = (wall.x - minX + 1) * CELL_SIZE;
+        const wy = (wall.y - minY + 1) * CELL_SIZE;
+
+        ctx.fillStyle = '#4B5563';
+        ctx.fillRect(wx, wy, wallW, wallH);
+
+        if (wallImages[idx]) {
+          drawImageSlice(wallImages[idx], wx, wy, wallW, wallH);
+        }
+      });
+
       // Draw modules
       placedModules.forEach((mod, idx) => {
         const x = (mod.x - minX + 1) * CELL_SIZE;
@@ -178,21 +193,6 @@ export default function PrintFloorPlanModal({ placedModules = [], furniture = []
           ctx.restore();
         });
       }
-
-      // Draw walls on top
-      walls.forEach((wall, idx) => {
-        const wallW = wall.orientation === "horizontal" ? wall.length * CELL_SIZE : wall.thickness * CELL_SIZE;
-        const wallH = wall.orientation === "vertical" ? wall.length * CELL_SIZE : wall.thickness * CELL_SIZE;
-        const wx = (wall.x - minX + 1) * CELL_SIZE;
-        const wy = (wall.y - minY + 1) * CELL_SIZE;
-
-        ctx.fillStyle = '#4B5563';
-        ctx.fillRect(wx, wy, wallW, wallH);
-
-        if (wallImages[idx]) {
-          drawImageSlice(wallImages[idx], wx, wy, wallW, wallH);
-        }
-      });
       
       const floorPlanData = svgCanvas.toDataURL('image/png');
       
