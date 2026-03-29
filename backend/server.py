@@ -103,9 +103,15 @@ def generate_id():
     return str(uuid.uuid4())
 
 async def create_document(collection_name: str, data: dict):
-    doc = {**data, "id": generate_id(), "created_date": datetime.utcnow()}
+    doc_id = generate_id()
+    doc = {**data, "id": doc_id, "created_date": datetime.utcnow()}
     doc.pop("_id", None)
-    await db[collection_name].insert_one(doc)
+    
+    # Create a copy for insertion to avoid MongoDB modifying our return value
+    doc_to_insert = doc.copy()
+    await db[collection_name].insert_one(doc_to_insert)
+    
+    # Return clean document without MongoDB _id
     return doc
 
 async def list_documents(collection_name: str, sort_field: str = "-created_date"):
