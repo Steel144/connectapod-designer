@@ -39,15 +39,20 @@ export default function PrintFloorPlanModal({ placedModules = [], furniture = []
   const handleDownloadPDF = async () => {
     setGenerating(true);
     try {
-      const svg = svgRef.current;
-      if (!svg) throw new Error('SVG not found');
+      const previewEl = document.querySelector('[data-pdf-preview]');
+      if (!previewEl) throw new Error('Preview element not found');
+      
+      // Capture just the SVG section from the preview
+      const svgContainer = previewEl.querySelector('div[style*="flex: 1"]');
+      if (!svgContainer) throw new Error('SVG container not found');
       
       // Use html2canvas to capture SVG with images
-      const canvas = await html2canvas(svg, { 
+      const canvas = await html2canvas(svgContainer, { 
         scale: 2,
         backgroundColor: '#ffffff',
         useCORS: true,
-        allowTaint: true
+        allowTaint: true,
+        logging: false
       });
       const floorPlanData = canvas.toDataURL('image/png');
       
