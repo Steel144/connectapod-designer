@@ -137,9 +137,16 @@ export default function SiteMap() {
         // Auto-geocode the saved address
         if (details.address) {
           setLoading(true);
-          base44.functions.invoke('geocodeAddress', { query: details.address, limit: 1 })
-            .then(response => {
-              const data = response.data.results;
+          fetch(
+            `https://nominatim.openstreetmap.org/search?` +
+            `q=${encodeURIComponent(details.address)}` +
+            `&format=json&limit=1&countrycodes=nz`,
+            {
+              headers: { 'User-Agent': 'Connectapod/1.0' }
+            }
+          )
+            .then(response => response.json())
+            .then(data => {
               if (data && data.length > 0) {
                 const { lat, lon } = data[0];
                 setCoordinates([parseFloat(lat), parseFloat(lon)]);
@@ -200,21 +207,36 @@ export default function SiteMap() {
     if (!address.trim()) return;
     setLoading(true);
     try {
-      const response = await base44.functions.invoke('geocodeAddress', {
-        query: address,
-        limit: 1
-      });
-      const data = response.data.results;
-      if (data && data.length > 0) {
-        const { lat, lon } = data[0];
-        const newCoords = [parseFloat(lat), parseFloat(lon)];
-        setCoordinates(newCoords);
-        setPositionOffset({ lat: 0, lng: 0 });
-        const newKey = `${lat}-${lon}`;
-        setMapKey(newKey);
-        localStorage.setItem('sitemap_mapkey', newKey);
+      // Use Nominatim API directly
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?` +
+        `q=${encodeURIComponent(address)}` +
+        `&format=json` +
+        `&addressdetails=1` +
+        `&limit=1` +
+        `&countrycodes=nz`, // Restrict to New Zealand
+        {
+          headers: {
+            'User-Agent': 'Connectapod/1.0'
+          }
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data && data.length > 0) {
+          const { lat, lon } = data[0];
+          const newCoords = [parseFloat(lat), parseFloat(lon)];
+          setCoordinates(newCoords);
+          setPositionOffset({ lat: 0, lng: 0 });
+          const newKey = `${lat}-${lon}`;
+          setMapKey(newKey);
+          localStorage.setItem('sitemap_mapkey', newKey);
+        } else {
+          alert('Address not found. Try a more specific address (e.g., "123 Queen St, Auckland, NZ")');
+        }
       } else {
-        alert('Address not found. Try a more specific address (e.g., "123 Main St, City, NZ")');
+        throw new Error(`Nominatim API error: ${response.status}`);
       }
     } catch (err) {
       console.error('Geocoding error:', err);
@@ -235,13 +257,32 @@ export default function SiteMap() {
     }
 
     try {
-      const response = await base44.functions.invoke('geocodeAddress', {
-        query: query,
-        limit: 5
-      });
-      setSuggestions(response.data.results || []);
+      // Use Nominatim API directly with New Zealand restriction
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?` +
+        `q=${encodeURIComponent(query)}` +
+        `&format=json` +
+        `&addressdetails=1` +
+        `&limit=8` +
+        `&countrycodes=nz` + // Restrict to New Zealand only
+        `&accept-language=en`,
+        {
+          headers: {
+            'User-Agent': 'Connectapod/1.0' // Required by Nominatim
+          }
+        }
+      );
+      
+      if (response.ok) {
+        const data = await response.json();
+        setSuggestions(data || []);
+      } else {
+        console.error('Nominatim API error:', response.status);
+        setSuggestions([]);
+      }
     } catch (err) {
       console.error('Autocomplete error:', err);
+      setSuggestions([]);
     }
   };
 
