@@ -9,21 +9,34 @@ class APIClient {
 
   async request(endpoint, options = {}) {
     const url = `${this.baseURL}${endpoint}`;
+    const timeout = options.timeout || 120000; // Default 2 minutes
+    
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeout);
+
     const config = {
       headers: {
         'Content-Type': 'application/json',
         ...options.headers,
       },
       ...options,
+      signal: controller.signal,
     };
 
     try {
       const response = await fetch(url, config);
+      clearTimeout(timeoutId);
+      
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       return await response.json();
     } catch (error) {
+      clearTimeout(timeoutId);
+      if (error.name === 'AbortError') {
+        console.error('API request timed out:', endpoint);
+        throw new Error(`Request timed out after ${timeout / 1000} seconds`);
+      }
       console.error('API request failed:', error);
       throw error;
     }
@@ -65,21 +78,35 @@ class APIClient {
     };
   }
 
-  // File upload
-  async uploadFile(file) {
+  // File upload with extended timeout (2 minutes)
+  async uploadFile(file, timeout = 120000) {
     const formData = new FormData();
     formData.append('file', file);
 
-    const response = await fetch(`${this.baseURL}/upload`, {
-      method: 'POST',
-      body: formData,
-    });
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeout);
 
-    if (!response.ok) {
-      throw new Error(`Upload failed: ${response.status}`);
+    try {
+      const response = await fetch(`${this.baseURL}/upload`, {
+        method: 'POST',
+        body: formData,
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        throw new Error(`Upload failed: ${response.status}`);
+      }
+
+      return await response.json();
+    } catch (error) {
+      clearTimeout(timeoutId);
+      if (error.name === 'AbortError') {
+        throw new Error('Upload timed out after 2 minutes');
+      }
+      throw error;
     }
-
-    return await response.json();
   }
 }
 
