@@ -70,9 +70,9 @@ export default function PrintFloorPlanModal({ placedModules = [], furniture = []
           const pageWidth = pdf.internal.pageSize.getWidth();
           const pageHeight = pdf.internal.pageSize.getHeight();
 
-          pdf.addImage(LOGO_URL, 'PNG', 7, 3, 12, 14);
+          pdf.addImage(LOGO_URL, 'PNG', 8, 4, 10, 12);
           pdf.setFontSize(9); pdf.setTextColor(241, 90, 34); pdf.setFont(undefined, 'bold');
-          pdf.text('www.connectapod.co.nz', pageWidth / 2, 8, { align: 'center' });
+          pdf.text('www.connectapod.co.nz', pageWidth / 2, 10, { align: 'center' });
           pdf.setFontSize(7); pdf.setTextColor(136, 136, 136); pdf.setFont(undefined, 'normal');
           pdf.text('hello@connectapod.co.nz · 022 396 2657', pageWidth / 2, 13, { align: 'center' });
           pdf.setFontSize(16); pdf.setTextColor(136, 136, 136); pdf.setFont(undefined, 'bold');
