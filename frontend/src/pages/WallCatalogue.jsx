@@ -21,6 +21,11 @@ const widthColors = {
 };
 
 export default function WallCatalogue() {
+  // Debug: Log component renders
+  const renderCount = useRef(0);
+  renderCount.current++;
+  console.log(`[WallCatalogue] Render #${renderCount.current}`);
+
   const [search, setSearch] = useState("");
   const [activeGroup, setActiveGroup] = useState("all");
   const [editMode, setEditMode] = useState(false);
