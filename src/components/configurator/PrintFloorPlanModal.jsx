@@ -39,22 +39,36 @@ export default function PrintFloorPlanModal({ placedModules = [], furniture = []
   const handleDownloadPDF = async () => {
     setGenerating(true);
     try {
-      const previewEl = document.querySelector('[data-pdf-preview]');
-      if (!previewEl) throw new Error('Preview element not found');
+      const svg = svgRef.current;
+      if (!svg) throw new Error('SVG not found');
       
-      // Capture just the SVG section from the preview
-      const svgContainer = previewEl.querySelector('div[style*="flex: 1"]');
-      if (!svgContainer) throw new Error('SVG container not found');
+      // Create canvas and render SVG
+      const svgCanvas = document.createElement('canvas');
+      svgCanvas.width = canvasWidth * 2;
+      svgCanvas.height = canvasHeight * 2;
+      const ctx = svgCanvas.getContext('2d');
       
-      // Use html2canvas to capture SVG with images
-      const canvas = await html2canvas(svgContainer, { 
-        scale: 2,
-        backgroundColor: '#ffffff',
-        useCORS: true,
-        allowTaint: true,
-        logging: false
+      // Render white background
+      ctx.fillStyle = 'white';
+      ctx.fillRect(0, 0, svgCanvas.width, svgCanvas.height);
+      
+      // Scale context
+      ctx.scale(2, 2);
+      
+      // Render SVG to canvas using foreignObject fallback
+      const svgString = new XMLSerializer().serializeToString(svg);
+      const blob = new Blob([svgString], { type: 'image/svg+xml' });
+      const url = URL.createObjectURL(blob);
+      
+      const img = new Image();
+      await new Promise((resolve, reject) => {
+        img.onload = resolve;
+        img.onerror = reject;
+        img.src = url;
       });
-      const floorPlanData = canvas.toDataURL('image/png');
+      
+      ctx.drawImage(img, 0, 0);
+      URL.revokeObjectURL(url);
       
       const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a3' });
       const pageWidth = pdf.internal.pageSize.getWidth();
@@ -68,9 +82,9 @@ export default function PrintFloorPlanModal({ placedModules = [], furniture = []
       const imgAreaW = pageWidth - 14;
 
       // Scale and position floor plan image
-      const scale = Math.min(imgAreaW / canvas.width, imgAreaH / canvas.height);
-      const imgW = canvas.width * scale;
-      const imgH = canvas.height * scale;
+      const scale = Math.min(imgAreaW / canvasWidth, imgAreaH / canvasHeight);
+      const imgW = canvasWidth * scale;
+      const imgH = canvasHeight * scale;
       const imgX = (pageWidth - imgW) / 2;
       const imgY = imgAreaTop + (imgAreaH - imgH) / 2;
 
