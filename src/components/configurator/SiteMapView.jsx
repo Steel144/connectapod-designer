@@ -303,7 +303,7 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
         if (mod.flipped) ctx.scale(-1, 1);
         ctx.translate(-w / 2, -h / 2);
 
-        ctx.fillStyle = mod.color || '#FDF0EB';
+        ctx.fillStyle = '#ffffff';
         ctx.fillRect(0, 0, w, h);
         if (img) ctx.drawImage(img, 0, 0, w, h);
 
