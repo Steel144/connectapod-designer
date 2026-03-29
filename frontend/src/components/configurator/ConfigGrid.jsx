@@ -859,19 +859,20 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                  let showY = !isConnection;
                  let showZ = (isLeftEnd || isConnection);
 
-                 // Swap Z/X visibility for rotated end modules
-                 if ((isLeftEnd || isRightEnd) && isRotated180) {
-                   [showZ, showX] = [showX, showZ];
-                 }
-
-                 // For end modules, flip swaps which end wall is visible
+                 // For end modules, handle rotation and flip
                  if (isLeftEnd || isRightEnd) {
+                   // First apply flip logic (which face is the end)
                    if (mod.flipped) {
                      showZ = isRightEnd;
                      showX = isLeftEnd;
                    } else {
                      showZ = isLeftEnd;
                      showX = isRightEnd;
+                   }
+                   
+                   // Then apply rotation (swap the faces)
+                   if (isRotated180) {
+                     [showZ, showX] = [showX, showZ];
                    }
                  }
 
