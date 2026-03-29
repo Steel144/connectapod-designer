@@ -39,98 +39,107 @@ export default function PrintFloorPlanModal({ placedModules = [], furniture = []
   const handleDownloadPDF = async () => {
     setGenerating(true);
     try {
-      // Use html2canvas to capture SVG with all images rendered
       const svgEl = svgRef.current;
       if (!svgEl) throw new Error('SVG element not found');
       
-      const canvas = await html2canvas(svgEl, { 
-        backgroundColor: '#ffffff', 
-        scale: 2,
-        allowTaint: true,
-        useCORS: true
-      });
+      // Convert SVG to data URL directly
+      const svgString = new XMLSerializer().serializeToString(svgEl);
+      const blob = new Blob([svgString], { type: 'image/svg+xml' });
+      const url = URL.createObjectURL(blob);
       
-      if (!canvas) throw new Error('Failed to create canvas');
-      
-      const screenshot = canvas.toDataURL('image/png');
-      if (!screenshot || !screenshot.startsWith('data:image')) {
-        throw new Error('Invalid canvas data');
-      }
-      
-      const canvasWidth2 = canvas.width;
-      const canvasHeight2 = canvas.height;
+      // Create image from SVG
+      const img = new window.Image();
+      img.onload = async () => {
+        try {
+          // Draw to canvas
+          const canvas = document.createElement('canvas');
+          canvas.width = svgEl.clientWidth * 2;
+          canvas.height = svgEl.clientHeight * 2;
+          const ctx = canvas.getContext('2d');
+          ctx.scale(2, 2);
+          ctx.drawImage(img, 0, 0);
+          
+          const screenshot = canvas.toDataURL('image/png');
+          URL.revokeObjectURL(url);
+          
+          // Create PDF
+          const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a3' });
+          const pageWidth = pdf.internal.pageSize.getWidth();
+          const pageHeight = pdf.internal.pageSize.getHeight();
 
-      const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a3' });
-      const pageWidth = pdf.internal.pageSize.getWidth();
-      const pageHeight = pdf.internal.pageSize.getHeight();
+          // Add logo
+          const logoImg = new window.Image();
+          logoImg.src = LOGO_URL;
+          logoImg.onload = () => {
+            const logoH = 14;
+            const logoW = (logoImg.width / logoImg.height) * logoH || 40;
+            pdf.addImage(logoImg, 'PNG', 7, 3, logoW, logoH);
+            
+            // Text content
+            pdf.setFontSize(9); pdf.setTextColor(241, 90, 34); pdf.setFont(undefined, 'bold');
+            pdf.text('www.connectapod.co.nz', pageWidth / 2, 8, { align: 'center' });
+            pdf.setFontSize(7); pdf.setTextColor(136, 136, 136); pdf.setFont(undefined, 'normal');
+            pdf.text('hello@connectapod.co.nz · 022 396 2657', pageWidth / 2, 13, { align: 'center' });
+            pdf.setFontSize(16); pdf.setTextColor(136, 136, 136); pdf.setFont(undefined, 'bold');
+            pdf.text('Floor Plan', pageWidth - 7, 13, { align: 'right' });
+            pdf.setDrawColor(241, 90, 34); pdf.setLineWidth(0.6);
+            pdf.line(7, 20, pageWidth - 7, 20);
 
-      // Header
-      const logoImg = new window.Image();
-      logoImg.crossOrigin = 'anonymous';
-      logoImg.src = LOGO_URL;
-      await new Promise(r => { logoImg.onload = r; logoImg.onerror = r; });
-      const logoH = 14;
-      const logoW = logoImg.naturalWidth ? (logoImg.naturalWidth / logoImg.naturalHeight) * logoH : 40;
-      
-      try {
-        pdf.addImage(logoImg, 'PNG', 7, 3, logoW, logoH);
-      } catch (e) {
-        console.warn('Logo image failed to add:', e);
-      }
+            // Add floor plan image
+            const footerH = 20;
+            const imgAreaTop = 22;
+            const imgAreaBottom = pageHeight - footerH - 2;
+            const imgAreaW = pageWidth - 14;
+            const imgAreaH = imgAreaBottom - imgAreaTop;
+            const scale2 = Math.min(imgAreaW / canvas.width, imgAreaH / canvas.height);
+            const drawW = canvas.width * scale2;
+            const drawH = canvas.height * scale2;
+            const imgX = (pageWidth - drawW) / 2;
+            pdf.addImage(screenshot, 'PNG', imgX, imgAreaTop, drawW, drawH);
 
-      pdf.setFontSize(9); pdf.setTextColor(241, 90, 34); pdf.setFont(undefined, 'bold');
-      pdf.text('www.connectapod.co.nz', pageWidth / 2, 8, { align: 'center' });
-      pdf.setFontSize(7); pdf.setTextColor(136, 136, 136); pdf.setFont(undefined, 'normal');
-      pdf.text('hello@connectapod.co.nz · 022 396 2657', pageWidth / 2, 13, { align: 'center' });
+            // Footer
+            const ftY = pageHeight - footerH;
+            pdf.setDrawColor(241, 90, 34); pdf.setLineWidth(1.2);
+            pdf.line(7, ftY, pageWidth - 7, ftY);
 
-      pdf.setFontSize(16); pdf.setTextColor(136, 136, 136); pdf.setFont(undefined, 'bold');
-      pdf.text('Floor Plan', pageWidth - 7, 13, { align: 'right' });
+            const clientInfo = [printDetails.clientName, printDetails.email, printDetails.phone].filter(Boolean).join(' · ');
+            const cols = [
+              { label: 'Project', value: printDetails.projectName || '—', x: 7, w: 70 },
+              { label: 'Client', value: clientInfo || '—', x: 77, w: 70 },
+              { label: 'Address', value: printDetails.address || '—', x: 147, w: 80 },
+              { label: 'Date', value: new Date().toLocaleDateString('en-NZ'), x: 227, w: 35 },
+              { label: 'Scale', value: '1:100', x: 262, w: 28 },
+            ];
 
-      pdf.setDrawColor(241, 90, 34); pdf.setLineWidth(0.6);
-      pdf.line(7, 20, pageWidth - 7, 20);
+            cols.forEach((col, i) => {
+              if (i > 0) { pdf.setDrawColor(241, 90, 34); pdf.setLineWidth(0.3); pdf.line(col.x - 1, ftY, col.x - 1, pageHeight - 2); }
+              pdf.setFontSize(6); pdf.setTextColor(241, 90, 34); pdf.setFont(undefined, 'bold');
+              pdf.text(col.label.toUpperCase(), col.x + 2, ftY + 5);
+              pdf.setFontSize(7); pdf.setTextColor(51, 51, 51); pdf.setFont(undefined, 'normal');
+              pdf.text(String(col.value), col.x + 2, ftY + 11, { maxWidth: col.w - 4 });
+            });
 
-      // Floor plan image
-      const footerH = 20;
-      const imgAreaTop = 22;
-      const imgAreaBottom = pageHeight - footerH - 2;
-      const imgAreaW = pageWidth - 14;
-      const imgAreaH = imgAreaBottom - imgAreaTop;
-      const scale2 = Math.min(imgAreaW / canvasWidth2, imgAreaH / canvasHeight2);
-      const drawW = canvasWidth2 * scale2;
-      const drawH = canvasHeight2 * scale2;
-      const imgX = (pageWidth - drawW) / 2;
-      pdf.addImage(screenshot, 'PNG', imgX, imgAreaTop, drawW, drawH);
+            pdf.setFontSize(6); pdf.setTextColor(0, 0, 0); pdf.setFont(undefined, 'bold');
+            pdf.text(`© ${new Date().getFullYear()} Connectapod Ltd.`, pageWidth - 9, pageHeight - 3, { align: 'right' });
 
-      // Footer
-      const ftY = pageHeight - footerH;
-      pdf.setDrawColor(241, 90, 34); pdf.setLineWidth(1.2);
-      pdf.line(7, ftY, pageWidth - 7, ftY);
-
-      const clientInfo = [printDetails.clientName, printDetails.email, printDetails.phone].filter(Boolean).join(' · ');
-      const cols = [
-        { label: 'Project', value: printDetails.projectName || '—', x: 7, w: 70 },
-        { label: 'Client', value: clientInfo || '—', x: 77, w: 70 },
-        { label: 'Address', value: printDetails.address || '—', x: 147, w: 80 },
-        { label: 'Date', value: new Date().toLocaleDateString('en-NZ'), x: 227, w: 35 },
-        { label: 'Scale', value: '1:100', x: 262, w: 28 },
-      ];
-
-      cols.forEach((col, i) => {
-        if (i > 0) { pdf.setDrawColor(241, 90, 34); pdf.setLineWidth(0.3); pdf.line(col.x - 1, ftY, col.x - 1, pageHeight - 2); }
-        pdf.setFontSize(6); pdf.setTextColor(241, 90, 34); pdf.setFont(undefined, 'bold');
-        pdf.text(col.label.toUpperCase(), col.x + 2, ftY + 5);
-        pdf.setFontSize(7); pdf.setTextColor(51, 51, 51); pdf.setFont(undefined, 'normal');
-        pdf.text(String(col.value), col.x + 2, ftY + 11, { maxWidth: col.w - 4 });
-      });
-
-      pdf.setFontSize(6); pdf.setTextColor(0, 0, 0); pdf.setFont(undefined, 'bold');
-      pdf.text(`© ${new Date().getFullYear()} Connectapod Ltd.`, pageWidth - 9, pageHeight - 3, { align: 'right' });
-
-      pdf.save('floor-plan.pdf');
+            pdf.save('floor-plan.pdf');
+            setGenerating(false);
+          };
+        } catch (error) {
+          console.error('PDF error:', error);
+          alert('Failed to generate PDF');
+          setGenerating(false);
+        }
+      };
+      img.onerror = () => {
+        URL.revokeObjectURL(url);
+        alert('Failed to load SVG');
+        setGenerating(false);
+      };
+      img.src = url;
     } catch (error) {
-      console.error('PDF generation error:', error);
-      alert('Failed to generate PDF: ' + (error?.message || 'Unknown error'));
-    } finally {
+      console.error('SVG conversion error:', error);
+      alert('Failed to convert floor plan');
       setGenerating(false);
     }
   };
