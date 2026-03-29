@@ -39,28 +39,33 @@ export default function PrintFloorPlanModal({ placedModules = [], furniture = []
   const handleDownloadPDF = async () => {
     setGenerating(true);
     try {
+      console.log('Starting PDF generation...');
       const svgEl = svgRef.current;
       if (!svgEl) throw new Error('SVG element not found');
       
-      // Clone SVG and remove problematic images to speed up rendering
+      console.log('Cloning SVG and removing images...');
       const svgClone = svgEl.cloneNode(true);
       svgClone.querySelectorAll('image').forEach(img => img.remove());
       
-      // Render to canvas with reduced scale
+      console.log('Converting SVG to canvas...');
       const canvas = await html2canvas(svgClone, {
         backgroundColor: '#ffffff',
         scale: 1.5,
         useCORS: true,
-        logging: false
+        logging: false,
+        timeout: 15000
       });
       
+      console.log('Canvas created, converting to PNG...');
       const screenshot = canvas.toDataURL('image/png');
+      if (!screenshot) throw new Error('Failed to generate canvas data');
       
-      // Create PDF
+      console.log('Creating PDF document...');
       const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a3' });
       const pageWidth = pdf.internal.pageSize.getWidth();
       const pageHeight = pdf.internal.pageSize.getHeight();
 
+      console.log('Adding PDF content...');
       // Text content
       pdf.setFontSize(9); pdf.setTextColor(241, 90, 34); pdf.setFont(undefined, 'bold');
       pdf.text('www.connectapod.co.nz', pageWidth / 2, 8, { align: 'center' });
@@ -81,6 +86,7 @@ export default function PrintFloorPlanModal({ placedModules = [], furniture = []
       const drawW = canvas.width * scale2;
       const drawH = canvas.height * scale2;
       const imgX = (pageWidth - drawW) / 2;
+      console.log('Adding image to PDF:', { drawW, drawH, imgX });
       pdf.addImage(screenshot, 'PNG', imgX, imgAreaTop, drawW, drawH);
 
       // Footer
@@ -108,9 +114,11 @@ export default function PrintFloorPlanModal({ placedModules = [], furniture = []
       pdf.setFontSize(6); pdf.setTextColor(0, 0, 0); pdf.setFont(undefined, 'bold');
       pdf.text(`© ${new Date().getFullYear()} Connectapod Ltd.`, pageWidth - 9, pageHeight - 3, { align: 'right' });
 
+      console.log('Saving PDF...');
       pdf.save('floor-plan.pdf');
+      console.log('PDF saved successfully');
     } catch (error) {
-      console.error('PDF error:', error);
+      console.error('PDF error details:', error, error?.stack);
       alert('Failed to generate PDF: ' + (error?.message || 'Unknown error'));
     } finally {
       setGenerating(false);
