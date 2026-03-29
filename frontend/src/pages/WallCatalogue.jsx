@@ -21,14 +21,6 @@ const widthColors = {
 };
 
 export default function WallCatalogue() {
-  // Track mount/unmount to detect if component is being destroyed
-  useEffect(() => {
-    console.log('[WallCatalogue] Component MOUNTED');
-    return () => {
-      console.log('[WallCatalogue] Component UNMOUNTED - this should NOT happen unless you navigate away');
-    };
-  }, []);
-
   const [search, setSearch] = useState("");
   const [activeGroup, setActiveGroup] = useState("all");
   const [editMode, setEditMode] = useState(false);
