@@ -188,8 +188,8 @@ async def get_design_template(id: str):
     return await get_document("design_templates", id)
 
 @app.put("/api/entities/DesignTemplate/{id}")
-async def update_design_template(id: str, template: DesignTemplate):
-    return await update_document("design_templates", id, template.dict(exclude_none=True))
+async def update_design_template(id: str, data: Dict[str, Any] = Body(...)):
+    return await update_document("design_templates", id, data)
 
 @app.delete("/api/entities/DesignTemplate/{id}")
 async def delete_design_template(id: str):
@@ -210,8 +210,8 @@ async def get_home_design(id: str):
     return await get_document("home_designs", id)
 
 @app.put("/api/entities/HomeDesign/{id}")
-async def update_home_design(id: str, design: HomeDesign):
-    return await update_document("home_designs", id, design.dict(exclude_none=True))
+async def update_home_design(id: str, data: Dict[str, Any] = Body(...)):
+    return await update_document("home_designs", id, data)
 
 @app.delete("/api/entities/HomeDesign/{id}")
 async def delete_home_design(id: str):
@@ -232,8 +232,8 @@ async def get_module_entry(id: str):
     return await get_document("module_entries", id)
 
 @app.put("/api/entities/ModuleEntry/{id}")
-async def update_module_entry(id: str, module: ModuleEntry):
-    return await update_document("module_entries", id, module.dict(exclude_none=True))
+async def update_module_entry(id: str, data: Dict[str, Any] = Body(...)):
+    return await update_document("module_entries", id, data)
 
 @app.delete("/api/entities/ModuleEntry/{id}")
 async def delete_module_entry(id: str):
@@ -254,8 +254,8 @@ async def get_wall_entry(id: str):
     return await get_document("wall_entries", id)
 
 @app.put("/api/entities/WallEntry/{id}")
-async def update_wall_entry(id: str, wall: WallEntry):
-    return await update_document("wall_entries", id, wall.dict(exclude_none=True))
+async def update_wall_entry(id: str, data: Dict[str, Any] = Body(...)):
+    return await update_document("wall_entries", id, data)
 
 @app.delete("/api/entities/WallEntry/{id}")
 async def delete_wall_entry(id: str):
@@ -280,8 +280,8 @@ async def get_floor_plan_image(id: str):
     return await get_document("floor_plan_images", id)
 
 @app.put("/api/entities/FloorPlanImage/{id}")
-async def update_floor_plan_image(id: str, image: FloorPlanImage):
-    return await update_document("floor_plan_images", id, image.dict(exclude_none=True))
+async def update_floor_plan_image(id: str, data: Dict[str, Any] = Body(...)):
+    return await update_document("floor_plan_images", id, data)
 
 @app.delete("/api/entities/FloorPlanImage/{id}")
 async def delete_floor_plan_image(id: str):
@@ -306,8 +306,8 @@ async def get_wall_image(id: str):
     return await get_document("wall_images", id)
 
 @app.put("/api/entities/WallImage/{id}")
-async def update_wall_image(id: str, image: WallImage):
-    return await update_document("wall_images", id, image.dict(exclude_none=True))
+async def update_wall_image(id: str, data: Dict[str, Any] = Body(...)):
+    return await update_document("wall_images", id, data)
 
 @app.delete("/api/entities/WallImage/{id}")
 async def delete_wall_image(id: str):
