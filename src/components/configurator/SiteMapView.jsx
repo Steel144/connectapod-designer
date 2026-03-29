@@ -166,16 +166,16 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
     });
   }, [design]);
 
-  // Capture by compositing Leaflet tiles + floor plan overlay onto a canvas
+  // Capture by drawing tiles using Leaflet's internal pixel coordinates (unaffected by CSS transforms)
   const captureMapScreenshot = useCallback(async () => {
     const map = mapRef.current;
-    const outerDiv = mapContainerRef.current;
-    if (!map || !outerDiv) return null;
+    if (!map) return null;
 
-    // The outer div is the viewport (before the scale(2) inner div)
-    const outerRect = outerDiv.getBoundingClientRect();
-    const W = outerRect.width;
-    const H = outerRect.height;
+    const mapContainer = map.getContainer();
+    // Use the map's actual pixel size (not the CSS-scaled size)
+    const mapSize = map.getSize(); // {x: w, y: h} in Leaflet pixels
+    const W = mapSize.x;
+    const H = mapSize.y;
 
     const outCanvas = document.createElement('canvas');
     outCanvas.width = W;
@@ -184,48 +184,76 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
     ctx.fillStyle = '#2a2a2a';
     ctx.fillRect(0, 0, W, H);
 
-    // Leaflet map container is scaled 2x and rotated — get its bounding rect
-    const mapContainer = map.getContainer();
-    const mapRect = mapContainer.getBoundingClientRect();
+    // Get the map's pixel origin so we can place tiles correctly
+    const mapPixelOrigin = map.getPixelOrigin();
 
-    // Draw each tile: its getBoundingClientRect already accounts for scale+rotation transforms
     const tileImgs = mapContainer.querySelectorAll('.leaflet-tile');
     const drawPromises = Array.from(tileImgs).map(tile => new Promise((resolve) => {
       if (!tile.src) { resolve(); return; }
-      const tileRect = tile.getBoundingClientRect();
-      // Translate from screen coords to canvas coords
-      const dx = tileRect.left - outerRect.left;
-      const dy = tileRect.top - outerRect.top;
-      const dw = tileRect.width;
-      const dh = tileRect.height;
-      if (dw <= 0 || dh <= 0) { resolve(); return; }
+
+      // Each tile has a data-x/data-y or we can read its CSS transform/left/top
+      // The tile's parent (.leaflet-tile-container) has a CSS transform we need to account for
+      const tileEl = tile;
+      const tileSize = 256;
+
+      // Get tile position from its inline style (Leaflet sets left/top)
+      const tileLeft = parseFloat(tileEl.style.left) || 0;
+      const tileTop = parseFloat(tileEl.style.top) || 0;
+
+      // Walk up to find the pane/container transform offset
+      let containerOffsetX = 0;
+      let containerOffsetY = 0;
+      let el = tileEl.parentElement;
+      while (el && el !== mapContainer) {
+        const transform = el.style.transform;
+        if (transform) {
+          const match = transform.match(/translate3d\(([^,]+)px,\s*([^,]+)px/);
+          if (match) {
+            containerOffsetX += parseFloat(match[1]);
+            containerOffsetY += parseFloat(match[2]);
+          } else {
+            const match2 = transform.match(/translate\(([^,]+)px,\s*([^,]+)px/);
+            if (match2) {
+              containerOffsetX += parseFloat(match2[1]);
+              containerOffsetY += parseFloat(match2[2]);
+            }
+          }
+        }
+        el = el.parentElement;
+      }
+
+      const dx = tileLeft + containerOffsetX;
+      const dy = tileTop + containerOffsetY;
+
       const img = new window.Image();
       img.crossOrigin = 'anonymous';
-      img.onload = () => { ctx.drawImage(img, dx, dy, dw, dh); resolve(); };
-      img.onerror = () => { resolve(); };
-      img.src = tile.src + (tile.src.includes('?') ? '&' : '?') + '_cb=' + Date.now();
+      img.onload = () => { ctx.drawImage(img, dx, dy, tileSize, tileSize); resolve(); };
+      img.onerror = () => resolve();
+      img.src = tile.src;
     }));
+
     await Promise.all(drawPromises);
 
-    // Draw floor plan overlay: find the img element and use its screen position
-    const fpImgEl = outerDiv.querySelector('img[alt="Floor Plan"]');
+    // Draw floor plan overlay centered, using same scale calc as the visual overlay
     const fp = floorPlanOverlayRef.current;
-    if (fp && fpImgEl) {
-      const fpRect = fpImgEl.getBoundingClientRect();
-      const dx = fpRect.left - outerRect.left;
-      const dy = fpRect.top - outerRect.top;
-      const dw = fpRect.width;
-      const dh = fpRect.height;
-      if (dw > 0 && dh > 0) {
-        const fpImg = new window.Image();
-        fpImg.src = fp;
-        await new Promise(r => { fpImg.onload = r; fpImg.onerror = r; });
-        ctx.drawImage(fpImg, dx, dy, dw, dh);
-      }
+    if (fp && design?.grid?.length > 0) {
+      const fpImg = new window.Image();
+      fpImg.src = fp;
+      await new Promise(r => { fpImg.onload = r; fpImg.onerror = r; });
+
+      const METRES_PER_PX_AT_ZOOM0 = 78271.52;
+      const lat = coordinates ? coordinates[0] : 0;
+      const metresToPx = Math.pow(2, mapZoom) / (METRES_PER_PX_AT_ZOOM0 * Math.cos(lat * Math.PI / 180));
+      const canvasPxPerMetre = CANVAS_PX_PER_CELL / CELL_M;
+      const scale = (metresToPx / canvasPxPerMetre) * planScaleMultiplier;
+
+      const dw = fpImg.naturalWidth * scale;
+      const dh = fpImg.naturalHeight * scale;
+      ctx.drawImage(fpImg, (W - dw) / 2, (H - dh) / 2, dw, dh);
     }
 
     return outCanvas.toDataURL('image/png');
-  }, []);
+  }, [design, coordinates, mapZoom, planScaleMultiplier]);
 
   // Expose screenshot capture to parent
   useEffect(() => {
