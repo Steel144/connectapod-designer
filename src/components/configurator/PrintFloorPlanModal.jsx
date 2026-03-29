@@ -105,9 +105,10 @@ export default function PrintFloorPlanModal({ placedModules = [], furniture = []
       pdf.setDrawColor(241, 90, 34); pdf.setLineWidth(1.2);
       pdf.line(7, ftY, pageWidth - 7, ftY);
 
+      const clientInfo = [printDetails.clientName, printDetails.email, printDetails.phone].filter(Boolean).join(' · ');
       const cols = [
         { label: 'Project', value: printDetails.projectName || '—', x: 7, w: 70 },
-        { label: 'Client', value: printDetails.clientName || '—', x: 77, w: 70 },
+        { label: 'Client', value: clientInfo || '—', x: 77, w: 70 },
         { label: 'Address', value: printDetails.address || '—', x: 147, w: 80 },
         { label: 'Date', value: new Date().toLocaleDateString('en-NZ'), x: 227, w: 35 },
         { label: 'Scale', value: '1:100', x: 262, w: 28 },
@@ -117,7 +118,7 @@ export default function PrintFloorPlanModal({ placedModules = [], furniture = []
         if (i > 0) { pdf.setDrawColor(241, 90, 34); pdf.setLineWidth(0.3); pdf.line(col.x - 1, ftY, col.x - 1, pageHeight - 2); }
         pdf.setFontSize(6); pdf.setTextColor(241, 90, 34); pdf.setFont(undefined, 'bold');
         pdf.text(col.label.toUpperCase(), col.x + 2, ftY + 5);
-        pdf.setFontSize(8); pdf.setTextColor(51, 51, 51); pdf.setFont(undefined, 'normal');
+        pdf.setFontSize(7); pdf.setTextColor(51, 51, 51); pdf.setFont(undefined, 'normal');
         pdf.text(String(col.value), col.x + 2, ftY + 11, { maxWidth: col.w - 4 });
       });
 
