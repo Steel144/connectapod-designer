@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import PrintPDFModal from "./PrintPDFModal";
 import { useElevationGeometry } from "@/hooks/useElevationGeometry";
 import HorizontalElevation from "./HorizontalElevation";
@@ -18,9 +18,37 @@ const getModulePavilion = (mod) => {
 
 const PAV_LABELS = { 3: "Pavilion 1", 2: "Connection", 1: "Pavilion 2" };
 
-
+async function toDataURL(url) {
+  try {
+    const res = await fetch(url, { mode: "cors" });
+    const blob = await res.blob();
+    return await new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result);
+      reader.readAsDataURL(blob);
+    });
+  } catch {
+    return null;
+  }
+}
 
 export default function PrintableElevationsSheet({ walls = [], placedModules = [], onClose, printDetails = {}, showLabels = true }) {
+  const [imageMap, setImageMap] = useState({});
+  const [imagesReady, setImagesReady] = useState(false);
+
+  // Pre-fetch all elevation images as base64
+  useEffect(() => {
+    const urls = [...new Set(walls.map(w => w.elevationImage).filter(Boolean))];
+    if (urls.length === 0) { setImagesReady(true); return; }
+
+    Promise.all(urls.map(async url => [url, await toDataURL(url)]))
+      .then(entries => {
+        const map = {};
+        entries.forEach(([url, data]) => { if (data) map[url] = data; });
+        setImageMap(map);
+        setImagesReady(true);
+      });
+  }, []);
 
   const scale = PRINT_SCALE;
   const wallHPx = Math.round(scale * WALL_H_M * PX_PER_M);
@@ -64,11 +92,12 @@ export default function PrintableElevationsSheet({ walls = [], placedModules = [
   const ElevationImage = ({ wall, label, face }) => {
     const wallWidthM = wall.width ?? (wall.length ? wall.length * CELL_M : CELL_M);
     const wallWidthPx = Math.round(scale * wallWidthM * 100);
+    const imgSrc = wall.elevationImage ? (imageMap[wall.elevationImage] || wall.elevationImage) : null;
     return (
       <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "4px", flexShrink: 0 }}>
-        <div style={{ height: `${imgHeight}px`, width: wall.elevationImage ? "auto" : `${wallWidthPx}px`, overflow: "hidden", border: "1px solid #e5e7eb", background: "white" }}>
-          {wall.elevationImage ? (
-            <img src={wall.elevationImage} alt={label} style={{ height: "100%", width: "auto", display: "block", transform: wall.flipped ? "scaleX(-1)" : undefined }} />
+        <div style={{ height: `${imgHeight}px`, width: imgSrc ? "auto" : `${wallWidthPx}px`, overflow: "hidden", border: "1px solid #e5e7eb", background: "white" }}>
+          {imgSrc ? (
+            <img src={imgSrc} alt={label} style={{ height: "100%", width: "auto", display: "block", transform: wall.flipped ? "scaleX(-1)" : undefined }} />
           ) : (
             <div style={{ width: "100%", height: "100%", background: "repeating-linear-gradient(45deg,#f3f4f6,#f3f4f6 4px,#e5e7eb 4px,#e5e7eb 8px)", border: "1px dashed #d1d5db", display: "flex", alignItems: "center", justifyContent: "center" }}>
               <span style={{ fontSize: "8px", color: "#9ca3af" }}>No wall</span>
@@ -134,6 +163,8 @@ export default function PrintableElevationsSheet({ walls = [], placedModules = [
     { sheet: "Elevations — Building", pageNum: 1, totalPages, content: page1Content },
     ...pavilionPageDefs,
   ];
+
+  if (!imagesReady) return null;
 
   return (
     <PrintPDFModal

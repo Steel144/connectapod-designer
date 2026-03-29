@@ -29,11 +29,12 @@ export default function PrintPDFModal({ title, printDetails = {}, onClose, pages
         const el = pagesRef.current[i];
         if (!el) continue;
         const canvas = await html2canvas(el, {
-          scale: 1.5,
-          useCORS: true,
-          allowTaint: true,
+          scale: 2,
+          useCORS: false,
+          allowTaint: false,
           logging: false,
           backgroundColor: "#ffffff",
+          imageTimeout: 0,
         });
         imgs.push(canvas.toDataURL("image/png"));
       }
