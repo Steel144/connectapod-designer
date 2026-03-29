@@ -65,6 +65,18 @@ export default function PrintFloorPlanModal({ placedModules = [], furniture = []
       const pageWidth = pdf.internal.pageSize.getWidth();
       const pageHeight = pdf.internal.pageSize.getHeight();
 
+      // Add content to PDF
+      const footerH = 20;
+      const imgAreaTop = 22;
+      const imgAreaBottom = pageHeight - footerH - 2;
+      const imgAreaW = pageWidth - 14;
+      const imgAreaH = imgAreaBottom - imgAreaTop;
+      const scale2 = Math.min(imgAreaW / canvas.width, imgAreaH / canvas.height);
+      const drawW = canvas.width * scale2;
+      const drawH = canvas.height * scale2;
+      const imgX = (pageWidth - drawW) / 2;
+      pdf.addImage(screenshot, 'PNG', imgX, imgAreaTop, drawW, drawH);
+
       const ftY = pageHeight - footerH;
       pdf.setDrawColor(241, 90, 34); pdf.setLineWidth(1.2);
       pdf.line(7, ftY, pageWidth - 7, ftY);
