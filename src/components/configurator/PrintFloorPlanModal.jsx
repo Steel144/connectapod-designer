@@ -226,20 +226,31 @@ export default function PrintFloorPlanModal({ placedModules = [], furniture = []
             </div>
 
             {/* Footer title block */}
-            <div style={{ flexShrink: 0, borderTop: '3px solid #F15A22', display: 'grid', gridTemplateColumns: '2fr 2fr 2.5fr 1fr 1fr', fontSize: '9px' }}>
-              {[
-                { label: 'Project', value: printDetails.projectName || '—' },
-                { label: 'Client', value: printDetails.clientName || '—' },
-                { label: 'Address', value: printDetails.address || '—' },
-                { label: 'Date', value: new Date().toLocaleDateString('en-NZ') },
-                { label: 'Scale', value: '1:100' },
-              ].map((col, i) => (
-                <div key={i} style={{ borderRight: i < 4 ? '1px solid #F15A22' : undefined, padding: '4px 10px' }}>
-                  <p style={{ fontWeight: 'bold', textTransform: 'uppercase', color: '#F15A22', fontSize: '7px' }}>{col.label}</p>
-                  <p style={{ marginTop: '1px', color: '#333', fontSize: '8px' }}>{col.value}</p>
-                  {i === 4 && <p style={{ marginTop: '2px', color: '#000', fontSize: '7px', fontWeight: '600' }}>© {new Date().getFullYear()} Connectapod Ltd.</p>}
-                </div>
-              ))}
+            <div style={{ flexShrink: 0, borderTop: '3px solid #F15A22', display: 'grid', gridTemplateColumns: '1.5fr 1.5fr 2fr 1.5fr 1fr', fontSize: '8px' }}>
+              <div style={{ borderRight: '1px solid #F15A22', padding: '4px 10px' }}>
+                <p style={{ fontWeight: 'bold', textTransform: 'uppercase', color: '#F15A22', fontSize: '6px' }}>Project</p>
+                <p style={{ marginTop: '1px', color: '#333', fontSize: '8px', fontWeight: '600' }}>{printDetails.projectName || '—'}</p>
+              </div>
+              <div style={{ borderRight: '1px solid #F15A22', padding: '4px 10px' }}>
+                <p style={{ fontWeight: 'bold', textTransform: 'uppercase', color: '#F15A22', fontSize: '6px' }}>Client</p>
+                <p style={{ marginTop: '1px', color: '#333', fontSize: '8px' }}>{printDetails.clientName || '—'}</p>
+                {(printDetails.email || printDetails.phone) && (
+                  <p style={{ marginTop: '1px', color: '#666', fontSize: '7px' }}>{[printDetails.email, printDetails.phone].filter(Boolean).join(' · ')}</p>
+                )}
+              </div>
+              <div style={{ borderRight: '1px solid #F15A22', padding: '4px 10px' }}>
+                <p style={{ fontWeight: 'bold', textTransform: 'uppercase', color: '#F15A22', fontSize: '6px' }}>Address</p>
+                <p style={{ marginTop: '1px', color: '#333', fontSize: '8px' }}>{printDetails.address || '—'}</p>
+              </div>
+              <div style={{ borderRight: '1px solid #F15A22', padding: '4px 10px' }}>
+                <p style={{ fontWeight: 'bold', textTransform: 'uppercase', color: '#F15A22', fontSize: '6px' }}>Date</p>
+                <p style={{ marginTop: '1px', color: '#666', fontSize: '8px' }}>{new Date().toLocaleDateString('en-NZ')}</p>
+              </div>
+              <div style={{ padding: '4px 10px' }}>
+                <p style={{ fontWeight: 'bold', textTransform: 'uppercase', color: '#F15A22', fontSize: '6px' }}>Scale</p>
+                <p style={{ marginTop: '1px', color: '#666', fontSize: '8px' }}>1:100</p>
+                <p style={{ marginTop: '2px', color: '#000', fontSize: '6px', fontWeight: '600' }}>© {new Date().getFullYear()} Connectapod Ltd.</p>
+              </div>
             </div>
           </div>
         </div>
