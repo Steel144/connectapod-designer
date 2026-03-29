@@ -347,9 +347,9 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
                   maxZoom={22}
                 />
                 <ZoomControl position="bottomright" />
-                <Marker position={coordinates}>
+                <CircleMarker center={coordinates} radius={8} pathOptions={{ color: '#F15A22', fillColor: '#F15A22', fillOpacity: 1 }}>
                   <Popup>Site Location</Popup>
-                </Marker>
+                </CircleMarker>
 
               </MapContainer>
             </div>
