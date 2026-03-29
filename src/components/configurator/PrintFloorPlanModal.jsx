@@ -42,13 +42,23 @@ export default function PrintFloorPlanModal({ placedModules = [], furniture = []
       const previewContainer = document.querySelector('[data-pdf-preview]');
       if (!previewContainer) throw new Error('Preview container not found');
       
-      const canvas = await html2canvas(previewContainer, {
+      // Clone the preview to avoid capturing overlays
+      const clonedContainer = previewContainer.cloneNode(true);
+      document.body.appendChild(clonedContainer);
+      clonedContainer.style.position = 'fixed';
+      clonedContainer.style.top = '-9999px';
+      clonedContainer.style.left = '-9999px';
+      clonedContainer.style.visibility = 'hidden';
+      
+      const canvas = await html2canvas(clonedContainer, {
         scale: 2,
         useCORS: true,
         allowTaint: true,
         backgroundColor: '#ffffff',
+        logging: false,
       });
       
+      document.body.removeChild(clonedContainer);
       const screenshot = canvas.toDataURL('image/png');
       
       const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a3' });
