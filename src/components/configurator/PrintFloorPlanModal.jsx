@@ -14,22 +14,26 @@ export default function PrintFloorPlanModal({ placedModules = [], furniture = []
   const scale = 1.2;
   const CELL_SIZE = scale * CELL_M * PX_PER_M;
 
-  // Calculate bounds
+  // Calculate bounds (including walls for end walls visibility)
   let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+  
+  walls.forEach(w => {
+    minX = Math.min(minX, w.x); maxX = Math.max(maxX, w.x + (w.orientation === "horizontal" ? w.length : w.thickness));
+    minY = Math.min(minY, w.y); maxY = Math.max(maxY, w.y + (w.orientation === "vertical" ? w.length : w.thickness));
+  });
+  
   placedModules.forEach(m => {
     minX = Math.min(minX, m.x); maxX = Math.max(maxX, m.x + m.w);
     minY = Math.min(minY, m.y); maxY = Math.max(maxY, m.y + m.h);
   });
+  
   furniture.forEach(f => {
     const fw = (f.width || 1.4) / CELL_M; const fd = (f.depth || 2.0) / CELL_M;
     minX = Math.min(minX, f.x - fw / 2); maxX = Math.max(maxX, f.x + fw / 2);
     minY = Math.min(minY, f.y - fd / 2); maxY = Math.max(maxY, f.y + fd / 2);
   });
-  walls.forEach(w => {
-    minX = Math.min(minX, w.x); maxX = Math.max(maxX, w.x + (w.orientation === "horizontal" ? w.length : w.thickness));
-    minY = Math.min(minY, w.y); maxY = Math.max(maxY, w.y + (w.orientation === "vertical" ? w.length : w.thickness));
-  });
-  if (placedModules.length === 0 && furniture.length === 0) { minX = 0; maxX = 10; minY = 0; maxY = 10; }
+  
+  if (placedModules.length === 0 && furniture.length === 0 && walls.length === 0) { minX = 0; maxX = 10; minY = 0; maxY = 10; }
 
   const gridWidth = Math.max(maxX - minX, 0) + 2;
   const gridHeight = Math.max(maxY - minY, 0) + 2;
@@ -76,6 +80,25 @@ export default function PrintFloorPlanModal({ placedModules = [], furniture = []
           srcY = (img.height - srcH) / 2;
         }
         ctx.drawImage(img, srcX, srcY, srcW, srcH, destX, destY, destW, destH);
+      };
+
+      // Helper to draw image with xMidYMid meet (fit without crop)
+      const drawImageMeet = (img, destX, destY, destW, destH) => {
+        if (!img) return;
+        const srcAspect = img.width / img.height;
+        const destAspect = destW / destH;
+        let finalW = destW, finalH = destH, offsetX = 0, offsetY = 0;
+        
+        if (srcAspect > destAspect) {
+          // Image is wider, fit to height
+          finalW = destH * srcAspect;
+          offsetX = (destW - finalW) / 2;
+        } else {
+          // Image is taller, fit to width
+          finalH = destW / srcAspect;
+          offsetY = (destH - finalH) / 2;
+        }
+        ctx.drawImage(img, destX + offsetX, destY + offsetY, finalW, finalH);
       };
 
       // Draw to canvas
@@ -162,7 +185,7 @@ export default function PrintFloorPlanModal({ placedModules = [], furniture = []
           ctx.translate(-fw / 2, -fd / 2);
 
           if (furnitureImages[idx]) {
-            drawImageSlice(furnitureImages[idx], 0, 0, fw, fd);
+            drawImageMeet(furnitureImages[idx], 0, 0, fw, fd);
           } else {
             ctx.fillStyle = '#FFB3A8';
             ctx.fillRect(0, 0, fw, fd);
