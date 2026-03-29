@@ -45,10 +45,10 @@ export default function PrintFloorPlanModal({ placedModules = [], furniture = []
       // Clone the preview to avoid capturing overlays
       const clonedContainer = previewContainer.cloneNode(true);
       document.body.appendChild(clonedContainer);
-      clonedContainer.style.position = 'fixed';
-      clonedContainer.style.top = '-9999px';
-      clonedContainer.style.left = '-9999px';
-      clonedContainer.style.visibility = 'hidden';
+      clonedContainer.style.position = 'absolute';
+      clonedContainer.style.top = '0';
+      clonedContainer.style.left = '0';
+      clonedContainer.style.visibility = 'visible';
       
       const canvas = await html2canvas(clonedContainer, {
         scale: 2,
