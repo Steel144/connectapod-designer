@@ -32,6 +32,7 @@ export default function PrintRouter({ mode, walls, placedModules, furniture = []
         onClose={onClose}
         siteAddress={siteAddress}
         screenshot={siteMapScreenshot}
+        printDetails={printDetails}
       />
     );
   }
