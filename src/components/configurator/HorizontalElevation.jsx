@@ -15,7 +15,7 @@ const HorizontalElevation = memo(function HorizontalElevation({
   if (layers.length === 0) return null;
 
   return (
-    <div style={{ display: "block", marginBottom: "40px" }}>
+    <div style={{ display: "block", marginBottom: "8px" }}>
       <div style={{ fontSize: "14px", fontWeight: "bold", color: "black", textTransform: "uppercase", letterSpacing: "0.05em", backgroundColor: "#fed7aa", padding: "8px 12px", borderRadius: "4px", width: "fit-content", marginLeft: "4px", marginBottom: "16px" }}>
         {label}
       </div>
