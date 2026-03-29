@@ -194,43 +194,44 @@ export default function PrintSiteMapModal({ onClose, placedModules, walls, siteA
               </p>
             </div>
 
-            {mapEmbedUrl && (
-              <div className="mb-8">
-                <h2 className="text-lg font-bold text-gray-800 mb-3">Site Location Map</h2>
-                <div className="border-2 border-gray-300 bg-white overflow-hidden" style={{ height: '300px' }}>
-                  <iframe
-                    src={mapEmbedUrl}
-                    title="Site Location Map"
-                    style={{ width: '100%', height: '100%', border: 'none' }}
-                    loading="eager"
-                  />
-                </div>
-                {siteAddress && (
-                  <p className="text-xs text-gray-500 mt-1 text-center">{siteAddress}</p>
+            <div className="grid grid-cols-2 gap-6 mb-6" style={{ minHeight: '400px' }}>
+              {/* Site Location Map */}
+              <div className="flex flex-col">
+                <h2 className="text-base font-bold text-gray-800 mb-2">Site Location</h2>
+                {mapEmbedUrl ? (
+                  <div className="border-2 border-gray-300 bg-white overflow-hidden flex-1">
+                    <iframe
+                      src={mapEmbedUrl}
+                      title="Site Location Map"
+                      style={{ width: '100%', height: '100%', minHeight: '360px', border: 'none' }}
+                      loading="eager"
+                    />
+                  </div>
+                ) : (
+                  <div className="border-2 border-gray-300 bg-gray-50 flex-1 flex items-center justify-center text-gray-400 text-sm">
+                    No site address set
+                  </div>
                 )}
               </div>
-            )}
 
-            {floorPlanOverlay && placedModules.length > 0 ? (
-               <div className="border-2 border-gray-300 bg-white p-8 flex items-center justify-center">
-                 <img
-                   src={floorPlanOverlay}
-                   alt="Floor Plan"
-                   style={{
-                     maxWidth: '100%',
-                     maxHeight: '300px',
-                     imageRendering: 'pixelated',
-                   }}
-                 />
-               </div>
-             ) : (
-              <div className="border-2 border-gray-300 bg-gray-50 p-8 text-center text-gray-500 min-h-96 flex items-center justify-center">
-                <div>
-                  <p className="text-lg font-semibold mb-2">Site Map Overlay</p>
-                  <p className="text-sm">No floor plan data available</p>
-                </div>
+              {/* Floor Plan */}
+              <div className="flex flex-col">
+                <h2 className="text-base font-bold text-gray-800 mb-2">Floor Plan</h2>
+                {floorPlanOverlay && placedModules.length > 0 ? (
+                  <div className="border-2 border-gray-300 bg-white flex-1 flex items-center justify-center p-4">
+                    <img
+                      src={floorPlanOverlay}
+                      alt="Floor Plan"
+                      style={{ maxWidth: '100%', maxHeight: '360px', imageRendering: 'pixelated' }}
+                    />
+                  </div>
+                ) : (
+                  <div className="border-2 border-gray-300 bg-gray-50 flex-1 flex items-center justify-center text-gray-400 text-sm">
+                    No floor plan data
+                  </div>
+                )}
               </div>
-            )}
+            </div>
 
             <div className="mt-6 grid grid-cols-2 gap-4 text-xs text-gray-600">
               <div>
