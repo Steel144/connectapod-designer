@@ -180,53 +180,52 @@ export default function QuoteGenerator({ placedModules, walls, open, onClose }) 
     doc.text(`Ref: QT-${Date.now().toString().slice(-6)}`, col2, y, { align: "right" });
     y += 10;
 
-    // Client info
+    // Client info box
     if (clientName || projectName || address || clientPhone || clientEmail) {
       const infoLines = [];
-      if (clientName) infoLines.push(`Client: ${clientName}`);
-      if (clientPhone) infoLines.push(`Phone: ${clientPhone}`);
-      if (clientEmail) infoLines.push(`Email: ${clientEmail}`);
-      if (address || city || postalCode) {
-        const addressStr = [address, city, postalCode].filter(Boolean).join(", ");
-        if (addressStr) infoLines.push(`Address: ${addressStr}`);
-      }
+      if (projectName) infoLines.push({ label: "Project", value: projectName, bold: true });
+      if (clientName) infoLines.push({ label: "Client", value: clientName });
+      if (clientPhone) infoLines.push({ label: "Phone", value: clientPhone });
+      if (clientEmail) infoLines.push({ label: "Email", value: clientEmail });
+      if (address) infoLines.push({ label: "Site Address", value: address });
       
-      const boxHeight = 8 + infoLines.length * 5;
-      doc.setFillColor(248, 248, 248);
+      const boxHeight = 10 + infoLines.length * 5.5;
+      doc.setFillColor(250, 250, 250);
       doc.rect(col1, y, pageW - 2 * margin, boxHeight, "F");
-      doc.setTextColor(30, 30, 30);
-      doc.setFontSize(8.5);
-      doc.setFont("helvetica", "normal");
+      doc.setDrawColor(220, 220, 220);
+      doc.setLineWidth(0.3);
+      doc.rect(col1, y, pageW - 2 * margin, boxHeight);
       
-      let infoY = y + 5;
-      infoLines.forEach(line => {
-        doc.text(line, col1 + 4, infoY);
-        infoY += 5;
+      let infoY = y + 6;
+      infoLines.forEach(item => {
+        doc.setTextColor(100, 100, 100);
+        doc.setFontSize(8);
+        doc.setFont("helvetica", "bold");
+        doc.text(item.label + ":", col1 + 5, infoY);
+        
+        doc.setTextColor(30, 30, 30);
+        doc.setFontSize(8.5);
+        doc.setFont("helvetica", item.bold ? "bold" : "normal");
+        doc.text(item.value, col1 + 32, infoY);
+        infoY += 5.5;
       });
       
-      if (projectName) {
-        doc.setFont("helvetica", "bold");
-        doc.text("Project:", col1 + 4, infoY);
-        doc.setFont("helvetica", "normal");
-        doc.text(projectName, col1 + 25, infoY);
-      }
-      
-      y += boxHeight + 6;
+      y += boxHeight + 8;
     }
 
     y += 4;
 
     // Section: Modules
     doc.setFillColor(241, 90, 34);
-    doc.rect(col1, y, pageW - 2 * margin, 7, "F");
+    doc.rect(col1, y, pageW - 2 * margin, 8, "F");
     doc.setTextColor(255, 255, 255);
     doc.setFontSize(9);
     doc.setFont("helvetica", "bold");
-    doc.text("MODULES", col1 + 3, y + 5);
-    doc.text("SQM", pageW - margin - 60, y + 5, { align: "right" });
-    doc.text("UNIT PRICE", pageW - margin - 20, y + 5, { align: "right" });
-    doc.text("TOTAL", col2, y + 5, { align: "right" });
-    y += 10;
+    doc.text("MODULES", col1 + 4, y + 5.5);
+    doc.text("SQM", pageW - margin - 62, y + 5.5, { align: "right" });
+    doc.text("UNIT PRICE", pageW - margin - 30, y + 5.5, { align: "right" });
+    doc.text("TOTAL", col2 - 3, y + 5.5, { align: "right" });
+    y += 11;
 
     // Group modules by label
     const moduleGroups = {};
@@ -242,39 +241,42 @@ export default function QuoteGenerator({ placedModules, walls, open, onClose }) 
     let rowAlt = false;
     Object.values(moduleGroups).forEach(g => {
       if (rowAlt) {
-        doc.setFillColor(252, 252, 252);
-        doc.rect(col1, y - 2, pageW - 2 * margin, 8, "F");
+        doc.setFillColor(248, 248, 248);
+        doc.rect(col1, y - 2.5, pageW - 2 * margin, 9, "F");
       }
       rowAlt = !rowAlt;
       const label = g.count > 1 ? `${g.label} ×${g.count}` : g.label;
-      doc.text(label, col1 + 2, y + 4);
-      doc.text(`${(g.sqm * g.count).toFixed(1)} m²`, pageW - margin - 60, y + 4, { align: "right" });
-      doc.text(`$${g.price.toLocaleString()}`, pageW - margin - 20, y + 4, { align: "right" });
-      doc.text(`$${(g.price * g.count).toLocaleString()}`, col2, y + 4, { align: "right" });
-      y += 8;
+      doc.text(label, col1 + 4, y + 4);
+      doc.text(`${(g.sqm * g.count).toFixed(1)} m²`, pageW - margin - 62, y + 4, { align: "right" });
+      doc.text(`$${g.price.toLocaleString()}`, pageW - margin - 30, y + 4, { align: "right" });
+      doc.text(`$${(g.price * g.count).toLocaleString()}`, col2 - 3, y + 4, { align: "right" });
+      y += 9;
     });
 
     // Modules subtotal
+    y += 1;
     doc.setDrawColor(200, 200, 200);
+    doc.setLineWidth(0.5);
     doc.line(col1, y, col2, y);
-    y += 5;
+    y += 6;
     doc.setFont("helvetica", "bold");
     doc.setFontSize(9);
-    doc.text("Modules Subtotal", col1 + 2, y + 3);
-    doc.text(`$${modulesTotal.toLocaleString()}`, col2, y + 3, { align: "right" });
-    y += 10;
+    doc.setTextColor(30, 30, 30);
+    doc.text("Modules Subtotal", col1 + 4, y);
+    doc.text(`$${modulesTotal.toLocaleString()}`, col2 - 3, y, { align: "right" });
+    y += 12;
 
     // Section: Walls
     if (walls.length > 0) {
       doc.setFillColor(241, 90, 34);
-      doc.rect(col1, y, pageW - 2 * margin, 7, "F");
+      doc.rect(col1, y, pageW - 2 * margin, 8, "F");
       doc.setTextColor(255, 255, 255);
       doc.setFont("helvetica", "bold");
       doc.setFontSize(9);
-      doc.text("WALL PANELS", col1 + 3, y + 5);
-      doc.text("FACE", pageW - margin - 40, y + 5, { align: "right" });
-      doc.text("TOTAL", col2, y + 5, { align: "right" });
-      y += 10;
+      doc.text("WALL PANELS", col1 + 4, y + 5.5);
+      doc.text("FACE", pageW - margin - 42, y + 5.5, { align: "right" });
+      doc.text("TOTAL", col2 - 3, y + 5.5, { align: "right" });
+      y += 11;
 
       const wallGroups = {};
       walls.forEach(w => {
@@ -289,56 +291,70 @@ export default function QuoteGenerator({ placedModules, walls, open, onClose }) 
       rowAlt = false;
       Object.values(wallGroups).forEach(g => {
         if (rowAlt) {
-          doc.setFillColor(252, 252, 252);
-          doc.rect(col1, y - 2, pageW - 2 * margin, 8, "F");
+          doc.setFillColor(248, 248, 248);
+          doc.rect(col1, y - 2.5, pageW - 2 * margin, 9, "F");
         }
         rowAlt = !rowAlt;
         const label = g.count > 1 ? `${g.label} ×${g.count}` : g.label;
-        doc.text(label, col1 + 2, y + 4);
-        doc.text(g.face, pageW - margin - 40, y + 4, { align: "right" });
-        doc.text(`$${(g.price * g.count).toLocaleString()}`, col2, y + 4, { align: "right" });
-        y += 8;
+        doc.text(label, col1 + 4, y + 4);
+        doc.text(g.face, pageW - margin - 42, y + 4, { align: "right" });
+        doc.text(`$${(g.price * g.count).toLocaleString()}`, col2 - 3, y + 4, { align: "right" });
+        y += 9;
       });
 
+      y += 1;
       doc.setDrawColor(200, 200, 200);
+      doc.setLineWidth(0.5);
       doc.line(col1, y, col2, y);
-      y += 5;
+      y += 6;
       doc.setFont("helvetica", "bold");
       doc.setFontSize(9);
       doc.setTextColor(30, 30, 30);
-      doc.text("Wall Panels Subtotal", col1 + 2, y + 3);
-      doc.text(`$${wallsTotal.toLocaleString()}`, col2, y + 3, { align: "right" });
+      doc.text("Wall Panels Subtotal", col1 + 4, y);
+      doc.text(`$${wallsTotal.toLocaleString()}`, col2 - 3, y, { align: "right" });
       y += 12;
     }
 
     // Grand total box
-    y += 4;
+    y += 2;
     doc.setFillColor(30, 30, 30);
-    doc.rect(col1, y, pageW - 2 * margin, 14, "F");
+    doc.rect(col1, y, pageW - 2 * margin, 16, "F");
     doc.setTextColor(255, 255, 255);
     doc.setFontSize(11);
     doc.setFont("helvetica", "bold");
-    doc.text("TOTAL ESTIMATE (excl. GST)", col1 + 4, y + 9.5);
-    doc.text(`$${grandTotal.toLocaleString()}`, col2 - 2, y + 9.5, { align: "right" });
-    y += 20;
+    doc.text("TOTAL ESTIMATE (excl. GST)", col1 + 5, y + 10.5);
+    doc.setFontSize(14);
+    doc.text(`$${grandTotal.toLocaleString()}`, col2 - 5, y + 10.5, { align: "right" });
+    y += 22;
 
     // Summary stats
-    doc.setTextColor(30, 30, 30);
-    doc.setFontSize(8.5);
+    doc.setTextColor(100, 100, 100);
+    doc.setFontSize(8);
     doc.setFont("helvetica", "normal");
-    doc.text(`Total Floor Area: ${totalSqm.toFixed(1)} m²  |  Modules: ${placedModules.length}  |  Wall Panels: ${walls.length}`, col1, y);
-    y += 12;
+    doc.text(`Total Floor Area: ${totalSqm.toFixed(1)} m²`, col1, y);
+    doc.text(`|`, (col1 + col2) / 2, y, { align: "center" });
+    doc.text(`Modules: ${placedModules.length}`, (col1 + col2) / 2 + 10, y);
+    doc.text(`|`, col2 - 35, y);
+    doc.text(`Wall Panels: ${walls.length}`, col2 - 25, y);
+    y += 14;
 
     // Footer
     doc.setDrawColor(241, 90, 34);
     doc.setLineWidth(0.5);
     doc.line(col1, y, col2, y);
-    y += 5;
-    doc.setTextColor(140, 140, 140);
+    y += 6;
+    doc.setTextColor(120, 120, 120);
     doc.setFontSize(7.5);
-    doc.text("This quote is indicative only and subject to final confirmation. Prices exclude GST, delivery, site prep and installation.", col1, y);
-    y += 5;
+    doc.setFont("helvetica", "italic");
+    doc.text("This estimate is indicative only and subject to final confirmation.", col1, y);
+    y += 4;
+    doc.text("Prices exclude GST, delivery, site preparation and installation.", col1, y);
+    y += 8;
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(100, 100, 100);
+    doc.setFontSize(7);
     doc.text(`© ${new Date().getFullYear()} connectapod. All rights reserved.`, col1, y);
+    doc.setTextColor(241, 90, 34);
     doc.text("www.connectapod.com", col2, y, { align: "right" });
 
     const filename = `connectapod-estimate-${projectName ? projectName.replace(/\s+/g, "-").toLowerCase() + "-" : ""}${Date.now().toString().slice(-6)}.pdf`;
