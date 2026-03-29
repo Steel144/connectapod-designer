@@ -10,17 +10,14 @@ export default function PrintSiteMapModal({ onClose, placedModules, walls, siteA
   const CANVAS_PX_PER_CELL = 20;
   const CELL_M = 0.6;
 
-  // Build a static map image URL using OpenStreetMap tiles via staticmap
-  const getStaticMapUrl = () => {
-    if (!coordinates) return null;
-    const lat = coordinates[0] + (positionOffset?.lat || 0);
-    const lng = coordinates[1] + (positionOffset?.lng || 0);
-    const zoom = Math.min(mapZoom, 19);
-    // Use staticmap.net (free, no key required)
-    return `https://staticmap.openstreetmap.de/staticmap.php?center=${lat},${lng}&zoom=${zoom}&size=800x400&maptype=osm&markers=${lat},${lng},red-pushpin`;
-  };
+  const lat = coordinates ? coordinates[0] + (positionOffset?.lat || 0) : null;
+  const lng = coordinates ? coordinates[1] + (positionOffset?.lng || 0) : null;
+  const zoom = coordinates ? Math.min(mapZoom, 19) : null;
 
-  const staticMapUrl = getStaticMapUrl();
+  // OpenStreetMap embed URL (always works in browser, no key needed)
+  const mapEmbedUrl = lat && lng
+    ? `https://www.openstreetmap.org/export/embed.html?bbox=${lng - 0.002},${lat - 0.001},${lng + 0.002},${lat + 0.001}&layer=mapnik&marker=${lat},${lng}`
+    : null;
 
   // Generate floor plan overlay from placed modules
   useEffect(() => {
@@ -197,21 +194,20 @@ export default function PrintSiteMapModal({ onClose, placedModules, walls, siteA
               </p>
             </div>
 
-            {staticMapUrl && (
+            {mapEmbedUrl && (
               <div className="mb-8">
                 <h2 className="text-lg font-bold text-gray-800 mb-3">Site Location Map</h2>
-                <div className="border-2 border-gray-300 bg-white flex items-center justify-center">
-                  <img
-                    src={staticMapUrl}
-                    alt="Site Map"
-                    crossOrigin="anonymous"
-                    style={{
-                      width: '100%',
-                      maxHeight: '300px',
-                      objectFit: 'cover',
-                    }}
+                <div className="border-2 border-gray-300 bg-white overflow-hidden" style={{ height: '300px' }}>
+                  <iframe
+                    src={mapEmbedUrl}
+                    title="Site Location Map"
+                    style={{ width: '100%', height: '100%', border: 'none' }}
+                    loading="eager"
                   />
                 </div>
+                {siteAddress && (
+                  <p className="text-xs text-gray-500 mt-1 text-center">{siteAddress}</p>
+                )}
               </div>
             )}
 
