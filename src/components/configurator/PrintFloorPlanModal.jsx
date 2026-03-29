@@ -42,12 +42,15 @@ export default function PrintFloorPlanModal({ placedModules = [], furniture = []
       const svgEl = svgRef.current;
       if (!svgEl) throw new Error('SVG element not found');
       
-      // Use html2canvas to capture SVG with rendered images
-      const canvas = await html2canvas(svgEl, {
+      // Clone SVG and remove problematic images to speed up rendering
+      const svgClone = svgEl.cloneNode(true);
+      svgClone.querySelectorAll('image').forEach(img => img.remove());
+      
+      // Render to canvas with reduced scale
+      const canvas = await html2canvas(svgClone, {
         backgroundColor: '#ffffff',
-        scale: 2,
+        scale: 1.5,
         useCORS: true,
-        allowTaint: true,
         logging: false
       });
       
