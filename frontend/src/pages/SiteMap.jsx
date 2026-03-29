@@ -118,28 +118,28 @@ export default function SiteMap() {
 
   // Load address from print details on mount and auto-geocode (only if no saved coordinates)
   useEffect(() => {
-    const savedDetails = localStorage.getItem('connectapod_save_details');
+    const savedDetails = localStorage.getItem('connectapod_print_details');
     if (savedDetails) {
       try {
         const details = JSON.parse(savedDetails);
         // Restore form fields
-        if (details.projectName || details.clientName || details.address) {
+        if (details.projectName || details.clientName || details.siteAddress) {
           setSaveDetails(details);
         }
         // Always populate the address field from saved details
-        if (details.address) {
-          setAddress(details.address);
+        if (details.siteAddress) {
+          setAddress(details.siteAddress);
         }
         // If we already have coordinates from localStorage, skip geocoding
         const savedCoords = localStorage.getItem('sitemap_coordinates');
         if (savedCoords) return;
 
         // Auto-geocode the saved address
-        if (details.address) {
+        if (details.siteAddress) {
           setLoading(true);
           fetch(
             `https://nominatim.openstreetmap.org/search?` +
-            `q=${encodeURIComponent(details.address)}` +
+            `q=${encodeURIComponent(details.siteAddress)}` +
             `&format=json&limit=1&countrycodes=nz`,
             {
               headers: { 'User-Agent': 'Connectapod/1.0' }
@@ -589,23 +589,40 @@ export default function SiteMap() {
     });
   }, [design]);
 
-  // Calculate overlay bounds based on design dimensions
+  // Calculate overlay bounds based on design dimensions with accurate scaling
   const getOverlayBounds = () => {
     if (!coordinates || !design) return null;
     const dims = getDesignDimensions();
     if (!dims) return null;
     
-    // Convert meters to approximate degrees (rough conversion for display)
-    // 1 degree ≈ 111 km at equator
-    const latDelta = (dims.height / 1000) / 111;
-    const lngDelta = (dims.width / 1000) / 111;
+    // Apply the plan scale multiplier
+    const scaledWidth = (dims.width * planScaleMultiplier) / 1000; // meters to km
+    const scaledHeight = (dims.height * planScaleMultiplier) / 1000; // meters to km
     
     const lat = coordinates[0];
     const lng = coordinates[1];
     
+    // More accurate conversion considering latitude
+    // At latitude, 1 degree longitude = 111.320 * cos(latitude) km
+    const latInRad = (lat * Math.PI) / 180;
+    const kmPerDegreeLat = 111.320; // km per degree latitude (constant)
+    const kmPerDegreeLng = 111.320 * Math.cos(latInRad); // km per degree longitude (varies with latitude)
+    
+    // Calculate deltas in degrees
+    const latDelta = scaledHeight / kmPerDegreeLat;
+    const lngDelta = scaledWidth / kmPerDegreeLng;
+    
+    // Apply rotation and position offset
+    const offsetLat = (positionOffset.lat / 1000) / kmPerDegreeLat;
+    const offsetLng = (positionOffset.lng / 1000) / kmPerDegreeLng;
+    
+    const centerLat = lat + offsetLat;
+    const centerLng = lng + offsetLng;
+    
+    // Return bounds [southwest, northeast]
     return [
-      [lat + latDelta / 2, lng - lngDelta / 2],
-      [lat - latDelta / 2, lng + lngDelta / 2]
+      [centerLat - latDelta / 2, centerLng - lngDelta / 2], // Southwest corner
+      [centerLat + latDelta / 2, centerLng + lngDelta / 2]  // Northeast corner
     ];
   };
 
