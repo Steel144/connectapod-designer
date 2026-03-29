@@ -58,7 +58,7 @@ function MapSync({ center, zoom }) {
   return null;
 }
 
-export default function SiteMapView({ design, siteAddress, setSiteAddress, coordinates, setCoordinates, saveDetails, setSaveDetails }) {
+export default function SiteMapView({ design, siteAddress, setSiteAddress, coordinates, setCoordinates, saveDetails, setSaveDetails, onFloorPlanRendered }) {
   const [mapKey, setMapKey] = useState(() => localStorage.getItem('sitemap_mapkey') ?? 'default');
   const [loading, setLoading] = useState(false);
   const [floorPlanOverlay, setFloorPlanOverlay] = useState(null);
@@ -310,7 +310,9 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
         ctx.restore();
       });
 
-      setFloorPlanOverlay(canvas.toDataURL());
+      const dataUrl = canvas.toDataURL();
+      setFloorPlanOverlay(dataUrl);
+      if (onFloorPlanRendered) onFloorPlanRendered(dataUrl);
     });
   }, [design]);
 

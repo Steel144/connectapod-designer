@@ -168,6 +168,7 @@ export default function Configurator() {
   const navBarRef = useRef(null);
   const siteMapViewRef = useRef(null);
   const [navBarHeight, setNavBarHeight] = useState(0);
+  const [siteMapFloorPlanImage, setSiteMapFloorPlanImage] = useState(null);
 
   useEffect(() => {
     if (!navBarRef.current) return;
@@ -1012,7 +1013,7 @@ export default function Configurator() {
   };
 
   if (printMode) {
-    return <PrintRouter mode={printMode} walls={walls} placedModules={placedModules} furniture={furniture} customWalls={customWalls} printDetails={printDetails} onClose={() => setPrintMode(null)} showLabels={showLabels} showFurniture={showFurniture} showPhotoImages={showPhotoImages} showDimensions={showDimensions} siteAddress={siteAddress} siteMapViewElement={siteMapViewRef.current} />;
+    return <PrintRouter mode={printMode} walls={walls} placedModules={placedModules} furniture={furniture} customWalls={customWalls} printDetails={printDetails} onClose={() => setPrintMode(null)} showLabels={showLabels} showFurniture={showFurniture} showPhotoImages={showPhotoImages} showDimensions={showDimensions} siteAddress={siteAddress} siteMapFloorPlanImage={siteMapFloorPlanImage} />;
   }
 
   return (
@@ -1213,6 +1214,7 @@ export default function Configurator() {
               setSiteAddress={setSiteAddress}
               coordinates={siteCoordinates}
               setCoordinates={setSiteCoordinates}
+              onFloorPlanRendered={setSiteMapFloorPlanImage}
               saveDetails={(() => {
                 try {
                   return JSON.parse(localStorage.getItem("connectapod_save_details")) || { projectName: '', clientName: '', address: '' };
