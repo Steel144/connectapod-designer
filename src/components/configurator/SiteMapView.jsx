@@ -10,6 +10,7 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
 });
 
+import leafletImage from 'leaflet-image';
 import { Input } from '@/components/ui/input';
 import { Loader2, X } from 'lucide-react';
 import { toast } from 'sonner';
@@ -166,57 +167,29 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
     });
   }, [design]);
 
-  // Capture the map view by reading Leaflet tile positions from the DOM
+  // Capture the map using leaflet-image, then composite the floor plan overlay
   const captureMapScreenshot = useCallback(async () => {
     const map = mapRef.current;
     if (!map) return null;
 
-    const mapContainer = map.getContainer();
-    const mapSize = map.getSize(); // Leaflet's internal pixel size (half of visual due to CSS scale(2))
-    const W = mapSize.x;
-    const H = mapSize.y;
+    // Get the map canvas from leaflet-image
+    const mapCanvas = await new Promise((resolve, reject) => {
+      leafletImage(map, (err, canvas) => {
+        if (err) reject(err);
+        else resolve(canvas);
+      });
+    });
+
+    const W = mapCanvas.width;
+    const H = mapCanvas.height;
 
     const outCanvas = document.createElement('canvas');
     outCanvas.width = W;
     outCanvas.height = H;
     const ctx = outCanvas.getContext('2d');
-    ctx.fillStyle = '#2a2a2a';
-    ctx.fillRect(0, 0, W, H);
+    ctx.drawImage(mapCanvas, 0, 0);
 
-    // Walk up from tile to mapContainer summing only transform offsets (Leaflet uses transforms, not left/top on panes)
-    const getTileOffset = (tileEl) => {
-      let ox = 0, oy = 0;
-      let el = tileEl.parentElement;
-      while (el && el !== mapContainer) {
-        const t = el.style.transform;
-        if (t) {
-          const m = t.match(/translate3d\(\s*([-\d.]+)px,\s*([-\d.]+)px/);
-          if (m) { ox += parseFloat(m[1]); oy += parseFloat(m[2]); }
-        }
-        el = el.parentElement;
-      }
-      return { ox, oy };
-    };
-
-    const tileImgs = Array.from(mapContainer.querySelectorAll('.leaflet-tile'));
-    const drawPromises = tileImgs.map(tile => new Promise((resolve) => {
-      if (!tile.src) { resolve(); return; }
-      const tileLeft = parseFloat(tile.style.left) || 0;
-      const tileTop = parseFloat(tile.style.top) || 0;
-      const { ox, oy } = getTileOffset(tile);
-      const dx = tileLeft + ox;
-      const dy = tileTop + oy;
-
-      const img = new window.Image();
-      img.crossOrigin = 'anonymous';
-      img.onload = () => { ctx.drawImage(img, dx, dy, 256, 256); resolve(); };
-      img.onerror = () => resolve();
-      img.src = tile.src;
-    }));
-
-    await Promise.all(drawPromises);
-
-    // Floor plan overlay — centered, same scale as visual
+    // Floor plan overlay — centered, same scale as the visual overlay
     const fp = floorPlanOverlayRef.current;
     if (fp && design?.grid?.length > 0) {
       const fpImg = new window.Image();
