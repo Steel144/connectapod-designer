@@ -183,11 +183,12 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
     const W = mapCanvas.width;
     const H = mapCanvas.height;
 
-    const outCanvas = document.createElement('canvas');
-    outCanvas.width = W;
-    outCanvas.height = H;
-    const ctx = outCanvas.getContext('2d');
-    ctx.drawImage(mapCanvas, 0, 0);
+    // Work on an intermediate canvas first (map + floor plan at natural orientation)
+    const midCanvas = document.createElement('canvas');
+    midCanvas.width = W;
+    midCanvas.height = H;
+    const midCtx = midCanvas.getContext('2d');
+    midCtx.drawImage(mapCanvas, 0, 0);
 
     // Floor plan overlay — position at the map's center pixel, scaled correctly
     const fp = floorPlanOverlayRef.current;
@@ -223,11 +224,21 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
       const dh = fpImg.naturalHeight * scale;
       const cx = W / 2 + offsetX;
       const cy = H / 2 + offsetY;
-      ctx.drawImage(fpImg, cx - dw / 2, cy - dh / 2, dw, dh);
+      midCtx.drawImage(fpImg, cx - dw / 2, cy - dh / 2, dw, dh);
     }
 
+    // Now apply rotation to the final output canvas
+    const rad = (overlayRotation * Math.PI) / 180;
+    const outCanvas = document.createElement('canvas');
+    outCanvas.width = W;
+    outCanvas.height = H;
+    const ctx = outCanvas.getContext('2d');
+    ctx.translate(W / 2, H / 2);
+    ctx.rotate(rad);
+    ctx.drawImage(midCanvas, -W / 2, -H / 2);
+
     return outCanvas.toDataURL('image/png');
-  }, [design, coordinates, mapZoom, planScaleMultiplier, positionOffset]);
+  }, [design, coordinates, mapZoom, planScaleMultiplier, positionOffset, overlayRotation]);
 
   // Expose screenshot capture to parent
   useEffect(() => {
