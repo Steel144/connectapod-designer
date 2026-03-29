@@ -21,7 +21,11 @@ export default defineConfig({
       '.preview.emergentcf.cloud',
       'localhost'
     ],
-    hmr: false, // Disable HMR to prevent page reloads in preview
+    hmr: false,
+    watch: {
+      ignored: ['**/node_modules/**', '**/.git/**'],
+      usePolling: false,
+    },
     proxy: {
       '/api': {
         target: process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001',
