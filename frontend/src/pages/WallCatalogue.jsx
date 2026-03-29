@@ -1,4 +1,4 @@
-import React, { useState, useRef, useMemo } from "react";
+import React, { useState, useRef, useMemo, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { ChevronLeft, Pencil, Upload, X, Loader2, Plus, Trash2, Printer, Copy } from "lucide-react";
@@ -21,6 +21,14 @@ const widthColors = {
 };
 
 export default function WallCatalogue() {
+  // Track mount/unmount to detect if component is being destroyed
+  useEffect(() => {
+    console.log('[WallCatalogue] Component MOUNTED');
+    return () => {
+      console.log('[WallCatalogue] Component UNMOUNTED - this should NOT happen unless you navigate away');
+    };
+  }, []);
+
   const [search, setSearch] = useState("");
   const [activeGroup, setActiveGroup] = useState("all");
   const [editMode, setEditMode] = useState(false);

@@ -10,22 +10,15 @@ const DEFAULT_ADMIN_USER = {
 };
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(DEFAULT_ADMIN_USER);
-  const [isLoadingAuth, setIsLoadingAuth] = useState(false);
-  const [isLoadingPublicSettings, setIsLoadingPublicSettings] = useState(false);
-  const [authError, setAuthError] = useState(null);
+  const [isLoadingAuth] = useState(false);
+  const [isLoadingPublicSettings] = useState(false);
+  const [authError] = useState(null);
 
-  // Ensure user is always set to admin
-  useEffect(() => {
-    if (!user || user.role !== 'admin') {
-      setUser(DEFAULT_ADMIN_USER);
-    }
-  }, [user]);
-
+  // Always use the default admin user - no state changes, no re-renders
   return (
     <AuthContext.Provider
       value={{
-        user: DEFAULT_ADMIN_USER, // Always return admin user
+        user: DEFAULT_ADMIN_USER,
         isLoadingAuth,
         isLoadingPublicSettings,
         authError,
