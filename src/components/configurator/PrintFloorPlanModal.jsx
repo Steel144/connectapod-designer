@@ -42,21 +42,22 @@ export default function PrintFloorPlanModal({ placedModules = [], furniture = []
       const svgEl = svgRef.current;
       if (!svgEl) throw new Error('SVG element not found');
       
-      // Convert SVG to data URL directly
+      // Convert SVG to data URL
       const svgString = new XMLSerializer().serializeToString(svgEl);
       const blob = new Blob([svgString], { type: 'image/svg+xml' });
       const url = URL.createObjectURL(blob);
       
-      // Create image from SVG
-      const img = new window.Image();
-      img.onload = async () => {
-        try {
-          // Draw to canvas
+      // Load SVG as image and convert to canvas
+      await new Promise((resolve, reject) => {
+        const img = new window.Image();
+        img.onload = () => {
           const canvas = document.createElement('canvas');
           canvas.width = svgEl.clientWidth * 2;
           canvas.height = svgEl.clientHeight * 2;
           const ctx = canvas.getContext('2d');
           ctx.scale(2, 2);
+          ctx.fillStyle = 'white';
+          ctx.fillRect(0, 0, canvas.width / 2, canvas.height / 2);
           ctx.drawImage(img, 0, 0);
           
           const screenshot = canvas.toDataURL('image/png');
@@ -67,79 +68,66 @@ export default function PrintFloorPlanModal({ placedModules = [], furniture = []
           const pageWidth = pdf.internal.pageSize.getWidth();
           const pageHeight = pdf.internal.pageSize.getHeight();
 
-          // Add logo
-          const logoImg = new window.Image();
-          logoImg.src = LOGO_URL;
-          logoImg.onload = () => {
-            const logoH = 14;
-            const logoW = (logoImg.width / logoImg.height) * logoH || 40;
-            pdf.addImage(logoImg, 'PNG', 7, 3, logoW, logoH);
-            
-            // Text content
-            pdf.setFontSize(9); pdf.setTextColor(241, 90, 34); pdf.setFont(undefined, 'bold');
-            pdf.text('www.connectapod.co.nz', pageWidth / 2, 8, { align: 'center' });
-            pdf.setFontSize(7); pdf.setTextColor(136, 136, 136); pdf.setFont(undefined, 'normal');
-            pdf.text('hello@connectapod.co.nz · 022 396 2657', pageWidth / 2, 13, { align: 'center' });
-            pdf.setFontSize(16); pdf.setTextColor(136, 136, 136); pdf.setFont(undefined, 'bold');
-            pdf.text('Floor Plan', pageWidth - 7, 13, { align: 'right' });
-            pdf.setDrawColor(241, 90, 34); pdf.setLineWidth(0.6);
-            pdf.line(7, 20, pageWidth - 7, 20);
+          // Text content
+          pdf.setFontSize(9); pdf.setTextColor(241, 90, 34); pdf.setFont(undefined, 'bold');
+          pdf.text('www.connectapod.co.nz', pageWidth / 2, 8, { align: 'center' });
+          pdf.setFontSize(7); pdf.setTextColor(136, 136, 136); pdf.setFont(undefined, 'normal');
+          pdf.text('hello@connectapod.co.nz · 022 396 2657', pageWidth / 2, 13, { align: 'center' });
+          pdf.setFontSize(16); pdf.setTextColor(136, 136, 136); pdf.setFont(undefined, 'bold');
+          pdf.text('Floor Plan', pageWidth - 7, 13, { align: 'right' });
+          pdf.setDrawColor(241, 90, 34); pdf.setLineWidth(0.6);
+          pdf.line(7, 20, pageWidth - 7, 20);
 
-            // Add floor plan image
-            const footerH = 20;
-            const imgAreaTop = 22;
-            const imgAreaBottom = pageHeight - footerH - 2;
-            const imgAreaW = pageWidth - 14;
-            const imgAreaH = imgAreaBottom - imgAreaTop;
-            const scale2 = Math.min(imgAreaW / canvas.width, imgAreaH / canvas.height);
-            const drawW = canvas.width * scale2;
-            const drawH = canvas.height * scale2;
-            const imgX = (pageWidth - drawW) / 2;
-            pdf.addImage(screenshot, 'PNG', imgX, imgAreaTop, drawW, drawH);
+          // Add floor plan image
+          const footerH = 20;
+          const imgAreaTop = 22;
+          const imgAreaBottom = pageHeight - footerH - 2;
+          const imgAreaW = pageWidth - 14;
+          const imgAreaH = imgAreaBottom - imgAreaTop;
+          const scale2 = Math.min(imgAreaW / canvas.width, imgAreaH / canvas.height);
+          const drawW = canvas.width * scale2;
+          const drawH = canvas.height * scale2;
+          const imgX = (pageWidth - drawW) / 2;
+          pdf.addImage(screenshot, 'PNG', imgX, imgAreaTop, drawW, drawH);
 
-            // Footer
-            const ftY = pageHeight - footerH;
-            pdf.setDrawColor(241, 90, 34); pdf.setLineWidth(1.2);
-            pdf.line(7, ftY, pageWidth - 7, ftY);
+          // Footer
+          const ftY = pageHeight - footerH;
+          pdf.setDrawColor(241, 90, 34); pdf.setLineWidth(1.2);
+          pdf.line(7, ftY, pageWidth - 7, ftY);
 
-            const clientInfo = [printDetails.clientName, printDetails.email, printDetails.phone].filter(Boolean).join(' · ');
-            const cols = [
-              { label: 'Project', value: printDetails.projectName || '—', x: 7, w: 70 },
-              { label: 'Client', value: clientInfo || '—', x: 77, w: 70 },
-              { label: 'Address', value: printDetails.address || '—', x: 147, w: 80 },
-              { label: 'Date', value: new Date().toLocaleDateString('en-NZ'), x: 227, w: 35 },
-              { label: 'Scale', value: '1:100', x: 262, w: 28 },
-            ];
+          const clientInfo = [printDetails.clientName, printDetails.email, printDetails.phone].filter(Boolean).join(' · ');
+          const cols = [
+            { label: 'Project', value: printDetails.projectName || '—', x: 7, w: 70 },
+            { label: 'Client', value: clientInfo || '—', x: 77, w: 70 },
+            { label: 'Address', value: printDetails.address || '—', x: 147, w: 80 },
+            { label: 'Date', value: new Date().toLocaleDateString('en-NZ'), x: 227, w: 35 },
+            { label: 'Scale', value: '1:100', x: 262, w: 28 },
+          ];
 
-            cols.forEach((col, i) => {
-              if (i > 0) { pdf.setDrawColor(241, 90, 34); pdf.setLineWidth(0.3); pdf.line(col.x - 1, ftY, col.x - 1, pageHeight - 2); }
-              pdf.setFontSize(6); pdf.setTextColor(241, 90, 34); pdf.setFont(undefined, 'bold');
-              pdf.text(col.label.toUpperCase(), col.x + 2, ftY + 5);
-              pdf.setFontSize(7); pdf.setTextColor(51, 51, 51); pdf.setFont(undefined, 'normal');
-              pdf.text(String(col.value), col.x + 2, ftY + 11, { maxWidth: col.w - 4 });
-            });
+          cols.forEach((col, i) => {
+            if (i > 0) { pdf.setDrawColor(241, 90, 34); pdf.setLineWidth(0.3); pdf.line(col.x - 1, ftY, col.x - 1, pageHeight - 2); }
+            pdf.setFontSize(6); pdf.setTextColor(241, 90, 34); pdf.setFont(undefined, 'bold');
+            pdf.text(col.label.toUpperCase(), col.x + 2, ftY + 5);
+            pdf.setFontSize(7); pdf.setTextColor(51, 51, 51); pdf.setFont(undefined, 'normal');
+            pdf.text(String(col.value), col.x + 2, ftY + 11, { maxWidth: col.w - 4 });
+          });
 
-            pdf.setFontSize(6); pdf.setTextColor(0, 0, 0); pdf.setFont(undefined, 'bold');
-            pdf.text(`© ${new Date().getFullYear()} Connectapod Ltd.`, pageWidth - 9, pageHeight - 3, { align: 'right' });
+          pdf.setFontSize(6); pdf.setTextColor(0, 0, 0); pdf.setFont(undefined, 'bold');
+          pdf.text(`© ${new Date().getFullYear()} Connectapod Ltd.`, pageWidth - 9, pageHeight - 3, { align: 'right' });
 
-            pdf.save('floor-plan.pdf');
-            setGenerating(false);
-          };
-        } catch (error) {
-          console.error('PDF error:', error);
-          alert('Failed to generate PDF');
-          setGenerating(false);
-        }
-      };
-      img.onerror = () => {
-        URL.revokeObjectURL(url);
-        alert('Failed to load SVG');
-        setGenerating(false);
-      };
-      img.src = url;
+          pdf.save('floor-plan.pdf');
+          resolve();
+        };
+        img.onerror = () => {
+          URL.revokeObjectURL(url);
+          reject(new Error('Failed to load SVG'));
+        };
+        img.src = url;
+      });
     } catch (error) {
-      console.error('SVG conversion error:', error);
-      alert('Failed to convert floor plan');
+      console.error('PDF error:', error);
+      alert('Failed to generate PDF: ' + (error?.message || 'Unknown error'));
+    } finally {
       setGenerating(false);
     }
   };
