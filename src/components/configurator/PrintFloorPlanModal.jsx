@@ -158,7 +158,7 @@ export default function PrintFloorPlanModal({ placedModules = [], furniture = []
                       <g transform={t}>
                         <rect x={0} y={0} width={w} height={h} fill="white" stroke="#111" strokeWidth="2" />
                         {showPhotoImages && mod.floorPlanImage && (
-                          <image x={0} y={0} width={w} height={h} href={mod.floorPlanImage} preserveAspectRatio="xMidYMid slice" />
+                          <image x={0} y={0} width={w} height={h} href={mod.floorPlanImage} preserveAspectRatio="xMidYMid meet" />
                         )}
                       </g>
                       <g transform={t}>
