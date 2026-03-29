@@ -9,36 +9,27 @@ export default function PrintSiteMapModal({ onClose, siteAddress, screenshot }) 
     if (!screenshot) return;
     setGenerating(true);
     try {
-      const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
-      const pageWidth = pdf.internal.pageSize.getWidth();
-      const pageHeight = pdf.internal.pageSize.getHeight();
-
-      // Header bar
-      pdf.setFillColor(241, 90, 34);
-      pdf.rect(0, 0, pageWidth, 18, 'F');
-      pdf.setTextColor(255, 255, 255);
-      pdf.setFontSize(16);
-      pdf.text('SITE PLAN', 14, 12);
-      if (siteAddress) {
-        pdf.setFontSize(9);
-        pdf.text(siteAddress, pageWidth - 14, 12, { align: 'right' });
-      }
-
-      // Load image to get natural dimensions
+      // Load image to get natural dimensions and determine orientation
       const img = new window.Image();
       img.src = screenshot;
       await new Promise(resolve => { img.onload = resolve; img.onerror = resolve; });
 
-      const imgMaxW = pageWidth - 14;
-      const imgMaxH = pageHeight - 26;
-      const scale = Math.min(imgMaxW / (img.naturalWidth || 800), imgMaxH / (img.naturalHeight || 600));
-      const imgW = (img.naturalWidth || 800) * scale;
-      const imgH = (img.naturalHeight || 600) * scale;
-      pdf.addImage(screenshot, 'PNG', (pageWidth - imgW) / 2, 20, imgW, imgH);
+      const imgW = img.naturalWidth || 800;
+      const imgH = img.naturalHeight || 600;
+      const orientation = imgW >= imgH ? 'landscape' : 'portrait';
 
-      pdf.setFontSize(7);
-      pdf.setTextColor(150, 150, 150);
-      pdf.text(`Generated: ${new Date().toLocaleString('en-NZ')}`, pageWidth / 2, pageHeight - 3, { align: 'center' });
+      const pdf = new jsPDF({ orientation, unit: 'mm', format: 'a4' });
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+
+      // Scale image to fill the entire page
+      const scale = Math.min(pageWidth / imgW, pageHeight / imgH);
+      const drawW = imgW * scale;
+      const drawH = imgH * scale;
+      const x = (pageWidth - drawW) / 2;
+      const y = (pageHeight - drawH) / 2;
+
+      pdf.addImage(screenshot, 'PNG', x, y, drawW, drawH);
       pdf.save('site-plan.pdf');
     } finally {
       setGenerating(false);
