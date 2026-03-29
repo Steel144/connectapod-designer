@@ -10,7 +10,7 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
 });
 
-import leafletImage from 'leaflet-image';
+import html2canvas from 'html2canvas';
 import { Input } from '@/components/ui/input';
 import { Loader2, X } from 'lucide-react';
 import { toast } from 'sonner';
@@ -167,74 +167,17 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
     });
   }, [design]);
 
-  // Capture the map using leaflet-image, then composite the floor plan overlay
+  // Capture the map by screenshotting the actual visible map container
   const captureMapScreenshot = useCallback(async () => {
-    const map = mapRef.current;
-    if (!map) return null;
-
-    // Get the map canvas from leaflet-image
-    const mapCanvas = await new Promise((resolve, reject) => {
-      leafletImage(map, (err, canvas) => {
-        if (err) reject(err);
-        else resolve(canvas);
-      });
+    if (!mapContainerRef.current) return null;
+    const canvas = await html2canvas(mapContainerRef.current, {
+      useCORS: true,
+      allowTaint: true,
+      scale: 1,
+      logging: false,
     });
-
-    const W = mapCanvas.width;
-    const H = mapCanvas.height;
-
-    const outCanvas = document.createElement('canvas');
-    outCanvas.width = W;
-    outCanvas.height = H;
-    const ctx = outCanvas.getContext('2d');
-    ctx.drawImage(mapCanvas, 0, 0);
-
-    // Floor plan overlay — position at the map's center pixel, scaled correctly
-    const fp = floorPlanOverlayRef.current;
-    if (fp && design?.grid?.length > 0 && coordinates) {
-      const fpImg = new window.Image();
-      fpImg.src = fp;
-      await new Promise(r => { fpImg.onload = r; fpImg.onerror = r; });
-
-      // Convert the adjusted center lat/lng to a pixel position within the leaflet-image canvas
-      const adjustedCenter = L.latLng(
-        coordinates[0] + positionOffset.lat,
-        coordinates[1] + positionOffset.lng
-      );
-      const mapCenter = map.getCenter();
-      const zoom = map.getZoom();
-
-      // Get pixel positions at current zoom
-      const centerPx = map.project(mapCenter, zoom);
-      const overlayPx = map.project(adjustedCenter, zoom);
-
-      // Offset from canvas center
-      const offsetX = overlayPx.x - centerPx.x;
-      const offsetY = overlayPx.y - centerPx.y;
-
-      // leaflet-image captures at Leaflet's internal size (half visual due to CSS scale(2))
-      // so floor plan scale must also be halved to match
-      const METRES_PER_PX_AT_ZOOM0 = 78271.52;
-      const lat = coordinates[0];
-      const metresToPx = Math.pow(2, zoom) / (METRES_PER_PX_AT_ZOOM0 * Math.cos(lat * Math.PI / 180));
-      const scale = (metresToPx / (CANVAS_PX_PER_CELL / CELL_M)) * planScaleMultiplier / CSS_SCALE;
-
-      const dw = fpImg.naturalWidth * scale;
-      const dh = fpImg.naturalHeight * scale;
-      const cx = W / 2 + offsetX;
-      const cy = H / 2 + offsetY;
-
-      // Rotate the floor plan overlay to match the visual rotation
-      const rad = (overlayRotation * Math.PI) / 180;
-      ctx.save();
-      ctx.translate(cx, cy);
-      ctx.rotate(rad);
-      ctx.drawImage(fpImg, -dw / 2, -dh / 2, dw, dh);
-      ctx.restore();
-    }
-
-    return outCanvas.toDataURL('image/png');
-  }, [design, coordinates, mapZoom, planScaleMultiplier, positionOffset, overlayRotation]);
+    return canvas.toDataURL('image/png');
+  }, []);
 
   // Expose screenshot capture to parent
   useEffect(() => {
