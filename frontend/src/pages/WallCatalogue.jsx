@@ -45,8 +45,8 @@ export default function WallCatalogue() {
   const { data: allWalls = [], isLoading } = useQuery({
     queryKey: ["wallEntries"],
     queryFn: () => base44.entities.WallEntry.list(),
-    staleTime: 0, // Always fetch fresh data
-    cacheTime: 0,  // Don't cache
+    staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
+    cacheTime: 10 * 60 * 1000, // Keep in cache for 10 minutes
   });
 
   const { data: deletedWalls = [] } = useQuery({
