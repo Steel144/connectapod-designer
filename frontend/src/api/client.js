@@ -1,4 +1,6 @@
-const API_BASE_URL = import.meta.env.REACT_APP_BACKEND_URL || 'http://localhost:8001/api';
+const API_BASE_URL = import.meta.env.REACT_APP_BACKEND_URL ? 
+  `${import.meta.env.REACT_APP_BACKEND_URL}/api` : 
+  '/api'; // Use relative path for proxy
 
 class APIClient {
   constructor(baseURL) {

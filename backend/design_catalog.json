@@ -1,0 +1,241 @@
+[
+  {
+    "id": "studio-sleepout-30",
+    "name": "Studio Sleepout 30sqm",
+    "slug": "studio-sleepout-30sqm",
+    "description": "Compact studio perfect for home office, teenage retreat, or Airbnb rental. Features open-plan living with kitchenette and bathroom.",
+    "heroImage": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800",
+    "gallery": [
+      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800",
+      "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800"
+    ],
+    "size_sqm": 30,
+    "width_m": 5,
+    "depth_m": 6,
+    "bedrooms": 0,
+    "bathrooms": 1,
+    "starting_price": 65000,
+    "use_cases": ["home_office", "rental_income", "guest_accommodation"],
+    "categories": ["studio", "minor_dwelling"],
+    "tags": ["nz", "prefab", "steel_frame", "sleepout"],
+    "build_type": ["modular", "kitset"],
+    "budget_range": "under_100k",
+    "is_featured": true,
+    "sort_order": 1,
+    "template_payload": {
+      "modules": ["L-3.0-4.8", "BA-2.4-2.4"],
+      "layout": {
+        "grid": [],
+        "walls": [],
+        "furniture": []
+      },
+      "metadata": {
+        "compliant_under_30sqm": true
+      }
+    }
+  },
+  {
+    "id": "granny-flat-1bed-50",
+    "name": "1 Bedroom Granny Flat 50sqm",
+    "slug": "1-bedroom-granny-flat-50sqm",
+    "description": "Self-contained 1 bedroom granny flat ideal for rental income or multi-generational living. Includes full kitchen, bathroom, and living area.",
+    "heroImage": "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=800",
+    "gallery": [
+      "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=800",
+      "https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=800"
+    ],
+    "size_sqm": 50,
+    "width_m": 6,
+    "depth_m": 8.4,
+    "bedrooms": 1,
+    "bathrooms": 1,
+    "starting_price": 115000,
+    "use_cases": ["rental_income", "multi_generational", "guest_accommodation"],
+    "categories": ["granny_flat", "minor_dwelling"],
+    "tags": ["nz", "prefab", "steel_frame", "rental"],
+    "build_type": ["modular", "kitset", "turnkey"],
+    "budget_range": "100k-200k",
+    "is_featured": true,
+    "sort_order": 2,
+    "template_payload": {
+      "modules": ["BR-3.0-4.8", "L-3.0-4.8", "KT-3.0-3.6", "BA-2.4-2.4"],
+      "layout": {
+        "grid": [],
+        "walls": [],
+        "furniture": []
+      },
+      "metadata": {
+        "compliant_under_70sqm": true
+      }
+    }
+  },
+  {
+    "id": "granny-flat-2bed-70",
+    "name": "2 Bedroom Granny Flat 70sqm",
+    "slug": "2-bedroom-granny-flat-70sqm",
+    "description": "Spacious 2 bedroom granny flat perfect for families or premium rental. Features separate living, full kitchen, and bathroom with laundry.",
+    "heroImage": "https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=800",
+    "gallery": [
+      "https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=800",
+      "https://images.unsplash.com/photo-1600607687644-c7171b42498f?w=800"
+    ],
+    "size_sqm": 70,
+    "width_m": 9,
+    "depth_m": 7.8,
+    "bedrooms": 2,
+    "bathrooms": 1,
+    "starting_price": 165000,
+    "use_cases": ["rental_income", "family", "multi_generational"],
+    "categories": ["granny_flat", "minor_dwelling"],
+    "tags": ["nz", "prefab", "steel_frame", "family"],
+    "build_type": ["modular", "kitset", "turnkey"],
+    "budget_range": "100k-200k",
+    "is_featured": true,
+    "sort_order": 3,
+    "template_payload": {
+      "modules": ["BR-3.0-4.8", "BR-3.0-4.8", "L-3.0-4.8", "KT-3.0-3.6", "BA-2.4-2.4"],
+      "layout": {
+        "grid": [],
+        "walls": [],
+        "furniture": []
+      },
+      "metadata": {
+        "compliant_under_70sqm": true
+      }
+    }
+  },
+  {
+    "id": "standalone-2bed-85",
+    "name": "2 Bedroom Home 85sqm",
+    "slug": "2-bedroom-home-85sqm",
+    "description": "Complete 2 bedroom standalone home with modern open-plan living. Perfect starter home or investment property with covered deck.",
+    "heroImage": "https://images.unsplash.com/photo-1600585154363-67eb9e2e2099?w=800",
+    "gallery": [
+      "https://images.unsplash.com/photo-1600585154363-67eb9e2e2099?w=800",
+      "https://images.unsplash.com/photo-1600566753151-384129cf4e3e?w=800"
+    ],
+    "size_sqm": 85,
+    "width_m": 9,
+    "depth_m": 9.6,
+    "bedrooms": 2,
+    "bathrooms": 1,
+    "starting_price": 195000,
+    "use_cases": ["family", "rental_income", "bach"],
+    "categories": ["standalone_home"],
+    "tags": ["nz", "prefab", "steel_frame", "starter_home"],
+    "build_type": ["modular", "turnkey"],
+    "budget_range": "100k-200k",
+    "is_featured": true,
+    "sort_order": 4,
+    "template_payload": {
+      "modules": ["BR-3.0-4.8", "BR-3.0-4.8", "L-3.0-4.8", "KT-3.0-3.6", "BA-2.4-2.4"],
+      "layout": {
+        "grid": [],
+        "walls": [],
+        "furniture": []
+      },
+      "metadata": {}
+    }
+  },
+  {
+    "id": "standalone-3bed-110",
+    "name": "3 Bedroom Family Home 110sqm",
+    "slug": "3-bedroom-family-home-110sqm",
+    "description": "Spacious 3 bedroom family home with separate living and dining areas. Includes master bedroom with ensuite and family bathroom.",
+    "heroImage": "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=800",
+    "gallery": [
+      "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=800",
+      "https://images.unsplash.com/photo-1600573472591-ee6b68d14c68?w=800"
+    ],
+    "size_sqm": 110,
+    "width_m": 12,
+    "depth_m": 9.2,
+    "bedrooms": 3,
+    "bathrooms": 2,
+    "starting_price": 265000,
+    "use_cases": ["family", "rental_income"],
+    "categories": ["standalone_home"],
+    "tags": ["nz", "prefab", "steel_frame", "family_home"],
+    "build_type": ["modular", "turnkey"],
+    "budget_range": "200k-300k",
+    "is_featured": true,
+    "sort_order": 5,
+    "template_payload": {
+      "modules": ["BR-3.0-4.8", "BR-3.0-4.8", "BR-3.0-4.8", "L-3.0-4.8", "KT-3.0-3.6", "BA-2.4-2.4", "BA-2.4-2.4"],
+      "layout": {
+        "grid": [],
+        "walls": [],
+        "furniture": []
+      },
+      "metadata": {}
+    }
+  },
+  {
+    "id": "standalone-4bed-140",
+    "name": "4 Bedroom Executive Home 140sqm",
+    "slug": "4-bedroom-executive-home-140sqm",
+    "description": "Premium 4 bedroom executive home with large open-plan living, master suite with walk-in wardrobe, and double garage provision.",
+    "heroImage": "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=800",
+    "gallery": [
+      "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=800",
+      "https://images.unsplash.com/photo-1600047509358-9dc75507daeb?w=800"
+    ],
+    "size_sqm": 140,
+    "width_m": 15,
+    "depth_m": 9.6,
+    "bedrooms": 4,
+    "bathrooms": 2,
+    "starting_price": 345000,
+    "use_cases": ["family"],
+    "categories": ["standalone_home"],
+    "tags": ["nz", "prefab", "steel_frame", "executive", "premium"],
+    "build_type": ["modular", "turnkey"],
+    "budget_range": "300k-400k",
+    "is_featured": false,
+    "sort_order": 6,
+    "template_payload": {
+      "modules": ["BR-3.0-4.8", "BR-3.0-4.8", "BR-3.0-4.8", "BR-3.0-4.8", "L-3.0-4.8", "KT-3.0-3.6", "BA-2.4-2.4", "BA-2.4-2.4"],
+      "layout": {
+        "grid": [],
+        "walls": [],
+        "furniture": []
+      },
+      "metadata": {}
+    }
+  },
+  {
+    "id": "duplex-2x2bed-140",
+    "name": "Duplex 2x2 Bedroom 140sqm",
+    "slug": "duplex-2x2-bedroom-140sqm",
+    "description": "Investment-grade duplex with two complete 2-bedroom units. Perfect for rental returns or multi-generational family living on one site.",
+    "heroImage": "https://images.unsplash.com/photo-1600585152915-d208bec867a1?w=800",
+    "gallery": [
+      "https://images.unsplash.com/photo-1600585152915-d208bec867a1?w=800",
+      "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800"
+    ],
+    "size_sqm": 140,
+    "width_m": 18,
+    "depth_m": 7.8,
+    "bedrooms": 4,
+    "bathrooms": 2,
+    "starting_price": 325000,
+    "use_cases": ["rental_income", "multi_generational"],
+    "categories": ["multi_unit"],
+    "tags": ["nz", "prefab", "steel_frame", "investment", "duplex"],
+    "build_type": ["modular", "turnkey"],
+    "budget_range": "300k-400k",
+    "is_featured": false,
+    "sort_order": 7,
+    "template_payload": {
+      "modules": ["BR-3.0-4.8", "BR-3.0-4.8", "L-3.0-4.8", "KT-3.0-3.6", "BA-2.4-2.4", "BR-3.0-4.8", "BR-3.0-4.8", "L-3.0-4.8", "KT-3.0-3.6", "BA-2.4-2.4"],
+      "layout": {
+        "grid": [],
+        "walls": [],
+        "furniture": []
+      },
+      "metadata": {
+        "units": 2
+      }
+    }
+  }
+]
