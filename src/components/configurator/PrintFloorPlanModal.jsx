@@ -39,36 +39,96 @@ export default function PrintFloorPlanModal({ placedModules = [], furniture = []
   const handleDownloadPDF = async () => {
     setGenerating(true);
     try {
-      const svg = svgRef.current;
-      if (!svg) throw new Error('SVG not found');
-      
-      // Create canvas and render SVG
+      // Pre-load all images
+      const loadImage = (src) => new Promise((resolve) => {
+        if (!src) return resolve(null);
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => resolve(img);
+        img.onerror = () => resolve(null);
+        img.src = src;
+      });
+
+      const moduleImages = await Promise.all(placedModules.map(m => loadImage(m.floorPlanImage)));
+      const wallImages = await Promise.all(walls.map(w => loadImage(w.elevationImage)));
+      const furnitureImages = await Promise.all(furniture.map(f => loadImage(f.image)));
+
+      // Draw to canvas
       const svgCanvas = document.createElement('canvas');
       svgCanvas.width = canvasWidth * 2;
       svgCanvas.height = canvasHeight * 2;
       const ctx = svgCanvas.getContext('2d');
-      
-      // Render white background
-      ctx.fillStyle = 'white';
-      ctx.fillRect(0, 0, svgCanvas.width, svgCanvas.height);
-      
-      // Scale context
       ctx.scale(2, 2);
       
-      // Render SVG to canvas using foreignObject fallback
-      const svgString = new XMLSerializer().serializeToString(svg);
-      const blob = new Blob([svgString], { type: 'image/svg+xml' });
-      const url = URL.createObjectURL(blob);
+      // White background
+      ctx.fillStyle = 'white';
+      ctx.fillRect(0, 0, canvasWidth, canvasHeight);
       
-      const img = new Image();
-      await new Promise((resolve, reject) => {
-        img.onload = resolve;
-        img.onerror = reject;
-        img.src = url;
+      // Grid
+      ctx.strokeStyle = '#e5e7eb';
+      ctx.lineWidth = 0.5;
+      for (let x = 0; x <= gridWidth; x += 1) {
+        ctx.beginPath();
+        ctx.moveTo(x * CELL_SIZE, 0);
+        ctx.lineTo(x * CELL_SIZE, canvasHeight);
+        ctx.stroke();
+      }
+      for (let y = 0; y <= gridHeight; y += 1) {
+        ctx.beginPath();
+        ctx.moveTo(0, y * CELL_SIZE);
+        ctx.lineTo(canvasWidth, y * CELL_SIZE);
+        ctx.stroke();
+      }
+
+      // Draw walls
+      walls.forEach((wall, idx) => {
+        const wallW = wall.orientation === "horizontal" ? wall.length * CELL_SIZE : wall.thickness * CELL_SIZE;
+        const wallH = wall.orientation === "vertical" ? wall.length * CELL_SIZE : wall.thickness * CELL_SIZE;
+        const wx = (wall.x - minX + 1) * CELL_SIZE;
+        const wy = (wall.y - minY + 1) * CELL_SIZE;
+        
+        ctx.fillStyle = '#4B5563';
+        ctx.fillRect(wx, wy, wallW, wallH);
+        
+        if (wallImages[idx]) {
+          ctx.drawImage(wallImages[idx], wx, wy, wallW, wallH);
+        }
       });
-      
-      ctx.drawImage(img, 0, 0);
-      URL.revokeObjectURL(url);
+
+      // Draw modules
+      placedModules.forEach((mod, idx) => {
+        const x = (mod.x - minX + 1) * CELL_SIZE;
+        const y = (mod.y - minY + 1) * CELL_SIZE;
+        const w = mod.w * CELL_SIZE;
+        const h = mod.h * CELL_SIZE;
+        
+        ctx.fillStyle = 'white';
+        ctx.strokeStyle = '#111';
+        ctx.lineWidth = 2;
+        ctx.fillRect(x, y, w, h);
+        ctx.strokeRect(x, y, w, h);
+        
+        if (moduleImages[idx] && showPhotoImages) {
+          ctx.drawImage(moduleImages[idx], x, y, w, h);
+        }
+      });
+
+      // Draw furniture
+      if (showFurniture) {
+        furniture.forEach((f, idx) => {
+          const fw = ((f.width || 1.4) / CELL_M) * CELL_SIZE;
+          const fd = ((f.depth || 2.0) / CELL_M) * CELL_SIZE;
+          const fx = (f.x - minX + 1) * CELL_SIZE;
+          const fy = (f.y - minY + 1) * CELL_SIZE;
+          
+          if (furnitureImages[idx]) {
+            ctx.drawImage(furnitureImages[idx], fx, fy, fw, fd);
+          } else {
+            ctx.fillStyle = '#FFB3A8';
+            ctx.fillRect(fx, fy, fw, fd);
+          }
+        });
+      }
       
       const floorPlanData = svgCanvas.toDataURL('image/png');
       
