@@ -9,13 +9,12 @@ const HorizontalElevation = memo(function HorizontalElevation({
   wallHPx,
   scale,
   CELL_M,
-  PX_PER_M,
-  imageMap = {}
+  PX_PER_M
 }) {
   if (layers.length === 0) return null;
 
   return (
-    <div style={{ display: "block", marginBottom: "8px" }}>
+    <div style={{ display: "block", marginBottom: "40px" }}>
       <div style={{ fontSize: "14px", fontWeight: "bold", color: "black", textTransform: "uppercase", letterSpacing: "0.05em", backgroundColor: "#fed7aa", padding: "8px 12px", borderRadius: "4px", width: "fit-content", marginLeft: "4px", marginBottom: "16px" }}>
         {label}
       </div>
@@ -28,14 +27,13 @@ const HorizontalElevation = memo(function HorizontalElevation({
              const widthPx = Math.round(scale * slot.widthCells * CELL_M * PX_PER_M);
              return (
                <ElevationSlot
-                key={`${li}-${si}`}
-                slot={slot}
-                leftPx={leftPx}
-                widthPx={widthPx}
-                heightPx={wallHPx}
-                objectFit="cover"
-                showLabel={false}
-                imageMap={imageMap}
+                 key={`${li}-${si}`}
+                 slot={slot}
+                 leftPx={leftPx}
+                 widthPx={widthPx}
+                 heightPx={wallHPx}
+                 objectFit="cover"
+                 showLabel={false}
                />
              );
            });

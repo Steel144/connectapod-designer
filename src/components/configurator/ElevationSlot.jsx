@@ -8,11 +8,9 @@ const ElevationSlot = memo(function ElevationSlot({
   heightPx, 
   labelNum,
   objectFit = "cover",
-  showLabel = true,
-  imageMap = {}
+  showLabel = true 
 }) {
   const wall = slot.wall;
-  const imgSrc = wall?.elevationImage ? (imageMap[wall.elevationImage] || wall.elevationImage) : null;
 
   return (
     <div
@@ -25,9 +23,9 @@ const ElevationSlot = memo(function ElevationSlot({
         overflow: "hidden",
       }}
     >
-      {imgSrc ? (
+      {wall?.elevationImage ? (
         <img
-          src={imgSrc}
+          src={wall.elevationImage}
           alt={wall.label || wall.type || slot.face}
           style={{
             width: "100%",

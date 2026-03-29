@@ -1014,13 +1014,12 @@ export default function Configurator() {
     setDraggingSummary({ startX: e.clientX, startY: e.clientY, summaryX: summaryPos.x, summaryY: summaryPos.y });
   };
 
-
+  if (printMode) {
+    return <PrintRouter mode={printMode} walls={walls} placedModules={placedModules} furniture={furniture} customWalls={customWalls} printDetails={printDetails} onClose={() => setPrintMode(null)} showLabels={showLabels} showFurniture={showFurniture} showPhotoImages={showPhotoImages} showDimensions={showDimensions} siteAddress={siteAddress} siteMapFloorPlanImage={siteMapFloorPlanImage} siteMapScreenshot={siteMapScreenshot} />;
+  }
 
   return (
     <>
-    {printMode && (
-      <PrintRouter mode={printMode} walls={walls} placedModules={placedModules} furniture={furniture} customWalls={customWalls} printDetails={printDetails} onClose={() => setPrintMode(null)} showLabels={showLabels} showFurniture={showFurniture} showPhotoImages={showPhotoImages} showDimensions={showDimensions} siteAddress={siteAddress} siteMapFloorPlanImage={siteMapFloorPlanImage} siteMapScreenshot={siteMapScreenshot} />
-    )}
     <div className={`bg-white ${viewMode === "building" ? "fixed inset-0 overflow-auto" : "w-screen h-screen overflow-hidden relative"} flex flex-col`}>
 
       {/* ── DESKTOP TOP BAR ── */}

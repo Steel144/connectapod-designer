@@ -13,8 +13,7 @@ const VerticalElevation = memo(function VerticalElevation({
   WALL_H_M,
   slotOffsets = {},
   slotScales = {},
-  labelMap = {},
-  imageMap = {}
+  labelMap = {}
 }) {
   if (layers.length === 0) return null;
 
@@ -65,7 +64,6 @@ const VerticalElevation = memo(function VerticalElevation({
                    labelNum={displayLabel}
                    objectFit="fill"
                    showLabel={true}
-                   imageMap={imageMap}
                  />
                );
              });
