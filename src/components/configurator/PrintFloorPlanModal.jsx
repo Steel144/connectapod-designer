@@ -59,6 +59,25 @@ export default function PrintFloorPlanModal({ placedModules = [], furniture = []
       // Small delay to ensure all images are fully decoded
       await new Promise(resolve => setTimeout(resolve, 100));
 
+      // Helper to draw image with xMidYMid slice (fill & crop to maintain aspect)
+      const drawImageSlice = (img, destX, destY, destW, destH) => {
+        if (!img) return;
+        const srcAspect = img.width / img.height;
+        const destAspect = destW / destH;
+        let srcW = img.width, srcH = img.height, srcX = 0, srcY = 0;
+        
+        if (srcAspect > destAspect) {
+          // Image is wider, crop left/right
+          srcW = img.height * destAspect;
+          srcX = (img.width - srcW) / 2;
+        } else {
+          // Image is taller, crop top/bottom
+          srcH = img.width / destAspect;
+          srcY = (img.height - srcH) / 2;
+        }
+        ctx.drawImage(img, srcX, srcY, srcW, srcH, destX, destY, destW, destH);
+      };
+
       // Draw to canvas
       const svgCanvas = document.createElement('canvas');
       svgCanvas.width = canvasWidth;
@@ -91,12 +110,12 @@ export default function PrintFloorPlanModal({ placedModules = [], furniture = []
         const wallH = wall.orientation === "vertical" ? wall.length * CELL_SIZE : wall.thickness * CELL_SIZE;
         const wx = (wall.x - minX + 1) * CELL_SIZE;
         const wy = (wall.y - minY + 1) * CELL_SIZE;
-        
+
         ctx.fillStyle = '#4B5563';
         ctx.fillRect(wx, wy, wallW, wallH);
-        
+
         if (wallImages[idx]) {
-          ctx.drawImage(wallImages[idx], wx, wy, wallW, wallH);
+          drawImageSlice(wallImages[idx], wx, wy, wallW, wallH);
         }
       });
 
@@ -107,20 +126,20 @@ export default function PrintFloorPlanModal({ placedModules = [], furniture = []
         const w = mod.w * CELL_SIZE;
         const h = mod.h * CELL_SIZE;
         const rotation = mod.rotation || 0;
-        
+
         ctx.save();
         ctx.translate(x + w / 2, y + h / 2);
         if (rotation) ctx.rotate((rotation * Math.PI) / 180);
         if (mod.flipped) ctx.scale(-1, 1);
         ctx.translate(-w / 2, -h / 2);
-        
+
         ctx.fillStyle = 'white';
         ctx.fillRect(0, 0, w, h);
-        
+
         if (moduleImages[idx] && showPhotoImages) {
-          ctx.drawImage(moduleImages[idx], 0, 0, w, h);
+          drawImageSlice(moduleImages[idx], 0, 0, w, h);
         }
-        
+
         ctx.strokeStyle = '#111';
         ctx.lineWidth = 2;
         ctx.strokeRect(0, 0, w, h);
@@ -135,15 +154,15 @@ export default function PrintFloorPlanModal({ placedModules = [], furniture = []
           const fx = (f.x - minX + 1) * CELL_SIZE;
           const fy = (f.y - minY + 1) * CELL_SIZE;
           const fRotation = f.rotation || 0;
-          
+
           ctx.save();
           ctx.translate(fx + fw / 2, fy + fd / 2);
           if (fRotation) ctx.rotate((fRotation * Math.PI) / 180);
           if (f.flipped) ctx.scale(-1, 1);
           ctx.translate(-fw / 2, -fd / 2);
-          
+
           if (furnitureImages[idx]) {
-            ctx.drawImage(furnitureImages[idx], 0, 0, fw, fd);
+            drawImageSlice(furnitureImages[idx], 0, 0, fw, fd);
           } else {
             ctx.fillStyle = '#FFB3A8';
             ctx.fillRect(0, 0, fw, fd);
