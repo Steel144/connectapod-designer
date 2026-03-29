@@ -30,8 +30,11 @@ function AddressAutocomplete({ value, onChange }) {
   const [query, setQuery] = useState(value || "");
   const [suggestions, setSuggestions] = useState([]);
   const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
   const debounceRef = useRef(null);
   const containerRef = useRef(null);
+  const cacheRef = useRef(new Map());
+  const lastRequestRef = useRef(0);
 
   useEffect(() => {
     setQuery(value || "");
@@ -52,21 +55,64 @@ function AddressAutocomplete({ value, onChange }) {
     setQuery(val);
     onChange(val);
     clearTimeout(debounceRef.current);
-    if (val.length < 3) { setSuggestions([]); setOpen(false); return; }
+    
+    if (val.length < 3) { 
+      setSuggestions([]); 
+      setOpen(false); 
+      return; 
+    }
+
+    // Check cache
+    if (cacheRef.current.has(val)) {
+      const cached = cacheRef.current.get(val);
+      setSuggestions(cached);
+      setOpen(cached.length > 0);
+      return;
+    }
+
+    setLoading(true);
     debounceRef.current = setTimeout(async () => {
-       try {
-         const response = await base44.functions.invoke('geocodeAddress', {
-           query: val,
-           limit: 5
-         });
-         const data = response.data?.results || [];
-         setSuggestions(data);
-         setOpen(data.length > 0);
-       } catch (err) {
-         console.error('Geocoding error:', err);
-         setSuggestions([]);
-       }
-     }, 350);
+      try {
+        // Rate limiting
+        const now = Date.now();
+        const timeSinceLastRequest = now - lastRequestRef.current;
+        if (timeSinceLastRequest < 1000) {
+          await new Promise(resolve => setTimeout(resolve, 1000 - timeSinceLastRequest));
+        }
+        lastRequestRef.current = Date.now();
+
+        const response = await fetch(
+          `https://nominatim.openstreetmap.org/search?` +
+          `q=${encodeURIComponent(val)}` +
+          `&format=json` +
+          `&addressdetails=1` +
+          `&limit=8` +
+          `&countrycodes=nz` +
+          `&accept-language=en`,
+          { 
+            headers: { 
+              "User-Agent": "Connectapod/1.0",
+              "Accept-Language": "en"
+            } 
+          }
+        );
+        
+        if (!response.ok) {
+          throw new Error(`Nominatim error: ${response.status}`);
+        }
+
+        const data = await response.json();
+        cacheRef.current.set(val, data);
+        setSuggestions(data);
+        setOpen(data.length > 0);
+      } catch (err) {
+        console.error('Geocoding error:', err);
+        setSuggestions([]);
+        setOpen(false);
+      } finally {
+        setLoading(false);
+      }
+    }, 800);
   };
 
   const handleSelect = (place) => {
@@ -82,10 +128,15 @@ function AddressAutocomplete({ value, onChange }) {
       <textarea
         value={query}
         onChange={handleInput}
-        placeholder="e.g. 123 Main St, Auckland"
+        placeholder="e.g. 123 Queen St, Auckland, NZ"
         className="mt-1 rounded-none text-sm w-full px-3 py-2 border border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-none min-h-[60px]"
         autoComplete="off"
       />
+      {loading && (
+        <div className="absolute right-3 top-3 text-xs text-gray-400">
+          Searching...
+        </div>
+      )}
       {open && (
         <ul className="absolute z-50 left-0 right-0 bg-white border border-gray-200 shadow-lg mt-0.5 max-h-48 overflow-y-auto text-sm">
           {suggestions.map((s) => (
