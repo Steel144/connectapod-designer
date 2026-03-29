@@ -166,14 +166,13 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
     });
   }, [design]);
 
-  // Capture by drawing tiles using Leaflet's internal pixel coordinates (unaffected by CSS transforms)
+  // Capture the map view by reading Leaflet tile positions from the DOM
   const captureMapScreenshot = useCallback(async () => {
     const map = mapRef.current;
     if (!map) return null;
 
     const mapContainer = map.getContainer();
-    // Use the map's actual pixel size (not the CSS-scaled size)
-    const mapSize = map.getSize(); // {x: w, y: h} in Leaflet pixels
+    const mapSize = map.getSize(); // Leaflet's internal pixel size (half of visual due to CSS scale(2))
     const W = mapSize.x;
     const H = mapSize.y;
 
@@ -184,57 +183,40 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
     ctx.fillStyle = '#2a2a2a';
     ctx.fillRect(0, 0, W, H);
 
-    // Get the map's pixel origin so we can place tiles correctly
-    const mapPixelOrigin = map.getPixelOrigin();
-
-    const tileImgs = mapContainer.querySelectorAll('.leaflet-tile');
-    const drawPromises = Array.from(tileImgs).map(tile => new Promise((resolve) => {
-      if (!tile.src) { resolve(); return; }
-
-      // Each tile has a data-x/data-y or we can read its CSS transform/left/top
-      // The tile's parent (.leaflet-tile-container) has a CSS transform we need to account for
-      const tileEl = tile;
-      const tileSize = 256;
-
-      // Get tile position from its inline style (Leaflet sets left/top)
-      const tileLeft = parseFloat(tileEl.style.left) || 0;
-      const tileTop = parseFloat(tileEl.style.top) || 0;
-
-      // Walk up to find the pane/container transform offset
-      let containerOffsetX = 0;
-      let containerOffsetY = 0;
+    // Walk up from tile to mapContainer summing only transform offsets (Leaflet uses transforms, not left/top on panes)
+    const getTileOffset = (tileEl) => {
+      let ox = 0, oy = 0;
       let el = tileEl.parentElement;
       while (el && el !== mapContainer) {
-        const transform = el.style.transform;
-        if (transform) {
-          const match = transform.match(/translate3d\(([^,]+)px,\s*([^,]+)px/);
-          if (match) {
-            containerOffsetX += parseFloat(match[1]);
-            containerOffsetY += parseFloat(match[2]);
-          } else {
-            const match2 = transform.match(/translate\(([^,]+)px,\s*([^,]+)px/);
-            if (match2) {
-              containerOffsetX += parseFloat(match2[1]);
-              containerOffsetY += parseFloat(match2[2]);
-            }
-          }
+        const t = el.style.transform;
+        if (t) {
+          const m = t.match(/translate3d\(\s*([-\d.]+)px,\s*([-\d.]+)px/);
+          if (m) { ox += parseFloat(m[1]); oy += parseFloat(m[2]); }
         }
         el = el.parentElement;
       }
+      return { ox, oy };
+    };
 
-      const dx = tileLeft + containerOffsetX;
-      const dy = tileTop + containerOffsetY;
+    const tileImgs = Array.from(mapContainer.querySelectorAll('.leaflet-tile'));
+    const drawPromises = tileImgs.map(tile => new Promise((resolve) => {
+      if (!tile.src) { resolve(); return; }
+      const tileLeft = parseFloat(tile.style.left) || 0;
+      const tileTop = parseFloat(tile.style.top) || 0;
+      const { ox, oy } = getTileOffset(tile);
+      const dx = tileLeft + ox;
+      const dy = tileTop + oy;
 
       const img = new window.Image();
       img.crossOrigin = 'anonymous';
-      img.onload = () => { ctx.drawImage(img, dx, dy, tileSize, tileSize); resolve(); };
+      img.onload = () => { ctx.drawImage(img, dx, dy, 256, 256); resolve(); };
       img.onerror = () => resolve();
       img.src = tile.src;
     }));
 
     await Promise.all(drawPromises);
 
-    // Draw floor plan overlay centered, using same scale calc as the visual overlay
+    // Floor plan overlay — centered, same scale as visual
     const fp = floorPlanOverlayRef.current;
     if (fp && design?.grid?.length > 0) {
       const fpImg = new window.Image();
@@ -244,8 +226,7 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
       const METRES_PER_PX_AT_ZOOM0 = 78271.52;
       const lat = coordinates ? coordinates[0] : 0;
       const metresToPx = Math.pow(2, mapZoom) / (METRES_PER_PX_AT_ZOOM0 * Math.cos(lat * Math.PI / 180));
-      const canvasPxPerMetre = CANVAS_PX_PER_CELL / CELL_M;
-      const scale = (metresToPx / canvasPxPerMetre) * planScaleMultiplier;
+      const scale = (metresToPx / (CANVAS_PX_PER_CELL / CELL_M)) * planScaleMultiplier;
 
       const dw = fpImg.naturalWidth * scale;
       const dh = fpImg.naturalHeight * scale;
