@@ -207,7 +207,7 @@ export default function PrintFloorPlanModal({ placedModules = [], furniture = []
       pdf.setFontSize(6); pdf.setTextColor(0, 0, 0); pdf.setFont(undefined, 'bold');
       pdf.text(`© ${new Date().getFullYear()} Connectapod Ltd.`, pageWidth - 9, pageHeight - 3, { align: 'right' });
 
-      pdf.save('floor-plan.pdf');
+      await pdf.save('floor-plan.pdf');
       setGenerating(false);
     } catch (error) {
       console.error('PDF error:', error);
