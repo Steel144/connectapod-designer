@@ -56,13 +56,12 @@ export default function PrintFloorPlanModal({ placedModules = [], furniture = []
         try {
           console.log('Image loaded, converting to canvas...');
           const canvas = document.createElement('canvas');
-          canvas.width = svgEl.clientWidth * 1.5;
-          canvas.height = svgEl.clientHeight * 1.5;
+          canvas.width = svgEl.clientWidth;
+          canvas.height = svgEl.clientHeight;
           const ctx = canvas.getContext('2d');
-          ctx.scale(1.5, 1.5);
           ctx.fillStyle = '#ffffff';
-          ctx.fillRect(0, 0, svgEl.clientWidth, svgEl.clientHeight);
-          ctx.drawImage(img, 0, 0);
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
           
           const screenshot = canvas.toDataURL('image/png');
           console.log('Canvas created, generating PDF...');
