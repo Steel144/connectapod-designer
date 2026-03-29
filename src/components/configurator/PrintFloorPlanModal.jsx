@@ -49,12 +49,17 @@ export default function PrintFloorPlanModal({ placedModules = [], furniture = []
         allowTaint: true,
         useCORS: true
       });
+      
+      if (!canvas) throw new Error('Failed to create canvas');
+      
       const screenshot = canvas.toDataURL('image/png');
+      if (!screenshot || !screenshot.startsWith('data:image')) {
+        throw new Error('Invalid canvas data');
+      }
+      
       const canvasWidth2 = canvas.width;
       const canvasHeight2 = canvas.height;
 
-      if (!screenshot) throw new Error('Failed to generate floor plan screenshot');
-      
       const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a3' });
       const pageWidth = pdf.internal.pageSize.getWidth();
       const pageHeight = pdf.internal.pageSize.getHeight();
@@ -66,8 +71,12 @@ export default function PrintFloorPlanModal({ placedModules = [], furniture = []
       await new Promise(r => { logoImg.onload = r; logoImg.onerror = r; });
       const logoH = 14;
       const logoW = logoImg.naturalWidth ? (logoImg.naturalWidth / logoImg.naturalHeight) * logoH : 40;
-      if (!LOGO_URL) throw new Error('Logo URL not configured');
-      pdf.addImage(logoImg, 'PNG', 7, 3, logoW, logoH);
+      
+      try {
+        pdf.addImage(logoImg, 'PNG', 7, 3, logoW, logoH);
+      } catch (e) {
+        console.warn('Logo image failed to add:', e);
+      }
 
       pdf.setFontSize(9); pdf.setTextColor(241, 90, 34); pdf.setFont(undefined, 'bold');
       pdf.text('www.connectapod.co.nz', pageWidth / 2, 8, { align: 'center' });
@@ -118,6 +127,9 @@ export default function PrintFloorPlanModal({ placedModules = [], furniture = []
       pdf.text(`© ${new Date().getFullYear()} Connectapod Ltd.`, pageWidth - 9, pageHeight - 3, { align: 'right' });
 
       pdf.save('floor-plan.pdf');
+    } catch (error) {
+      console.error('PDF generation error:', error);
+      alert('Failed to generate PDF: ' + (error?.message || 'Unknown error'));
     } finally {
       setGenerating(false);
     }
