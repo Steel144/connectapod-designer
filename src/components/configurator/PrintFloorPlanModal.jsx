@@ -55,10 +55,9 @@ export default function PrintFloorPlanModal({ placedModules = [], furniture = []
 
       // Draw to canvas
       const svgCanvas = document.createElement('canvas');
-      svgCanvas.width = canvasWidth * 2;
-      svgCanvas.height = canvasHeight * 2;
+      svgCanvas.width = canvasWidth;
+      svgCanvas.height = canvasHeight;
       const ctx = svgCanvas.getContext('2d');
-      ctx.scale(2, 2);
       
       // White background
       ctx.fillStyle = 'white';
