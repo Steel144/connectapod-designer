@@ -109,15 +109,16 @@ export default function PrintFloorPlanModal({ placedModules = [], furniture = []
         if (mod.flipped) ctx.scale(-1, 1);
         ctx.translate(-w / 2, -h / 2);
         
-        ctx.fillStyle = 'white';
-        ctx.strokeStyle = '#111';
-        ctx.lineWidth = 2;
-        ctx.fillRect(0, 0, w, h);
-        ctx.strokeRect(0, 0, w, h);
-        
         if (moduleImages[idx] && showPhotoImages) {
           ctx.drawImage(moduleImages[idx], 0, 0, w, h);
+        } else {
+          ctx.fillStyle = 'white';
+          ctx.fillRect(0, 0, w, h);
         }
+        
+        ctx.strokeStyle = '#111';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(0, 0, w, h);
         ctx.restore();
       });
 
