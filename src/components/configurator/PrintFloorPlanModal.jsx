@@ -39,34 +39,12 @@ export default function PrintFloorPlanModal({ placedModules = [], furniture = []
   const handleDownloadPDF = async () => {
     setGenerating(true);
     try {
-      // Convert SVG to canvas directly
+      // Use html2canvas to capture SVG with all images rendered
       const svgEl = svgRef.current;
-      const svgString = new XMLSerializer().serializeToString(svgEl);
-      const blob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
-      const url = URL.createObjectURL(blob);
-      const img = new window.Image();
-      img.crossOrigin = 'anonymous';
-      img.src = url;
-      
-      let canvasWidth2 = 800;
-      let canvasHeight2 = 600;
-      const screenshot = await new Promise((resolve, reject) => {
-        img.onload = () => {
-          const canvas = document.createElement('canvas');
-          canvas.width = img.naturalWidth || 800;
-          canvas.height = img.naturalHeight || 600;
-          canvasWidth2 = canvas.width;
-          canvasHeight2 = canvas.height;
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0);
-          URL.revokeObjectURL(url);
-          resolve(canvas.toDataURL('image/png'));
-        };
-        img.onerror = () => {
-          URL.revokeObjectURL(url);
-          reject(new Error('Failed to load SVG'));
-        };
-      });
+      const canvas = await html2canvas(svgEl, { backgroundColor: '#ffffff', scale: 2 });
+      const screenshot = canvas.toDataURL('image/png');
+      const canvasWidth2 = canvas.width;
+      const canvasHeight2 = canvas.height;
 
       const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a3' });
       const pageWidth = pdf.internal.pageSize.getWidth();
