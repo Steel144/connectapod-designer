@@ -212,10 +212,12 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
       const offsetX = overlayPx.x - centerPx.x;
       const offsetY = overlayPx.y - centerPx.y;
 
+      // leaflet-image captures at Leaflet's internal size (half visual due to CSS scale(2))
+      // so floor plan scale must also be halved to match
       const METRES_PER_PX_AT_ZOOM0 = 78271.52;
       const lat = coordinates[0];
       const metresToPx = Math.pow(2, zoom) / (METRES_PER_PX_AT_ZOOM0 * Math.cos(lat * Math.PI / 180));
-      const scale = (metresToPx / (CANVAS_PX_PER_CELL / CELL_M)) * planScaleMultiplier;
+      const scale = (metresToPx / (CANVAS_PX_PER_CELL / CELL_M)) * planScaleMultiplier / CSS_SCALE;
 
       const dw = fpImg.naturalWidth * scale;
       const dh = fpImg.naturalHeight * scale;
