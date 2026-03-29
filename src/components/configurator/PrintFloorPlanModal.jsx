@@ -43,84 +43,101 @@ export default function PrintFloorPlanModal({ placedModules = [], furniture = []
       const svgEl = svgRef.current;
       if (!svgEl) throw new Error('SVG element not found');
       
-      console.log('Cloning SVG and removing images...');
-      const svgClone = svgEl.cloneNode(true);
-      svgClone.querySelectorAll('image').forEach(img => img.remove());
+      console.log('Converting SVG to string...');
+      const svgString = new XMLSerializer().serializeToString(svgEl);
+      const svgWithoutImages = svgString.replace(/<image[^>]*>/g, '');
       
-      console.log('Converting SVG to canvas...');
-      const canvas = await html2canvas(svgClone, {
-        backgroundColor: '#ffffff',
-        scale: 1.5,
-        useCORS: true,
-        logging: false,
-        timeout: 15000
-      });
+      console.log('Creating blob and converting to canvas...');
+      const blob = new Blob([svgWithoutImages], { type: 'image/svg+xml' });
+      const url = URL.createObjectURL(blob);
+      const img = new Image();
       
-      console.log('Canvas created, converting to PNG...');
-      const screenshot = canvas.toDataURL('image/png');
-      if (!screenshot) throw new Error('Failed to generate canvas data');
+      img.onload = async () => {
+        try {
+          console.log('Image loaded, converting to canvas...');
+          const canvas = document.createElement('canvas');
+          canvas.width = svgEl.clientWidth * 1.5;
+          canvas.height = svgEl.clientHeight * 1.5;
+          const ctx = canvas.getContext('2d');
+          ctx.scale(1.5, 1.5);
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(0, 0, svgEl.clientWidth, svgEl.clientHeight);
+          ctx.drawImage(img, 0, 0);
+          
+          const screenshot = canvas.toDataURL('image/png');
+          console.log('Canvas created, generating PDF...');
+          
+          const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a3' });
+          const pageWidth = pdf.internal.pageSize.getWidth();
+          const pageHeight = pdf.internal.pageSize.getHeight();
+
+          pdf.setFontSize(9); pdf.setTextColor(241, 90, 34); pdf.setFont(undefined, 'bold');
+          pdf.text('www.connectapod.co.nz', pageWidth / 2, 8, { align: 'center' });
+          pdf.setFontSize(7); pdf.setTextColor(136, 136, 136); pdf.setFont(undefined, 'normal');
+          pdf.text('hello@connectapod.co.nz · 022 396 2657', pageWidth / 2, 13, { align: 'center' });
+          pdf.setFontSize(16); pdf.setTextColor(136, 136, 136); pdf.setFont(undefined, 'bold');
+          pdf.text('Floor Plan', pageWidth - 7, 13, { align: 'right' });
+          pdf.setDrawColor(241, 90, 34); pdf.setLineWidth(0.6);
+          pdf.line(7, 20, pageWidth - 7, 20);
+
+          const footerH = 20;
+          const imgAreaTop = 22;
+          const imgAreaBottom = pageHeight - footerH - 2;
+          const imgAreaW = pageWidth - 14;
+          const imgAreaH = imgAreaBottom - imgAreaTop;
+          const scale2 = Math.min(imgAreaW / canvas.width, imgAreaH / canvas.height);
+          const drawW = canvas.width * scale2;
+          const drawH = canvas.height * scale2;
+          const imgX = (pageWidth - drawW) / 2;
+          pdf.addImage(screenshot, 'PNG', imgX, imgAreaTop, drawW, drawH);
+
+          const ftY = pageHeight - footerH;
+          pdf.setDrawColor(241, 90, 34); pdf.setLineWidth(1.2);
+          pdf.line(7, ftY, pageWidth - 7, ftY);
+
+          const clientInfo = [printDetails.clientName, printDetails.email, printDetails.phone].filter(Boolean).join(' · ');
+          const cols = [
+            { label: 'Project', value: printDetails.projectName || '—', x: 7, w: 70 },
+            { label: 'Client', value: clientInfo || '—', x: 77, w: 70 },
+            { label: 'Address', value: printDetails.address || '—', x: 147, w: 80 },
+            { label: 'Date', value: new Date().toLocaleDateString('en-NZ'), x: 227, w: 35 },
+            { label: 'Scale', value: '1:100', x: 262, w: 28 },
+          ];
+
+          cols.forEach((col, i) => {
+            if (i > 0) { pdf.setDrawColor(241, 90, 34); pdf.setLineWidth(0.3); pdf.line(col.x - 1, ftY, col.x - 1, pageHeight - 2); }
+            pdf.setFontSize(6); pdf.setTextColor(241, 90, 34); pdf.setFont(undefined, 'bold');
+            pdf.text(col.label.toUpperCase(), col.x + 2, ftY + 5);
+            pdf.setFontSize(7); pdf.setTextColor(51, 51, 51); pdf.setFont(undefined, 'normal');
+            pdf.text(String(col.value), col.x + 2, ftY + 11, { maxWidth: col.w - 4 });
+          });
+
+          pdf.setFontSize(6); pdf.setTextColor(0, 0, 0); pdf.setFont(undefined, 'bold');
+          pdf.text(`© ${new Date().getFullYear()} Connectapod Ltd.`, pageWidth - 9, pageHeight - 3, { align: 'right' });
+
+          pdf.save('floor-plan.pdf');
+          console.log('PDF saved successfully');
+          setGenerating(false);
+          URL.revokeObjectURL(url);
+        } catch (error) {
+          console.error('PDF error:', error);
+          alert('Failed to generate PDF: ' + (error?.message || 'Unknown error'));
+          setGenerating(false);
+          URL.revokeObjectURL(url);
+        }
+      };
       
-      console.log('Creating PDF document...');
-      const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a3' });
-      const pageWidth = pdf.internal.pageSize.getWidth();
-      const pageHeight = pdf.internal.pageSize.getHeight();
-
-      console.log('Adding PDF content...');
-      // Text content
-      pdf.setFontSize(9); pdf.setTextColor(241, 90, 34); pdf.setFont(undefined, 'bold');
-      pdf.text('www.connectapod.co.nz', pageWidth / 2, 8, { align: 'center' });
-      pdf.setFontSize(7); pdf.setTextColor(136, 136, 136); pdf.setFont(undefined, 'normal');
-      pdf.text('hello@connectapod.co.nz · 022 396 2657', pageWidth / 2, 13, { align: 'center' });
-      pdf.setFontSize(16); pdf.setTextColor(136, 136, 136); pdf.setFont(undefined, 'bold');
-      pdf.text('Floor Plan', pageWidth - 7, 13, { align: 'right' });
-      pdf.setDrawColor(241, 90, 34); pdf.setLineWidth(0.6);
-      pdf.line(7, 20, pageWidth - 7, 20);
-
-      // Add floor plan image
-      const footerH = 20;
-      const imgAreaTop = 22;
-      const imgAreaBottom = pageHeight - footerH - 2;
-      const imgAreaW = pageWidth - 14;
-      const imgAreaH = imgAreaBottom - imgAreaTop;
-      const scale2 = Math.min(imgAreaW / canvas.width, imgAreaH / canvas.height);
-      const drawW = canvas.width * scale2;
-      const drawH = canvas.height * scale2;
-      const imgX = (pageWidth - drawW) / 2;
-      console.log('Adding image to PDF:', { drawW, drawH, imgX });
-      pdf.addImage(screenshot, 'PNG', imgX, imgAreaTop, drawW, drawH);
-
-      // Footer
-      const ftY = pageHeight - footerH;
-      pdf.setDrawColor(241, 90, 34); pdf.setLineWidth(1.2);
-      pdf.line(7, ftY, pageWidth - 7, ftY);
-
-      const clientInfo = [printDetails.clientName, printDetails.email, printDetails.phone].filter(Boolean).join(' · ');
-      const cols = [
-        { label: 'Project', value: printDetails.projectName || '—', x: 7, w: 70 },
-        { label: 'Client', value: clientInfo || '—', x: 77, w: 70 },
-        { label: 'Address', value: printDetails.address || '—', x: 147, w: 80 },
-        { label: 'Date', value: new Date().toLocaleDateString('en-NZ'), x: 227, w: 35 },
-        { label: 'Scale', value: '1:100', x: 262, w: 28 },
-      ];
-
-      cols.forEach((col, i) => {
-        if (i > 0) { pdf.setDrawColor(241, 90, 34); pdf.setLineWidth(0.3); pdf.line(col.x - 1, ftY, col.x - 1, pageHeight - 2); }
-        pdf.setFontSize(6); pdf.setTextColor(241, 90, 34); pdf.setFont(undefined, 'bold');
-        pdf.text(col.label.toUpperCase(), col.x + 2, ftY + 5);
-        pdf.setFontSize(7); pdf.setTextColor(51, 51, 51); pdf.setFont(undefined, 'normal');
-        pdf.text(String(col.value), col.x + 2, ftY + 11, { maxWidth: col.w - 4 });
-      });
-
-      pdf.setFontSize(6); pdf.setTextColor(0, 0, 0); pdf.setFont(undefined, 'bold');
-      pdf.text(`© ${new Date().getFullYear()} Connectapod Ltd.`, pageWidth - 9, pageHeight - 3, { align: 'right' });
-
-      console.log('Saving PDF...');
-      pdf.save('floor-plan.pdf');
-      console.log('PDF saved successfully');
+      img.onerror = () => {
+        console.error('Failed to load SVG image');
+        alert('Failed to render floor plan image');
+        setGenerating(false);
+        URL.revokeObjectURL(url);
+      };
+      
+      img.src = url;
     } catch (error) {
       console.error('PDF error details:', error, error?.stack);
       alert('Failed to generate PDF: ' + (error?.message || 'Unknown error'));
-    } finally {
       setGenerating(false);
     }
   };
