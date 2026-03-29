@@ -343,7 +343,7 @@ export default function PrintFloorPlanModal({ placedModules = [], furniture = []
                   const t = [`translate(${fx + fw / 2}, ${fy + fd / 2})`, `rotate(${f.rotation || 0})`, f.flipped ? 'scale(-1, 1)' : '', `translate(${-fw / 2}, ${-fd / 2})`].filter(Boolean).join(' ');
                   return (
                     <g key={f.id} transform={t}>
-                      <rect x={0} y={0} width={fw} height={fd} fill={f.image ? "white" : "#FFB3A8"} />
+                      <rect x={0} y={0} width={fw} height={fd} fill="none" stroke="#999" strokeWidth="1" />
                       {f.image ? <image x={0} y={0} width={fw} height={fd} href={f.image} preserveAspectRatio="xMidYMid meet" /> : (
                         <text x={fw / 2} y={fd / 2 + 3} textAnchor="middle" fontSize="7" fontWeight="bold" fill="#666">{f.label || f.type}</text>
                       )}
