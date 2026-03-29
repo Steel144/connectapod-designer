@@ -107,7 +107,7 @@ export default function BulkUploadWallModal({ onClose, onDone }) {
             <h2 className="text-sm font-bold text-gray-900">Bulk Upload Wall Elevations</h2>
             <p className="text-xs text-gray-400 mt-0.5">Name each file with the wall code (e.g. WY30-B-500.png)</p>
           </div>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
+          <button type="button" onClick={onClose} className="text-gray-400 hover:text-gray-600">
             <X size={16} />
           </button>
         </div>
@@ -116,6 +116,7 @@ export default function BulkUploadWallModal({ onClose, onDone }) {
         <div className="flex-1 overflow-y-auto px-5 py-4">
           {files.length === 0 ? (
             <button
+              type="button"
               onClick={() => inputRef.current.click()}
               className="w-full border-2 border-dashed border-gray-300 hover:border-[#F15A22] text-gray-400 hover:text-[#F15A22] transition-colors flex flex-col items-center justify-center gap-2 py-12"
             >
@@ -159,6 +160,7 @@ export default function BulkUploadWallModal({ onClose, onDone }) {
               </p>
               <div className="flex gap-2">
                 <button
+                  type="button"
                   onClick={onClose}
                   className="px-3 py-1.5 text-xs text-gray-600 hover:text-gray-900"
                   disabled={processing}
@@ -166,6 +168,7 @@ export default function BulkUploadWallModal({ onClose, onDone }) {
                   Cancel
                 </button>
                 <button
+                  type="button"
                   onClick={() => {
                     console.log('[BulkUpload] Upload button clicked!', { files: files.length, processing });
                     handleUpload();

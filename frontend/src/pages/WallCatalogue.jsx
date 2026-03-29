@@ -298,7 +298,7 @@ export default function WallCatalogue() {
 
       {/* Search + filter bar */}
       <div className="max-w-7xl mx-auto px-6 pt-8 pb-0">
-        <div className="flex flex-col sm:flex-row gap-4 mb-6">
+        <form onSubmit={(e) => e.preventDefault()} className="flex flex-col sm:flex-row gap-4 mb-6">
           <input
             type="text"
             placeholder="Search by code or name…"
@@ -310,7 +310,7 @@ export default function WallCatalogue() {
             <span className="font-bold text-gray-800">{totalWalls}</span> wall panels across
             <span className="font-bold text-gray-800">{wallGroups.length}</span> series
           </div>
-        </div>
+        </form>
         <div className="flex flex-wrap gap-2 mb-8">
           <button
             type="button"
