@@ -108,11 +108,21 @@ export default function PrintFloorPlanModal({ placedModules = [], furniture = []
         if (mod.flipped) ctx.scale(-1, 1);
         ctx.translate(-w / 2, -h / 2);
         
+        ctx.fillStyle = 'white';
+        ctx.fillRect(0, 0, w, h);
+        
         if (moduleImages[idx] && showPhotoImages) {
-          ctx.drawImage(moduleImages[idx], 0, 0, w, h);
-        } else {
-          ctx.fillStyle = 'white';
-          ctx.fillRect(0, 0, w, h);
+          const img = moduleImages[idx];
+          const imgAspect = img.width / img.height;
+          let drawW = w, drawH = h;
+          if (imgAspect > w / h) {
+            drawH = w / imgAspect;
+          } else {
+            drawW = h * imgAspect;
+          }
+          const drawX = (w - drawW) / 2;
+          const drawY = (h - drawH) / 2;
+          ctx.drawImage(img, drawX, drawY, drawW, drawH);
         }
         
         ctx.strokeStyle = '#111';
