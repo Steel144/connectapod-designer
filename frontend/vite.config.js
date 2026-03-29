@@ -21,10 +21,7 @@ export default defineConfig({
       '.preview.emergentcf.cloud',
       'localhost'
     ],
-    hmr: {
-      clientPort: 443,
-      protocol: 'wss'
-    },
+    hmr: false, // Disable HMR to prevent page reloads in preview
     proxy: {
       '/api': {
         target: process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001',
