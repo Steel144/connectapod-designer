@@ -45,13 +45,19 @@ export default function PrintFloorPlanModal({ placedModules = [], furniture = []
         const img = new Image();
         img.crossOrigin = 'anonymous';
         img.onload = () => resolve(img);
-        img.onerror = () => resolve(null);
+        img.onerror = () => {
+          console.warn('Failed to load image:', src);
+          resolve(null);
+        };
         img.src = src;
       });
 
       const moduleImages = await Promise.all(placedModules.map(m => loadImage(m.floorPlanImage)));
       const wallImages = await Promise.all(walls.map(w => loadImage(w.elevationImage)));
       const furnitureImages = await Promise.all(furniture.map(f => loadImage(f.image)));
+      
+      // Small delay to ensure all images are fully decoded
+      await new Promise(resolve => setTimeout(resolve, 100));
 
       // Draw to canvas
       const svgCanvas = document.createElement('canvas');
