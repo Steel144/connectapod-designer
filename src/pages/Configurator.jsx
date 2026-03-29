@@ -169,6 +169,8 @@ export default function Configurator() {
   const siteMapViewRef = useRef(null);
   const [navBarHeight, setNavBarHeight] = useState(0);
   const [siteMapFloorPlanImage, setSiteMapFloorPlanImage] = useState(null);
+  const [siteMapScreenshot, setSiteMapScreenshot] = useState(null);
+  const captureMapScreenshotRef = useRef(null);
 
   useEffect(() => {
     if (!navBarRef.current) return;
@@ -1013,7 +1015,7 @@ export default function Configurator() {
   };
 
   if (printMode) {
-    return <PrintRouter mode={printMode} walls={walls} placedModules={placedModules} furniture={furniture} customWalls={customWalls} printDetails={printDetails} onClose={() => setPrintMode(null)} showLabels={showLabels} showFurniture={showFurniture} showPhotoImages={showPhotoImages} showDimensions={showDimensions} siteAddress={siteAddress} siteMapFloorPlanImage={siteMapFloorPlanImage} />;
+    return <PrintRouter mode={printMode} walls={walls} placedModules={placedModules} furniture={furniture} customWalls={customWalls} printDetails={printDetails} onClose={() => setPrintMode(null)} showLabels={showLabels} showFurniture={showFurniture} showPhotoImages={showPhotoImages} showDimensions={showDimensions} siteAddress={siteAddress} siteMapFloorPlanImage={siteMapFloorPlanImage} siteMapScreenshot={siteMapScreenshot} />;
   }
 
   return (
@@ -1061,7 +1063,14 @@ export default function Configurator() {
                <button onClick={() => setDetailsModalMode('estimate')} disabled={placedModules.length === 0} className={`flex items-center gap-1.5 px-3 py-1.5 text-xs transition-all ${placedModules.length === 0 ? "bg-white text-gray-400 opacity-40" : "bg-white text-gray-600 border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22]"}`} style={{ clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 50%, calc(100% - 6px) 100%, 0 100%)" }}>
                   Get Estimate
                 </button>
-               <PrintMenu placedModules={placedModules} walls={walls} onPrint={(mode) => { setPendingPrintMode(mode); setDetailsModalMode('print'); }} />
+               <PrintMenu placedModules={placedModules} walls={walls} onPrint={async (mode) => {
+                 if (mode === 'site-plan' && captureMapScreenshotRef.current) {
+                   const shot = await captureMapScreenshotRef.current();
+                   if (shot) setSiteMapScreenshot(shot);
+                 }
+                 setPendingPrintMode(mode);
+                 setDetailsModalMode('print');
+               }} />
                </div>
                <button onClick={handleUndo} disabled={history.length === 0} title="Undo (Ctrl+Z)" className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-gray-600 bg-white border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22] disabled:opacity-30 transition-all" style={{ clipPath: "polygon(0 0, calc(100% - 8px) 0, 100% 50%, calc(100% - 8px) 100%, 0 100%)" }}>
                <Undo2 size={13} /> Undo {history.length > 0 && <span className="text-[10px] text-gray-400">({history.length})</span>}
@@ -1215,6 +1224,7 @@ export default function Configurator() {
               coordinates={siteCoordinates}
               setCoordinates={setSiteCoordinates}
               onFloorPlanRendered={setSiteMapFloorPlanImage}
+              onScreenshotReady={(fn) => { captureMapScreenshotRef.current = fn; }}
               saveDetails={(() => {
                 try {
                   return JSON.parse(localStorage.getItem("connectapod_save_details")) || { projectName: '', clientName: '', address: '' };
