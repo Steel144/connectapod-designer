@@ -50,7 +50,7 @@ export default function PrintFloorPlanModal({ placedModules = [], furniture = []
       
       const svgString = new XMLSerializer().serializeToString(svg);
       const img = new Image();
-      img.onload = async () => {
+      img.onload = () => {
         ctx.scale(2, 2);
         ctx.drawImage(img, 0, 0);
         const floorPlanData = svgCanvas.toDataURL('image/png');
@@ -59,7 +59,7 @@ export default function PrintFloorPlanModal({ placedModules = [], furniture = []
         const pageWidth = pdf.internal.pageSize.getWidth();
         const pageHeight = pdf.internal.pageSize.getHeight();
 
-        // Add content to PDF
+        const footerH = 20;
         const ftY = pageHeight - footerH;
         pdf.setDrawColor(241, 90, 34); pdf.setLineWidth(1.2);
         pdf.line(7, ftY, pageWidth - 7, ftY);
@@ -86,8 +86,8 @@ export default function PrintFloorPlanModal({ placedModules = [], furniture = []
 
         pdf.save('floor-plan.pdf');
         setGenerating(false);
-        };
-        img.src = 'data:image/svg+xml;base64,' + btoa(svgString);
+      };
+      img.src = 'data:image/svg+xml;base64,' + btoa(svgString);
     } catch (error) {
       console.error('PDF error:', error);
       alert('Failed to generate PDF: ' + (error?.message || 'Unknown error'));
