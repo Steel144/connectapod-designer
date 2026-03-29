@@ -11,13 +11,13 @@ export default defineConfig({
     },
   },
   server: {
-    host: '0.0.0.0',
+    host: true,
     port: 3000,
-    strictPort: true,
-    allowedHosts: 'all',
+    strictPort: false,
     hmr: {
       clientPort: 443,
-      protocol: 'wss'
+      protocol: 'wss',
+      host: 'base44-rebuild-2.preview.emergentagent.com'
     },
     proxy: {
       '/api': {
