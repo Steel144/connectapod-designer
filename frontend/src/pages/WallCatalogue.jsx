@@ -21,11 +21,6 @@ const widthColors = {
 };
 
 export default function WallCatalogue() {
-  // Debug: Log component renders
-  const renderCount = useRef(0);
-  renderCount.current++;
-  console.log(`[WallCatalogue] Render #${renderCount.current}`);
-
   const [search, setSearch] = useState("");
   const [activeGroup, setActiveGroup] = useState("all");
   const [editMode, setEditMode] = useState(false);
@@ -267,6 +262,7 @@ export default function WallCatalogue() {
           </div>
           <div className="flex items-center gap-2 ml-auto">
             <button
+              type="button"
               onClick={() => setShowBulkUpload(true)}
               className="flex items-center gap-2 px-3 py-1.5 text-xs text-white bg-[#F15A22] hover:bg-[#D14A1A] transition-all"
               title="Bulk upload wall elevation images"
@@ -275,6 +271,7 @@ export default function WallCatalogue() {
               Bulk Upload
             </button>
             <button
+              type="button"
               onClick={() => setPrintMode(true)}
               className="flex items-center gap-2 px-3 py-1.5 text-xs text-gray-600 border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22] transition-all"
               title="Print catalogue as PDF"
@@ -283,6 +280,7 @@ export default function WallCatalogue() {
               Print
             </button>
             <button
+              type="button"
               onClick={() => setEditMode(e => !e)}
               className={`flex items-center gap-2 px-3 py-1.5 text-xs border transition-all ${editMode ? "bg-[#F15A22] text-white border-[#F15A22]" : "text-gray-600 border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22]"}`}
             >
@@ -315,6 +313,7 @@ export default function WallCatalogue() {
         </div>
         <div className="flex flex-wrap gap-2 mb-8">
           <button
+            type="button"
             onClick={() => setActiveGroup("all")}
             className={`px-3 py-1.5 text-xs font-medium border transition-all ${activeGroup === "all" ? "bg-[#F15A22] text-white border-[#F15A22]" : "bg-white text-gray-600 border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22]"}`}
           >
@@ -323,6 +322,7 @@ export default function WallCatalogue() {
           {wallGroups.map(g => (
             <button
               key={g.key}
+              type="button"
               onClick={() => setActiveGroup(g.key)}
               className={`px-3 py-1.5 text-xs font-medium border transition-all ${activeGroup === g.key ? "bg-[#F15A22] text-white border-[#F15A22]" : "bg-white text-gray-600 border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22]"}`}
             >
@@ -360,6 +360,7 @@ export default function WallCatalogue() {
               <span className="ml-auto text-xs text-gray-400">{group.walls.length} panels</span>
               {editMode && (
                 <button
+                  type="button"
                   onClick={() => setAddingToGroup(group)}
                   className="flex items-center gap-1 px-2 py-1 text-xs text-[#F15A22] border border-[#F15A22] hover:bg-[#F15A22] hover:text-white transition-colors"
                 >
@@ -378,6 +379,7 @@ export default function WallCatalogue() {
                     {editMode && !wall._deleted && (
                       <div className="flex items-center gap-1">
                         <button
+                          type="button"
                           onClick={() => handleDuplicateWall(wall, group.key)}
                           className="text-gray-300 hover:text-blue-500 transition-colors"
                           title="Duplicate wall"
@@ -385,6 +387,7 @@ export default function WallCatalogue() {
                           <Copy size={13} />
                         </button>
                         <button
+                          type="button"
                           onClick={() => setEditingWall(wall)}
                           className="text-gray-300 hover:text-[#F15A22] transition-colors"
                           title="Edit this wall"
@@ -392,6 +395,7 @@ export default function WallCatalogue() {
                           <Pencil size={13} />
                         </button>
                         <button
+                          type="button"
                           onClick={() => handleDeleteWall(wall._id)}
                           className="text-gray-300 hover:text-red-500 transition-colors"
                           title="Remove this wall"
@@ -422,6 +426,7 @@ export default function WallCatalogue() {
                     {editMode && uploading !== wall.code && (
                       <div className="absolute inset-0 bg-black/40 flex items-center justify-center gap-2">
                         <button
+                          type="button"
                           onClick={() => handleUploadClick(wall.code)}
                           className="flex items-center gap-1 px-2 py-1 bg-white text-gray-800 text-xs font-medium hover:bg-[#F15A22] hover:text-white transition-colors"
                         >
@@ -429,6 +434,7 @@ export default function WallCatalogue() {
                         </button>
                         {wallImages[wall.code] && (
                           <button
+                            type="button"
                             onClick={() => handleRemoveImage(wall.code)}
                             className="flex items-center gap-1 px-2 py-1 bg-white text-red-600 text-xs font-medium hover:bg-red-600 hover:text-white transition-colors"
                           >
