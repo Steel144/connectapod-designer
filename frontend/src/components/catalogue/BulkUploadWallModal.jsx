@@ -15,8 +15,9 @@ export default function BulkUploadWallModal({ onClose, onDone }) {
       selectedFiles.map(async (file) => {
         const code = file.name.replace(/\.(png|jpg|jpeg|svg)$/i, "");
         
-        // Check if wall exists
-        const existing = await base44.entities.WallEntry.filter({ code });
+        // Check if wall exists by listing all and filtering
+        const allWalls = await base44.entities.WallEntry.list();
+        const existing = allWalls.filter(w => w.code === code);
         
         return {
           file,
@@ -40,31 +41,44 @@ export default function BulkUploadWallModal({ onClose, onDone }) {
       setFiles(prev => prev.map((f, idx) => idx === i ? { ...f, status: "uploading", message: "Uploading..." } : f));
 
       try {
+        console.log(`[Upload] Processing ${item.code}...`);
+        
         // Upload the file
-        const { file_url } = await base44.integrations.Core.UploadFile({ file: item.file });
+        const uploadResult = await base44.integrations.Core.UploadFile({ file: item.file });
+        const { file_url } = uploadResult;
+        console.log(`[Upload] File uploaded: ${file_url}`);
 
         // If new wall, create a WallEntry
         if (item.isNew) {
+          console.log(`[Upload] Creating new wall entry for ${item.code}`);
           await base44.entities.WallEntry.create({
             code: item.code,
             name: item.code,
             width: 3000,
             height: 2400,
+            price: 2500,
             description: "",
             variants: ["Standard"],
           });
         }
 
         // Save or update the wall image
-        const existing = await base44.entities.WallImage.filter({ wallType: item.code });
+        console.log(`[Upload] Checking for existing wall image...`);
+        const allImages = await base44.entities.WallImage.list();
+        const existing = allImages.filter(img => img.wallType === item.code);
+        
         if (existing.length > 0) {
+          console.log(`[Upload] Updating existing wall image ${existing[0].id}`);
           await base44.entities.WallImage.update(existing[0].id, { imageUrl: file_url });
         } else {
+          console.log(`[Upload] Creating new wall image`);
           await base44.entities.WallImage.create({ wallType: item.code, imageUrl: file_url });
         }
 
+        console.log(`[Upload] Success for ${item.code}`);
         setFiles(prev => prev.map((f, idx) => idx === i ? { ...f, status: "done", message: item.isNew ? "Created + image saved" : "Image updated" } : f));
       } catch (err) {
+        console.error(`[Upload] Error for ${item.code}:`, err);
         setFiles(prev => prev.map((f, idx) => idx === i ? { ...f, status: "error", message: err.message || "Failed" } : f));
       }
     }
@@ -143,7 +157,10 @@ export default function BulkUploadWallModal({ onClose, onDone }) {
                   Cancel
                 </button>
                 <button
-                  onClick={handleUpload}
+                  onClick={() => {
+                    console.log('[BulkUpload] Upload button clicked!', { files: files.length, processing });
+                    handleUpload();
+                  }}
                   disabled={processing || allDone}
                   className="px-4 py-1.5 text-xs font-medium text-white bg-[#F15A22] hover:bg-[#D14A1A] disabled:bg-gray-300 disabled:cursor-not-allowed"
                 >
