@@ -18,14 +18,14 @@ export function useElevationGeometry(placedModules, walls) {
         return walls.find(w =>
           w.face === "W" &&
           Math.abs(w.x - mod.x) < THRESH &&
-          w.y >= mod.y - 2 && w.y <= mod.y + THRESH
+          w.y < mod.y && w.y > mod.y - 2
         ) || null;
       }
       if (face === "Y") {
         return walls.find(w =>
           w.face === "Y" &&
           Math.abs(w.x - mod.x) < THRESH &&
-          w.y >= mod.y + mod.h - THRESH && w.y <= mod.y + mod.h + THRESH
+          Math.abs(w.y - (mod.y + mod.h)) < THRESH
         ) || null;
       }
       return null;

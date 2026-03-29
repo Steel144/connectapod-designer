@@ -66,7 +66,35 @@ export default function PrintableElevationsSheet({ walls = [], placedModules = [
   const wallHPx = Math.round(scale * WALL_H_M * PX_PER_M);
   const endElevationHPx = wallHPx;
 
-  const { minX, maxX, allMinY, allMaxY, wElevation, yElevation, zElevation, xElevation } = useElevationGeometry(placedModules, walls);
+  const { minX, maxX, allMinY, allMaxY, wElevation: wElRaw, yElevation: yElRaw, zElevation, xElevation } = useElevationGeometry(placedModules, walls);
+
+  // Re-resolve W/Y walls with a more tolerant lookup (connection modules shift wall positions)
+  const tolerantFindWall = (face, mod) => {
+    if (face === "W") {
+      return walls.find(w =>
+        w.face === "W" &&
+        Math.abs(w.x - mod.x) < 0.6 &&
+        w.y >= mod.y - 2 && w.y <= mod.y + 0.6
+      ) || null;
+    }
+    if (face === "Y") {
+      return walls.find(w =>
+        w.face === "Y" &&
+        Math.abs(w.x - mod.x) < 0.6 &&
+        w.y >= mod.y + mod.h - 0.6 && w.y <= mod.y + mod.h + 0.6
+      ) || null;
+    }
+    return null;
+  };
+
+  const wElevation = wElRaw.map(layer => ({
+    ...layer,
+    slots: layer.slots.map(slot => ({ ...slot, wall: tolerantFindWall("W", slot.mod) || slot.wall }))
+  }));
+  const yElevation = yElRaw.map(layer => ({
+    ...layer,
+    slots: layer.slots.map(slot => ({ ...slot, wall: tolerantFindWall("Y", slot.mod) || slot.wall }))
+  }));
 
   const totalWidthCells = maxX - minX;
   const totalWidthPx = Math.round(scale * totalWidthCells * CELL_M * PX_PER_M);
