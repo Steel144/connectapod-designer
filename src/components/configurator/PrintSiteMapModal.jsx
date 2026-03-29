@@ -2,34 +2,25 @@ import React, { useRef, useState, useEffect } from "react";
 import { X } from "lucide-react";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
-import L from "leaflet";
 
-export default function PrintSiteMapModal({ onClose, placedModules, walls, siteAddress, coordinates, mapZoom, overlayRotation, planScaleMultiplier, positionOffset, siteMapViewElement }) {
+export default function PrintSiteMapModal({ onClose, placedModules, walls, siteAddress, coordinates, mapZoom, overlayRotation, planScaleMultiplier, positionOffset }) {
   const contentRef = useRef(null);
   const [floorPlanOverlay, setFloorPlanOverlay] = useState(null);
-  const [mapScreenshot, setMapScreenshot] = useState(null);
 
   const CANVAS_PX_PER_CELL = 20;
   const CELL_M = 0.6;
 
-  // Capture map screenshot from siteMapViewElement
-  useEffect(() => {
-    if (!siteMapViewElement) return;
+  // Build a static map image URL using OpenStreetMap tiles via staticmap
+  const getStaticMapUrl = () => {
+    if (!coordinates) return null;
+    const lat = coordinates[0] + (positionOffset?.lat || 0);
+    const lng = coordinates[1] + (positionOffset?.lng || 0);
+    const zoom = Math.min(mapZoom, 19);
+    // Use staticmap.net (free, no key required)
+    return `https://staticmap.openstreetmap.de/staticmap.php?center=${lat},${lng}&zoom=${zoom}&size=800x400&maptype=osm&markers=${lat},${lng},red-pushpin`;
+  };
 
-    setTimeout(() => {
-      html2canvas(siteMapViewElement, {
-        scale: 1.5,
-        backgroundColor: '#ffffff',
-        logging: false,
-        allowTaint: true,
-        useCORS: true,
-      }).then(canvas => {
-        setMapScreenshot(canvas.toDataURL('image/png'));
-      }).catch(err => {
-        console.warn('Could not capture map:', err.message);
-      });
-    }, 2000);
-  }, [siteMapViewElement]);
+  const staticMapUrl = getStaticMapUrl();
 
   // Generate floor plan overlay from placed modules
   useEffect(() => {
@@ -206,17 +197,18 @@ export default function PrintSiteMapModal({ onClose, placedModules, walls, siteA
               </p>
             </div>
 
-            {mapScreenshot && (
+            {staticMapUrl && (
               <div className="mb-8">
-                <h2 className="text-lg font-bold text-gray-800 mb-3">Satellite Map View</h2>
-                <div className="border-2 border-gray-300 bg-white p-4 flex items-center justify-center">
+                <h2 className="text-lg font-bold text-gray-800 mb-3">Site Location Map</h2>
+                <div className="border-2 border-gray-300 bg-white flex items-center justify-center">
                   <img
-                    src={mapScreenshot}
+                    src={staticMapUrl}
                     alt="Site Map"
+                    crossOrigin="anonymous"
                     style={{
-                      maxWidth: '100%',
+                      width: '100%',
                       maxHeight: '300px',
-                      objectFit: 'contain',
+                      objectFit: 'cover',
                     }}
                   />
                 </div>
