@@ -30,18 +30,18 @@ export default function PrintPDFModal({ title, printDetails = {}, onClose, pages
         if (!el) continue;
         const canvas = await html2canvas(el, {
           scale: 2,
-          useCORS: false,
-          allowTaint: false,
+          useCORS: true,
+          allowTaint: true,
           logging: false,
           backgroundColor: "#ffffff",
-          imageTimeout: 0,
+          imageTimeout: 15000,
         });
         imgs.push(canvas.toDataURL("image/png"));
       }
       setPageImages(imgs);
     };
-    // Small delay to allow images inside the hidden pages to load
-    const t = setTimeout(capture, 800);
+    // Delay to allow base64 images inside the hidden pages to fully render
+    const t = setTimeout(capture, 2000);
     return () => clearTimeout(t);
   }, [pages]);
 
