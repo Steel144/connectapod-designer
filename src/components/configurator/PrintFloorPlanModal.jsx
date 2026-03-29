@@ -53,6 +53,8 @@ export default function PrintFloorPlanModal({ placedModules = [], furniture = []
       const canvasWidth2 = canvas.width;
       const canvasHeight2 = canvas.height;
 
+      if (!screenshot) throw new Error('Failed to generate floor plan screenshot');
+      
       const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a3' });
       const pageWidth = pdf.internal.pageSize.getWidth();
       const pageHeight = pdf.internal.pageSize.getHeight();
@@ -64,6 +66,7 @@ export default function PrintFloorPlanModal({ placedModules = [], furniture = []
       await new Promise(r => { logoImg.onload = r; logoImg.onerror = r; });
       const logoH = 14;
       const logoW = logoImg.naturalWidth ? (logoImg.naturalWidth / logoImg.naturalHeight) * logoH : 40;
+      if (!LOGO_URL) throw new Error('Logo URL not configured');
       pdf.addImage(logoImg, 'PNG', 7, 3, logoW, logoH);
 
       pdf.setFontSize(9); pdf.setTextColor(241, 90, 34); pdf.setFont(undefined, 'bold');
