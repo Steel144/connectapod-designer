@@ -97,12 +97,10 @@ export default function PrintFloorPlanModal({ placedModules = [], furniture = []
 
       // Draw modules
       placedModules.forEach((mod, idx) => {
-        // Use 3m as the standard module width for image sizing
-        const moduleWidthM = 3;
-        const w = (moduleWidthM / CELL_M) * CELL_SIZE;
-        const h = (mod.h * CELL_SIZE);
         const x = (mod.x - minX + 1) * CELL_SIZE;
         const y = (mod.y - minY + 1) * CELL_SIZE;
+        const w = mod.w * CELL_SIZE;
+        const h = mod.h * CELL_SIZE;
         const rotation = mod.rotation || 0;
         
         ctx.save();
