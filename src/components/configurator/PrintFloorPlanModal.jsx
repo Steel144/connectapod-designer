@@ -159,10 +159,18 @@ export default function PrintFloorPlanModal({ placedModules = [], furniture = []
       const imgAreaH = imgAreaBottom - imgAreaTop;
       const imgAreaW = pageWidth - 14;
 
-      // Scale and position floor plan image (account for 2x canvas resolution)
-      const pdfScale = Math.min((imgAreaW * 25.4) / (canvasWidth * 2), (imgAreaH * 25.4) / (canvasHeight * 2));
-      const imgW = (canvasWidth * pdfScale) / 25.4;
-      const imgH = (canvasHeight * pdfScale) / 25.4;
+      // Scale and position floor plan image
+      const aspectRatio = canvasWidth / canvasHeight;
+      let imgW, imgH;
+      
+      if (aspectRatio > imgAreaW / imgAreaH) {
+        imgW = imgAreaW - 2;
+        imgH = imgW / aspectRatio;
+      } else {
+        imgH = imgAreaH - 2;
+        imgW = imgH * aspectRatio;
+      }
+      
       const imgX = (pageWidth - imgW) / 2;
       const imgY = imgAreaTop + (imgAreaH - imgH) / 2;
 
