@@ -70,9 +70,10 @@ export default function PrintSiteMapModal({ onClose, siteAddress, screenshot, pr
       pdf.setLineWidth(1.2);
       pdf.line(7, ftY, pageWidth - 7, ftY);
 
+      const clientInfo = [printDetails.clientName, printDetails.email, printDetails.phone].filter(Boolean).join(' · ');
       const cols = [
         { label: 'Project', value: printDetails.projectName || '—', x: 7, w: 70 },
-        { label: 'Client', value: printDetails.clientName || '—', x: 77, w: 70 },
+        { label: 'Client', value: clientInfo || '—', x: 77, w: 70 },
         { label: 'Site Address', value: siteAddress || printDetails.address || '—', x: 147, w: 80 },
         { label: 'Date', value: new Date().toLocaleDateString('en-NZ'), x: 227, w: 35 },
         { label: 'Page', value: '1 / 1', x: 262, w: 28 },
@@ -91,7 +92,7 @@ export default function PrintSiteMapModal({ onClose, siteAddress, screenshot, pr
         pdf.setFont(undefined, 'bold');
         pdf.text(col.label.toUpperCase(), col.x + 2, ftY + 5);
         // Value
-        pdf.setFontSize(8);
+        pdf.setFontSize(7);
         pdf.setTextColor(51, 51, 51);
         pdf.setFont(undefined, 'normal');
         pdf.text(String(col.value), col.x + 2, ftY + 11, { maxWidth: col.w - 4 });
@@ -144,20 +145,31 @@ export default function PrintSiteMapModal({ onClose, siteAddress, screenshot, pr
             </div>
 
             {/* Footer title block */}
-            <div style={{ flexShrink: 0, borderTop: '3px solid #F15A22', display: 'grid', gridTemplateColumns: '2fr 2fr 2.5fr 1fr 1fr', fontSize: '9px' }}>
-              {[
-                { label: 'Project', value: printDetails.projectName || '—' },
-                { label: 'Client', value: printDetails.clientName || '—' },
-                { label: 'Site Address', value: siteAddress || printDetails.address || '—' },
-                { label: 'Date', value: new Date().toLocaleDateString('en-NZ') },
-                { label: 'Page', value: '1 / 1' },
-              ].map((col, i) => (
-                <div key={i} style={{ borderRight: i < 4 ? '1px solid #F15A22' : undefined, padding: '4px 10px' }}>
-                  <p style={{ fontWeight: 'bold', textTransform: 'uppercase', color: '#F15A22', fontSize: '7px' }}>{col.label}</p>
-                  <p style={{ marginTop: '1px', color: '#333', fontSize: '8px' }}>{col.value}</p>
-                  {i === 4 && <p style={{ marginTop: '2px', color: '#000', fontSize: '7px', fontWeight: '600' }}>© {new Date().getFullYear()} Connectapod Ltd.</p>}
-                </div>
-              ))}
+            <div style={{ flexShrink: 0, borderTop: '3px solid #F15A22', display: 'grid', gridTemplateColumns: '1.5fr 1.5fr 2fr 1.5fr 1fr', fontSize: '8px' }}>
+              <div style={{ borderRight: '1px solid #F15A22', padding: '4px 10px' }}>
+                <p style={{ fontWeight: 'bold', textTransform: 'uppercase', color: '#F15A22', fontSize: '6px' }}>Project</p>
+                <p style={{ marginTop: '1px', color: '#333', fontSize: '8px', fontWeight: '600' }}>{printDetails.projectName || '—'}</p>
+              </div>
+              <div style={{ borderRight: '1px solid #F15A22', padding: '4px 10px' }}>
+                <p style={{ fontWeight: 'bold', textTransform: 'uppercase', color: '#F15A22', fontSize: '6px' }}>Client</p>
+                <p style={{ marginTop: '1px', color: '#333', fontSize: '8px' }}>{printDetails.clientName || '—'}</p>
+                {(printDetails.email || printDetails.phone) && (
+                  <p style={{ marginTop: '1px', color: '#666', fontSize: '7px' }}>{[printDetails.email, printDetails.phone].filter(Boolean).join(' · ')}</p>
+                )}
+              </div>
+              <div style={{ borderRight: '1px solid #F15A22', padding: '4px 10px' }}>
+                <p style={{ fontWeight: 'bold', textTransform: 'uppercase', color: '#F15A22', fontSize: '6px' }}>Site Address</p>
+                <p style={{ marginTop: '1px', color: '#333', fontSize: '8px' }}>{siteAddress || printDetails.address || '—'}</p>
+              </div>
+              <div style={{ borderRight: '1px solid #F15A22', padding: '4px 10px' }}>
+                <p style={{ fontWeight: 'bold', textTransform: 'uppercase', color: '#F15A22', fontSize: '6px' }}>Date</p>
+                <p style={{ marginTop: '1px', color: '#666', fontSize: '8px' }}>{new Date().toLocaleDateString('en-NZ')}</p>
+              </div>
+              <div style={{ padding: '4px 10px' }}>
+                <p style={{ fontWeight: 'bold', textTransform: 'uppercase', color: '#F15A22', fontSize: '6px' }}>Page</p>
+                <p style={{ marginTop: '1px', color: '#666', fontSize: '8px' }}>1 / 1</p>
+                <p style={{ marginTop: '2px', color: '#000', fontSize: '6px', fontWeight: '600' }}>© {new Date().getFullYear()} Connectapod Ltd.</p>
+              </div>
             </div>
           </div>
         </div>
