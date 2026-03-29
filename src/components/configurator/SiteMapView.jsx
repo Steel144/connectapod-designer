@@ -183,12 +183,11 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
     const W = mapCanvas.width;
     const H = mapCanvas.height;
 
-    // Work on an intermediate canvas first (map + floor plan at natural orientation)
-    const midCanvas = document.createElement('canvas');
-    midCanvas.width = W;
-    midCanvas.height = H;
-    const midCtx = midCanvas.getContext('2d');
-    midCtx.drawImage(mapCanvas, 0, 0);
+    const outCanvas = document.createElement('canvas');
+    outCanvas.width = W;
+    outCanvas.height = H;
+    const ctx = outCanvas.getContext('2d');
+    ctx.drawImage(mapCanvas, 0, 0);
 
     // Floor plan overlay — position at the map's center pixel, scaled correctly
     const fp = floorPlanOverlayRef.current;
@@ -224,18 +223,15 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
       const dh = fpImg.naturalHeight * scale;
       const cx = W / 2 + offsetX;
       const cy = H / 2 + offsetY;
-      midCtx.drawImage(fpImg, cx - dw / 2, cy - dh / 2, dw, dh);
-    }
 
-    // Now apply rotation to the final output canvas
-    const rad = (overlayRotation * Math.PI) / 180;
-    const outCanvas = document.createElement('canvas');
-    outCanvas.width = W;
-    outCanvas.height = H;
-    const ctx = outCanvas.getContext('2d');
-    ctx.translate(W / 2, H / 2);
-    ctx.rotate(rad);
-    ctx.drawImage(midCanvas, -W / 2, -H / 2);
+      // Rotate the floor plan overlay to match the visual rotation
+      const rad = (overlayRotation * Math.PI) / 180;
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.rotate(rad);
+      ctx.drawImage(fpImg, -dw / 2, -dh / 2, dw, dh);
+      ctx.restore();
+    }
 
     return outCanvas.toDataURL('image/png');
   }, [design, coordinates, mapZoom, planScaleMultiplier, positionOffset, overlayRotation]);
