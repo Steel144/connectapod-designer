@@ -101,16 +101,24 @@ export default function PrintFloorPlanModal({ placedModules = [], furniture = []
         const y = (mod.y - minY + 1) * CELL_SIZE;
         const w = mod.w * CELL_SIZE;
         const h = mod.h * CELL_SIZE;
+        const rotation = mod.rotation || 0;
+        
+        ctx.save();
+        ctx.translate(x + w / 2, y + h / 2);
+        if (rotation) ctx.rotate((rotation * Math.PI) / 180);
+        if (mod.flipped) ctx.scale(-1, 1);
+        ctx.translate(-w / 2, -h / 2);
         
         ctx.fillStyle = 'white';
         ctx.strokeStyle = '#111';
         ctx.lineWidth = 2;
-        ctx.fillRect(x, y, w, h);
-        ctx.strokeRect(x, y, w, h);
+        ctx.fillRect(0, 0, w, h);
+        ctx.strokeRect(0, 0, w, h);
         
         if (moduleImages[idx] && showPhotoImages) {
-          ctx.drawImage(moduleImages[idx], x, y, w, h);
+          ctx.drawImage(moduleImages[idx], 0, 0, w, h);
         }
+        ctx.restore();
       });
 
       // Draw furniture
@@ -120,13 +128,21 @@ export default function PrintFloorPlanModal({ placedModules = [], furniture = []
           const fd = ((f.depth || 2.0) / CELL_M) * CELL_SIZE;
           const fx = (f.x - minX + 1) * CELL_SIZE;
           const fy = (f.y - minY + 1) * CELL_SIZE;
+          const fRotation = f.rotation || 0;
+          
+          ctx.save();
+          ctx.translate(fx + fw / 2, fy + fd / 2);
+          if (fRotation) ctx.rotate((fRotation * Math.PI) / 180);
+          if (f.flipped) ctx.scale(-1, 1);
+          ctx.translate(-fw / 2, -fd / 2);
           
           if (furnitureImages[idx]) {
-            ctx.drawImage(furnitureImages[idx], fx, fy, fw, fd);
+            ctx.drawImage(furnitureImages[idx], 0, 0, fw, fd);
           } else {
             ctx.fillStyle = '#FFB3A8';
-            ctx.fillRect(fx, fy, fw, fd);
+            ctx.fillRect(0, 0, fw, fd);
           }
+          ctx.restore();
         });
       }
       
