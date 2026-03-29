@@ -16,6 +16,7 @@ from pathlib import Path
 from motor.motor_asyncio import AsyncIOMotorClient
 
 MONGO_URL = os.getenv("MONGO_URL", "mongodb://localhost:27017")
+DB_NAME = os.getenv("DB_NAME", "connectapod")
 MIGRATION_DIR = Path("/app/backend/migration_data")
 
 # Create migration directory if it doesn't exist
@@ -57,7 +58,7 @@ async def import_collection(db, collection_name, file_path):
 async def migrate_all():
     """Main migration function"""
     client = AsyncIOMotorClient(MONGO_URL)
-    db = client.connectapod
+    db = client[DB_NAME]
     
     print("🔄 Starting Base44 Data Migration...\n")
     

@@ -22,8 +22,9 @@ app.add_middleware(
 
 # MongoDB setup
 MONGO_URL = os.getenv("MONGO_URL", "mongodb://localhost:27017")
+DB_NAME = os.getenv("DB_NAME", "connectapod")
 client = AsyncIOMotorClient(MONGO_URL)
-db = client.connectapod
+db = client[DB_NAME]
 
 # File upload directory
 UPLOAD_DIR = Path("/app/backend/uploads")
@@ -113,7 +114,7 @@ async def list_documents(collection_name: str, sort_field: str = "-created_date"
     cursor = db[collection_name].find({}, {"_id": 0})
     if field:
         cursor = cursor.sort(field, sort_dir)
-    return await cursor.to_list(length=None)
+    return await cursor.to_list(length=1000)
 
 async def get_document(collection_name: str, doc_id: str):
     doc = await db[collection_name].find_one({"id": doc_id}, {"_id": 0})
@@ -136,7 +137,7 @@ async def delete_document(collection_name: str, doc_id: str):
     return {"success": True}
 
 async def filter_documents(collection_name: str, filters: dict):
-    docs = await db[collection_name].find(filters, {"_id": 0}).to_list(length=None)
+    docs = await db[collection_name].find(filters, {"_id": 0}).to_list(length=1000)
     return docs
 
 # ============ FILE UPLOAD ============

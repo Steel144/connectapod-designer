@@ -16,8 +16,7 @@ export default defineConfig({
     strictPort: false,
     hmr: {
       clientPort: 443,
-      protocol: 'wss',
-      host: 'base44-rebuild-2.preview.emergentagent.com'
+      protocol: 'wss'
     },
     proxy: {
       '/api': {
