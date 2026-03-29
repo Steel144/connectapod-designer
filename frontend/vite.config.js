@@ -11,9 +11,16 @@ export default defineConfig({
     },
   },
   server: {
-    host: true,
+    host: '0.0.0.0',
     port: 3000,
     strictPort: false,
+    allowedHosts: [
+      'base44-rebuild-2.preview.emergentagent.com',
+      'base44-rebuild-2.cluster-0.preview.emergentcf.cloud',
+      '.preview.emergentagent.com',
+      '.preview.emergentcf.cloud',
+      'localhost'
+    ],
     hmr: {
       clientPort: 443,
       protocol: 'wss'
