@@ -70,6 +70,8 @@ export default function PrintFloorPlanModal({ placedModules = [], furniture = []
       ctx.drawImage(img, 0, 0);
       URL.revokeObjectURL(url);
       
+      const floorPlanData = svgCanvas.toDataURL('image/png');
+      
       const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a3' });
       const pageWidth = pdf.internal.pageSize.getWidth();
       const pageHeight = pdf.internal.pageSize.getHeight();
