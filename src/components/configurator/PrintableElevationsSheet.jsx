@@ -20,7 +20,8 @@ const PAV_LABELS = { 3: "Pavilion 1", 2: "Connection", 1: "Pavilion 2" };
 
 async function toDataURL(url) {
   try {
-    const res = await fetch(url, { mode: "cors" });
+    const res = await fetch(url, { mode: "cors", cache: "force-cache" });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const blob = await res.blob();
     return await new Promise((resolve) => {
       const reader = new FileReader();
@@ -28,7 +29,18 @@ async function toDataURL(url) {
       reader.readAsDataURL(blob);
     });
   } catch {
-    return null;
+    // Try no-cors as fallback — will return opaque response but at least won't throw
+    try {
+      const res = await fetch(url);
+      const blob = await res.blob();
+      return await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.readAsDataURL(blob);
+      });
+    } catch {
+      return null;
+    }
   }
 }
 
