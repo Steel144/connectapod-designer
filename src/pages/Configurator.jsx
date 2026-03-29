@@ -1718,12 +1718,20 @@ export default function Configurator() {
         walls={walls}
         printMode={pendingPrintMode}
         onConfirm={(details, replace = false) => {
-          if (detailsModalMode === 'print') {
-            setPrintDetails(details);
-            setPrintMode(pendingPrintMode);
-            setPendingPrintMode(null);
-            setDetailsModalMode(null);
-          } else if (detailsModalMode === 'save') {
+           if (detailsModalMode === 'print') {
+             // Combine clientFirstName and clientFamilyName into clientName for print details
+             const printDetailsFormatted = {
+               projectName: details.projectName,
+               clientName: `${details.clientFirstName} ${details.clientFamilyName}`.trim(),
+               address: details.siteAddress || details.homeAddress,
+               email: details.email,
+               phone: details.phone
+             };
+             setPrintDetails(printDetailsFormatted);
+             setPrintMode(pendingPrintMode);
+             setPendingPrintMode(null);
+             setDetailsModalMode(null);
+           } else if (detailsModalMode === 'save') {
             handleSave(details.projectName, { 
               clientFirstName: details.clientFirstName,
               clientFamilyName: details.clientFamilyName,
