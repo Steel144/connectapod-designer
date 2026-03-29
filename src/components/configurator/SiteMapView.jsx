@@ -166,66 +166,66 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
     });
   }, [design]);
 
-  // Build a combined satellite + floor plan screenshot using Leaflet tile canvases
+  // Capture by compositing Leaflet tiles + floor plan overlay onto a canvas
   const captureMapScreenshot = useCallback(async () => {
     const map = mapRef.current;
-    if (!map) return null;
+    const outerDiv = mapContainerRef.current;
+    if (!map || !outerDiv) return null;
 
-    const mapContainer = map.getContainer();
-    const rect = mapContainer.getBoundingClientRect();
-    const W = rect.width;
-    const H = rect.height;
+    // The outer div is the viewport (before the scale(2) inner div)
+    const outerRect = outerDiv.getBoundingClientRect();
+    const W = outerRect.width;
+    const H = outerRect.height;
 
     const outCanvas = document.createElement('canvas');
     outCanvas.width = W;
     outCanvas.height = H;
     const ctx = outCanvas.getContext('2d');
-    ctx.fillStyle = '#1a1a2e';
+    ctx.fillStyle = '#2a2a2a';
     ctx.fillRect(0, 0, W, H);
 
-    // Draw all tile images from the Leaflet container
+    // Leaflet map container is scaled 2x and rotated — get its bounding rect
+    const mapContainer = map.getContainer();
+    const mapRect = mapContainer.getBoundingClientRect();
+
+    // Draw each tile: its getBoundingClientRect already accounts for scale+rotation transforms
     const tileImgs = mapContainer.querySelectorAll('.leaflet-tile');
     const drawPromises = Array.from(tileImgs).map(tile => new Promise((resolve) => {
-      if (!tile.src || !tile.complete) { resolve(); return; }
-      try {
-        const tileRect = tile.getBoundingClientRect();
-        const dx = tileRect.left - rect.left;
-        const dy = tileRect.top - rect.top;
-        const img = new window.Image();
-        img.crossOrigin = 'anonymous';
-        img.onload = () => {
-          ctx.drawImage(img, dx, dy, tileRect.width, tileRect.height);
-          resolve();
-        };
-        img.onerror = () => resolve();
-        img.src = tile.src;
-      } catch { resolve(); }
+      if (!tile.src) { resolve(); return; }
+      const tileRect = tile.getBoundingClientRect();
+      // Translate from screen coords to canvas coords
+      const dx = tileRect.left - outerRect.left;
+      const dy = tileRect.top - outerRect.top;
+      const dw = tileRect.width;
+      const dh = tileRect.height;
+      if (dw <= 0 || dh <= 0) { resolve(); return; }
+      const img = new window.Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = () => { ctx.drawImage(img, dx, dy, dw, dh); resolve(); };
+      img.onerror = () => { resolve(); };
+      img.src = tile.src + (tile.src.includes('?') ? '&' : '?') + '_cb=' + Date.now();
     }));
-
     await Promise.all(drawPromises);
 
-    // Draw floor plan overlay centered
+    // Draw floor plan overlay: find the img element and use its screen position
+    const fpImgEl = outerDiv.querySelector('img[alt="Floor Plan"]');
     const fp = floorPlanOverlayRef.current;
-    if (fp && design?.grid?.length > 0) {
-      const fpImg = new window.Image();
-      fpImg.src = fp;
-      await new Promise(r => { fpImg.onload = r; fpImg.onerror = r; });
-
-      const METRES_PER_PX_AT_ZOOM0 = 78271.52;
-      const lat = coordinates ? coordinates[0] : 0;
-      const metresToPx = Math.pow(2, mapZoom) / (METRES_PER_PX_AT_ZOOM0 * Math.cos(lat * Math.PI / 180));
-      const canvasPxPerMetre = CANVAS_PX_PER_CELL / CELL_M;
-      const scale = (metresToPx / canvasPxPerMetre) * planScaleMultiplier;
-
-      const dw = fpImg.naturalWidth * scale;
-      const dh = fpImg.naturalHeight * scale;
-      const dx = (W - dw) / 2;
-      const dy = (H - dh) / 2;
-      ctx.drawImage(fpImg, dx, dy, dw, dh);
+    if (fp && fpImgEl) {
+      const fpRect = fpImgEl.getBoundingClientRect();
+      const dx = fpRect.left - outerRect.left;
+      const dy = fpRect.top - outerRect.top;
+      const dw = fpRect.width;
+      const dh = fpRect.height;
+      if (dw > 0 && dh > 0) {
+        const fpImg = new window.Image();
+        fpImg.src = fp;
+        await new Promise(r => { fpImg.onload = r; fpImg.onerror = r; });
+        ctx.drawImage(fpImg, dx, dy, dw, dh);
+      }
     }
 
     return outCanvas.toDataURL('image/png');
-  }, [design, coordinates, mapZoom, planScaleMultiplier]);
+  }, []);
 
   // Expose screenshot capture to parent
   useEffect(() => {
