@@ -224,7 +224,6 @@ export default function RealisticModularBuilder3D({ placedModules = [], walls = 
     scene.fog = new THREE.Fog(0x87ceeb, 40, 120);
 
     const camera = new THREE.PerspectiveCamera(50, w / h, 0.1, 300);
-    camera.position.set(10, 6, 10);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(w, h);
@@ -266,6 +265,10 @@ export default function RealisticModularBuilder3D({ placedModules = [], walls = 
     // Create materials
     const materials = createRealisticMaterials();
 
+    // Calculate building center
+    let buildingCenterX = 0;
+    let buildingCenterZ = 0;
+
     // Build modules
     if (placedModules.length > 0) {
       placedModules.forEach(module => {
@@ -275,22 +278,35 @@ export default function RealisticModularBuilder3D({ placedModules = [], walls = 
         scene.add(moduleObj);
       });
       
-      // Center camera on building
-      const avgX = placedModules.reduce((sum, m) => sum + m.x, 0) / placedModules.length * MODULE_WIDTH;
-      const avgZ = placedModules.reduce((sum, m) => sum + m.y, 0) / placedModules.length * MODULE_DEPTH;
-      camera.lookAt(avgX, 2, avgZ);
+      // Calculate center of all modules
+      buildingCenterX = placedModules.reduce((sum, m) => sum + m.x, 0) / placedModules.length * MODULE_WIDTH + MODULE_WIDTH / 2;
+      buildingCenterZ = placedModules.reduce((sum, m) => sum + m.y, 0) / placedModules.length * MODULE_DEPTH + MODULE_DEPTH / 2;
     } else {
-      // Show single test module at origin
+      // Single test module at origin
       const testModule = buildSingleModule(materials, { x: 0, y: 0, z: 0 });
       scene.add(testModule);
+      buildingCenterX = MODULE_WIDTH / 2;
+      buildingCenterZ = MODULE_DEPTH / 2;
     }
 
-    // Controls
+    // Position camera to look at building center
+    const distance = 12;
+    const angle = Math.PI / 4;
+    camera.position.set(
+      buildingCenterX + distance * Math.cos(angle),
+      6,
+      buildingCenterZ + distance * Math.sin(angle)
+    );
+    camera.lookAt(buildingCenterX, MODULE_STUD_HEIGHT / 2, buildingCenterZ);
+
+    // Controls with proper target
     const controls = new OrbitControls(camera, el);
+    controls.target.set(buildingCenterX, MODULE_STUD_HEIGHT / 2, buildingCenterZ);
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
     controls.minPolarAngle = Math.PI / 6;
     controls.maxPolarAngle = Math.PI / 2.5;
+    controls.update();
 
     // Resize
     const ro = new ResizeObserver(() => {
