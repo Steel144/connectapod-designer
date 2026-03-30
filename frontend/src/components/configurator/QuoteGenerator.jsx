@@ -125,107 +125,122 @@ export default function QuoteGenerator({ placedModules, walls, open, onClose }) 
     setGenerating(true);
     const doc = new jsPDF();
     const pageW = doc.internal.pageSize.getWidth();
-    const margin = 20;
+    const margin = 22;
     const col1 = margin;
     const col2 = pageW - margin;
-    let y = margin;
+    let y = 18;
 
-    // Add logo image — preserve aspect ratio at fixed height of 14pt
+    // Add logo image — preserve aspect ratio at fixed height of 12pt
     const logoUrl = "https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/1a43e85d2_Connectapod-01.png";
     try {
       await new Promise((resolve) => {
         const img = new Image();
         img.crossOrigin = "anonymous";
         img.onload = () => {
-          const logoH = 14;
+          const logoH = 12;
           const logoW = (img.naturalWidth / img.naturalHeight) * logoH;
-          doc.addImage(img, "PNG", margin, 8, logoW, logoH);
+          doc.addImage(img, "PNG", margin, y - 4, logoW, logoH);
           resolve();
         };
         img.onerror = () => resolve();
         img.src = logoUrl;
       });
     } catch (e) {
-      doc.setTextColor(241, 90, 34);
-      doc.setFontSize(13);
+      doc.setTextColor(60, 60, 60);
+      doc.setFontSize(11);
       doc.setFont("helvetica", "bold");
-      doc.text("connectapod", margin, 18);
+      doc.text("connectapod", margin, y + 4);
     }
 
-    // Header line
-    doc.setDrawColor(241, 90, 34);
-    doc.setLineWidth(0.5);
-    doc.line(0, 30, pageW, 30);
-
-    doc.setTextColor(120, 120, 120);
-    doc.setFontSize(9);
+    // Header metadata (right side)
+    doc.setTextColor(90, 90, 90);
+    doc.setFontSize(8);
     doc.setFont("helvetica", "normal");
-    doc.text("Design Studio — Building Estimate", pageW - margin, 22, { align: "right" });
+    doc.text("Building Estimate", col2, y + 2, { align: "right" });
 
-    y = 36;
+    y = 35;
+
+    // Horizontal divider
+    doc.setDrawColor(220, 220, 220);
+    doc.setLineWidth(0.3);
+    doc.line(col1, y, col2, y);
+    y += 12;
 
     // Quote title
-    doc.setTextColor(30, 30, 30);
-    doc.setFontSize(20);
+    doc.setTextColor(40, 40, 40);
+    doc.setFontSize(16);
     doc.setFont("helvetica", "bold");
-    doc.text("ESTIMATE", col1, y);
-    y += 8;
-
-    // Date & quote ref
-    doc.setFontSize(9);
+    doc.text("Building Estimate", col1, y);
+    
+    // Date & quote ref (same line as title, right aligned)
+    doc.setFontSize(8);
     doc.setFont("helvetica", "normal");
-    doc.setTextColor(120, 120, 120);
-    const dateStr = new Date().toLocaleDateString("en-NZ", { day: "2-digit", month: "long", year: "numeric" });
-    doc.text(`Date: ${dateStr}`, col1, y);
-    doc.text(`Ref: QT-${Date.now().toString().slice(-6)}`, col2, y, { align: "right" });
-    y += 10;
+    doc.setTextColor(110, 110, 110);
+    const dateStr = new Date().toLocaleDateString("en-NZ", { day: "2-digit", month: "short", year: "numeric" });
+    const refNum = `EST-${Date.now().toString().slice(-6)}`;
+    doc.text(`${refNum} | ${dateStr}`, col2, y, { align: "right" });
+    y += 12;
 
-    // Client info box
-    if (clientName || projectName || address || clientPhone || clientEmail) {
-      const infoLines = [];
-      if (projectName) infoLines.push({ label: "Project", value: projectName, bold: true });
-      if (clientName) infoLines.push({ label: "Client", value: clientName });
-      if (clientPhone) infoLines.push({ label: "Phone", value: clientPhone });
-      if (clientEmail) infoLines.push({ label: "Email", value: clientEmail });
-      if (address) infoLines.push({ label: "Site Address", value: address });
+    // Client info section (clean, minimal)
+    if (projectName || clientName || address || clientPhone || clientEmail) {
+      doc.setFontSize(8);
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(80, 80, 80);
+      doc.text("PREPARED FOR", col1, y);
+      y += 6;
       
-      const boxHeight = 10 + infoLines.length * 5.5;
-      doc.setFillColor(250, 250, 250);
-      doc.rect(col1, y, pageW - 2 * margin, boxHeight, "F");
-      doc.setDrawColor(220, 220, 220);
-      doc.setLineWidth(0.3);
-      doc.rect(col1, y, pageW - 2 * margin, boxHeight);
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(9);
+      doc.setTextColor(40, 40, 40);
       
-      let infoY = y + 6;
-      infoLines.forEach(item => {
-        doc.setTextColor(100, 100, 100);
-        doc.setFontSize(8);
+      if (projectName) {
         doc.setFont("helvetica", "bold");
-        doc.text(item.label + ":", col1 + 5, infoY);
-        
-        doc.setTextColor(30, 30, 30);
+        doc.text(projectName, col1, y);
+        y += 5;
+        doc.setFont("helvetica", "normal");
+      }
+      if (clientName) {
+        doc.text(clientName, col1, y);
+        y += 4.5;
+      }
+      if (clientPhone) {
+        doc.setTextColor(90, 90, 90);
         doc.setFontSize(8.5);
-        doc.setFont("helvetica", item.bold ? "bold" : "normal");
-        doc.text(item.value, col1 + 32, infoY);
-        infoY += 5.5;
-      });
+        doc.text(clientPhone, col1, y);
+        y += 4;
+      }
+      if (clientEmail) {
+        doc.setTextColor(90, 90, 90);
+        doc.text(clientEmail, col1, y);
+        y += 4;
+      }
+      if (address) {
+        doc.setTextColor(90, 90, 90);
+        const maxWidth = 85;
+        const lines = doc.splitTextToSize(address, maxWidth);
+        lines.forEach(line => {
+          doc.text(line, col1, y);
+          y += 4;
+        });
+      }
       
-      y += boxHeight + 8;
+      y += 8;
     }
 
-    y += 4;
-
-    // Section: Modules
-    doc.setFillColor(241, 90, 34);
-    doc.rect(col1, y, pageW - 2 * margin, 8, "F");
-    doc.setTextColor(255, 255, 255);
-    doc.setFontSize(9);
+    // Section: Modules (clean table header)
+    doc.setDrawColor(200, 200, 200);
+    doc.setLineWidth(0.5);
+    doc.line(col1, y, col2, y);
+    y += 6;
+    
+    doc.setTextColor(60, 60, 60);
+    doc.setFontSize(8);
     doc.setFont("helvetica", "bold");
-    doc.text("MODULES", col1 + 4, y + 5.5);
-    doc.text("SQM", pageW - margin - 62, y + 5.5, { align: "right" });
-    doc.text("UNIT PRICE", pageW - margin - 30, y + 5.5, { align: "right" });
-    doc.text("TOTAL", col2 - 3, y + 5.5, { align: "right" });
-    y += 11;
+    doc.text("ITEM", col1, y);
+    doc.text("AREA", pageW - margin - 65, y, { align: "right" });
+    doc.text("UNIT PRICE", pageW - margin - 35, y, { align: "right" });
+    doc.text("AMOUNT", col2, y, { align: "right" });
+    y += 5;
 
     // Group modules by label
     const moduleGroups = {};
@@ -235,48 +250,51 @@ export default function QuoteGenerator({ placedModules, walls, open, onClose }) 
       moduleGroups[key].count += 1;
     });
 
-    doc.setTextColor(30, 30, 30);
+    doc.setTextColor(50, 50, 50);
     doc.setFont("helvetica", "normal");
     doc.setFontSize(8.5);
-    let rowAlt = false;
-    Object.values(moduleGroups).forEach(g => {
-      if (rowAlt) {
-        doc.setFillColor(248, 248, 248);
-        doc.rect(col1, y - 2.5, pageW - 2 * margin, 9, "F");
-      }
-      rowAlt = !rowAlt;
-      const label = g.count > 1 ? `${g.label} ×${g.count}` : g.label;
-      doc.text(label, col1 + 4, y + 4);
-      doc.text(`${(g.sqm * g.count).toFixed(1)} m²`, pageW - margin - 62, y + 4, { align: "right" });
-      doc.text(`$${g.price.toLocaleString()}`, pageW - margin - 30, y + 4, { align: "right" });
-      doc.text(`$${(g.price * g.count).toLocaleString()}`, col2 - 3, y + 4, { align: "right" });
-      y += 9;
+    
+    Object.values(moduleGroups).forEach((g, idx) => {
+      y += 5;
+      const label = g.count > 1 ? `${g.label} (×${g.count})` : g.label;
+      doc.text(label, col1, y);
+      doc.setTextColor(90, 90, 90);
+      doc.text(`${(g.sqm * g.count).toFixed(1)} m²`, pageW - margin - 65, y, { align: "right" });
+      doc.text(`$${g.price.toLocaleString()}`, pageW - margin - 35, y, { align: "right" });
+      doc.setTextColor(50, 50, 50);
+      doc.setFont("helvetica", "bold");
+      doc.text(`$${(g.price * g.count).toLocaleString()}`, col2, y, { align: "right" });
+      doc.setFont("helvetica", "normal");
     });
 
     // Modules subtotal
-    y += 1;
-    doc.setDrawColor(200, 200, 200);
-    doc.setLineWidth(0.5);
-    doc.line(col1, y, col2, y);
     y += 6;
+    doc.setDrawColor(180, 180, 180);
+    doc.setLineWidth(0.3);
+    doc.line(pageW - margin - 50, y, col2, y);
+    y += 5;
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(8.5);
+    doc.setTextColor(70, 70, 70);
+    doc.text("Modules Subtotal", col1, y);
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(9);
-    doc.setTextColor(30, 30, 30);
-    doc.text("Modules Subtotal", col1 + 4, y);
-    doc.text(`$${modulesTotal.toLocaleString()}`, col2 - 3, y, { align: "right" });
-    y += 12;
+    doc.text(`$${modulesTotal.toLocaleString()}`, col2, y, { align: "right" });
+    y += 10;
 
     // Section: Walls
     if (walls.length > 0) {
-      doc.setFillColor(241, 90, 34);
-      doc.rect(col1, y, pageW - 2 * margin, 8, "F");
-      doc.setTextColor(255, 255, 255);
+      doc.setDrawColor(200, 200, 200);
+      doc.setLineWidth(0.5);
+      doc.line(col1, y, col2, y);
+      y += 6;
+      
+      doc.setTextColor(60, 60, 60);
+      doc.setFontSize(8);
       doc.setFont("helvetica", "bold");
-      doc.setFontSize(9);
-      doc.text("WALL PANELS", col1 + 4, y + 5.5);
-      doc.text("FACE", pageW - margin - 42, y + 5.5, { align: "right" });
-      doc.text("TOTAL", col2 - 3, y + 5.5, { align: "right" });
-      y += 11;
+      doc.text("WALL PANELS", col1, y);
+      doc.text("FACE", pageW - margin - 45, y, { align: "right" });
+      doc.text("AMOUNT", col2, y, { align: "right" });
+      y += 5;
 
       const wallGroups = {};
       walls.forEach(w => {
@@ -285,76 +303,79 @@ export default function QuoteGenerator({ placedModules, walls, open, onClose }) 
         wallGroups[key].count += 1;
       });
 
-      doc.setTextColor(30, 30, 30);
+      doc.setTextColor(50, 50, 50);
       doc.setFont("helvetica", "normal");
       doc.setFontSize(8.5);
-      rowAlt = false;
+      
       Object.values(wallGroups).forEach(g => {
-        if (rowAlt) {
-          doc.setFillColor(248, 248, 248);
-          doc.rect(col1, y - 2.5, pageW - 2 * margin, 9, "F");
-        }
-        rowAlt = !rowAlt;
-        const label = g.count > 1 ? `${g.label} ×${g.count}` : g.label;
-        doc.text(label, col1 + 4, y + 4);
-        doc.text(g.face, pageW - margin - 42, y + 4, { align: "right" });
-        doc.text(`$${(g.price * g.count).toLocaleString()}`, col2 - 3, y + 4, { align: "right" });
-        y += 9;
+        y += 5;
+        const label = g.count > 1 ? `${g.label} (×${g.count})` : g.label;
+        doc.text(label, col1, y);
+        doc.setTextColor(90, 90, 90);
+        doc.text(g.face, pageW - margin - 45, y, { align: "right" });
+        doc.setTextColor(50, 50, 50);
+        doc.setFont("helvetica", "bold");
+        doc.text(`$${(g.price * g.count).toLocaleString()}`, col2, y, { align: "right" });
+        doc.setFont("helvetica", "normal");
       });
 
-      y += 1;
-      doc.setDrawColor(200, 200, 200);
-      doc.setLineWidth(0.5);
-      doc.line(col1, y, col2, y);
       y += 6;
+      doc.setDrawColor(180, 180, 180);
+      doc.setLineWidth(0.3);
+      doc.line(pageW - margin - 50, y, col2, y);
+      y += 5;
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(8.5);
+      doc.setTextColor(70, 70, 70);
+      doc.text("Wall Panels Subtotal", col1, y);
       doc.setFont("helvetica", "bold");
-      doc.setFontSize(9);
-      doc.setTextColor(30, 30, 30);
-      doc.text("Wall Panels Subtotal", col1 + 4, y);
-      doc.text(`$${wallsTotal.toLocaleString()}`, col2 - 3, y, { align: "right" });
-      y += 12;
+      doc.text(`$${wallsTotal.toLocaleString()}`, col2, y, { align: "right" });
+      y += 10;
     }
 
-    // Grand total box
-    y += 2;
-    doc.setFillColor(30, 30, 30);
-    doc.rect(col1, y, pageW - 2 * margin, 16, "F");
-    doc.setTextColor(255, 255, 255);
-    doc.setFontSize(11);
-    doc.setFont("helvetica", "bold");
-    doc.text("TOTAL ESTIMATE (excl. GST)", col1 + 5, y + 10.5);
-    doc.setFontSize(14);
-    doc.text(`$${grandTotal.toLocaleString()}`, col2 - 5, y + 10.5, { align: "right" });
-    y += 22;
-
-    // Summary stats
-    doc.setTextColor(100, 100, 100);
-    doc.setFontSize(8);
-    doc.setFont("helvetica", "normal");
-    doc.text(`Total Floor Area: ${totalSqm.toFixed(1)} m²`, col1, y);
-    doc.text(`|`, (col1 + col2) / 2, y, { align: "center" });
-    doc.text(`Modules: ${placedModules.length}`, (col1 + col2) / 2 + 10, y);
-    doc.text(`|`, col2 - 35, y);
-    doc.text(`Wall Panels: ${walls.length}`, col2 - 25, y);
-    y += 14;
-
-    // Footer
-    doc.setDrawColor(241, 90, 34);
-    doc.setLineWidth(0.5);
+    // Grand total (clean, bold line)
+    y += 3;
+    doc.setDrawColor(40, 40, 40);
+    doc.setLineWidth(0.8);
     doc.line(col1, y, col2, y);
-    y += 6;
-    doc.setTextColor(120, 120, 120);
-    doc.setFontSize(7.5);
-    doc.setFont("helvetica", "italic");
-    doc.text("This estimate is indicative only and subject to final confirmation.", col1, y);
-    y += 4;
-    doc.text("Prices exclude GST, delivery, site preparation and installation.", col1, y);
-    y += 8;
-    doc.setFont("helvetica", "normal");
-    doc.setTextColor(100, 100, 100);
+    y += 7;
+    
+    doc.setTextColor(40, 40, 40);
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "bold");
+    doc.text("TOTAL ESTIMATE", col1, y);
+    doc.setFontSize(13);
+    doc.text(`$${grandTotal.toLocaleString()}`, col2, y, { align: "right" });
+    
     doc.setFontSize(7);
-    doc.text(`© ${new Date().getFullYear()} connectapod. All rights reserved.`, col1, y);
-    doc.setTextColor(241, 90, 34);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(110, 110, 110);
+    doc.text("(excl. GST)", col1, y + 4);
+    y += 12;
+
+    // Summary stats (minimal, single line)
+    doc.setTextColor(100, 100, 100);
+    doc.setFontSize(7.5);
+    doc.setFont("helvetica", "normal");
+    doc.text(`Total Floor Area: ${totalSqm.toFixed(1)}m² • ${placedModules.length} Modules • ${walls.length} Wall Panels`, col1, y);
+    y += 12;
+
+    // Footer (clean, minimal)
+    doc.setDrawColor(230, 230, 230);
+    doc.setLineWidth(0.3);
+    doc.line(col1, y, col2, y);
+    y += 5;
+    
+    doc.setTextColor(110, 110, 110);
+    doc.setFontSize(7);
+    doc.setFont("helvetica", "normal");
+    doc.text("This estimate is indicative only. Prices exclude GST, delivery, site preparation and installation.", col1, y);
+    y += 8;
+    
+    doc.setTextColor(130, 130, 130);
+    doc.setFontSize(6.5);
+    doc.text(`© ${new Date().getFullYear()} Connectapod Ltd. All rights reserved.`, col1, y);
+    doc.setTextColor(90, 90, 90);
     doc.text("www.connectapod.com", col2, y, { align: "right" });
 
     const filename = `connectapod-estimate-${projectName ? projectName.replace(/\s+/g, "-").toLowerCase() + "-" : ""}${Date.now().toString().slice(-6)}.pdf`;
