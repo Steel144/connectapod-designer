@@ -65,96 +65,104 @@ function buildSingleModule(materials, position = { x: 0, y: 0, z: 0 }) {
   // Simple box: 3m wide × 5.2m deep × 2.4m tall
   const boxGeo = new THREE.BoxGeometry(3.0, 2.4, 5.2);
   const box = new THREE.Mesh(boxGeo, materials.cladding1);
-  box.position.set(0, 2.4 / 2, 0); // Center at ground level
+  box.position.set(0, 2.4 / 2, 0);
   box.castShadow = true;
   box.receiveShadow = true;
   group.add(box);
   
-  // GABLE ROOF - 25° pitch, 3m ridge (along the 3m width)
-  // Roof slopes along the 5.2m depth dimension
+  // GABLE ROOF - 25° pitch, 3m ridgeline (along width)
+  // Ridge runs along the 3m width
+  // Roof slopes down along the 5.2m depth
   const roofPitch = 25 * Math.PI / 180;
-  const ridgeLength = 3.0; // width of building
-  const roofDepth = 5.2; // depth of building
+  const ridgeLength = 3.0; // Along width
+  const roofSlope = 5.2; // Depth dimension where it slopes
   
-  // Peak height calculation: half-width × tan(25°)
-  const halfWidth = ridgeLength / 2;
-  const peakHeight = halfWidth * Math.tan(roofPitch); // ~0.7m
+  // Peak height: half of depth × tan(25°)
+  const halfDepth = roofSlope / 2;
+  const peakHeight = halfDepth * Math.tan(roofPitch); // ~1.21m
   
-  const overhang = 0.4; // 40cm overhang
-  const totalDepth = roofDepth + overhang * 2;
+  const overhang = 0.4;
   const totalWidth = ridgeLength + overhang * 2;
+  const totalDepth = roofSlope + overhang * 2;
   
-  // Front roof slope (left side when viewed from front)
-  const frontSlopeGeo = new THREE.BufferGeometry();
-  const frontVerts = new Float32Array([
-    // Bottom edge
-    -totalWidth/2, 0, -totalDepth/2,
-    -totalWidth/2, 0, totalDepth/2,
-    // Ridge (top center)
-    0, peakHeight, -totalDepth/2,
-    0, peakHeight, totalDepth/2,
+  // Create solid roof geometry
+  const roofGeo = new THREE.BufferGeometry();
+  
+  // 6 vertices: 4 bottom corners + 2 ridge points
+  const vertices = new Float32Array([
+    // Bottom front edge
+    -totalWidth/2, 0, -totalDepth/2,  // 0
+    totalWidth/2, 0, -totalDepth/2,   // 1
+    
+    // Ridge (top center running along width)
+    -totalWidth/2, peakHeight, 0,     // 2
+    totalWidth/2, peakHeight, 0,      // 3
+    
+    // Bottom back edge
+    -totalWidth/2, 0, totalDepth/2,   // 4
+    totalWidth/2, 0, totalDepth/2,    // 5
   ]);
   
-  const frontIndices = new Uint32Array([
+  // Triangles for both slopes
+  const indices = new Uint32Array([
+    // Front slope
     0, 2, 1,
-    1, 2, 3
+    1, 2, 3,
+    
+    // Back slope
+    4, 5, 6,
+    5, 7, 6,
+    
+    // Left gable end
+    0, 4, 2,
+    
+    // Right gable end
+    1, 3, 5,
   ]);
   
-  frontSlopeGeo.setAttribute('position', new THREE.BufferAttribute(frontVerts, 3));
-  frontSlopeGeo.setIndex(new THREE.BufferAttribute(frontIndices, 1));
-  frontSlopeGeo.computeVertexNormals();
-  
-  const frontSlope = new THREE.Mesh(frontSlopeGeo, materials.roof);
-  frontSlope.position.y = 2.4; // Top of walls
-  frontSlope.castShadow = true;
-  group.add(frontSlope);
-  
-  // Back roof slope (right side when viewed from front)
-  const backSlopeGeo = new THREE.BufferGeometry();
-  const backVerts = new Float32Array([
-    // Bottom edge
-    totalWidth/2, 0, -totalDepth/2,
-    totalWidth/2, 0, totalDepth/2,
-    // Ridge (top center)
-    0, peakHeight, -totalDepth/2,
-    0, peakHeight, totalDepth/2,
+  // Map vertices correctly
+  const finalIndices = new Uint32Array([
+    // Front slope (front edge to ridge)
+    0, 2, 1,
+    1, 2, 3,
+    
+    // Back slope (ridge to back edge)
+    2, 4, 3,
+    3, 4, 5,
   ]);
   
-  const backIndices = new Uint32Array([
-    0, 1, 2,
-    1, 3, 2
-  ]);
+  roofGeo.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+  roofGeo.setIndex(new THREE.BufferAttribute(finalIndices, 1));
+  roofGeo.computeVertexNormals();
   
-  backSlopeGeo.setAttribute('position', new THREE.BufferAttribute(backVerts, 3));
-  backSlopeGeo.setIndex(new THREE.BufferAttribute(backIndices, 1));
-  backSlopeGeo.computeVertexNormals();
+  const roof = new THREE.Mesh(roofGeo, materials.roof);
+  roof.position.y = 2.4; // Top of walls
+  roof.castShadow = true;
+  roof.receiveShadow = true;
+  group.add(roof);
   
-  const backSlope = new THREE.Mesh(backSlopeGeo, materials.roof);
-  backSlope.position.y = 2.4; // Top of walls
-  backSlope.castShadow = true;
-  group.add(backSlope);
-  
-  // Gable end triangles (front and back)
+  // Gable end triangles (left and right sides)
   const gableShape = new THREE.Shape();
-  gableShape.moveTo(-ridgeLength/2, 0);
+  gableShape.moveTo(-roofSlope/2, 0);
   gableShape.lineTo(0, peakHeight);
-  gableShape.lineTo(ridgeLength/2, 0);
-  gableShape.lineTo(-ridgeLength/2, 0);
+  gableShape.lineTo(roofSlope/2, 0);
+  gableShape.lineTo(-roofSlope/2, 0);
   
   const gableGeo = new THREE.ShapeGeometry(gableShape);
   
-  // Front gable end
-  const frontGable = new THREE.Mesh(gableGeo, materials.timber);
-  frontGable.position.set(0, 2.4, -roofDepth/2);
-  frontGable.castShadow = true;
-  group.add(frontGable);
+  // Left gable
+  const leftGable = new THREE.Mesh(gableGeo, materials.timber);
+  leftGable.position.set(-ridgeLength/2, 2.4, 0);
+  leftGable.rotation.y = Math.PI / 2;
+  leftGable.castShadow = true;
+  group.add(leftGable);
   
-  // Back gable end
-  const backGable = new THREE.Mesh(gableGeo, materials.timber);
-  backGable.position.set(0, 2.4, roofDepth/2);
-  backGable.rotation.y = Math.PI;
-  backGable.castShadow = true;
-  group.add(backGable);
+  // Right gable
+  const rightGable = new THREE.Mesh(gableGeo, materials.timber);
+  rightGable.position.set(ridgeLength/2, 2.4, 0);
+  rightGable.rotation.y = -Math.PI / 2;
+  rightGable.castShadow = true;
+  group.add(rightGable);
   
   group.position.set(position.x, position.y, position.z);
   return group;
