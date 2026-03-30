@@ -205,7 +205,7 @@ export default function RealisticModularBuilder3D({ placedModules = [], walls = 
 
     // Build modules - position them correctly to connect
     if (placedModules.length > 0) {
-      console.log('Building', placedModules.length, 'modules');
+      console.log('🔧 NEW CODE LOADED - Building', placedModules.length, 'modules with FIXED positioning');
       
       placedModules.forEach((module, idx) => {
         // Position based on module grid coordinates
@@ -214,7 +214,13 @@ export default function RealisticModularBuilder3D({ placedModules = [], walls = 
         const modX = module.x * MODULE_WIDTH + MODULE_WIDTH / 2;
         const modZ = module.y * MODULE_DEPTH + MODULE_DEPTH / 2;
         
-        console.log(`Module ${idx}:`, { x: module.x, y: module.y, worldX: modX, worldZ: modZ });
+        console.log(`✅ Module ${idx} FIXED POSITIONING:`, { 
+          gridX: module.x, 
+          gridY: module.y, 
+          worldX: modX, 
+          worldZ: modZ,
+          boxExtends: `(${modX-1.5}, ${modZ-2.6}) to (${modX+1.5}, ${modZ+2.6})`
+        });
         
         const moduleObj = buildSingleModule(materials, { x: modX, y: 0, z: modZ });
         scene.add(moduleObj);

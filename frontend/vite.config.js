@@ -10,6 +10,15 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        entryFileNames: `assets/[name]-${Date.now()}.js`,
+        chunkFileNames: `assets/[name]-${Date.now()}.js`,
+        assetFileNames: `assets/[name]-[hash].[ext]`
+      }
+    }
+  },
   server: {
     host: '0.0.0.0',
     port: 3000,
