@@ -1,9 +1,12 @@
 import React, { useEffect, useRef } from "react";
 import * as THREE from "three";
 
-// Standard module height
-const MODULE_HEIGHT = 2.7; // meters
-const GRID_UNIT = 0.6; // meters per grid cell
+// Standard module specifications
+const MODULE_STUD_HEIGHT = 2.4; // meters (stud height)
+const MODULE_WIDTH = 3.0; // meters (standard width)
+const MODULE_DEPTH = 5.2; // meters (standard depth)
+const ROOF_PITCH = 25 * Math.PI / 180; // 25 degrees
+const RIDGE_LENGTH = 3.0; // meters
 
 function createOrbitControls(camera, domElement) {
   let isPointerDown = false;
@@ -125,50 +128,63 @@ export default function ModularBuilder3D({ placedModules = [], walls = [] }) {
 
     const textureLoader = new THREE.TextureLoader();
 
-    // Calculate building bounds from modules
+    // ═══════════════════════════════════════════════════════════
+    // STEP 1: BUILD MODULES AS 3D BOXES WITH CORRECT DIMENSIONS
+    // ═══════════════════════════════════════════════════════════
+    
+    // Calculate building bounds
+    const modulesData = placedModules.map(m => {
+      // Use actual module dimensions (3m × 5.2m)
+      // Assuming grid units represent module positions, not dimensions
+      return {
+        ...m,
+        actualWidth: MODULE_WIDTH,
+        actualDepth: MODULE_DEPTH,
+        actualHeight: MODULE_STUD_HEIGHT
+      };
+    });
+
+    // Find bounds for positioning
     const bounds = {
       minX: Math.min(...placedModules.map(m => m.x)),
-      maxX: Math.max(...placedModules.map(m => m.x + m.w)),
+      maxX: Math.max(...placedModules.map(m => m.x + 1)), // +1 for module span
       minY: Math.min(...placedModules.map(m => m.y)),
-      maxY: Math.max(...placedModules.map(m => m.y + m.h))
+      maxY: Math.max(...placedModules.map(m => m.y + 1))
     };
 
-    const buildingWidth = (bounds.maxX - bounds.minX) * GRID_UNIT;
-    const buildingDepth = (bounds.maxY - bounds.minY) * GRID_UNIT;
-    const centerX = ((bounds.minX + bounds.maxX) / 2) * GRID_UNIT;
-    const centerZ = ((bounds.minY + bounds.maxY) / 2) * GRID_UNIT;
-
-    // ═══════════════════════════════════════════════════════════
-    // STEP 1: BUILD MODULES AS 3D BOXES
-    // ═══════════════════════════════════════════════════════════
+    const buildingWidth = (bounds.maxX - bounds.minX) * MODULE_WIDTH;
+    const buildingDepth = (bounds.maxY - bounds.minY) * MODULE_DEPTH;
+    const centerX = ((bounds.minX + bounds.maxX) / 2) * MODULE_WIDTH;
+    const centerZ = ((bounds.minY + bounds.maxY) / 2) * MODULE_DEPTH;
     
     const moduleGroup = new THREE.Group();
     
     placedModules.forEach((module) => {
-      const modWidth = module.w * GRID_UNIT;
-      const modDepth = module.h * GRID_UNIT;
-      const modX = module.x * GRID_UNIT - centerX;
-      const modZ = module.y * GRID_UNIT - centerZ;
+      const modWidth = MODULE_WIDTH;
+      const modDepth = MODULE_DEPTH;
+      const modHeight = MODULE_STUD_HEIGHT;
+      const modX = module.x * MODULE_WIDTH - centerX;
+      const modZ = module.y * MODULE_DEPTH - centerZ;
 
-      // Module structure (simple box frame - not filled, just edges)
-      const moduleBoxGeo = new THREE.BoxGeometry(modWidth, MODULE_HEIGHT, modDepth);
+      // Module structure (wireframe box showing 3m × 2.4m × 5.2m)
+      const moduleBoxGeo = new THREE.BoxGeometry(modWidth, modHeight, modDepth);
       const moduleEdges = new THREE.EdgesGeometry(moduleBoxGeo);
       const moduleFrame = new THREE.LineSegments(
         moduleEdges,
-        new THREE.LineBasicMaterial({ color: 0x666666, linewidth: 1 })
+        new THREE.LineBasicMaterial({ color: 0x555555, linewidth: 1.5 })
       );
       moduleFrame.position.set(
         modX + modWidth / 2,
-        MODULE_HEIGHT / 2,
+        modHeight / 2,
         modZ + modDepth / 2
       );
       moduleGroup.add(moduleFrame);
 
-      // Optional: Add transparent interior volume to show module space
+      // Interior volume (very subtle)
       const interiorMat = new THREE.MeshBasicMaterial({
         color: 0xccddff,
         transparent: true,
-        opacity: 0.05,
+        opacity: 0.03,
         side: THREE.DoubleSide
       });
       const interiorBox = new THREE.Mesh(moduleBoxGeo, interiorMat);
@@ -226,11 +242,11 @@ export default function ModularBuilder3D({ placedModules = [], walls = [] }) {
     if (wallsByFace.W.length > 0) {
       const panelWidth = buildingWidth / wallsByFace.W.length;
       wallsByFace.W.forEach((wall, i) => {
-        const wallHeight = MODULE_HEIGHT * 1.4; // Include some roof overlap
+        const wallHeight = MODULE_STUD_HEIGHT * 1.5; // Extra height for gable
         const panel = createWallPanel(panelWidth, wallHeight, wall.elevationImage, wall.flipped);
         
         const xPos = -buildingWidth / 2 + panelWidth * (i + 0.5);
-        panel.position.set(xPos, wallHeight / 2, -buildingDepth / 2 - 0.01);
+        panel.position.set(xPos, wallHeight / 2, -buildingDepth / 2 - 0.02);
         panel.castShadow = true;
         panel.receiveShadow = true;
         wallGroup.add(panel);
@@ -241,11 +257,11 @@ export default function ModularBuilder3D({ placedModules = [], walls = [] }) {
     if (wallsByFace.Y.length > 0) {
       const panelWidth = buildingWidth / wallsByFace.Y.length;
       wallsByFace.Y.forEach((wall, i) => {
-        const wallHeight = MODULE_HEIGHT * 1.4;
+        const wallHeight = MODULE_STUD_HEIGHT * 1.5;
         const panel = createWallPanel(panelWidth, wallHeight, wall.elevationImage, !wall.flipped);
         
         const xPos = -buildingWidth / 2 + panelWidth * (i + 0.5);
-        panel.position.set(xPos, wallHeight / 2, buildingDepth / 2 + 0.01);
+        panel.position.set(xPos, wallHeight / 2, buildingDepth / 2 + 0.02);
         panel.rotation.y = Math.PI;
         panel.castShadow = true;
         panel.receiveShadow = true;
@@ -256,10 +272,10 @@ export default function ModularBuilder3D({ placedModules = [], walls = [] }) {
     // Z Face (Left - min X)
     if (wallsByFace.Z.length > 0) {
       const wall = wallsByFace.Z[0];
-      const wallHeight = MODULE_HEIGHT * 1.4;
+      const wallHeight = MODULE_STUD_HEIGHT * 1.5;
       const panel = createWallPanel(buildingDepth, wallHeight, wall.elevationImage, wall.flipped);
       
-      panel.position.set(-buildingWidth / 2 - 0.01, wallHeight / 2, 0);
+      panel.position.set(-buildingWidth / 2 - 0.02, wallHeight / 2, 0);
       panel.rotation.y = -Math.PI / 2;
       panel.castShadow = true;
       panel.receiveShadow = true;
@@ -269,10 +285,10 @@ export default function ModularBuilder3D({ placedModules = [], walls = [] }) {
     // X Face (Right - max X)
     if (wallsByFace.X.length > 0) {
       const wall = wallsByFace.X[0];
-      const wallHeight = MODULE_HEIGHT * 1.4;
+      const wallHeight = MODULE_STUD_HEIGHT * 1.5;
       const panel = createWallPanel(buildingDepth, wallHeight, wall.elevationImage, wall.flipped);
       
-      panel.position.set(buildingWidth / 2 + 0.01, wallHeight / 2, 0);
+      panel.position.set(buildingWidth / 2 + 0.02, wallHeight / 2, 0);
       panel.rotation.y = Math.PI / 2;
       panel.castShadow = true;
       panel.receiveShadow = true;
@@ -373,8 +389,9 @@ export default function ModularBuilder3D({ placedModules = [], walls = [] }) {
   return (
     <div ref={mountRef} className="w-full h-full relative" style={{ touchAction: "none" }}>
       <div className="absolute top-4 left-4 bg-white/90 backdrop-blur px-4 py-2 shadow-lg text-sm">
-        <div className="font-semibold text-gray-800">{placedModules.length} Modules</div>
-        <div className="text-xs text-gray-500">Modular Construction View</div>
+        <div className="font-semibold text-gray-800">{placedModules.length} Module{placedModules.length !== 1 ? 's' : ''}</div>
+        <div className="text-xs text-gray-500">3m × 5.2m × 2.4m stud</div>
+        <div className="text-xs text-gray-500">25° gable roof</div>
       </div>
       <div className="absolute bottom-4 right-4 bg-black/70 backdrop-blur px-3 py-2 text-white text-xs">
         <div>🖱️ Left drag: Rotate</div>
