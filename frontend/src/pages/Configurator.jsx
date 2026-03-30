@@ -37,6 +37,7 @@ import FurniturePanel, { FURNITURE_ITEMS } from "@/components/configurator/Furni
 import { ZoomIn, ZoomOut } from "lucide-react";
 import { useAuth } from "@/lib/AuthContext";
 import SiteMapView from "@/components/configurator/SiteMapView";
+import Viewer3D from "@/components/configurator/Viewer3D";
 
 const generateId = () => `mod-${Math.random().toString(36).substr(2, 9)}`;
 const generateWallId = () => `wall-${Math.random().toString(36).substr(2, 9)}`;
@@ -1051,6 +1052,9 @@ export default function Configurator() {
               <button onClick={() => setViewMode("2d")} className={`flex items-center gap-1.5 px-3 py-1.5 text-xs transition-all ${viewMode === "2d" ? "bg-[#F15A22] text-white" : "bg-white text-gray-600 hover:text-[#F15A22]"}`} style={{ clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 50%, calc(100% - 6px) 100%, 0 100%)" }}>
               <Grid2X2 size={13} /> 2D
             </button>
+            <button onClick={() => setViewMode("3d")} className={`flex items-center gap-1.5 px-3 py-1.5 text-xs transition-all ${viewMode === "3d" ? "bg-[#F15A22] text-white" : "bg-white text-gray-600 hover:text-[#F15A22]"}`} style={{ clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 50%, calc(100% - 6px) 100%, 0 100%)" }}>
+              <Box size={13} /> 3D
+            </button>
             <button onClick={() => setViewMode("elevations")} className={`flex items-center gap-1.5 px-3 py-1.5 text-xs transition-all ${viewMode === "elevations" ? "bg-[#F15A22] text-white" : "bg-white text-gray-600 hover:text-[#F15A22]"}`} style={{ clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 50%, calc(100% - 6px) 100%, 0 100%)" }}>
               <Image size={13} /> Elevations
             </button>
@@ -1162,7 +1166,7 @@ export default function Configurator() {
                   </button>
                 </div>
                 {/* Zoom controls - only for 2D/building view */}
-                {viewMode !== "elevations" && (
+                {viewMode !== "elevations" && viewMode !== "3d" && viewMode !== "sitemap" && (
                   <div className="flex border border-gray-200 overflow-hidden ml-1">
                     <button onClick={() => setGridZoom(z => Math.max(25, z - 10))} title="Zoom out" className="px-2.5 py-1.5 text-xs text-gray-600 hover:text-[#F15A22] transition-all">
                       <ZoomOut size={14} />
@@ -1236,6 +1240,10 @@ export default function Configurator() {
                 localStorage.setItem("connectapod_save_details", JSON.stringify(details));
               }}
             />
+          </div>
+        ) : viewMode === "3d" ? (
+          <div className="w-full h-full">
+            <Viewer3D placedModules={placedModules} />
           </div>
         ) : viewMode === "elevations" ? (
           <div style={{ transform: `scale(${elevationZoom / 100})`, transformOrigin: "top center", display: "inline-block", width: "100%" }}>
