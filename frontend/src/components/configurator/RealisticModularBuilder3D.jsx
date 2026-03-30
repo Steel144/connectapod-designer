@@ -11,11 +11,18 @@ const ROOF_PITCH = 25 * Math.PI / 180;
 
 function createRealisticMaterials() {
   return {
-    // Dark vertical metal cladding
-    metalCladding: new THREE.MeshStandardMaterial({
+    // Cladding 1 - Vertical metal panels (used on most elevations)
+    cladding1: new THREE.MeshStandardMaterial({
       color: 0x2a2a2a,
       roughness: 0.7,
       metalness: 0.3,
+    }),
+    
+    // Cladding 2 - Feature cladding/timber (darker or contrasting)
+    cladding2: new THREE.MeshStandardMaterial({
+      color: 0x1a1a1a,
+      roughness: 0.8,
+      metalness: 0.2,
     }),
     
     // Timber for gable ends
@@ -25,14 +32,15 @@ function createRealisticMaterials() {
       metalness: 0.0,
     }),
     
-    // Glass for windows
+    // Glass for windows - more visible
     glass: new THREE.MeshPhysicalMaterial({
-      color: 0x88ccff,
+      color: 0x4a90c8,
       transparent: true,
-      opacity: 0.25,
-      roughness: 0.1,
+      opacity: 0.4,
+      roughness: 0.05,
       metalness: 0.1,
-      transmission: 0.95,
+      transmission: 0.85,
+      reflectivity: 0.9,
     }),
     
     // Dark metal roof
@@ -42,11 +50,11 @@ function createRealisticMaterials() {
       metalness: 0.6,
     }),
     
-    // Window frames
+    // Dark window/door frames
     windowFrame: new THREE.MeshStandardMaterial({
-      color: 0x1a1a1a,
-      roughness: 0.5,
-      metalness: 0.2,
+      color: 0x0a0a0a,
+      roughness: 0.3,
+      metalness: 0.4,
     }),
   };
 }
@@ -65,89 +73,184 @@ function buildSingleModule(materials, position = { x: 0, y: 0, z: 0 }) {
   
   const wallHeight = MODULE_STUD_HEIGHT;
   
-  // Front wall (with large window/door)
-  // Left section
-  const frontLeft = new THREE.Mesh(
-    new THREE.BoxGeometry(0.6, wallHeight, WALL_THICKNESS),
-    materials.metalCladding
-  );
-  frontLeft.position.set(-MODULE_WIDTH/2 + 0.3, wallHeight/2, -MODULE_DEPTH/2);
-  frontLeft.castShadow = true;
-  group.add(frontLeft);
-  
-  // Right section  
-  const frontRight = new THREE.Mesh(
-    new THREE.BoxGeometry(0.6, wallHeight, WALL_THICKNESS),
-    materials.metalCladding
-  );
-  frontRight.position.set(MODULE_WIDTH/2 - 0.3, wallHeight/2, -MODULE_DEPTH/2);
-  frontRight.castShadow = true;
-  group.add(frontRight);
-  
-  // Top section
-  const frontTop = new THREE.Mesh(
-    new THREE.BoxGeometry(MODULE_WIDTH - 1.2, 0.3, WALL_THICKNESS),
-    materials.metalCladding
-  );
-  frontTop.position.set(0, wallHeight - 0.15, -MODULE_DEPTH/2);
-  frontTop.castShadow = true;
-  group.add(frontTop);
-  
-  // Large glass window/door
-  const windowGeo = new THREE.PlaneGeometry(1.8, 2.0);
-  const window1 = new THREE.Mesh(windowGeo, materials.glass);
-  window1.position.set(0, 1.0, -MODULE_DEPTH/2 - 0.02);
-  group.add(window1);
-  
-  // Window frame
-  const frameThick = 0.08;
-  const frameDepth = 0.1;
-  
-  // Horizontal frames
-  [0.95, -1.05].forEach(yPos => {
-    const frame = new THREE.Mesh(
-      new THREE.BoxGeometry(2.0, frameThick, frameDepth),
+  // Helper function to create window with frame
+  const createWindow = (width, height, xPos, yPos, zPos, rotation = 0) => {
+    const windowGroup = new THREE.Group();
+    
+    // Glass
+    const glassGeo = new THREE.PlaneGeometry(width, height);
+    const glass = new THREE.Mesh(glassGeo, materials.glass);
+    glass.position.set(0, 0, 0.02);
+    windowGroup.add(glass);
+    
+    // Frame - outer border
+    const frameThickness = 0.08;
+    const frameDepth = 0.12;
+    
+    // Top frame
+    const topFrame = new THREE.Mesh(
+      new THREE.BoxGeometry(width + frameThickness * 2, frameThickness, frameDepth),
       materials.windowFrame
     );
-    frame.position.set(0, yPos, -MODULE_DEPTH/2 - 0.01);
-    group.add(frame);
-  });
-  
-  // Vertical frames
-  [-1.0, 1.0].forEach(xPos => {
-    const frame = new THREE.Mesh(
-      new THREE.BoxGeometry(frameThick, 2.0, frameDepth),
+    topFrame.position.set(0, height / 2 + frameThickness / 2, 0);
+    windowGroup.add(topFrame);
+    
+    // Bottom frame
+    const bottomFrame = new THREE.Mesh(
+      new THREE.BoxGeometry(width + frameThickness * 2, frameThickness, frameDepth),
       materials.windowFrame
     );
-    frame.position.set(xPos, 1.0, -MODULE_DEPTH/2 - 0.01);
-    group.add(frame);
-  });
+    bottomFrame.position.set(0, -height / 2 - frameThickness / 2, 0);
+    windowGroup.add(bottomFrame);
+    
+    // Left frame
+    const leftFrame = new THREE.Mesh(
+      new THREE.BoxGeometry(frameThickness, height, frameDepth),
+      materials.windowFrame
+    );
+    leftFrame.position.set(-width / 2 - frameThickness / 2, 0, 0);
+    windowGroup.add(leftFrame);
+    
+    // Right frame
+    const rightFrame = new THREE.Mesh(
+      new THREE.BoxGeometry(frameThickness, height, frameDepth),
+      materials.windowFrame
+    );
+    rightFrame.position.set(width / 2 + frameThickness / 2, 0, 0);
+    windowGroup.add(rightFrame);
+    
+    windowGroup.position.set(xPos, yPos, zPos);
+    windowGroup.rotation.y = rotation;
+    return windowGroup;
+  };
   
-  // Back wall (timber gable end)
-  const backWall = new THREE.Mesh(
+  // Y-FACE (East) - Feature side with large ED002 window (3.02m × 2.2m)
+  const yFaceZ = MODULE_DEPTH / 2;
+  
+  // Wall sections around the large window
+  const ed002Width = 3.02;
+  const ed002Height = 2.2;
+  
+  // Left wall section
+  const yLeftWall = new THREE.Mesh(
+    new THREE.BoxGeometry((MODULE_WIDTH - ed002Width) / 2 - 0.1, wallHeight, WALL_THICKNESS),
+    materials.cladding1
+  );
+  yLeftWall.position.set(
+    -MODULE_WIDTH / 2 + (MODULE_WIDTH - ed002Width) / 4,
+    wallHeight / 2,
+    yFaceZ
+  );
+  yLeftWall.castShadow = true;
+  group.add(yLeftWall);
+  
+  // Right wall section
+  const yRightWall = new THREE.Mesh(
+    new THREE.BoxGeometry((MODULE_WIDTH - ed002Width) / 2 - 0.1, wallHeight, WALL_THICKNESS),
+    materials.cladding1
+  );
+  yRightWall.position.set(
+    MODULE_WIDTH / 2 - (MODULE_WIDTH - ed002Width) / 4,
+    wallHeight / 2,
+    yFaceZ
+  );
+  yRightWall.castShadow = true;
+  group.add(yRightWall);
+  
+  // Top wall section above window
+  const yTopWall = new THREE.Mesh(
+    new THREE.BoxGeometry(ed002Width, wallHeight - ed002Height - 0.1, WALL_THICKNESS),
+    materials.cladding1
+  );
+  yTopWall.position.set(
+    0,
+    wallHeight - (wallHeight - ed002Height) / 2,
+    yFaceZ
+  );
+  yTopWall.castShadow = true;
+  group.add(yTopWall);
+  
+  // Large ED002 window (3.02m × 2.2m) - floor to near-ceiling
+  const ed002Window = createWindow(
+    ed002Width,
+    ed002Height,
+    0,
+    ed002Height / 2 + 0.1,
+    yFaceZ + 0.02
+  );
+  group.add(ed002Window);
+  
+  // W-FACE (West) - Simple side with Cladding 2
+  const wFaceZ = -MODULE_DEPTH / 2;
+  const wWall = new THREE.Mesh(
     new THREE.BoxGeometry(MODULE_WIDTH, wallHeight, WALL_THICKNESS),
-    materials.timber
+    materials.cladding2  // Different cladding type
   );
-  backWall.position.set(0, wallHeight/2, MODULE_DEPTH/2);
-  backWall.castShadow = true;
-  group.add(backWall);
+  wWall.position.set(0, wallHeight / 2, wFaceZ);
+  wWall.castShadow = true;
+  group.add(wWall);
   
-  // Side walls (metal cladding)
-  const leftWall = new THREE.Mesh(
-    new THREE.BoxGeometry(WALL_THICKNESS, wallHeight, MODULE_DEPTH - WALL_THICKNESS * 2),
-    materials.metalCladding
-  );
-  leftWall.position.set(-MODULE_WIDTH/2, wallHeight/2, 0);
-  leftWall.castShadow = true;
-  group.add(leftWall);
+  // Z-FACE (South) - Service side with windows
+  const zFaceX = -MODULE_WIDTH / 2;
   
-  const rightWall = new THREE.Mesh(
-    new THREE.BoxGeometry(WALL_THICKNESS, wallHeight, MODULE_DEPTH - WALL_THICKNESS * 2),
-    materials.metalCladding
+  // EW001 window (2.45m × 1.12m) - bedroom window
+  const ew001Window = createWindow(
+    1.12,  // rotated, so swap dimensions
+    2.45,
+    zFaceX - 0.02,
+    wallHeight / 2,
+    -MODULE_DEPTH / 4,
+    Math.PI / 2
   );
-  rightWall.position.set(MODULE_WIDTH/2, wallHeight/2, 0);
-  rightWall.castShadow = true;
-  group.add(rightWall);
+  group.add(ew001Window);
+  
+  // Wall sections around window
+  const zTopWall = new THREE.Mesh(
+    new THREE.BoxGeometry(WALL_THICKNESS, wallHeight, MODULE_DEPTH / 2),
+    materials.cladding1
+  );
+  zTopWall.position.set(zFaceX, wallHeight / 2, MODULE_DEPTH / 4);
+  zTopWall.castShadow = true;
+  group.add(zTopWall);
+  
+  const zBottomWall = new THREE.Mesh(
+    new THREE.BoxGeometry(WALL_THICKNESS, wallHeight, MODULE_DEPTH / 3),
+    materials.cladding1
+  );
+  zBottomWall.position.set(zFaceX, wallHeight / 2, -MODULE_DEPTH / 2.5);
+  zBottomWall.castShadow = true;
+  group.add(zBottomWall);
+  
+  // X-FACE (North) - Street side with windows
+  const xFaceX = MODULE_WIDTH / 2;
+  
+  // EW017 window (1.22m × 1.12m) - smaller window
+  const ew017Window = createWindow(
+    1.12,  // rotated
+    1.22,
+    xFaceX + 0.02,
+    wallHeight - 0.8,
+    MODULE_DEPTH / 4,
+    -Math.PI / 2
+  );
+  group.add(ew017Window);
+  
+  // Wall sections
+  const xTopWall = new THREE.Mesh(
+    new THREE.BoxGeometry(WALL_THICKNESS, wallHeight, MODULE_DEPTH / 2),
+    materials.cladding1
+  );
+  xTopWall.position.set(xFaceX, wallHeight / 2, -MODULE_DEPTH / 4);
+  xTopWall.castShadow = true;
+  group.add(xTopWall);
+  
+  const xBottomWall = new THREE.Mesh(
+    new THREE.BoxGeometry(WALL_THICKNESS, wallHeight, MODULE_DEPTH / 3),
+    materials.cladding1
+  );
+  xBottomWall.position.set(xFaceX, wallHeight / 2, MODULE_DEPTH / 3);
+  xBottomWall.castShadow = true;
+  group.add(xBottomWall);
   
   // Gable roof at 25°
   const roofPeakHeight = (MODULE_WIDTH / 2) * Math.tan(ROOF_PITCH);
