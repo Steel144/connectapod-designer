@@ -76,13 +76,35 @@ function createOrbitControls(camera, domElement) {
 export default function ModularBuilder3D({ placedModules = [], walls = [] }) {
   const mountRef = useRef(null);
 
+  // Debug: Log whenever props change
+  console.log('🏗️ ModularBuilder3D render:', {
+    moduleCount: placedModules.length,
+    wallCount: walls.length,
+    firstModule: placedModules[0],
+    hasMount: !!mountRef.current
+  });
+
   useEffect(() => {
     const el = mountRef.current;
-    if (!el || placedModules.length === 0) return;
+    
+    console.log('🔄 ModularBuilder3D useEffect triggered:', {
+      hasElement: !!el,
+      moduleCount: placedModules.length,
+      modules: placedModules
+    });
+    
+    if (!el) {
+      console.warn('⚠️ No mount element');
+      return;
+    }
+    
+    if (placedModules.length === 0) {
+      console.log('📭 No modules to render');
+      return;
+    }
 
-    console.log('🏗️ ModularBuilder3D: Rendering', placedModules.length, 'modules');
-    console.log('📦 First module:', placedModules[0]);
-    console.log('🧱 Walls:', walls.length, 'walls');
+    console.log('🎨 Starting 3D render with', placedModules.length, 'modules');
+    console.log('📦 Module data:', JSON.stringify(placedModules.slice(0, 2), null, 2));
 
     const w = el.clientWidth;
     const h = el.clientHeight;
@@ -343,7 +365,7 @@ export default function ModularBuilder3D({ placedModules = [], walls = [] }) {
     // Simple corrugated metal roof texture
     const roofMat = new THREE.MeshLambertMaterial({ color: 0x3a3a3a, side: THREE.DoubleSide });
     const roofMesh = new THREE.Mesh(roofGeo, roofMat);
-    roofMesh.position.y = MODULE_HEIGHT;
+    roofMesh.position.y = MODULE_STUD_HEIGHT;
     roofMesh.castShadow = true;
     scene.add(roofMesh);
 
