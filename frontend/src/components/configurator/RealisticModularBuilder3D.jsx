@@ -210,8 +210,9 @@ export default function RealisticModularBuilder3D({ placedModules = [], walls = 
       placedModules.forEach((module, idx) => {
         // Position based on module grid coordinates
         // Each module is 3m wide × 5.2m deep
-        const modX = module.x * MODULE_WIDTH;
-        const modZ = module.y * MODULE_DEPTH;
+        // Add half-width/depth offset so modules align edge-to-edge
+        const modX = module.x * MODULE_WIDTH + MODULE_WIDTH / 2;
+        const modZ = module.y * MODULE_DEPTH + MODULE_DEPTH / 2;
         
         console.log(`Module ${idx}:`, { x: module.x, y: module.y, worldX: modX, worldZ: modZ });
         
@@ -220,17 +221,28 @@ export default function RealisticModularBuilder3D({ placedModules = [], walls = 
       });
       
       // Calculate center of all modules for camera
-      buildingCenterX = placedModules.reduce((sum, m) => sum + m.x, 0) / placedModules.length * MODULE_WIDTH + MODULE_WIDTH / 2;
-      buildingCenterZ = placedModules.reduce((sum, m) => sum + m.y, 0) / placedModules.length * MODULE_DEPTH + MODULE_DEPTH / 2;
+      buildingCenterX = (placedModules.reduce((sum, m) => sum + m.x, 0) / placedModules.length) * MODULE_WIDTH + MODULE_WIDTH / 2;
+      buildingCenterZ = (placedModules.reduce((sum, m) => sum + m.y, 0) / placedModules.length) * MODULE_DEPTH + MODULE_DEPTH / 2;
       
       console.log('Building center:', { x: buildingCenterX, z: buildingCenterZ });
     } else {
-      // Single test module at origin
-      console.log('No modules in placedModules, showing test module');
-      const testModule = buildSingleModule(materials, { x: 0, y: 0, z: 0 });
-      scene.add(testModule);
-      buildingCenterX = MODULE_WIDTH / 2;
-      buildingCenterZ = MODULE_DEPTH / 2;
+      // Test with 3 adjacent modules to demonstrate joining
+      console.log('No modules in placedModules, showing 3 test modules');
+      
+      // Module 1 at grid (0, 0) → world center at (1.5, 0, 2.6)
+      const testModule1 = buildSingleModule(materials, { x: MODULE_WIDTH / 2, y: 0, z: MODULE_DEPTH / 2 });
+      scene.add(testModule1);
+      
+      // Module 2 at grid (1, 0) → world center at (4.5, 0, 2.6) - joins to the right
+      const testModule2 = buildSingleModule(materials, { x: MODULE_WIDTH + MODULE_WIDTH / 2, y: 0, z: MODULE_DEPTH / 2 });
+      scene.add(testModule2);
+      
+      // Module 3 at grid (0, 1) → world center at (1.5, 0, 7.8) - joins to the back
+      const testModule3 = buildSingleModule(materials, { x: MODULE_WIDTH / 2, y: 0, z: MODULE_DEPTH + MODULE_DEPTH / 2 });
+      scene.add(testModule3);
+      
+      buildingCenterX = MODULE_WIDTH;
+      buildingCenterZ = MODULE_DEPTH;
     }
 
     // Position camera to look at building center
