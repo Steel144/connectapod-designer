@@ -1,6 +1,6 @@
 {
-  "name": "Connectapod",
-  "short_name": "Connectapod",
+  "name": "Designer",
+  "short_name": "Designer",
   "description": "Interactive modular building design and quoting platform",
   "start_url": "/",
   "display": "standalone",

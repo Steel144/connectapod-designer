@@ -154,10 +154,10 @@ export default function Landing() {
       <div className="border-t border-gray-200 bg-white py-8 text-center">
         <img
           src="https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/1a43e85d2_Connectapod-01.png"
-          alt="connectapod"
+          alt="Designer"
           className="h-7 w-auto mx-auto mb-3 opacity-60"
         />
-        <p className="text-xs text-gray-400">© {new Date().getFullYear()} Connectapod. All rights reserved.</p>
+        <p className="text-xs text-gray-400">© {new Date().getFullYear()} Designer. All rights reserved.</p>
       </div>
     </div>
   );

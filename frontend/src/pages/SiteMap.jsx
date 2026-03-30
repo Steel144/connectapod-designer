@@ -671,7 +671,7 @@ export default function SiteMap() {
       {/* ── TOP BAR (SHARED WITH CONFIGURATOR) ── */}
       <div className="flex items-center px-4 py-4 bg-white border-b border-gray-200 overflow-x-auto gap-4 min-w-0 z-30">
         <div className="shrink-0 flex flex-col gap-0.5">
-          <img src="https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/1a43e85d2_Connectapod-01.png" alt="connectapod" style={{ height: "25px", width: "auto" }} />
+          <img src="https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/1a43e85d2_Connectapod-01.png" alt="Designer" style={{ height: "25px", width: "auto" }} />
           <span className="text-[10px] text-gray-400 tracking-widest uppercase">Design Studio</span>
         </div>
 

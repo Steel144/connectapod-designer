@@ -1026,7 +1026,7 @@ export default function Configurator() {
       {!isMobile && (
         <div ref={navBarRef} className={`${viewMode === "building" ? "fixed" : "absolute"} top-0 left-0 right-0 z-30 flex items-center px-4 py-4 bg-white border-b border-gray-200 overflow-x-auto gap-4 min-w-0`}>
           <div className="shrink-0 flex flex-col gap-0.5">
-            <img src="https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/1a43e85d2_Connectapod-01.png" alt="connectapod" style={{ height: "25px", width: "auto" }} />
+            <img src="https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/1a43e85d2_Connectapod-01.png" alt="Designer" style={{ height: "25px", width: "auto" }} />
             <span className="text-[10px] text-gray-400 tracking-widest uppercase">Design Studio</span>
           </div>
           <div className="flex items-center gap-2 ml-auto shrink-0">
@@ -1148,7 +1148,7 @@ export default function Configurator() {
       {isMobile && (
         <div ref={navBarRef} className={`${viewMode === "building" ? "fixed" : "absolute"} top-0 left-0 right-0 z-30 bg-white border-b border-gray-200 shadow-sm`}>
           <div className="flex items-center px-3 py-2 gap-2">
-            <img src="https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/1a43e85d2_Connectapod-01.png" alt="connectapod" style={{ height: "22px", width: "auto" }} />
+            <img src="https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/1a43e85d2_Connectapod-01.png" alt="Designer" style={{ height: "22px", width: "auto" }} />
             {/* View switcher */}
               <div className="flex border border-gray-200 overflow-hidden ml-2">
                 <button onClick={() => setViewMode("2d")} className={`px-2.5 py-1.5 text-xs transition-all ${viewMode === "2d" ? "bg-[#F15A22] text-white" : "bg-white text-gray-600"}`}>
@@ -1756,7 +1756,7 @@ export default function Configurator() {
       {/* Copyright footer */}
       {!isMobile && (
         <div className="fixed bottom-0 left-0 right-0 z-10 text-center py-1 text-[10px] text-gray-400 bg-white/70 backdrop-blur pointer-events-none select-none">
-          © {new Date().getFullYear()} connectapod. All rights reserved.
+          © {new Date().getFullYear()} Designer. All rights reserved.
         </div>
       )}
     </div>

@@ -14,14 +14,14 @@ export default function HeroSection({ onStartQuiz }) {
       <div className="relative z-10 mb-8">
         <img
           src="https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/1a43e85d2_Connectapod-01.png"
-          alt="connectapod"
+          alt="Designer"
           className="h-24 w-auto brightness-0 invert"
         />
       </div>
 
       <div className="relative z-10 text-center px-6 max-w-3xl">
         <p className="text-[#F15A22] text-sm font-semibold uppercase tracking-widest mb-4">
-          New Zealand's Modular Home Specialists
+          Modular Building Design Platform
         </p>
         <h1 className="font-heading text-4xl md:text-6xl font-bold text-white leading-tight mb-6">
           Find Your Perfect

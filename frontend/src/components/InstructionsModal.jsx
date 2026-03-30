@@ -9,7 +9,7 @@ const TUTORIAL_SECTIONS = [
     title: "Getting Started",
     content: (
       <div className="space-y-4">
-        <h3 className="font-semibold text-base text-gray-900">Welcome to Connectapod Designer</h3>
+        <h3 className="font-semibold text-base text-gray-900">Welcome to Designer</h3>
         <p className="text-sm text-gray-700">
           This tool lets you design custom modular buildings by dragging and dropping modules onto a grid, adding walls, furniture, and generating estimates.
         </p>

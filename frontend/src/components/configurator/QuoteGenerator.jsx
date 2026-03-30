@@ -149,7 +149,7 @@ export default function QuoteGenerator({ placedModules, walls, open, onClose }) 
       doc.setTextColor(60, 60, 60);
       doc.setFontSize(11);
       doc.setFont("helvetica", "bold");
-      doc.text("connectapod", margin, y + 4);
+      doc.text("Designer", margin, y + 4);
     }
 
     // Header metadata (right side)
@@ -374,11 +374,11 @@ export default function QuoteGenerator({ placedModules, walls, open, onClose }) 
     
     doc.setTextColor(130, 130, 130);
     doc.setFontSize(6.5);
-    doc.text(`© ${new Date().getFullYear()} Connectapod Ltd. All rights reserved.`, col1, y);
+    doc.text(`© ${new Date().getFullYear()} Designer. All rights reserved.`, col1, y);
     doc.setTextColor(90, 90, 90);
-    doc.text("www.connectapod.com", col2, y, { align: "right" });
+    doc.text("www.designer.com", col2, y, { align: "right" });
 
-    const filename = `connectapod-estimate-${projectName ? projectName.replace(/\s+/g, "-").toLowerCase() + "-" : ""}${Date.now().toString().slice(-6)}.pdf`;
+    const filename = `designer-estimate-${projectName ? projectName.replace(/\s+/g, "-").toLowerCase() + "-" : ""}${Date.now().toString().slice(-6)}.pdf`;
     doc.save(filename);
     setGenerating(false);
   };
