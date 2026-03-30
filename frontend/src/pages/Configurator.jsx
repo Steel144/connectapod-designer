@@ -37,7 +37,7 @@ import FurniturePanel, { FURNITURE_ITEMS } from "@/components/configurator/Furni
 import { ZoomIn, ZoomOut } from "lucide-react";
 import { useAuth } from "@/lib/AuthContext";
 import SiteMapView from "@/components/configurator/SiteMapView";
-import ModularBuilder3D from "@/components/configurator/ModularBuilder3D";
+import RealisticModularBuilder3D from "@/components/configurator/RealisticModularBuilder3D";
 
 const generateId = () => `mod-${Math.random().toString(36).substr(2, 9)}`;
 const generateWallId = () => `wall-${Math.random().toString(36).substr(2, 9)}`;
@@ -1243,7 +1243,7 @@ export default function Configurator() {
           </div>
         ) : viewMode === "3d" ? (
           <div className="w-full h-full">
-            <ModularBuilder3D placedModules={placedModules} walls={walls} />
+            <RealisticModularBuilder3D placedModules={placedModules} walls={walls} />
           </div>
         ) : viewMode === "elevations" ? (
           <div style={{ transform: `scale(${elevationZoom / 100})`, transformOrigin: "top center", display: "inline-block", width: "100%" }}>
