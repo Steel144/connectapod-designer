@@ -203,20 +203,30 @@ export default function RealisticModularBuilder3D({ placedModules = [], walls = 
     let buildingCenterX = 0;
     let buildingCenterZ = 0;
 
-    // Build modules
+    // Build modules - position them correctly to connect
     if (placedModules.length > 0) {
-      placedModules.forEach(module => {
+      console.log('Building', placedModules.length, 'modules');
+      
+      placedModules.forEach((module, idx) => {
+        // Position based on module grid coordinates
+        // Each module is 3m wide × 5.2m deep
         const modX = module.x * MODULE_WIDTH;
         const modZ = module.y * MODULE_DEPTH;
+        
+        console.log(`Module ${idx}:`, { x: module.x, y: module.y, worldX: modX, worldZ: modZ });
+        
         const moduleObj = buildSingleModule(materials, { x: modX, y: 0, z: modZ });
         scene.add(moduleObj);
       });
       
-      // Calculate center of all modules
+      // Calculate center of all modules for camera
       buildingCenterX = placedModules.reduce((sum, m) => sum + m.x, 0) / placedModules.length * MODULE_WIDTH + MODULE_WIDTH / 2;
       buildingCenterZ = placedModules.reduce((sum, m) => sum + m.y, 0) / placedModules.length * MODULE_DEPTH + MODULE_DEPTH / 2;
+      
+      console.log('Building center:', { x: buildingCenterX, z: buildingCenterZ });
     } else {
       // Single test module at origin
+      console.log('No modules in placedModules, showing test module');
       const testModule = buildSingleModule(materials, { x: 0, y: 0, z: 0 });
       scene.add(testModule);
       buildingCenterX = MODULE_WIDTH / 2;
