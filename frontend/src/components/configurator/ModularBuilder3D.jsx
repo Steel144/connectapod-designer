@@ -80,6 +80,10 @@ export default function ModularBuilder3D({ placedModules = [], walls = [] }) {
     const el = mountRef.current;
     if (!el || placedModules.length === 0) return;
 
+    console.log('🏗️ ModularBuilder3D: Rendering', placedModules.length, 'modules');
+    console.log('📦 First module:', placedModules[0]);
+    console.log('🧱 Walls:', walls.length, 'walls');
+
     const w = el.clientWidth;
     const h = el.clientHeight;
 
