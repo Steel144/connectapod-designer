@@ -62,107 +62,81 @@ function createRealisticMaterials() {
 function buildSingleModule(materials, position = { x: 0, y: 0, z: 0 }) {
   const group = new THREE.Group();
   
-  // Simple box: 3m wide × 5.2m deep × 2.4m tall
-  const boxGeo = new THREE.BoxGeometry(3.0, 2.4, 5.2);
-  const box = new THREE.Mesh(boxGeo, materials.cladding1);
-  box.position.set(0, 2.4 / 2, 0);
-  box.castShadow = true;
-  box.receiveShadow = true;
-  group.add(box);
-  
-  // GABLE ROOF - 25° pitch, 3m ridgeline (along width)
-  // Ridge runs along the 3m width
-  // Roof slopes down along the 5.2m depth
+  // Dimensions
+  const width = 3.0;
+  const depth = 5.2;
+  const wallHeight = 2.4;
   const roofPitch = 25 * Math.PI / 180;
-  const ridgeLength = 3.0; // Along width
-  const roofSlope = 5.2; // Depth dimension where it slopes
+  const peakHeight = (depth / 2) * Math.tan(roofPitch); // ~1.21m
   
-  // Peak height: half of depth × tan(25°)
-  const halfDepth = roofSlope / 2;
-  const peakHeight = halfDepth * Math.tan(roofPitch); // ~1.21m
+  // Create single unified geometry
+  const geo = new THREE.BufferGeometry();
   
-  const overhang = 0.4;
-  const totalWidth = ridgeLength + overhang * 2;
-  const totalDepth = roofSlope + overhang * 2;
-  
-  // Create solid roof geometry
-  const roofGeo = new THREE.BufferGeometry();
-  
-  // 6 vertices: 4 bottom corners + 2 ridge points
+  // All vertices for the building
   const vertices = new Float32Array([
-    // Bottom front edge
-    -totalWidth/2, 0, -totalDepth/2,  // 0
-    totalWidth/2, 0, -totalDepth/2,   // 1
+    // Base/walls (box) - 8 vertices
+    // Bottom 4 corners
+    -width/2, 0, -depth/2,        // 0
+    width/2, 0, -depth/2,         // 1
+    width/2, 0, depth/2,          // 2
+    -width/2, 0, depth/2,         // 3
     
-    // Ridge (top center running along width)
-    -totalWidth/2, peakHeight, 0,     // 2
-    totalWidth/2, peakHeight, 0,      // 3
+    // Top 4 corners (at wall height)
+    -width/2, wallHeight, -depth/2,  // 4
+    width/2, wallHeight, -depth/2,   // 5
+    width/2, wallHeight, depth/2,    // 6
+    -width/2, wallHeight, depth/2,   // 7
     
-    // Bottom back edge
-    -totalWidth/2, 0, totalDepth/2,   // 4
-    totalWidth/2, 0, totalDepth/2,    // 5
+    // Roof ridge (2 vertices at peak)
+    -width/2, wallHeight + peakHeight, 0,  // 8
+    width/2, wallHeight + peakHeight, 0,   // 9
   ]);
   
-  // Triangles for both slopes
+  // Triangles for all faces
   const indices = new Uint32Array([
-    // Front slope
+    // Bottom
     0, 2, 1,
-    1, 2, 3,
+    0, 3, 2,
     
-    // Back slope
-    4, 5, 6,
-    5, 7, 6,
+    // Front wall
+    0, 1, 5,
+    0, 5, 4,
+    
+    // Right wall
+    1, 2, 6,
+    1, 6, 5,
+    
+    // Back wall
+    2, 3, 7,
+    2, 7, 6,
+    
+    // Left wall
+    3, 0, 4,
+    3, 4, 7,
+    
+    // Front roof slope
+    4, 5, 9,
+    4, 9, 8,
+    
+    // Back roof slope
+    7, 8, 9,
+    7, 9, 6,
     
     // Left gable end
-    0, 4, 2,
+    7, 4, 8,
     
     // Right gable end
-    1, 3, 5,
+    5, 6, 9,
   ]);
   
-  // Map vertices correctly
-  const finalIndices = new Uint32Array([
-    // Front slope (front edge to ridge)
-    0, 2, 1,
-    1, 2, 3,
-    
-    // Back slope (ridge to back edge)
-    2, 4, 3,
-    3, 4, 5,
-  ]);
+  geo.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+  geo.setIndex(new THREE.BufferAttribute(indices, 1));
+  geo.computeVertexNormals();
   
-  roofGeo.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
-  roofGeo.setIndex(new THREE.BufferAttribute(finalIndices, 1));
-  roofGeo.computeVertexNormals();
-  
-  const roof = new THREE.Mesh(roofGeo, materials.roof);
-  roof.position.y = 2.4; // Top of walls
-  roof.castShadow = true;
-  roof.receiveShadow = true;
-  group.add(roof);
-  
-  // Gable end triangles (left and right sides)
-  const gableShape = new THREE.Shape();
-  gableShape.moveTo(-roofSlope/2, 0);
-  gableShape.lineTo(0, peakHeight);
-  gableShape.lineTo(roofSlope/2, 0);
-  gableShape.lineTo(-roofSlope/2, 0);
-  
-  const gableGeo = new THREE.ShapeGeometry(gableShape);
-  
-  // Left gable
-  const leftGable = new THREE.Mesh(gableGeo, materials.timber);
-  leftGable.position.set(-ridgeLength/2, 2.4, 0);
-  leftGable.rotation.y = Math.PI / 2;
-  leftGable.castShadow = true;
-  group.add(leftGable);
-  
-  // Right gable
-  const rightGable = new THREE.Mesh(gableGeo, materials.timber);
-  rightGable.position.set(ridgeLength/2, 2.4, 0);
-  rightGable.rotation.y = -Math.PI / 2;
-  rightGable.castShadow = true;
-  group.add(rightGable);
+  const building = new THREE.Mesh(geo, materials.cladding1);
+  building.castShadow = true;
+  building.receiveShadow = true;
+  group.add(building);
   
   group.position.set(position.x, position.y, position.z);
   return group;
