@@ -79,11 +79,9 @@ agenthub/agents/youtube/db
 memory/test_credentials.md
 
 # Mobile development
-android-sdk/-e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
+android-sdk/
+
+# Environment files - Allow specific .env files for deployment
+# (Secrets should be injected via Emergent platform, not committed)
+!backend/.env
+!frontend/.env

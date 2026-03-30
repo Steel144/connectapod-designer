@@ -15,10 +15,9 @@ export default defineConfig({
     port: 3000,
     strictPort: false,
     allowedHosts: [
-      'base44-rebuild-2.preview.emergentagent.com',
-      'base44-rebuild-2.cluster-0.preview.emergentcf.cloud',
       '.preview.emergentagent.com',
       '.preview.emergentcf.cloud',
+      '.emergent.host',
       'localhost'
     ],
     hmr: false,
