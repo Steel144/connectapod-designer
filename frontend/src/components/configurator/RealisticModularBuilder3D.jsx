@@ -238,11 +238,23 @@ export default function RealisticModularBuilder3D({ placedModules = [], walls = 
         scene.add(moduleObj);
       });
       
-      // Calculate center of all modules for camera
-      buildingCenterX = (placedModules.reduce((sum, m) => sum + m.x, 0) / placedModules.length) * MODULE_WIDTH + MODULE_WIDTH / 2;
-      buildingCenterZ = (placedModules.reduce((sum, m) => sum + m.y, 0) / placedModules.length) * MODULE_DEPTH + MODULE_DEPTH / 2;
+      // Calculate center of all modules for camera - use new coordinate system
+      const GRID_CELL_SIZE = 0.6;
       
-      console.log('Building center:', { x: buildingCenterX, z: buildingCenterZ });
+      // Average grid position
+      const avgGridX = placedModules.reduce((sum, m) => sum + m.x + m.w/2, 0) / placedModules.length;
+      const avgGridY = placedModules.reduce((sum, m) => sum + m.y + m.h/2, 0) / placedModules.length;
+      
+      // Convert to world coordinates
+      buildingCenterX = avgGridX * GRID_CELL_SIZE;
+      buildingCenterZ = avgGridY * GRID_CELL_SIZE;
+      
+      console.log('Building center:', { 
+        x: buildingCenterX, 
+        z: buildingCenterZ,
+        avgGridX,
+        avgGridY 
+      });
     } else {
       // Test with 3 adjacent modules to demonstrate joining
       console.log('No modules in placedModules, showing 3 test modules');
