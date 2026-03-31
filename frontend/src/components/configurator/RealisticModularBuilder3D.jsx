@@ -244,6 +244,83 @@ export default function RealisticModularBuilder3D({ placedModules = [], walls = 
         scene.add(moduleObj);
       });
       
+      // Render standalone walls with their elevation textures
+      console.log(`🎨 Rendering ${walls.length} walls with textures`);
+      const textureLoader = new THREE.TextureLoader();
+      
+      walls.forEach((wall, idx) => {
+        const GRID_CELL_SIZE = 0.6;
+        const WALL_HEIGHT = 2.4;
+        const WALL_THICKNESS = 0.05;
+        
+        // Convert grid position to world position
+        const wallWorldX = wall.x * GRID_CELL_SIZE;
+        const wallWorldZ = wall.y * GRID_CELL_SIZE;
+        
+        // Determine wall dimensions based on orientation
+        let wallWidth, wallDepth;
+        if (wall.orientation === 'horizontal' || wall.face === 'W' || wall.face === 'Y') {
+          // Horizontal wall (runs along X axis)
+          wallWidth = 3.0; // Width of one module
+          wallDepth = WALL_THICKNESS;
+        } else {
+          // Vertical wall (runs along Z axis)
+          wallWidth = WALL_THICKNESS;
+          wallDepth = 5.2; // Depth of one module
+        }
+        
+        // Create wall geometry
+        const wallGeometry = new THREE.BoxGeometry(wallWidth, WALL_HEIGHT, wallDepth);
+        
+        // Load texture if wall has elevation image
+        let wallMaterial;
+        if (wall.elevationImage) {
+          const texture = textureLoader.load(
+            wall.elevationImage,
+            () => console.log(`✅ Loaded texture for wall ${idx}: ${wall.type}`),
+            undefined,
+            (err) => console.error(`❌ Failed to load texture for wall ${idx}:`, err)
+          );
+          
+          // Configure texture
+          texture.wrapS = THREE.RepeatWrapping;
+          texture.wrapT = THREE.RepeatWrapping;
+          
+          wallMaterial = new THREE.MeshStandardMaterial({
+            map: texture,
+            roughness: 0.7,
+            metalness: 0.2,
+          });
+        } else {
+          // Default material if no texture
+          wallMaterial = new THREE.MeshStandardMaterial({
+            color: 0x8b7355,
+            roughness: 0.8,
+            metalness: 0.1,
+          });
+        }
+        
+        const wallMesh = new THREE.Mesh(wallGeometry, wallMaterial);
+        
+        // Position wall - centered at grid position + half dimensions
+        wallMesh.position.set(
+          wallWorldX + wallWidth / 2,
+          WALL_HEIGHT / 2,
+          wallWorldZ + wallDepth / 2
+        );
+        
+        scene.add(wallMesh);
+        
+        console.log(`📍 Wall ${idx} positioned:`, {
+          type: wall.type,
+          face: wall.face,
+          gridPos: { x: wall.x, y: wall.y },
+          worldPos: { x: wallWorldX, z: wallWorldZ },
+          dimensions: { w: wallWidth, h: WALL_HEIGHT, d: wallDepth },
+          hasTexture: !!wall.elevationImage
+        });
+      });
+      
       // Calculate center of all modules for camera - use new coordinate system
       const GRID_CELL_SIZE = 0.6;
       
