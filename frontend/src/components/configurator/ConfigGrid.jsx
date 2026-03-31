@@ -1607,7 +1607,54 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
            />
          )}
 
-
+        {/* Drag preview for modules - shows rotation */}
+        {dragging?.isPlaced && dragging.mod && (() => {
+          const rect = gridRef.current?.getBoundingClientRect();
+          if (!rect) return null;
+          
+          const cursorX = dragging.cursorX - rect.left;
+          const cursorY = dragging.cursorY - rect.top;
+          const previewX = (cursorX - dragging.offsetX) / scaledCellW;
+          const previewY = (cursorY - dragging.offsetY) / scaledCellH;
+          
+          return (
+            <div
+              className="absolute pointer-events-none opacity-60"
+              style={{
+                left: previewX * scaledCellW,
+                top: previewY * scaledCellH,
+                width: dragging.mod.w * scaledCellW,
+                height: dragging.mod.h * scaledCellH,
+                zIndex: 9999,
+              }}
+            >
+              <div
+                className="absolute inset-0 overflow-hidden border-2 border-blue-400 border-dashed"
+                style={{
+                  transform: `rotate(${dragging.mod.rotation || 0}deg)`,
+                  width: "100%",
+                  height: "100%",
+                  backgroundColor: dragging.mod.floorPlanImage ? "white" : "transparent",
+                }}
+              >
+                {showPhotoImages && (dragging.mod.floorPlanImage || floorPlanImages[dragging.mod.type] || floorPlanImages[dragging.mod.type?.toLowerCase()]) ? (
+                  <img 
+                    src={dragging.mod.floorPlanImage || floorPlanImages[dragging.mod.type] || floorPlanImages[dragging.mod.type?.toLowerCase()]} 
+                    alt={dragging.mod.label} 
+                    className="w-full h-full object-cover" 
+                    style={{ transform: dragging.mod.flipped ? 'scaleX(-1)' : undefined }} 
+                  />
+                ) : (
+                  <FloorPlanSVG 
+                    code={dragging.mod.type} 
+                    className="w-full h-full" 
+                    style={{ transform: dragging.mod.flipped ? 'scaleX(-1)' : undefined }} 
+                  />
+                )}
+              </div>
+            </div>
+          );
+        })()}
 
         </div>
 
