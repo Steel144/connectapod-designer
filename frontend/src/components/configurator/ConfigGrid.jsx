@@ -1111,6 +1111,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
             <div
               key={mod.id}
               data-module-id={mod.id}
+              draggable="false"
               onMouseDown={(e) => startDragPlaced(e, mod)}
               onMouseEnter={() => setHoveredModuleId(mod.id)}
               onMouseLeave={() => setHoveredModuleId(null)}
@@ -1124,6 +1125,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                 userSelect: "none",
                 border: "none",
                 boxShadow: "none",
+                WebkitUserDrag: "none",
               }}
             >
               <div
@@ -1136,7 +1138,13 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                 }}
               >
                 {showPhotoImages && (mod.floorPlanImage || floorPlanImages[mod.type] || floorPlanImages[mod.type?.toLowerCase()]) ? (
-                  <img src={mod.floorPlanImage || floorPlanImages[mod.type] || floorPlanImages[mod.type?.toLowerCase()]} alt={mod.label} className="w-full h-full object-cover" style={{ transform: mod.flipped ? 'scaleX(-1)' : undefined }} />
+                  <img 
+                    src={mod.floorPlanImage || floorPlanImages[mod.type] || floorPlanImages[mod.type?.toLowerCase()]} 
+                    alt={mod.label} 
+                    className="w-full h-full object-cover" 
+                    style={{ transform: mod.flipped ? 'scaleX(-1)' : undefined }}
+                    draggable="false"
+                  />
                 ) : (
                   <FloorPlanSVG code={mod.type} className="w-full h-full" style={{ transform: mod.flipped ? 'scaleX(-1)' : undefined }} />
                 )}
