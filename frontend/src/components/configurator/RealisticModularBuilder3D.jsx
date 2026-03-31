@@ -338,41 +338,42 @@ export default function RealisticModularBuilder3D({ placedModules = [], walls = 
     gridHelper.position.y = 0.01;
     scene.add(gridHelper);
 
-    // Create tray roofing texture FIRST (600mm wide vertical metal trays)
+    // Create tray roofing texture with HIGH CONTRAST for visibility
     const createTrayRoofingTexture = () => {
       const canvas = document.createElement('canvas');
       canvas.width = 512;
       canvas.height = 512;
       const ctx = canvas.getContext('2d');
       
-      // Background - LIGHTER dark grey (was too dark)
-      ctx.fillStyle = '#4a4a4a';
+      // Background - medium grey (visible base)
+      ctx.fillStyle = '#707070';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       
-      // Vertical trays (600mm = 0.6m wide each)
+      // Vertical trays with HIGH CONTRAST
       const trayWidth = canvas.width / 8;
       
       for (let i = 0; i < 8; i++) {
         const x = i * trayWidth;
         
-        // Tray center - lighter
-        ctx.fillStyle = '#5a5a5a';
-        ctx.fillRect(x + trayWidth * 0.2, 0, trayWidth * 0.6, canvas.height);
+        // Tray center - light grey (very visible)
+        ctx.fillStyle = '#909090';
+        ctx.fillRect(x + trayWidth * 0.25, 0, trayWidth * 0.5, canvas.height);
         
-        // Left edge (shadow) - not pure black
-        ctx.fillStyle = '#3a3a3a';
-        ctx.fillRect(x, 0, trayWidth * 0.2, canvas.height);
+        // Left edge (shadow) - dark but not black
+        ctx.fillStyle = '#404040';
+        ctx.fillRect(x, 0, trayWidth * 0.25, canvas.height);
         
-        // Right edge (highlight) - lighter
-        ctx.fillStyle = '#6a6a6a';
-        ctx.fillRect(x + trayWidth * 0.8, 0, trayWidth * 0.2, canvas.height);
+        // Right edge (highlight) - bright
+        ctx.fillStyle = '#b0b0b0';
+        ctx.fillRect(x + trayWidth * 0.75, 0, trayWidth * 0.25, canvas.height);
       }
       
       const texture = new THREE.CanvasTexture(canvas);
       texture.wrapS = THREE.RepeatWrapping;
       texture.wrapT = THREE.RepeatWrapping;
-      texture.repeat.set(1, 2); // Reduced repeat for correct 600mm scale
+      texture.repeat.set(1, 2);
       
+      console.log('✅ Created high-contrast tray texture');
       return texture;
     };
     
@@ -381,24 +382,28 @@ export default function RealisticModularBuilder3D({ placedModules = [], walls = 
     // Create materials
     const materials = createRealisticMaterials();
     
-    // Override roof AND wall materials to use tray texture with correct scale
+    // Override roof AND wall materials with LIGHTER colors and emissive
     materials.roof = new THREE.MeshStandardMaterial({
       map: trayTexture.clone(),
-      color: 0x5a5a5a, // Lighter grey so it's visible
-      roughness: 0.4,
-      metalness: 0.6,
+      color: 0x808080, // Much lighter grey
+      roughness: 0.5,
+      metalness: 0.3,
       side: THREE.DoubleSide,
+      emissive: 0x202020, // Slight glow so it's visible
+      emissiveIntensity: 0.2,
     });
     
-    // Adjust roof texture repeat for proper orientation along roof slope
+    // Adjust roof texture repeat
     materials.roof.map.repeat.set(3, 2);
     
     materials.cladding1 = new THREE.MeshStandardMaterial({
       map: trayTexture,
-      color: 0x5a5a5a, // Lighter grey so it's visible
-      roughness: 0.6,
-      metalness: 0.4,
+      color: 0x808080, // Much lighter grey  
+      roughness: 0.5,
+      metalness: 0.3,
       side: THREE.DoubleSide,
+      emissive: 0x202020, // Slight glow so it's visible
+      emissiveIntensity: 0.2,
     });
 
     // Calculate building center
