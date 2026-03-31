@@ -105,11 +105,66 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
         const selectedWalls = walls.filter(w => selectedWallIds.has(w.id));
         const selectedFurniture = furniture.filter(f => selectedFurnitureIds.has(f.id));
         
-        if (selectedModules.length > 0 || selectedWalls.length > 0 || selectedFurniture.length > 0) {
+        // Also find walls attached to selected modules
+        const WALL_OFFSET = 0.308;
+        const TOLERANCE = 0.6;
+        const attachedWalls = [];
+        
+        selectedModules.forEach(mod => {
+          walls.forEach(w => {
+            // Check if this wall is already selected
+            if (selectedWallIds.has(w.id)) return;
+            
+            // Check each face of the module to see if this wall belongs to it
+            // W face (top/north): horizontal wall at y = module.y - WALL_OFFSET
+            if (w.orientation === "horizontal" || w.face === "W") {
+              const expectedY = mod.y - WALL_OFFSET;
+              const expectedX = mod.x;
+              if (Math.abs(w.y - expectedY) < TOLERANCE && Math.abs(w.x - expectedX) < TOLERANCE) {
+                attachedWalls.push(w);
+                return;
+              }
+            }
+            
+            // Y face (bottom/south): horizontal wall at y = module.y + module.h
+            if (w.orientation === "horizontal" || w.face === "Y") {
+              const expectedY = mod.y + mod.h;
+              const expectedX = mod.x;
+              if (Math.abs(w.y - expectedY) < TOLERANCE && Math.abs(w.x - expectedX) < TOLERANCE) {
+                attachedWalls.push(w);
+                return;
+              }
+            }
+            
+            // Z face (left/west): vertical wall at x = module.x
+            if (w.orientation === "vertical" || w.face === "Z") {
+              const expectedX = mod.x;
+              const expectedY = mod.y;
+              if (Math.abs(w.x - expectedX) < TOLERANCE && Math.abs(w.y - expectedY) < TOLERANCE) {
+                attachedWalls.push(w);
+                return;
+              }
+            }
+            
+            // X face (right/east): vertical wall at x = module.x + module.w - WALL_OFFSET
+            if (w.orientation === "vertical" || w.face === "X") {
+              const expectedX = mod.x + mod.w - WALL_OFFSET;
+              const expectedY = mod.y;
+              if (Math.abs(w.x - expectedX) < TOLERANCE && Math.abs(w.y - expectedY) < TOLERANCE) {
+                attachedWalls.push(w);
+                return;
+              }
+            }
+          });
+        });
+        
+        const allWalls = [...selectedWalls, ...attachedWalls];
+        
+        if (selectedModules.length > 0 || allWalls.length > 0 || selectedFurniture.length > 0) {
           console.log('Copying modules:', selectedModules);
-          console.log('Module 0 details:', selectedModules[0]);
-          setClipboard({ modules: selectedModules, walls: selectedWalls, furniture: selectedFurniture });
-          console.log('Copied:', { modules: selectedModules.length, walls: selectedWalls.length, furniture: selectedFurniture.length });
+          console.log('Copying walls:', allWalls.length, '(', selectedWalls.length, 'selected +', attachedWalls.length, 'attached)');
+          setClipboard({ modules: selectedModules, walls: allWalls, furniture: selectedFurniture });
+          console.log('Copied:', { modules: selectedModules.length, walls: allWalls.length, furniture: selectedFurniture.length });
         }
         return;
       }
