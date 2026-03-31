@@ -480,6 +480,8 @@ export default function Configurator() {
       || floorPlanImages[mod.type?.toLowerCase()]
       || (mod.originalCode && (floorPlanImages[mod.originalCode] || floorPlanImages[mod.originalCode?.toLowerCase()]));
     if (imgUrl) newMod.floorPlanImage = imgUrl;
+    // If no lookup found but mod has floorPlanImage, preserve it
+    else if (mod.floorPlanImage) newMod.floorPlanImage = mod.floorPlanImage;
     // Look up pricing from customModules
     const dbMod = customModules.find(c => c.code === mod.type);
     if (dbMod?.price) newMod.price = dbMod.price;
