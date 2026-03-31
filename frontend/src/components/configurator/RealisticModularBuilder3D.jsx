@@ -382,27 +382,29 @@ export default function RealisticModularBuilder3D({ placedModules = [], walls = 
     // Create materials
     const materials = createRealisticMaterials();
     
-    // Override roof AND wall materials with LIGHTER colors and emissive
+    // Override roof material with same settings as walls for consistency
     materials.roof = new THREE.MeshStandardMaterial({
       map: trayTexture.clone(),
-      color: 0x808080, // Much lighter grey
+      color: 0x808080, // Same as walls
       roughness: 0.5,
       metalness: 0.3,
       side: THREE.DoubleSide,
-      emissive: 0x202020, // Slight glow so it's visible
+      emissive: 0x202020,
       emissiveIntensity: 0.2,
     });
     
-    // Adjust roof texture repeat
-    materials.roof.map.repeat.set(3, 2);
+    // Adjust roof texture to run along slope (rotate 90° and adjust repeat)
+    materials.roof.map.rotation = Math.PI / 2; // Rotate texture 90 degrees
+    materials.roof.map.repeat.set(2, 1.5); // Adjusted for roof slope
+    materials.roof.map.needsUpdate = true;
     
     materials.cladding1 = new THREE.MeshStandardMaterial({
       map: trayTexture,
-      color: 0x808080, // Much lighter grey  
+      color: 0x808080,
       roughness: 0.5,
       metalness: 0.3,
       side: THREE.DoubleSide,
-      emissive: 0x202020, // Slight glow so it's visible
+      emissive: 0x202020,
       emissiveIntensity: 0.2,
     });
 
