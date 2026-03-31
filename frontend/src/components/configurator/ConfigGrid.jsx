@@ -586,14 +586,11 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
       if (canPlace) {
         if (isCopyDrag) {
           // Copy mode: create new module at new position
-          const newModule = {
-            ...mod,
-            id: `${Date.now()}-${Math.random()}`,
-            x: mod.x + deltaX,
-            y: mod.y + deltaY
-          };
-          onPlace(newModule);
-          console.log('Copied module with Alt/Option');
+          const {x: _x, y: _y, id: _id, ...modWithoutCoords} = mod;
+          const newX = mod.x + deltaX;
+          const newY = mod.y + deltaY;
+          onPlace(modWithoutCoords, newX, newY);
+          console.log('Copied module with Alt/Option drag');
         } else {
           // Move mode: move existing module
           onMove(id, mod.x + deltaX, mod.y + deltaY);
