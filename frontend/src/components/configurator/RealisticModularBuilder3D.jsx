@@ -89,11 +89,14 @@ function createRealisticMaterials() {
       reflectivity: 0.95,
     }),
     
-    // Dark metal roof
+    // Dark metal roof - solid and opaque
     roof: new THREE.MeshStandardMaterial({
-      color: 0x2a2a2a,
-      roughness: 0.3,
-      metalness: 0.7,
+      color: 0x1a1a1a, // Darker for better visibility
+      roughness: 0.4,
+      metalness: 0.6,
+      side: THREE.DoubleSide,
+      transparent: false,
+      opacity: 1.0,
     }),
     
     // Dark window/door frames
