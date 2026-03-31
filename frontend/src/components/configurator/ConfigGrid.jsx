@@ -67,23 +67,32 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
   // Track Alt/Option key state for drag-to-copy
   const [isAltPressed, setIsAltPressed] = useState(false);
 
-  // Track Alt key globally
+  // Track Alt/Option key globally
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (e.key === 'Alt' || e.key === 'Option') {
+      if (e.altKey) {
         setIsAltPressed(true);
+        console.log('Alt/Option key pressed');
       }
     };
     const handleKeyUp = (e) => {
-      if (e.key === 'Alt' || e.key === 'Option') {
+      if (!e.altKey) {
         setIsAltPressed(false);
+        console.log('Alt/Option key released');
       }
     };
+    // Also reset on blur to prevent stuck keys
+    const handleBlur = () => {
+      setIsAltPressed(false);
+    };
+    
     window.addEventListener('keydown', handleKeyDown);
     window.addEventListener('keyup', handleKeyUp);
+    window.addEventListener('blur', handleBlur);
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
+      window.removeEventListener('blur', handleBlur);
     };
   }, []);
 
