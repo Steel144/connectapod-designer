@@ -117,6 +117,7 @@ function buildSingleModule(materials, position = { x: 0, y: 0, z: 0 }, customWid
   const wallHeight = 2.4;
   const roofPitch = 25 * Math.PI / 180;
   const peakHeight = (depth / 2) * Math.tan(roofPitch);
+  const OVERLAP = 0.001; // Tiny overlap to prevent gaps between meshes
   
   // Create single unified geometry
   const geo = new THREE.BufferGeometry();
@@ -182,8 +183,8 @@ function buildSingleModule(materials, position = { x: 0, y: 0, z: 0 }, customWid
   geo.setIndex(new THREE.BufferAttribute(indices, 1));
   geo.computeVertexNormals();
   
-  // Create walls with tray roofing (RIGHT and LEFT walls only)
-  const metalWallIndices = new Uint32Array([
+  // Create metal-clad parts (side walls + roof) as ONE mesh to avoid gaps
+  const metalIndices = new Uint32Array([
     // Bottom
     0, 2, 1,
     0, 3, 2,
@@ -195,17 +196,25 @@ function buildSingleModule(materials, position = { x: 0, y: 0, z: 0 }, customWid
     // Left wall (metal tray)
     3, 0, 4,
     3, 4, 7,
+    
+    // Front roof slope (connects to walls seamlessly)
+    4, 5, 9,
+    4, 9, 8,
+    
+    // Back roof slope (connects to walls seamlessly)
+    7, 8, 9,
+    7, 9, 6,
   ]);
   
-  const wallsGeo = new THREE.BufferGeometry();
-  wallsGeo.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
-  wallsGeo.setIndex(new THREE.BufferAttribute(metalWallIndices, 1));
-  wallsGeo.computeVertexNormals();
+  const metalGeo = new THREE.BufferGeometry();
+  metalGeo.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+  metalGeo.setIndex(new THREE.BufferAttribute(metalIndices, 1));
+  metalGeo.computeVertexNormals();
   
-  const wallsMesh = new THREE.Mesh(wallsGeo, materials.cladding1);
-  wallsMesh.castShadow = true;
-  wallsMesh.receiveShadow = true;
-  group.add(wallsMesh);
+  const metalMesh = new THREE.Mesh(metalGeo, materials.cladding1);
+  metalMesh.castShadow = true;
+  metalMesh.receiveShadow = true;
+  group.add(metalMesh);
   
   // Create FRONT and BACK walls with cedar (entire walls including gables)
   const cedarWallIndices = new Uint32Array([
@@ -228,26 +237,8 @@ function buildSingleModule(materials, position = { x: 0, y: 0, z: 0 }, customWid
   cedarWallsMesh.receiveShadow = true;
   group.add(cedarWallsMesh);
   
-  // Create roof with metal material
-  const roofIndices = new Uint32Array([
-    // Front roof slope
-    4, 5, 9,
-    4, 9, 8,
-    
-    // Back roof slope
-    7, 8, 9,
-    7, 9, 6,
-  ]);
-  
-  const roofGeo = new THREE.BufferGeometry();
-  roofGeo.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
-  roofGeo.setIndex(new THREE.BufferAttribute(roofIndices, 1));
-  roofGeo.computeVertexNormals();
-  
-  const roofMesh = new THREE.Mesh(roofGeo, materials.roof);
-  roofMesh.castShadow = true;
-  roofMesh.receiveShadow = true;
-  group.add(roofMesh);
+  // Note: Roof is now included with metal mesh above (no separate roof mesh)
+  // This eliminates gaps between walls and roof
   
   // Create gable triangles with cedar
   // Left gable end (triangle)
