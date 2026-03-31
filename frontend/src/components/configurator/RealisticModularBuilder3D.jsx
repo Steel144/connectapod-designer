@@ -182,38 +182,51 @@ function buildSingleModule(materials, position = { x: 0, y: 0, z: 0 }, customWid
   geo.setIndex(new THREE.BufferAttribute(indices, 1));
   geo.computeVertexNormals();
   
-  // Create walls only (exclude roof slopes and gables)
-  const wallIndices = new Uint32Array([
+  // Create walls with tray roofing (RIGHT and LEFT walls only)
+  const metalWallIndices = new Uint32Array([
     // Bottom
     0, 2, 1,
     0, 3, 2,
     
-    // Front wall
-    0, 1, 5,
-    0, 5, 4,
-    
-    // Right wall
+    // Right wall (metal tray)
     1, 2, 6,
     1, 6, 5,
     
-    // Back wall
-    2, 3, 7,
-    2, 7, 6,
-    
-    // Left wall
+    // Left wall (metal tray)
     3, 0, 4,
     3, 4, 7,
   ]);
   
   const wallsGeo = new THREE.BufferGeometry();
   wallsGeo.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
-  wallsGeo.setIndex(new THREE.BufferAttribute(wallIndices, 1));
+  wallsGeo.setIndex(new THREE.BufferAttribute(metalWallIndices, 1));
   wallsGeo.computeVertexNormals();
   
   const wallsMesh = new THREE.Mesh(wallsGeo, materials.cladding1);
   wallsMesh.castShadow = true;
   wallsMesh.receiveShadow = true;
   group.add(wallsMesh);
+  
+  // Create FRONT and BACK walls with cedar (entire walls including gables)
+  const cedarWallIndices = new Uint32Array([
+    // Front wall (cedar)
+    0, 1, 5,
+    0, 5, 4,
+    
+    // Back wall (cedar)
+    2, 3, 7,
+    2, 7, 6,
+  ]);
+  
+  const cedarWallsGeo = new THREE.BufferGeometry();
+  cedarWallsGeo.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+  cedarWallsGeo.setIndex(new THREE.BufferAttribute(cedarWallIndices, 1));
+  cedarWallsGeo.computeVertexNormals();
+  
+  const cedarWallsMesh = new THREE.Mesh(cedarWallsGeo, materials.timber);
+  cedarWallsMesh.castShadow = true;
+  cedarWallsMesh.receiveShadow = true;
+  group.add(cedarWallsMesh);
   
   // Create roof with metal material
   const roofIndices = new Uint32Array([
@@ -236,8 +249,8 @@ function buildSingleModule(materials, position = { x: 0, y: 0, z: 0 }, customWid
   roofMesh.receiveShadow = true;
   group.add(roofMesh);
   
-  // Create separate gable ends with cedar/timber
-  // Left gable end
+  // Create gable triangles with cedar
+  // Left gable end (triangle)
   const leftGableGeo = new THREE.BufferGeometry();
   const leftGableVerts = new Float32Array([
     vertices[21], vertices[22], vertices[23], // vertex 7
@@ -358,7 +371,7 @@ export default function RealisticModularBuilder3D({ placedModules = [], walls = 
       const texture = new THREE.CanvasTexture(canvas);
       texture.wrapS = THREE.RepeatWrapping;
       texture.wrapT = THREE.RepeatWrapping;
-      texture.repeat.set(2, 4);
+      texture.repeat.set(1, 2); // Reduced repeat for correct 600mm scale
       
       return texture;
     };
@@ -368,14 +381,17 @@ export default function RealisticModularBuilder3D({ placedModules = [], walls = 
     // Create materials
     const materials = createRealisticMaterials();
     
-    // Override BOTH roof AND wall materials to use tray texture
+    // Override roof AND wall materials to use tray texture with correct scale
     materials.roof = new THREE.MeshStandardMaterial({
-      map: trayTexture,
+      map: trayTexture.clone(),
       color: 0x2a2a2a,
       roughness: 0.4,
       metalness: 0.6,
       side: THREE.DoubleSide,
     });
+    
+    // Adjust roof texture repeat for proper orientation along roof slope
+    materials.roof.map.repeat.set(3, 2);
     
     materials.cladding1 = new THREE.MeshStandardMaterial({
       map: trayTexture,
