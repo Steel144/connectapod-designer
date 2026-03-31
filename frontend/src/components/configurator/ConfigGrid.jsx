@@ -452,9 +452,9 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
         const newY = Math.max(0, Math.min(item.y + deltaY, GRID_ROWS - 1));
         
         if (isCopyDrag) {
-          // Copy furniture
-          const newItem = { ...item, id: `${Date.now()}-${Math.random()}`, x: newX, y: newY };
-          onPlaceFurniture?.(newItem);
+          // Copy furniture - remove id, x, y and pass separately
+          const {id: _id, x: _x, y: _y, ...furnitureData} = item;
+          onPlaceFurniture?.(furnitureData, newX, newY);
           console.log('Copied furniture with Alt/Option');
         } else {
           // Move furniture
