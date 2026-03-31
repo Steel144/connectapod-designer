@@ -35,7 +35,13 @@ UPLOAD_DIR.mkdir(exist_ok=True)
 class DesignTemplate(BaseModel):
     id: Optional[str] = None
     name: str
+    description: Optional[str] = None
+    size_sqm: Optional[float] = None
     bedrooms: Optional[int] = None
+    bathrooms: Optional[int] = None
+    starting_price: Optional[float] = None
+    heroImage: Optional[str] = None
+    categories: Optional[List[str]] = []
     use_cases: Optional[List[str]] = []
     budget_range: Optional[str] = None
     is_featured: Optional[bool] = False
