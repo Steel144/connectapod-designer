@@ -710,7 +710,7 @@ export default function Configurator() {
       image: furnitureItem.image || null,
       x,
       y,
-      rotation: 0,
+      rotation: furnitureItem.rotation || 0,
       width: furnitureItem.width || 1.4,
       depth: furnitureItem.depth || 2.0,
     };
