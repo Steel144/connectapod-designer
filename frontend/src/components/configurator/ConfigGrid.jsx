@@ -61,8 +61,71 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
   const [selectedFurnitureIds, setSelectedFurnitureIds] = useState(new Set());
   // { wall, offsetX, offsetY, cursorX, cursorY }
 
+  // Copy/paste state
+  const [clipboard, setClipboard] = useState(null);
+
   useEffect(() => {
     const onKey = (e) => {
+      // Copy (Ctrl+C or Cmd+C)
+      if ((e.ctrlKey || e.metaKey) && e.key === 'c') {
+        e.preventDefault();
+        const selectedModules = placedModules.filter(m => selected.has(m.id));
+        const selectedWalls = walls.filter(w => selectedWallIds.has(w.id));
+        const selectedFurniture = furniture.filter(f => selectedFurnitureIds.has(f.id));
+        
+        if (selectedModules.length > 0 || selectedWalls.length > 0 || selectedFurniture.length > 0) {
+          setClipboard({ modules: selectedModules, walls: selectedWalls, furniture: selectedFurniture });
+          console.log('Copied:', { modules: selectedModules.length, walls: selectedWalls.length, furniture: selectedFurniture.length });
+        }
+        return;
+      }
+      
+      // Paste (Ctrl+V or Cmd+V)
+      if ((e.ctrlKey || e.metaKey) && e.key === 'v' && clipboard) {
+        e.preventDefault();
+        
+        // Calculate offset for pasted items (2 cells right and down)
+        const offsetX = 2;
+        const offsetY = 2;
+        
+        // Paste modules
+        clipboard.modules.forEach(mod => {
+          const newModule = {
+            ...mod,
+            id: `${Date.now()}-${Math.random()}`,
+            x: mod.x + offsetX,
+            y: mod.y + offsetY
+          };
+          onPlace(newModule);
+        });
+        
+        // Paste walls
+        clipboard.walls.forEach(wall => {
+          const newWall = {
+            ...wall,
+            id: `${Date.now()}-${Math.random()}`,
+            x: wall.x + offsetX,
+            y: wall.y + offsetY
+          };
+          onPlaceWall && onPlaceWall(newWall);
+        });
+        
+        // Paste furniture
+        clipboard.furniture.forEach(item => {
+          const newItem = {
+            ...item,
+            id: `${Date.now()}-${Math.random()}`,
+            x: item.x + offsetX,
+            y: item.y + offsetY
+          };
+          onPlaceFurniture && onPlaceFurniture(newItem);
+        });
+        
+        console.log('Pasted items');
+        return;
+      }
+      
+      // Delete
       if (e.key === "Delete" || e.key === "Backspace") {
         setSelected((prevSelected) => {
           if (prevSelected.size > 0) {
@@ -84,7 +147,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [onRemove, onRemoveWall, onRemoveFurniture, selectedFurnitureIds]);
+  }, [onRemove, onRemoveWall, onRemoveFurniture, selectedFurnitureIds, selected, selectedWallIds, placedModules, walls, furniture, clipboard, onPlace, onPlaceWall, onPlaceFurniture]);
 
   const getCellFromClient = (clientX, clientY) => {
     const rect = gridRef.current.getBoundingClientRect();
@@ -432,7 +495,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
           newSelectedFurniture.add(item.id);
         }
       });
-      if (newSelectedFurniture.size > 0) setSelectedFurnitureIds(newSelectedFurniture);
+      setSelectedFurnitureIds(newSelectedFurniture);
 
       setSelectionBox(null);
       return;
