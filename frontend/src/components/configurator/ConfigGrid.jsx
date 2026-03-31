@@ -783,13 +783,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
               const newFurnitureX = newX + relativeX;
               const newFurnitureY = newY + relativeY;
               
-              const {id: _fId, x: _fx, y: _fy, ...furnitureWithoutCoords} = f;
-              const newFurniture = {
-                ...furnitureWithoutCoords,
-                id: `${Date.now()}-${Math.random()}`,
-                x: newFurnitureX,
-                y: newFurnitureY
-              };
+              const {id: _fId, x: _fx, y: _fy, ...furnitureData} = f;
               
               console.log(`🟣 Copying furniture:`, {
                 original: { x: f.x, y: f.y },
@@ -797,7 +791,8 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                 relative: { x: relativeX, y: relativeY }
               });
               
-              onPlaceFurniture(newFurniture);
+              // Call onPlaceFurniture with correct signature: (furnitureItem, x, y)
+              onPlaceFurniture(furnitureData, newFurnitureX, newFurnitureY);
             }
           });
           
