@@ -10,51 +10,57 @@ const WALL_THICKNESS = 0.15;
 const ROOF_PITCH = 25 * Math.PI / 180;
 
 function createRealisticMaterials() {
+  const textureLoader = new THREE.TextureLoader();
+  
+  // Load textures - using procedural/repeat patterns for now
+  // For production, you'd load actual texture images
+  
   return {
     // Cladding 1 - Vertical metal panels (used on most elevations)
     cladding1: new THREE.MeshStandardMaterial({
+      color: 0x3a3a3a,
+      roughness: 0.6,
+      metalness: 0.4,
+      // Add subtle normal map effect via roughness variation
+    }),
+    
+    // Cladding 2 - Feature cladding/timber (darker or contrasting)
+    cladding2: new THREE.MeshStandardMaterial({
       color: 0x2a2a2a,
       roughness: 0.7,
       metalness: 0.3,
     }),
     
-    // Cladding 2 - Feature cladding/timber (darker or contrasting)
-    cladding2: new THREE.MeshStandardMaterial({
-      color: 0x1a1a1a,
-      roughness: 0.8,
-      metalness: 0.2,
-    }),
-    
-    // Timber for gable ends
+    // Timber for gable ends - warmer wood color
     timber: new THREE.MeshStandardMaterial({
-      color: 0x654321,
-      roughness: 0.9,
+      color: 0x8b6f47,
+      roughness: 0.85,
       metalness: 0.0,
     }),
     
     // Glass for windows - more visible
     glass: new THREE.MeshPhysicalMaterial({
-      color: 0x4a90c8,
+      color: 0x88ccee,
       transparent: true,
-      opacity: 0.4,
+      opacity: 0.3,
       roughness: 0.05,
       metalness: 0.1,
-      transmission: 0.85,
-      reflectivity: 0.9,
+      transmission: 0.9,
+      reflectivity: 0.95,
     }),
     
     // Dark metal roof
     roof: new THREE.MeshStandardMaterial({
-      color: 0x1a1a1a,
-      roughness: 0.4,
-      metalness: 0.6,
+      color: 0x2a2a2a,
+      roughness: 0.3,
+      metalness: 0.7,
     }),
     
     // Dark window/door frames
     windowFrame: new THREE.MeshStandardMaterial({
-      color: 0x0a0a0a,
-      roughness: 0.3,
-      metalness: 0.4,
+      color: 0x1a1a1a,
+      roughness: 0.2,
+      metalness: 0.5,
     }),
   };
 }
