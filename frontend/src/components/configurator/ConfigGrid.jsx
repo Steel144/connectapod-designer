@@ -665,17 +665,29 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
       if (canPlace) {
         if (isCopyDrag) {
           // Copy mode: create new module at new position
+          // Use originalMod.x/y since mod might have been updated during drag
           const {x: _x, y: _y, id: _id, ...modWithoutCoords} = mod;
-          const newX = mod.x + deltaX;
-          const newY = mod.y + deltaY;
+          const newX = originalMod.x + deltaX;
+          const newY = originalMod.y + deltaY;
+          
+          console.log('🔵 Copying module:', { 
+            from: { x: originalMod.x, y: originalMod.y }, 
+            to: { x: newX, y: newY },
+            delta: { x: deltaX, y: deltaY }
+          });
+          
           onPlace(modWithoutCoords, newX, newY);
           
-          // Also copy walls attached to this module (using ORIGINAL position)
+          // Also copy walls attached to this module
+          // Calculate wall positions relative to NEW module, not using delta
           const WALL_OFFSET = 0.308;
           const TOLERANCE = 0.6;
           
           walls.forEach(w => {
             let shouldCopy = false;
+            let newWallX = 0;
+            let newWallY = 0;
+            let faceName = '';
             
             // W face (top/north) - check against ORIGINAL position
             if (w.orientation === "horizontal" || w.face === "W") {
@@ -683,6 +695,10 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
               const expectedX = originalMod.x;
               if (Math.abs(w.y - expectedY) < TOLERANCE && Math.abs(w.x - expectedX) < TOLERANCE) {
                 shouldCopy = true;
+                faceName = 'W';
+                // Place at NEW module's W face
+                newWallX = newX;
+                newWallY = newY - WALL_OFFSET;
               }
             }
             
@@ -692,6 +708,10 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
               const expectedX = originalMod.x;
               if (Math.abs(w.y - expectedY) < TOLERANCE && Math.abs(w.x - expectedX) < TOLERANCE) {
                 shouldCopy = true;
+                faceName = 'Y';
+                // Place at NEW module's Y face
+                newWallX = newX;
+                newWallY = newY + originalMod.h;
               }
             }
             
@@ -701,6 +721,10 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
               const expectedY = originalMod.y;
               if (Math.abs(w.x - expectedX) < TOLERANCE && Math.abs(w.y - expectedY) < TOLERANCE) {
                 shouldCopy = true;
+                faceName = 'Z';
+                // Place at NEW module's Z face
+                newWallX = newX;
+                newWallY = newY;
               }
             }
             
@@ -710,6 +734,10 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
               const expectedY = originalMod.y;
               if (Math.abs(w.x - expectedX) < TOLERANCE && Math.abs(w.y - expectedY) < TOLERANCE) {
                 shouldCopy = true;
+                faceName = 'X';
+                // Place at NEW module's X face
+                newWallX = newX + originalMod.w - WALL_OFFSET;
+                newWallY = newY;
               }
             }
             
@@ -718,9 +746,14 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
               const newWall = { 
                 ...wallWithoutId, 
                 id: `${Date.now()}-${Math.random()}`,
-                x: w.x + deltaX, 
-                y: w.y + deltaY 
+                x: newWallX, 
+                y: newWallY,
+                face: faceName || w.face
               };
+              console.log(`🟢 Copying ${faceName} wall:`, {
+                original: { x: w.x, y: w.y },
+                new: { x: newWallX, y: newWallY }
+              });
               onPlaceWall(newWall);
             }
           });
