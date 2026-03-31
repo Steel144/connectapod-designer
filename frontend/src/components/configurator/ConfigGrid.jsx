@@ -106,6 +106,8 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
         const selectedFurniture = furniture.filter(f => selectedFurnitureIds.has(f.id));
         
         if (selectedModules.length > 0 || selectedWalls.length > 0 || selectedFurniture.length > 0) {
+          console.log('Copying modules:', selectedModules);
+          console.log('Module 0 details:', selectedModules[0]);
           setClipboard({ modules: selectedModules, walls: selectedWalls, furniture: selectedFurniture });
           console.log('Copied:', { modules: selectedModules.length, walls: selectedWalls.length, furniture: selectedFurniture.length });
         }
@@ -120,13 +122,22 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
         const offsetX = 3;
         const offsetY = 8;
         
+        console.log('Clipboard contents:', clipboard);
+        
         // Paste modules
-        clipboard.modules.forEach(mod => {
+        clipboard.modules.forEach((mod, idx) => {
+          console.log(`Module ${idx} before paste:`, { x: mod.x, y: mod.y, w: mod.w, h: mod.h });
+          
+          const newX = (Number(mod.x) || 0) + offsetX;
+          const newY = (Number(mod.y) || 0) + offsetY;
+          
+          console.log(`Module ${idx} after calculation:`, { newX, newY });
+          
           const newModule = {
             ...mod,
             id: `${Date.now()}-${Math.random()}`,
-            x: Number(mod.x) + offsetX,
-            y: Number(mod.y) + offsetY
+            x: newX,
+            y: newY
           };
           console.log('Pasting module:', newModule);
           onPlace(newModule);
@@ -137,8 +148,8 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
           const newWall = {
             ...wall,
             id: `${Date.now()}-${Math.random()}`,
-            x: Number(wall.x) + offsetX,
-            y: Number(wall.y) + offsetY
+            x: (Number(wall.x) || 0) + offsetX,
+            y: (Number(wall.y) || 0) + offsetY
           };
           onPlaceWall && onPlaceWall(newWall);
         });
@@ -148,8 +159,8 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
           const newItem = {
             ...item,
             id: `${Date.now()}-${Math.random()}`,
-            x: Number(item.x) + offsetX,
-            y: Number(item.y) + offsetY
+            x: (Number(item.x) || 0) + offsetX,
+            y: (Number(item.y) || 0) + offsetY
           };
           onPlaceFurniture && onPlaceFurniture(newItem);
         });
