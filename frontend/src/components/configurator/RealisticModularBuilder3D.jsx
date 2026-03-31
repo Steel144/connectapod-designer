@@ -378,26 +378,63 @@ export default function RealisticModularBuilder3D({ placedModules = [], walls = 
     };
     
     const trayTexture = createTrayRoofingTexture();
+    
+    // Create a SECOND texture specifically for the roof with horizontal orientation
+    const createRoofTrayTexture = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = 512;
+      canvas.height = 512;
+      const ctx = canvas.getContext('2d');
+      
+      // Background - medium grey
+      ctx.fillStyle = '#707070';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      // HORIZONTAL trays for roof (already oriented correctly)
+      const trayHeight = canvas.height / 12; // More trays for roof
+      
+      for (let i = 0; i < 12; i++) {
+        const y = i * trayHeight;
+        
+        // Tray center - very light
+        ctx.fillStyle = '#a0a0a0';
+        ctx.fillRect(0, y + trayHeight * 0.25, canvas.width, trayHeight * 0.5);
+        
+        // Top edge (shadow)
+        ctx.fillStyle = '#505050';
+        ctx.fillRect(0, y, canvas.width, trayHeight * 0.25);
+        
+        // Bottom edge (highlight)
+        ctx.fillStyle = '#c0c0c0';
+        ctx.fillRect(0, y + trayHeight * 0.75, canvas.width, trayHeight * 0.25);
+      }
+      
+      const texture = new THREE.CanvasTexture(canvas);
+      texture.wrapS = THREE.RepeatWrapping;
+      texture.wrapT = THREE.RepeatWrapping;
+      texture.repeat.set(4, 3); // More repeat for roof coverage
+      
+      console.log('✅ Created horizontal roof tray texture');
+      return texture;
+    };
+    
+    const roofTrayTexture = createRoofTrayTexture();
 
     // Create materials
     const materials = createRealisticMaterials();
     
-    // Override roof material with same settings as walls for consistency
+    // Roof uses horizontal tray texture (pre-oriented)
     materials.roof = new THREE.MeshStandardMaterial({
-      map: trayTexture.clone(),
-      color: 0x808080, // Same as walls
-      roughness: 0.5,
-      metalness: 0.3,
+      map: roofTrayTexture,
+      color: 0x909090, // Even lighter for roof visibility
+      roughness: 0.4,
+      metalness: 0.2,
       side: THREE.DoubleSide,
-      emissive: 0x202020,
-      emissiveIntensity: 0.2,
+      emissive: 0x303030, // More emissive for roof
+      emissiveIntensity: 0.3,
     });
     
-    // Adjust roof texture to run along slope (rotate 90° and adjust repeat)
-    materials.roof.map.rotation = Math.PI / 2; // Rotate texture 90 degrees
-    materials.roof.map.repeat.set(2, 1.5); // Adjusted for roof slope
-    materials.roof.map.needsUpdate = true;
-    
+    // Walls use vertical tray texture
     materials.cladding1 = new THREE.MeshStandardMaterial({
       map: trayTexture,
       color: 0x808080,
