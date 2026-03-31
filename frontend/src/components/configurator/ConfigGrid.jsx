@@ -63,6 +63,29 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
 
   // Copy/paste state
   const [clipboard, setClipboard] = useState(null);
+  
+  // Track Alt/Option key state for drag-to-copy
+  const [isAltPressed, setIsAltPressed] = useState(false);
+
+  // Track Alt key globally
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Alt' || e.key === 'Option') {
+        setIsAltPressed(true);
+      }
+    };
+    const handleKeyUp = (e) => {
+      if (e.key === 'Alt' || e.key === 'Option') {
+        setIsAltPressed(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+    };
+  }, []);
 
   useEffect(() => {
     const onKey = (e) => {
@@ -324,7 +347,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
       const cursorY = dragging.cursorY - rect.top;
       const deltaX = (cursorX - dragging.offsetX) / scaledCellW - dragging.mod.x;
       const deltaY = (cursorY - dragging.offsetY) / scaledCellH - dragging.mod.y;
-      const isCopyDrag = e.altKey; // Alt key = copy
+      const isCopyDrag = isAltPressed; // Use tracked Alt state
       
       // Move/copy all selected furniture by same delta
       const idsToMove = dragging.selectedFurnitureIds || new Set([dragging.mod.id]);
@@ -338,6 +361,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
           // Copy furniture
           const newItem = { ...item, id: `${Date.now()}-${Math.random()}`, x: newX, y: newY };
           onPlaceFurniture?.(newItem);
+          console.log('Copied furniture with Alt/Option');
         } else {
           // Move furniture
           onMoveFurniture?.(id, newX, newY);
@@ -534,7 +558,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
     });
 
     // Move all selected modules by same delta
-    const isCopyDrag = e.altKey; // Alt key held = copy instead of move
+    const isCopyDrag = isAltPressed; // Use tracked Alt state
     
     dragging.selectedIds.forEach((id) => {
       const mod = placedModules.find((m) => m.id === id);
@@ -551,6 +575,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
             y: mod.y + deltaY
           };
           onPlace(newModule);
+          console.log('Copied module with Alt/Option');
         } else {
           // Move mode: move existing module
           onMove(id, mod.x + deltaX, mod.y + deltaY);
