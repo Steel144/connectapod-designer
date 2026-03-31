@@ -308,11 +308,11 @@ export default function RealisticModularBuilder3D({ placedModules = [], walls = 
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     el.appendChild(renderer.domElement);
 
-    // Lighting - realistic outdoor
-    const ambLight = new THREE.AmbientLight(0xffffff, 0.4);
+    // Lighting - brighter so materials are visible
+    const ambLight = new THREE.AmbientLight(0xffffff, 0.8); // Increased from 0.4
     scene.add(ambLight);
 
-    const sunLight = new THREE.DirectionalLight(0xfff5e6, 1.8);
+    const sunLight = new THREE.DirectionalLight(0xfff5e6, 2.2); // Increased from 1.8
     sunLight.position.set(15, 20, 10);
     sunLight.castShadow = true;
     sunLight.shadow.mapSize.width = 2048;
@@ -345,8 +345,8 @@ export default function RealisticModularBuilder3D({ placedModules = [], walls = 
       canvas.height = 512;
       const ctx = canvas.getContext('2d');
       
-      // Background - dark metal
-      ctx.fillStyle = '#2a2a2a';
+      // Background - LIGHTER dark grey (was too dark)
+      ctx.fillStyle = '#4a4a4a';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       
       // Vertical trays (600mm = 0.6m wide each)
@@ -355,16 +355,16 @@ export default function RealisticModularBuilder3D({ placedModules = [], walls = 
       for (let i = 0; i < 8; i++) {
         const x = i * trayWidth;
         
-        // Tray center
-        ctx.fillStyle = '#3a3a3a';
+        // Tray center - lighter
+        ctx.fillStyle = '#5a5a5a';
         ctx.fillRect(x + trayWidth * 0.2, 0, trayWidth * 0.6, canvas.height);
         
-        // Left edge (shadow)
-        ctx.fillStyle = '#1a1a1a';
+        // Left edge (shadow) - not pure black
+        ctx.fillStyle = '#3a3a3a';
         ctx.fillRect(x, 0, trayWidth * 0.2, canvas.height);
         
-        // Right edge (highlight)
-        ctx.fillStyle = '#4a4a4a';
+        // Right edge (highlight) - lighter
+        ctx.fillStyle = '#6a6a6a';
         ctx.fillRect(x + trayWidth * 0.8, 0, trayWidth * 0.2, canvas.height);
       }
       
@@ -384,7 +384,7 @@ export default function RealisticModularBuilder3D({ placedModules = [], walls = 
     // Override roof AND wall materials to use tray texture with correct scale
     materials.roof = new THREE.MeshStandardMaterial({
       map: trayTexture.clone(),
-      color: 0x2a2a2a,
+      color: 0x5a5a5a, // Lighter grey so it's visible
       roughness: 0.4,
       metalness: 0.6,
       side: THREE.DoubleSide,
@@ -395,7 +395,7 @@ export default function RealisticModularBuilder3D({ placedModules = [], walls = 
     
     materials.cladding1 = new THREE.MeshStandardMaterial({
       map: trayTexture,
-      color: 0x3a3a3a,
+      color: 0x5a5a5a, // Lighter grey so it's visible
       roughness: 0.6,
       metalness: 0.4,
       side: THREE.DoubleSide,
