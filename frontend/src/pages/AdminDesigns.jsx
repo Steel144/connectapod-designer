@@ -15,6 +15,7 @@ export default function AdminDesigns() {
   const [editForm, setEditForm] = useState({});
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
   const [uploading, setUploading] = useState(false);
+  const [generatingDescription, setGeneratingDescription] = useState(false);
 
   const { data: designs = [], isLoading } = useQuery({
     queryKey: ["designTemplates"],
@@ -95,6 +96,33 @@ export default function AdminDesigns() {
     await base44.entities.DesignTemplate.update(designId, { heroImage: null });
     qc.invalidateQueries({ queryKey: ["designTemplates"] });
     toast.success("Image deleted");
+  };
+
+  const generateDescription = async () => {
+    setGeneratingDescription(true);
+    try {
+      const design = designs.find(d => d.id === editingId);
+      const prompt = `Write a compelling, concise 1-2 sentence marketing description for a modular home design called "${editForm.name || design?.name}". 
+Details: ${editForm.size_sqm || design?.size_sqm}m², ${editForm.bedrooms ?? design?.bedrooms ?? 0} bedrooms, ${editForm.bathrooms ?? design?.bathrooms ?? 0} bathrooms, starting at $${editForm.starting_price || design?.starting_price || 0}.
+Keep it professional, highlight the key benefits, and make it sound appealing to potential buyers. No bullet points, just flowing text.`;
+
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL || ""}/api/ai/generate-description`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt }),
+      });
+
+      if (!response.ok) throw new Error("Failed to generate");
+      
+      const data = await response.json();
+      setEditForm({ ...editForm, description: data.description });
+      toast.success("Description generated!");
+    } catch (error) {
+      toast.error("Failed to generate description");
+      console.error(error);
+    } finally {
+      setGeneratingDescription(false);
+    }
   };
 
   return (
@@ -195,7 +223,27 @@ export default function AdminDesigns() {
                     </div>
 
                     <div>
-                      <Label>Description</Label>
+                      <div className="flex items-center justify-between mb-1">
+                        <Label>Description</Label>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={generateDescription}
+                          disabled={generatingDescription}
+                          className="h-7 text-xs gap-1"
+                        >
+                          {generatingDescription ? (
+                            <>
+                              <div className="w-3 h-3 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin" />
+                              Generating...
+                            </>
+                          ) : (
+                            <>
+                              ✨ AI Generate
+                            </>
+                          )}
+                        </Button>
+                      </div>
                       <Textarea
                         value={editForm.description}
                         onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}

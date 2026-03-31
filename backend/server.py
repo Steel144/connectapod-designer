@@ -8,6 +8,10 @@ import os
 import uuid
 import shutil
 from pathlib import Path
+from emergentintegrations.llm.chat import LlmChat, UserMessage
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = FastAPI(title="Connectapod API")
 
@@ -360,6 +364,36 @@ async def delete_deleted_wall(id: str):
 @app.get("/api/health")
 async def health_check():
     return {"status": "ok", "service": "Connectapod API"}
+
+# ========== AI Generation Endpoint ==========
+
+class AIGenerateRequest(BaseModel):
+    prompt: str
+
+@app.post("/api/ai/generate-description")
+async def generate_description(request: AIGenerateRequest):
+    """Generate AI description using Emergent LLM"""
+    try:
+        emergent_key = os.getenv("EMERGENT_LLM_KEY", "sk-emergent-fCe0222Fd00BcB9B95")
+        
+        # Initialize LLM chat
+        chat = LlmChat(
+            api_key=emergent_key,
+            session_id=f"description-gen-{uuid.uuid4()}",
+            system_message="You are a professional real estate copywriter. Write compelling, concise descriptions for modular homes."
+        ).with_model("openai", "gpt-4o-mini")
+        
+        # Create user message
+        user_message = UserMessage(text=request.prompt)
+        
+        # Get response
+        description = await chat.send_message(user_message)
+        
+        return {"description": description.strip()}
+            
+    except Exception as e:
+        print(f"AI generation error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == "__main__":
     import uvicorn
