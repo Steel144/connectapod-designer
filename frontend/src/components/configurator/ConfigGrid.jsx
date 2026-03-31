@@ -756,7 +756,52 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
             }
           });
           
-          console.log('Copied module with walls using Alt/Option drag');
+          // Also copy furniture that's inside/on this module
+          furniture.forEach(f => {
+            // Check if furniture is within the bounds of the ORIGINAL module
+            const furnitureWidth = (f.width || 1.4) / 0.6; // Convert meters to grid cells
+            const furnitureDepth = (f.depth || 1.4) / 0.6;
+            
+            // Furniture center point
+            const furnitureCenterX = f.x + furnitureWidth / 2;
+            const furnitureCenterY = f.y + furnitureDepth / 2;
+            
+            // Check if furniture center is within module bounds
+            const isInsideModule = (
+              furnitureCenterX >= originalMod.x &&
+              furnitureCenterX <= originalMod.x + originalMod.w &&
+              furnitureCenterY >= originalMod.y &&
+              furnitureCenterY <= originalMod.y + originalMod.h
+            );
+            
+            if (isInsideModule && onPlaceFurniture) {
+              // Calculate furniture's relative position to original module
+              const relativeX = f.x - originalMod.x;
+              const relativeY = f.y - originalMod.y;
+              
+              // Place furniture at same relative position on new module
+              const newFurnitureX = newX + relativeX;
+              const newFurnitureY = newY + relativeY;
+              
+              const {id: _fId, x: _fx, y: _fy, ...furnitureWithoutCoords} = f;
+              const newFurniture = {
+                ...furnitureWithoutCoords,
+                id: `${Date.now()}-${Math.random()}`,
+                x: newFurnitureX,
+                y: newFurnitureY
+              };
+              
+              console.log(`🟣 Copying furniture:`, {
+                original: { x: f.x, y: f.y },
+                new: { x: newFurnitureX, y: newFurnitureY },
+                relative: { x: relativeX, y: relativeY }
+              });
+              
+              onPlaceFurniture(newFurniture);
+            }
+          });
+          
+          console.log('Copied module with walls and furniture using Alt/Option drag');
         } else {
           // Move mode: move existing module
           onMove(id, mod.x + deltaX, mod.y + deltaY);
