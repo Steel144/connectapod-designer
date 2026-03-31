@@ -491,21 +491,50 @@ export default function Configurator() {
     const modToRemove = placedModules.find((m) => m.id === id);
     if (modToRemove) {
       const WALL_OFFSET = 0.308;
-      const TOLERANCE = 0.5; // Allow small coordinate differences
+      const TOLERANCE = 0.6; // Tolerance for coordinate matching
       
       setWalls((prev) =>
         prev.filter((w) => {
-          // Check if this wall belongs to the module being removed
-          // by checking if the wall's coordinates are within the module's bounds plus offset
+          // Check each face of the module to see if this wall belongs to it
           
-          const minX = modToRemove.x - TOLERANCE;
-          const maxX = modToRemove.x + modToRemove.w + TOLERANCE;
-          const minY = modToRemove.y - WALL_OFFSET - TOLERANCE;
-          const maxY = modToRemove.y + modToRemove.h + TOLERANCE;
+          // W face (top/north): horizontal wall at y = module.y - WALL_OFFSET
+          if (w.orientation === "horizontal" || w.face === "W") {
+            const expectedY = modToRemove.y - WALL_OFFSET;
+            const expectedX = modToRemove.x;
+            if (Math.abs(w.y - expectedY) < TOLERANCE && 
+                Math.abs(w.x - expectedX) < TOLERANCE) {
+              return false; // Remove - this wall belongs to W face
+            }
+          }
           
-          // If wall is within module bounds, remove it
-          if (w.x >= minX && w.x <= maxX && w.y >= minY && w.y <= maxY) {
-            return false; // Remove this wall
+          // Y face (bottom/south): horizontal wall at y = module.y + module.h
+          if (w.orientation === "horizontal" || w.face === "Y") {
+            const expectedY = modToRemove.y + modToRemove.h;
+            const expectedX = modToRemove.x;
+            if (Math.abs(w.y - expectedY) < TOLERANCE && 
+                Math.abs(w.x - expectedX) < TOLERANCE) {
+              return false; // Remove - this wall belongs to Y face
+            }
+          }
+          
+          // Z face (left/west): vertical wall at x = module.x
+          if (w.orientation === "vertical" || w.face === "Z") {
+            const expectedX = modToRemove.x;
+            const expectedY = modToRemove.y;
+            if (Math.abs(w.x - expectedX) < TOLERANCE && 
+                Math.abs(w.y - expectedY) < TOLERANCE) {
+              return false; // Remove - this wall belongs to Z face
+            }
+          }
+          
+          // X face (right/east): vertical wall at x = module.x + module.w - WALL_OFFSET
+          if (w.orientation === "vertical" || w.face === "X") {
+            const expectedX = modToRemove.x + modToRemove.w - WALL_OFFSET;
+            const expectedY = modToRemove.y;
+            if (Math.abs(w.x - expectedX) < TOLERANCE && 
+                Math.abs(w.y - expectedY) < TOLERANCE) {
+              return false; // Remove - this wall belongs to X face
+            }
           }
           
           return true; // Keep this wall
