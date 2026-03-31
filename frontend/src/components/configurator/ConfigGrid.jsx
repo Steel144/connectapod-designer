@@ -1159,6 +1159,10 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                   {(() => { const p = getPavilion(mod.y); const labels = { 3: "P1", 2: "CM", 1: "P2" }; return labels[p] || `P${p}`; })()}
                 </span>
               )}
+              {/* DEBUG: Show grid coordinates */}
+              <span className="absolute text-[8px] font-bold text-blue-600 pointer-events-none bg-white/80 px-1 rounded" style={{ top: '2px', left: '2px' }}>
+                X:{mod.x} Y:{mod.y}
+              </span>
               {/* Action buttons above the module, same distance as label below */}
               <div className="absolute opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1" style={{ top: '-26px', left: '50%', transform: 'translateX(-50%)', whiteSpace: 'nowrap' }}>
                 <button
