@@ -244,9 +244,49 @@ export default function RealisticModularBuilder3D({ placedModules = [], walls = 
         scene.add(moduleObj);
       });
       
-      // Render standalone walls with their elevation textures
-      console.log(`🎨 Rendering ${walls.length} walls with textures`);
-      const textureLoader = new THREE.TextureLoader();
+      // Create tray roofing texture (600mm wide vertical metal trays)
+      const createTrayRoofingTexture = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = 512;
+        canvas.height = 512;
+        const ctx = canvas.getContext('2d');
+        
+        // Background - dark metal
+        ctx.fillStyle = '#2a2a2a';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // Vertical trays (600mm = 0.6m wide each)
+        // Each tray has highlights and shadows to create depth
+        const trayWidth = canvas.width / 8; // 8 trays across the texture
+        
+        for (let i = 0; i < 8; i++) {
+          const x = i * trayWidth;
+          
+          // Tray center (flat part)
+          ctx.fillStyle = '#3a3a3a';
+          ctx.fillRect(x + trayWidth * 0.2, 0, trayWidth * 0.6, canvas.height);
+          
+          // Left edge (shadow)
+          ctx.fillStyle = '#1a1a1a';
+          ctx.fillRect(x, 0, trayWidth * 0.2, canvas.height);
+          
+          // Right edge (highlight)
+          ctx.fillStyle = '#4a4a4a';
+          ctx.fillRect(x + trayWidth * 0.8, 0, trayWidth * 0.2, canvas.height);
+        }
+        
+        const texture = new THREE.CanvasTexture(canvas);
+        texture.wrapS = THREE.RepeatWrapping;
+        texture.wrapT = THREE.RepeatWrapping;
+        texture.repeat.set(2, 4); // Repeat to show multiple trays
+        
+        return texture;
+      };
+      
+      const trayTexture = createTrayRoofingTexture();
+      
+      // Render standalone walls with tray roofing cladding
+      console.log(`🏗️ Rendering ${walls.length} walls with 600mm tray roofing`);
       
       walls.forEach((wall, idx) => {
         const GRID_CELL_SIZE = 0.6;
@@ -272,33 +312,13 @@ export default function RealisticModularBuilder3D({ placedModules = [], walls = 
         // Create wall geometry
         const wallGeometry = new THREE.BoxGeometry(wallWidth, WALL_HEIGHT, wallDepth);
         
-        // Load texture if wall has elevation image
-        let wallMaterial;
-        if (wall.elevationImage) {
-          const texture = textureLoader.load(
-            wall.elevationImage,
-            () => console.log(`✅ Loaded texture for wall ${idx}: ${wall.type}`),
-            undefined,
-            (err) => console.error(`❌ Failed to load texture for wall ${idx}:`, err)
-          );
-          
-          // Configure texture
-          texture.wrapS = THREE.RepeatWrapping;
-          texture.wrapT = THREE.RepeatWrapping;
-          
-          wallMaterial = new THREE.MeshStandardMaterial({
-            map: texture,
-            roughness: 0.7,
-            metalness: 0.2,
-          });
-        } else {
-          // Default material if no texture
-          wallMaterial = new THREE.MeshStandardMaterial({
-            color: 0x8b7355,
-            roughness: 0.8,
-            metalness: 0.1,
-          });
-        }
+        // Apply tray roofing material
+        const wallMaterial = new THREE.MeshStandardMaterial({
+          map: trayTexture,
+          color: 0x3a3a3a, // Dark grey metal
+          roughness: 0.6,
+          metalness: 0.5,
+        });
         
         const wallMesh = new THREE.Mesh(wallGeometry, wallMaterial);
         
@@ -311,13 +331,12 @@ export default function RealisticModularBuilder3D({ placedModules = [], walls = 
         
         scene.add(wallMesh);
         
-        console.log(`📍 Wall ${idx} positioned:`, {
+        console.log(`📍 Tray wall ${idx}:`, {
           type: wall.type,
           face: wall.face,
           gridPos: { x: wall.x, y: wall.y },
           worldPos: { x: wallWorldX, z: wallWorldZ },
-          dimensions: { w: wallWidth, h: WALL_HEIGHT, d: wallDepth },
-          hasTexture: !!wall.elevationImage
+          dimensions: { w: wallWidth, h: WALL_HEIGHT, d: wallDepth }
         });
       });
       
