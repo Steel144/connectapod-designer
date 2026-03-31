@@ -645,64 +645,102 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
           const newX = mod.x + deltaX;
           const newY = mod.y + deltaY;
           onPlace(modWithoutCoords, newX, newY);
-          console.log('Copied module with Alt/Option drag');
+          
+          // Also copy walls attached to this module
+          const WALL_OFFSET = 0.308;
+          const TOLERANCE = 0.6;
+          
+          walls.forEach(w => {
+            let shouldCopy = false;
+            
+            // W face (top/north)
+            if (w.orientation === "horizontal" || w.face === "W") {
+              const expectedY = mod.y - WALL_OFFSET;
+              const expectedX = mod.x;
+              if (Math.abs(w.y - expectedY) < TOLERANCE && Math.abs(w.x - expectedX) < TOLERANCE) {
+                shouldCopy = true;
+              }
+            }
+            
+            // Y face (bottom/south)
+            if (!shouldCopy && (w.orientation === "horizontal" || w.face === "Y")) {
+              const expectedY = mod.y + mod.h;
+              const expectedX = mod.x;
+              if (Math.abs(w.y - expectedY) < TOLERANCE && Math.abs(w.x - expectedX) < TOLERANCE) {
+                shouldCopy = true;
+              }
+            }
+            
+            // Z face (left/west)
+            if (!shouldCopy && (w.orientation === "vertical" || w.face === "Z")) {
+              const expectedX = mod.x;
+              const expectedY = mod.y;
+              if (Math.abs(w.x - expectedX) < TOLERANCE && Math.abs(w.y - expectedY) < TOLERANCE) {
+                shouldCopy = true;
+              }
+            }
+            
+            // X face (right/east)
+            if (!shouldCopy && (w.orientation === "vertical" || w.face === "X")) {
+              const expectedX = mod.x + mod.w - WALL_OFFSET;
+              const expectedY = mod.y;
+              if (Math.abs(w.x - expectedX) < TOLERANCE && Math.abs(w.y - expectedY) < TOLERANCE) {
+                shouldCopy = true;
+              }
+            }
+            
+            if (shouldCopy && onPlaceWall) {
+              const {id: _wId, ...wallWithoutId} = w;
+              const newWall = { 
+                ...wallWithoutId, 
+                id: `${Date.now()}-${Math.random()}`,
+                x: w.x + deltaX, 
+                y: w.y + deltaY 
+              };
+              onPlaceWall(newWall);
+            }
+          });
+          
+          console.log('Copied module with walls using Alt/Option drag');
         } else {
           // Move mode: move existing module
           onMove(id, mod.x + deltaX, mod.y + deltaY);
         }
         
-        // Move/copy walls attached to this module (only if exactly snapped)
-        const WALL_THRESHOLD = 0.1;
-        walls.forEach((wall) => {
-          if (wall.orientation === "horizontal") {
-            // Wall must be exactly aligned with the module
-            if (Math.abs(wall.x - mod.x) < WALL_THRESHOLD) {
-              // Above (W face)
-              if (Math.abs(wall.y - (mod.y - wall.thickness)) < WALL_THRESHOLD) {
-                if (isCopyDrag && onPlaceWall) {
-                  const newWall = { ...wall, id: `${Date.now()}-${Math.random()}`, x: wall.x + deltaX, y: wall.y + deltaY };
-                  onPlaceWall(newWall);
-                } else if (onMoveWall) {
-                  onMoveWall(wall.id, wall.x + deltaX, wall.y + deltaY);
-                }
-              }
-              // Below (Y face)
-              else if (Math.abs(wall.y - (mod.y + mod.h)) < WALL_THRESHOLD) {
-                if (isCopyDrag && onPlaceWall) {
-                  const newWall = { ...wall, id: `${Date.now()}-${Math.random()}`, x: wall.x + deltaX, y: wall.y + deltaY };
-                  onPlaceWall(newWall);
-                } else if (onMoveWall) {
-                  onMoveWall(wall.id, wall.x + deltaX, wall.y + deltaY);
-                }
-              }
-            }
-          } else if (wall.orientation === "vertical") {
-            // Only move Z/X walls with end modules
-            const isEndMod = mod.chassis === "EF" || mod.chassis === "ER" || mod.chassis === "LF" || mod.chassis === "RF" || mod.chassis === "End";
-            if (!isEndMod) return;
-            // Wall must be exactly aligned with the module
-            if (Math.abs(wall.y - mod.y) < WALL_THRESHOLD) {
-              // Left (Z face)
+        // Move/copy walls attached to this module (only if exactly snapped) - for non-copy move mode
+        if (!isCopyDrag) {
+          const WALL_THRESHOLD = 0.1;
+          walls.forEach((wall) => {
+            if (wall.orientation === "horizontal") {
+              // Wall must be exactly aligned with the module
               if (Math.abs(wall.x - mod.x) < WALL_THRESHOLD) {
-                if (isCopyDrag && onPlaceWall) {
-                  const newWall = { ...wall, id: `${Date.now()}-${Math.random()}`, x: wall.x + deltaX, y: wall.y + deltaY };
-                  onPlaceWall(newWall);
-                } else if (onMoveWall) {
-                  onMoveWall(wall.id, wall.x + deltaX, wall.y + deltaY);
+                // Above (W face)
+                if (Math.abs(wall.y - (mod.y - wall.thickness)) < WALL_THRESHOLD) {
+                  if (onMoveWall) onMoveWall(wall.id, wall.x + deltaX, wall.y + deltaY);
+                }
+                // Below (Y face)
+                else if (Math.abs(wall.y - (mod.y + mod.h)) < WALL_THRESHOLD) {
+                  if (onMoveWall) onMoveWall(wall.id, wall.x + deltaX, wall.y + deltaY);
                 }
               }
-              // Right (X face)
-              else if (Math.abs(wall.x - (mod.x + mod.w)) < WALL_THRESHOLD) {
-                if (isCopyDrag && onPlaceWall) {
-                  const newWall = { ...wall, id: `${Date.now()}-${Math.random()}`, x: wall.x + deltaX, y: wall.y + deltaY };
-                  onPlaceWall(newWall);
-                } else if (onMoveWall) {
-                  onMoveWall(wall.id, wall.x + deltaX, wall.y + deltaY);
+            } else if (wall.orientation === "vertical") {
+              // Only move Z/X walls with end modules
+              const isEndMod = mod.chassis === "EF" || mod.chassis === "ER" || mod.chassis === "LF" || mod.chassis === "RF" || mod.chassis === "End";
+              if (!isEndMod) return;
+              // Wall must be exactly aligned with the module
+              if (Math.abs(wall.y - mod.y) < WALL_THRESHOLD) {
+                // Left (Z face)
+                if (Math.abs(wall.x - mod.x) < WALL_THRESHOLD) {
+                  if (onMoveWall) onMoveWall(wall.id, wall.x + deltaX, wall.y + deltaY);
+                }
+                // Right (X face)
+                else if (Math.abs(wall.x - (mod.x + mod.w)) < WALL_THRESHOLD) {
+                  if (onMoveWall) onMoveWall(wall.id, wall.x + deltaX, wall.y + deltaY);
                 }
               }
             }
-          }
-        });
+          });
+        }
       }
     });
     setDragging(null);
