@@ -379,42 +379,33 @@ export default function RealisticModularBuilder3D({ placedModules = [], walls = 
     
     const trayTexture = createTrayRoofingTexture();
     
-    // Create a SECOND texture specifically for the roof with horizontal orientation
+    // Create EXTREMELY bold roof texture with thick visible bands
     const createRoofTrayTexture = () => {
       const canvas = document.createElement('canvas');
-      canvas.width = 512;
-      canvas.height = 512;
+      canvas.width = 256;
+      canvas.height = 256;
       const ctx = canvas.getContext('2d');
       
-      // Background - medium grey
-      ctx.fillStyle = '#707070';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      // Create simple alternating bands (very bold)
+      const bandHeight = 32; // Thick bands
       
-      // HORIZONTAL trays for roof (already oriented correctly)
-      const trayHeight = canvas.height / 12; // More trays for roof
-      
-      for (let i = 0; i < 12; i++) {
-        const y = i * trayHeight;
+      for (let y = 0; y < canvas.height; y += bandHeight * 2) {
+        // Dark band
+        ctx.fillStyle = '#404040';
+        ctx.fillRect(0, y, canvas.width, bandHeight);
         
-        // Tray center - very light
-        ctx.fillStyle = '#a0a0a0';
-        ctx.fillRect(0, y + trayHeight * 0.25, canvas.width, trayHeight * 0.5);
-        
-        // Top edge (shadow)
-        ctx.fillStyle = '#505050';
-        ctx.fillRect(0, y, canvas.width, trayHeight * 0.25);
-        
-        // Bottom edge (highlight)
-        ctx.fillStyle = '#c0c0c0';
-        ctx.fillRect(0, y + trayHeight * 0.75, canvas.width, trayHeight * 0.25);
+        // Light band
+        ctx.fillStyle = '#d0d0d0';
+        ctx.fillRect(0, y + bandHeight, canvas.width, bandHeight);
       }
       
       const texture = new THREE.CanvasTexture(canvas);
       texture.wrapS = THREE.RepeatWrapping;
       texture.wrapT = THREE.RepeatWrapping;
-      texture.repeat.set(4, 3); // More repeat for roof coverage
+      texture.repeat.set(6, 4); // Large repeat to see pattern
+      texture.needsUpdate = true;
       
-      console.log('✅ Created horizontal roof tray texture');
+      console.log('✅ Created BOLD roof pattern texture');
       return texture;
     };
     
@@ -423,15 +414,13 @@ export default function RealisticModularBuilder3D({ placedModules = [], walls = 
     // Create materials
     const materials = createRealisticMaterials();
     
-    // Roof uses horizontal tray texture (pre-oriented)
+    // Roof uses BOLD striped pattern
     materials.roof = new THREE.MeshStandardMaterial({
       map: roofTrayTexture,
-      color: 0x909090, // Even lighter for roof visibility
-      roughness: 0.4,
-      metalness: 0.2,
+      color: 0xffffff, // Pure white to see texture clearly
+      roughness: 0.7,
+      metalness: 0.0, // No metalness
       side: THREE.DoubleSide,
-      emissive: 0x303030, // More emissive for roof
-      emissiveIntensity: 0.3,
     });
     
     // Walls use vertical tray texture
