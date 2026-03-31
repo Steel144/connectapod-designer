@@ -84,9 +84,9 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
       if ((e.ctrlKey || e.metaKey) && e.key === 'v' && clipboard) {
         e.preventDefault();
         
-        // Calculate offset for pasted items (2 cells right and down)
-        const offsetX = 2;
-        const offsetY = 2;
+        // Calculate offset for pasted items (3 cells right, 8 cells down)
+        const offsetX = 3;
+        const offsetY = 8;
         
         // Paste modules
         clipboard.modules.forEach(mod => {
@@ -121,7 +121,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
           onPlaceFurniture && onPlaceFurniture(newItem);
         });
         
-        console.log('Pasted items');
+        console.log('Pasted items with offset');
         return;
       }
       
@@ -324,14 +324,24 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
       const cursorY = dragging.cursorY - rect.top;
       const deltaX = (cursorX - dragging.offsetX) / scaledCellW - dragging.mod.x;
       const deltaY = (cursorY - dragging.offsetY) / scaledCellH - dragging.mod.y;
-      // Move all selected furniture by same delta
+      const isCopyDrag = e.altKey; // Alt key = copy
+      
+      // Move/copy all selected furniture by same delta
       const idsToMove = dragging.selectedFurnitureIds || new Set([dragging.mod.id]);
       idsToMove.forEach((id) => {
         const item = furniture.find((f) => f.id === id);
         if (!item) return;
         const newX = Math.max(0, Math.min(item.x + deltaX, GRID_COLS - 1));
         const newY = Math.max(0, Math.min(item.y + deltaY, GRID_ROWS - 1));
-        onMoveFurniture?.(id, newX, newY);
+        
+        if (isCopyDrag) {
+          // Copy furniture
+          const newItem = { ...item, id: `${Date.now()}-${Math.random()}`, x: newX, y: newY };
+          onPlaceFurniture?.(newItem);
+        } else {
+          // Move furniture
+          onMoveFurniture?.(id, newX, newY);
+        }
       });
       setDragging(null);
       return;
@@ -524,15 +534,29 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
     });
 
     // Move all selected modules by same delta
+    const isCopyDrag = e.altKey; // Alt key held = copy instead of move
+    
     dragging.selectedIds.forEach((id) => {
       const mod = placedModules.find((m) => m.id === id);
       if (!mod) return;
       
       const canPlace = canPlaceGroup(mod, mod.x + deltaX, mod.y + deltaY, dragging.selectedIds);
       if (canPlace) {
-        onMove(id, mod.x + deltaX, mod.y + deltaY);
+        if (isCopyDrag) {
+          // Copy mode: create new module at new position
+          const newModule = {
+            ...mod,
+            id: `${Date.now()}-${Math.random()}`,
+            x: mod.x + deltaX,
+            y: mod.y + deltaY
+          };
+          onPlace(newModule);
+        } else {
+          // Move mode: move existing module
+          onMove(id, mod.x + deltaX, mod.y + deltaY);
+        }
         
-        // Move walls attached to this module (only if exactly snapped)
+        // Move/copy walls attached to this module (only if exactly snapped)
         const WALL_THRESHOLD = 0.1;
         walls.forEach((wall) => {
           if (wall.orientation === "horizontal") {
@@ -540,11 +564,21 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
             if (Math.abs(wall.x - mod.x) < WALL_THRESHOLD) {
               // Above (W face)
               if (Math.abs(wall.y - (mod.y - wall.thickness)) < WALL_THRESHOLD) {
-                if (onMoveWall) onMoveWall(wall.id, wall.x + deltaX, wall.y + deltaY);
+                if (isCopyDrag && onPlaceWall) {
+                  const newWall = { ...wall, id: `${Date.now()}-${Math.random()}`, x: wall.x + deltaX, y: wall.y + deltaY };
+                  onPlaceWall(newWall);
+                } else if (onMoveWall) {
+                  onMoveWall(wall.id, wall.x + deltaX, wall.y + deltaY);
+                }
               }
               // Below (Y face)
               else if (Math.abs(wall.y - (mod.y + mod.h)) < WALL_THRESHOLD) {
-                if (onMoveWall) onMoveWall(wall.id, wall.x + deltaX, wall.y + deltaY);
+                if (isCopyDrag && onPlaceWall) {
+                  const newWall = { ...wall, id: `${Date.now()}-${Math.random()}`, x: wall.x + deltaX, y: wall.y + deltaY };
+                  onPlaceWall(newWall);
+                } else if (onMoveWall) {
+                  onMoveWall(wall.id, wall.x + deltaX, wall.y + deltaY);
+                }
               }
             }
           } else if (wall.orientation === "vertical") {
@@ -555,11 +589,21 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
             if (Math.abs(wall.y - mod.y) < WALL_THRESHOLD) {
               // Left (Z face)
               if (Math.abs(wall.x - mod.x) < WALL_THRESHOLD) {
-                if (onMoveWall) onMoveWall(wall.id, wall.x + deltaX, wall.y + deltaY);
+                if (isCopyDrag && onPlaceWall) {
+                  const newWall = { ...wall, id: `${Date.now()}-${Math.random()}`, x: wall.x + deltaX, y: wall.y + deltaY };
+                  onPlaceWall(newWall);
+                } else if (onMoveWall) {
+                  onMoveWall(wall.id, wall.x + deltaX, wall.y + deltaY);
+                }
               }
               // Right (X face)
               else if (Math.abs(wall.x - (mod.x + mod.w)) < WALL_THRESHOLD) {
-                if (onMoveWall) onMoveWall(wall.id, wall.x + deltaX, wall.y + deltaY);
+                if (isCopyDrag && onPlaceWall) {
+                  const newWall = { ...wall, id: `${Date.now()}-${Math.random()}`, x: wall.x + deltaX, y: wall.y + deltaY };
+                  onPlaceWall(newWall);
+                } else if (onMoveWall) {
+                  onMoveWall(wall.id, wall.x + deltaX, wall.y + deltaY);
+                }
               }
             }
           }
