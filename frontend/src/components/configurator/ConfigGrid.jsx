@@ -133,14 +133,11 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
           
           console.log(`Module ${idx} after calculation:`, { newX, newY });
           
-          const newModule = {
-            ...mod,
-            id: `${Date.now()}-${Math.random()}`,
-            x: newX,
-            y: newY
-          };
-          console.log('Pasting module:', newModule);
-          onPlace(newModule);
+          // Remove x, y from mod before passing to onPlace
+          const {x: _x, y: _y, id: _id, ...modWithoutCoords} = mod;
+          
+          console.log('Pasting module:', { ...modWithoutCoords, x: newX, y: newY });
+          onPlace(modWithoutCoords, newX, newY);
         });
         
         // Paste walls
