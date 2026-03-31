@@ -34,7 +34,7 @@ export default function DesignCatalogue() {
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-    base44.auth.me().then(u => { if (u?.role === "admin") setIsAdmin(true); }).catch(() => {});
+    base44.auth?.me?.().then(u => { if (u?.role === "admin") setIsAdmin(true); }).catch(() => {});
   }, []);
 
   const { data: designTemplates = [], isLoading: loadingTemplates } = useQuery({
