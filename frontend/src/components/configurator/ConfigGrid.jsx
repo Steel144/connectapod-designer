@@ -742,19 +742,17 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
             }
             
             if (shouldCopy && onPlaceWall) {
-              const {id: _wId, ...wallWithoutId} = w;
-              const newWall = { 
-                ...wallWithoutId, 
-                id: `${Date.now()}-${Math.random()}`,
-                x: newWallX, 
-                y: newWallY,
+              const {id: _wId, x: _wx, y: _wy, ...wallWithoutCoords} = w;
+              const wallData = { 
+                ...wallWithoutCoords,
                 face: faceName || w.face
               };
               console.log(`🟢 Copying ${faceName} wall:`, {
                 original: { x: w.x, y: w.y },
                 new: { x: newWallX, y: newWallY }
               });
-              onPlaceWall(newWall);
+              // Call onPlaceWall with correct signature: (wallData, x, y)
+              onPlaceWall(wallData, newWallX, newWallY);
             }
           });
           
