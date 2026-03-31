@@ -110,10 +110,23 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
         const TOLERANCE = 0.6;
         const attachedWalls = [];
         
+        console.log('Checking for attached walls. Total walls:', walls.length);
+        
         selectedModules.forEach(mod => {
+          console.log('Module:', { id: mod.id, x: mod.x, y: mod.y, w: mod.w, h: mod.h });
+          console.log('  Looking for walls at:');
+          console.log('    W face (top):', { x: mod.x, y: mod.y - WALL_OFFSET });
+          console.log('    Y face (bottom):', { x: mod.x, y: mod.y + mod.h });
+          console.log('    Z face (left):', { x: mod.x, y: mod.y });
+          console.log('    X face (right):', { x: mod.x + mod.w - WALL_OFFSET, y: mod.y });
+          
+          let foundCount = 0;
           walls.forEach(w => {
             // Check if this wall is already selected
             if (selectedWallIds.has(w.id)) return;
+            
+            let matched = false;
+            let face = '';
             
             // Check each face of the module to see if this wall belongs to it
             // W face (top/north): horizontal wall at y = module.y - WALL_OFFSET
@@ -121,41 +134,49 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
               const expectedY = mod.y - WALL_OFFSET;
               const expectedX = mod.x;
               if (Math.abs(w.y - expectedY) < TOLERANCE && Math.abs(w.x - expectedX) < TOLERANCE) {
-                attachedWalls.push(w);
-                return;
+                matched = true;
+                face = 'W';
               }
             }
             
             // Y face (bottom/south): horizontal wall at y = module.y + module.h
-            if (w.orientation === "horizontal" || w.face === "Y") {
+            if (!matched && (w.orientation === "horizontal" || w.face === "Y")) {
               const expectedY = mod.y + mod.h;
               const expectedX = mod.x;
               if (Math.abs(w.y - expectedY) < TOLERANCE && Math.abs(w.x - expectedX) < TOLERANCE) {
-                attachedWalls.push(w);
-                return;
+                matched = true;
+                face = 'Y';
               }
             }
             
             // Z face (left/west): vertical wall at x = module.x
-            if (w.orientation === "vertical" || w.face === "Z") {
+            if (!matched && (w.orientation === "vertical" || w.face === "Z")) {
               const expectedX = mod.x;
               const expectedY = mod.y;
               if (Math.abs(w.x - expectedX) < TOLERANCE && Math.abs(w.y - expectedY) < TOLERANCE) {
-                attachedWalls.push(w);
-                return;
+                matched = true;
+                face = 'Z';
               }
             }
             
             // X face (right/east): vertical wall at x = module.x + module.w - WALL_OFFSET
-            if (w.orientation === "vertical" || w.face === "X") {
+            if (!matched && (w.orientation === "vertical" || w.face === "X")) {
               const expectedX = mod.x + mod.w - WALL_OFFSET;
               const expectedY = mod.y;
               if (Math.abs(w.x - expectedX) < TOLERANCE && Math.abs(w.y - expectedY) < TOLERANCE) {
-                attachedWalls.push(w);
-                return;
+                matched = true;
+                face = 'X';
               }
             }
+            
+            if (matched) {
+              attachedWalls.push(w);
+              foundCount++;
+              console.log(`  ✓ Found wall on ${face} face:`, { id: w.id, x: w.x, y: w.y, orientation: w.orientation });
+            }
           });
+          
+          console.log(`  Found ${foundCount} attached walls for this module`);
         });
         
         const allWalls = [...selectedWalls, ...attachedWalls];
@@ -637,6 +658,9 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
       const mod = placedModules.find((m) => m.id === id);
       if (!mod) return;
       
+      // Get the original module position (before drag started)
+      const originalMod = dragging.mod.id === id ? dragging.mod : mod;
+      
       const canPlace = canPlaceGroup(mod, mod.x + deltaX, mod.y + deltaY, dragging.selectedIds);
       if (canPlace) {
         if (isCopyDrag) {
@@ -646,17 +670,17 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
           const newY = mod.y + deltaY;
           onPlace(modWithoutCoords, newX, newY);
           
-          // Also copy walls attached to this module
+          // Also copy walls attached to this module (using ORIGINAL position)
           const WALL_OFFSET = 0.308;
           const TOLERANCE = 0.6;
           
           walls.forEach(w => {
             let shouldCopy = false;
             
-            // W face (top/north)
+            // W face (top/north) - check against ORIGINAL position
             if (w.orientation === "horizontal" || w.face === "W") {
-              const expectedY = mod.y - WALL_OFFSET;
-              const expectedX = mod.x;
+              const expectedY = originalMod.y - WALL_OFFSET;
+              const expectedX = originalMod.x;
               if (Math.abs(w.y - expectedY) < TOLERANCE && Math.abs(w.x - expectedX) < TOLERANCE) {
                 shouldCopy = true;
               }
@@ -664,8 +688,8 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
             
             // Y face (bottom/south)
             if (!shouldCopy && (w.orientation === "horizontal" || w.face === "Y")) {
-              const expectedY = mod.y + mod.h;
-              const expectedX = mod.x;
+              const expectedY = originalMod.y + originalMod.h;
+              const expectedX = originalMod.x;
               if (Math.abs(w.y - expectedY) < TOLERANCE && Math.abs(w.x - expectedX) < TOLERANCE) {
                 shouldCopy = true;
               }
@@ -673,8 +697,8 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
             
             // Z face (left/west)
             if (!shouldCopy && (w.orientation === "vertical" || w.face === "Z")) {
-              const expectedX = mod.x;
-              const expectedY = mod.y;
+              const expectedX = originalMod.x;
+              const expectedY = originalMod.y;
               if (Math.abs(w.x - expectedX) < TOLERANCE && Math.abs(w.y - expectedY) < TOLERANCE) {
                 shouldCopy = true;
               }
@@ -682,8 +706,8 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
             
             // X face (right/east)
             if (!shouldCopy && (w.orientation === "vertical" || w.face === "X")) {
-              const expectedX = mod.x + mod.w - WALL_OFFSET;
-              const expectedY = mod.y;
+              const expectedX = originalMod.x + originalMod.w - WALL_OFFSET;
+              const expectedY = originalMod.y;
               if (Math.abs(w.x - expectedX) < TOLERANCE && Math.abs(w.y - expectedY) < TOLERANCE) {
                 shouldCopy = true;
               }
