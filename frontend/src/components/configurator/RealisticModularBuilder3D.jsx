@@ -10,10 +10,50 @@ const WALL_THICKNESS = 0.15;
 const ROOF_PITCH = 25 * Math.PI / 180;
 
 function createRealisticMaterials() {
-  const textureLoader = new THREE.TextureLoader();
+  // Create cedar/timber texture for gable ends
+  const createCedarTexture = () => {
+    const canvas = document.createElement('canvas');
+    canvas.width = 512;
+    canvas.height = 512;
+    const ctx = canvas.getContext('2d');
+    
+    // Base cedar color
+    ctx.fillStyle = '#C19A6B';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    // Vertical shiplap boards
+    const boardWidth = 24;
+    for (let x = 0; x < canvas.width; x += boardWidth) {
+      // Vary board color slightly for cedar variation
+      const colorVariation = Math.random() > 0.5 ? '#D4A574' : '#A8845C';
+      ctx.fillStyle = colorVariation;
+      ctx.fillRect(x, 0, boardWidth * 0.85, canvas.height);
+      
+      // Wood grain effect
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.08)';
+      for (let i = 0; i < 3; i++) {
+        const grainY = Math.random() * canvas.height;
+        ctx.fillRect(x, grainY, boardWidth * 0.85, 1);
+      }
+      
+      // Shiplap shadow line (right edge overlap)
+      ctx.strokeStyle = 'rgba(0, 0, 0, 0.2)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(x + boardWidth * 0.88, 0);
+      ctx.lineTo(x + boardWidth * 0.88, canvas.height);
+      ctx.stroke();
+    }
+    
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.wrapS = THREE.RepeatWrapping;
+    texture.wrapT = THREE.RepeatWrapping;
+    texture.repeat.set(2, 2);
+    
+    return texture;
+  };
   
-  // Load textures - using procedural/repeat patterns for now
-  // For production, you'd load actual texture images
+  const cedarTexture = createCedarTexture();
   
   return {
     // Cladding 1 - Vertical metal panels (used on most elevations)
@@ -21,7 +61,6 @@ function createRealisticMaterials() {
       color: 0x3a3a3a,
       roughness: 0.6,
       metalness: 0.4,
-      // Add subtle normal map effect via roughness variation
     }),
     
     // Cladding 2 - Feature cladding/timber (darker or contrasting)
@@ -31,10 +70,11 @@ function createRealisticMaterials() {
       metalness: 0.3,
     }),
     
-    // Timber for gable ends - warmer wood color
+    // Cedar/Timber for gable ends - natural wood with texture
     timber: new THREE.MeshStandardMaterial({
-      color: 0x8b6f47,
-      roughness: 0.85,
+      map: cedarTexture,
+      color: 0xC19A6B,
+      roughness: 0.9,
       metalness: 0.0,
     }),
     
@@ -139,10 +179,42 @@ function buildSingleModule(materials, position = { x: 0, y: 0, z: 0 }, customWid
   geo.setIndex(new THREE.BufferAttribute(indices, 1));
   geo.computeVertexNormals();
   
+  // Create main building with metal cladding (walls + roof)
   const building = new THREE.Mesh(geo, materials.cladding1);
   building.castShadow = true;
   building.receiveShadow = true;
   group.add(building);
+  
+  // Create separate gable ends with cedar/timber
+  // Left gable end
+  const leftGableGeo = new THREE.BufferGeometry();
+  const leftGableVerts = new Float32Array([
+    vertices[21], vertices[22], vertices[23], // vertex 7
+    vertices[12], vertices[13], vertices[14], // vertex 4
+    vertices[24], vertices[25], vertices[26], // vertex 8
+  ]);
+  leftGableGeo.setAttribute('position', new THREE.BufferAttribute(leftGableVerts, 3));
+  leftGableGeo.setIndex(new THREE.BufferAttribute(new Uint32Array([0, 1, 2]), 1));
+  leftGableGeo.computeVertexNormals();
+  const leftGable = new THREE.Mesh(leftGableGeo, materials.timber);
+  leftGable.castShadow = true;
+  leftGable.receiveShadow = true;
+  group.add(leftGable);
+  
+  // Right gable end
+  const rightGableGeo = new THREE.BufferGeometry();
+  const rightGableVerts = new Float32Array([
+    vertices[15], vertices[16], vertices[17], // vertex 5
+    vertices[18], vertices[19], vertices[20], // vertex 6
+    vertices[27], vertices[28], vertices[29], // vertex 9
+  ]);
+  rightGableGeo.setAttribute('position', new THREE.BufferAttribute(rightGableVerts, 3));
+  rightGableGeo.setIndex(new THREE.BufferAttribute(new Uint32Array([0, 1, 2]), 1));
+  rightGableGeo.computeVertexNormals();
+  const rightGable = new THREE.Mesh(rightGableGeo, materials.timber);
+  rightGable.castShadow = true;
+  rightGable.receiveShadow = true;
+  group.add(rightGable);
   
   group.position.set(position.x, position.y, position.z);
   return group;
