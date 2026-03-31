@@ -490,17 +490,25 @@ export default function Configurator() {
     pushHistory(placedModules, walls);
     const modToRemove = placedModules.find((m) => m.id === id);
     if (modToRemove) {
+      const WALL_OFFSET = 0.308;
+      const TOLERANCE = 0.5; // Allow small coordinate differences
+      
       setWalls((prev) =>
         prev.filter((w) => {
-          const isLongFace = w.face === "W" || w.face === "Y" || (!w.face && w.orientation === "horizontal");
-          if (isLongFace) {
-            if ((w.face === "W" || !w.face) && w.x === modToRemove.x && w.y === modToRemove.y - 1) return false;
-            if (w.face === "Y" && w.x === modToRemove.x && w.y === modToRemove.y + modToRemove.h) return false;
-          } else {
-            if (w.face === "Z" && w.y === modToRemove.y && w.x === modToRemove.x + 1) return false;
-            if (w.face === "X" && w.y === modToRemove.y && w.x === modToRemove.x + modToRemove.w - 1) return false;
+          // Check if this wall belongs to the module being removed
+          // by checking if the wall's coordinates are within the module's bounds plus offset
+          
+          const minX = modToRemove.x - TOLERANCE;
+          const maxX = modToRemove.x + modToRemove.w + TOLERANCE;
+          const minY = modToRemove.y - WALL_OFFSET - TOLERANCE;
+          const maxY = modToRemove.y + modToRemove.h + TOLERANCE;
+          
+          // If wall is within module bounds, remove it
+          if (w.x >= minX && w.x <= maxX && w.y >= minY && w.y <= maxY) {
+            return false; // Remove this wall
           }
-          return true;
+          
+          return true; // Keep this wall
         })
       );
     }
