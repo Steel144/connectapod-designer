@@ -179,11 +179,59 @@ function buildSingleModule(materials, position = { x: 0, y: 0, z: 0 }, customWid
   geo.setIndex(new THREE.BufferAttribute(indices, 1));
   geo.computeVertexNormals();
   
-  // Create main building with metal cladding (walls + roof)
-  const building = new THREE.Mesh(geo, materials.cladding1);
-  building.castShadow = true;
-  building.receiveShadow = true;
-  group.add(building);
+  // Create walls only (exclude roof slopes and gables)
+  const wallIndices = new Uint32Array([
+    // Bottom
+    0, 2, 1,
+    0, 3, 2,
+    
+    // Front wall
+    0, 1, 5,
+    0, 5, 4,
+    
+    // Right wall
+    1, 2, 6,
+    1, 6, 5,
+    
+    // Back wall
+    2, 3, 7,
+    2, 7, 6,
+    
+    // Left wall
+    3, 0, 4,
+    3, 4, 7,
+  ]);
+  
+  const wallsGeo = new THREE.BufferGeometry();
+  wallsGeo.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+  wallsGeo.setIndex(new THREE.BufferAttribute(wallIndices, 1));
+  wallsGeo.computeVertexNormals();
+  
+  const wallsMesh = new THREE.Mesh(wallsGeo, materials.cladding1);
+  wallsMesh.castShadow = true;
+  wallsMesh.receiveShadow = true;
+  group.add(wallsMesh);
+  
+  // Create roof with metal material
+  const roofIndices = new Uint32Array([
+    // Front roof slope
+    4, 5, 9,
+    4, 9, 8,
+    
+    // Back roof slope
+    7, 8, 9,
+    7, 9, 6,
+  ]);
+  
+  const roofGeo = new THREE.BufferGeometry();
+  roofGeo.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+  roofGeo.setIndex(new THREE.BufferAttribute(roofIndices, 1));
+  roofGeo.computeVertexNormals();
+  
+  const roofMesh = new THREE.Mesh(roofGeo, materials.roof);
+  roofMesh.castShadow = true;
+  roofMesh.receiveShadow = true;
+  group.add(roofMesh);
   
   // Create separate gable ends with cedar/timber
   // Left gable end
