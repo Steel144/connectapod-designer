@@ -59,15 +59,15 @@ function createRealisticMaterials() {
   };
 }
 
-function buildSingleModule(materials, position = { x: 0, y: 0, z: 0 }) {
+function buildSingleModule(materials, position = { x: 0, y: 0, z: 0 }, customWidth = 3.0, customDepth = 5.2) {
   const group = new THREE.Group();
   
-  // Dimensions
-  const width = 3.0;
-  const depth = 5.2;
+  // Dimensions - use custom if provided, otherwise defaults
+  const width = customWidth;
+  const depth = customDepth;
   const wallHeight = 2.4;
   const roofPitch = 25 * Math.PI / 180;
-  const peakHeight = (depth / 2) * Math.tan(roofPitch); // ~1.21m
+  const peakHeight = (depth / 2) * Math.tan(roofPitch);
   
   // Create single unified geometry
   const geo = new THREE.BufferGeometry();
@@ -208,21 +208,33 @@ export default function RealisticModularBuilder3D({ placedModules = [], walls = 
       console.log('🔧 NEW CODE LOADED - Building', placedModules.length, 'modules with FIXED positioning');
       
       placedModules.forEach((module, idx) => {
-        // Position based on module grid coordinates
-        // Each module is 3m wide × 5.2m deep
-        // Add half-width/depth offset so modules align edge-to-edge
-        const modX = module.x * MODULE_WIDTH + MODULE_WIDTH / 2;
-        const modZ = module.y * MODULE_DEPTH + MODULE_DEPTH / 2;
+        // FIXED: Use module's actual grid position (x, y) converted using 0.6m cell size
+        // Each grid cell = 0.6m (not 3m!)
+        // Module dimensions in grid cells: w (width) × h (height/depth)
+        const GRID_CELL_SIZE = 0.6; // meters per grid cell
+        
+        // Convert grid position to world position
+        // Position at module's corner, then add half the actual module size for centering
+        const moduleWorldWidth = module.w * GRID_CELL_SIZE;
+        const moduleWorldDepth = module.h * GRID_CELL_SIZE;
+        
+        const modX = module.x * GRID_CELL_SIZE + moduleWorldWidth / 2;
+        const modZ = module.y * GRID_CELL_SIZE + moduleWorldDepth / 2;
         
         console.log(`✅ Module ${idx} FIXED POSITIONING:`, { 
           gridX: module.x, 
-          gridY: module.y, 
+          gridY: module.y,
+          gridW: module.w,
+          gridH: module.h,
           worldX: modX, 
           worldZ: modZ,
-          boxExtends: `(${modX-1.5}, ${modZ-2.6}) to (${modX+1.5}, ${modZ+2.6})`
+          worldWidth: moduleWorldWidth,
+          worldDepth: moduleWorldDepth,
+          boxExtends: `(${modX-moduleWorldWidth/2}, ${modZ-moduleWorldDepth/2}) to (${modX+moduleWorldWidth/2}, ${modZ+moduleWorldDepth/2})`
         });
         
-        const moduleObj = buildSingleModule(materials, { x: modX, y: 0, z: modZ });
+        // Use the actual module size for building, not hardcoded 3m
+        const moduleObj = buildSingleModule(materials, { x: modX, y: 0, z: modZ }, moduleWorldWidth, moduleWorldDepth);
         scene.add(moduleObj);
       });
       
