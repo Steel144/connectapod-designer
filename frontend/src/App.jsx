@@ -19,6 +19,7 @@ const LayoutWrapper = ({ children, currentPageName }) => Layout ?
 import DesignCatalogue from './pages/DesignCatalogue';
 import Landing from './pages/Landing';
 import FloorCatalogue from './pages/Catalogue';
+import AdminDesigns from './pages/AdminDesigns';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -47,6 +48,7 @@ const AuthenticatedApp = () => {
       <Route path="/" element={<Landing />} />
       <Route path="/DesignCatalogue" element={<DesignCatalogue />} />
       <Route path="/FloorCatalogue" element={<FloorCatalogue />} />
+      <Route path="/AdminDesigns" element={<AdminDesigns />} />
       <Route path="/Home" element={
         <LayoutWrapper currentPageName={mainPageKey}>
           <MainPage />

@@ -25,11 +25,6 @@ export default function Landing() {
   const navigate = useNavigate();
   const [phase, setPhase] = useState("hero"); // hero | quiz | results
   const [quizAnswers, setQuizAnswers] = useState(null);
-  const [isAdmin, setIsAdmin] = useState(false);
-
-  React.useEffect(() => {
-    base44.auth?.me?.().then(u => { if (u?.role === "admin") setIsAdmin(true); }).catch(() => {});
-  }, []);
 
   const { data: designs = [], isLoading } = useQuery({
     queryKey: ["designTemplates"],
@@ -149,7 +144,6 @@ export default function Landing() {
                 design={design}
                 onSelect={handleSelectDesign}
                 isFeatured={quizAnswers ? i === 0 : design.is_featured}
-                isAdmin={isAdmin}
               />
             ))}
           </div>

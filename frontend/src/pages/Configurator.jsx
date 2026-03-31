@@ -1131,6 +1131,11 @@ export default function Configurator() {
                     <Save size={13} /> Save to Design Catalogue
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
+                    <Link to="/AdminDesigns" className="flex items-center gap-2 cursor-pointer">
+                      <LayoutTemplate size={13} /> Manage Starter Designs
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
                     <Link to="/FloorCatalogue" className="flex items-center gap-2 cursor-pointer">
                       <BookOpen size={13} /> Floor Catalogue
                     </Link>
