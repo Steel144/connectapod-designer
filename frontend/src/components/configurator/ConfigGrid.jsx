@@ -125,9 +125,10 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
           const newModule = {
             ...mod,
             id: `${Date.now()}-${Math.random()}`,
-            x: mod.x + offsetX,
-            y: mod.y + offsetY
+            x: Number(mod.x) + offsetX,
+            y: Number(mod.y) + offsetY
           };
+          console.log('Pasting module:', newModule);
           onPlace(newModule);
         });
         
@@ -136,8 +137,8 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
           const newWall = {
             ...wall,
             id: `${Date.now()}-${Math.random()}`,
-            x: wall.x + offsetX,
-            y: wall.y + offsetY
+            x: Number(wall.x) + offsetX,
+            y: Number(wall.y) + offsetY
           };
           onPlaceWall && onPlaceWall(newWall);
         });
@@ -147,8 +148,8 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
           const newItem = {
             ...item,
             id: `${Date.now()}-${Math.random()}`,
-            x: item.x + offsetX,
-            y: item.y + offsetY
+            x: Number(item.x) + offsetX,
+            y: Number(item.y) + offsetY
           };
           onPlaceFurniture && onPlaceFurniture(newItem);
         });
