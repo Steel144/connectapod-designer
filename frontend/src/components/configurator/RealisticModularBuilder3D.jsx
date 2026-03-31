@@ -368,12 +368,20 @@ export default function RealisticModularBuilder3D({ placedModules = [], walls = 
     // Create materials
     const materials = createRealisticMaterials();
     
-    // Override roof material to use tray texture (same as walls)
+    // Override BOTH roof AND wall materials to use tray texture
     materials.roof = new THREE.MeshStandardMaterial({
       map: trayTexture,
       color: 0x2a2a2a,
       roughness: 0.4,
       metalness: 0.6,
+      side: THREE.DoubleSide,
+    });
+    
+    materials.cladding1 = new THREE.MeshStandardMaterial({
+      map: trayTexture,
+      color: 0x3a3a3a,
+      roughness: 0.6,
+      metalness: 0.4,
       side: THREE.DoubleSide,
     });
 
