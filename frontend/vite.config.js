@@ -13,8 +13,9 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
-        entryFileNames: `assets/[name]-${Date.now()}.js`,
-        chunkFileNames: `assets/[name]-${Date.now()}.js`,
+        // Use content hash instead of timestamp for better cache busting
+        entryFileNames: `assets/[name]-[hash].js`,
+        chunkFileNames: `assets/[name]-[hash].js`,
         assetFileNames: `assets/[name]-[hash].[ext]`
       }
     }
