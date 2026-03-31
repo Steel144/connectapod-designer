@@ -1264,10 +1264,10 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
            <div
              className="absolute pointer-events-none border-2 border-indigo-500 bg-indigo-50/30"
              style={{
-               left: Math.min(selectionBox.startX, selectionBox.cursorX),
-               top: Math.min(selectionBox.startY, selectionBox.cursorY),
-               width: Math.abs(selectionBox.cursorX - selectionBox.startX),
-               height: Math.abs(selectionBox.cursorY - selectionBox.startY),
+               left: Math.min(selectionBox.startX, selectionBox.cursorX) * (zoom / 100),
+               top: Math.min(selectionBox.startY, selectionBox.cursorY) * (zoom / 100),
+               width: Math.abs(selectionBox.cursorX - selectionBox.startX) * (zoom / 100),
+               height: Math.abs(selectionBox.cursorY - selectionBox.startY) * (zoom / 100),
              }}
            />
          )}
