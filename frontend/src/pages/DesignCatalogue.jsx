@@ -180,7 +180,7 @@ export default function DesignCatalogue() {
                     onMouseLeave={() => setHoveredTemplate(null)}
                   >
                     {isAdmin && (
-                      <div className="absolute top-2 left-2 flex gap-1 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="absolute top-2 left-2 flex gap-1 z-30 opacity-0 group-hover:opacity-100 transition-opacity">
                         <button
                           onClick={(e) => { e.stopPropagation(); setEditingTemplate(template); }}
                           className="p-1.5 bg-white/90 hover:bg-white text-gray-600 hover:text-[#F15A22] shadow-sm transition-colors"
