@@ -66,6 +66,11 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
   
   // Track Alt/Option key state for drag-to-copy
   const [isAltPressed, setIsAltPressed] = useState(false);
+  
+  // Pan state for click-and-drag to move the view
+  const [isPanning, setIsPanning] = useState(false);
+  const [panStart, setPanStart] = useState({ x: 0, y: 0 });
+  const [panOffset, setPanOffset] = useState({ x: 0, y: 0 });
 
   // Track Alt/Option key globally
   useEffect(() => {
@@ -340,6 +345,15 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
 
   const startSelectionBox = (e) => {
     if (e.button !== 0 || e.target !== gridRef.current) return;
+    
+    // If Space key is held, start panning instead of selection
+    if (e.shiftKey || e.ctrlKey || e.metaKey) {
+      setIsPanning(true);
+      setPanStart({ x: e.clientX, y: e.clientY });
+      e.preventDefault();
+      return;
+    }
+    
     // Deselect when clicking empty space
     setSelected(new Set());
     setSelectedModId(null);
@@ -374,6 +388,19 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
   };
 
   const onMouseMove = useCallback((e) => {
+    // Handle panning
+    if (isPanning) {
+      const deltaX = e.clientX - panStart.x;
+      const deltaY = e.clientY - panStart.y;
+      setPanOffset({ x: deltaX, y: deltaY });
+      if (gridRef.current) {
+        gridRef.current.scrollLeft -= deltaX;
+        gridRef.current.scrollTop -= deltaY;
+      }
+      setPanStart({ x: e.clientX, y: e.clientY });
+      return;
+    }
+    
     if (selectionBox) {
       const rect = gridRef.current.getBoundingClientRect();
       setSelectionBox((b) => ({ ...b, cursorX: (e.clientX - rect.left) / (zoom / 100), cursorY: (e.clientY - rect.top) / (zoom / 100) }));
@@ -385,7 +412,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
     }
     if (!dragging) return;
     setDragging((d) => d ? { ...d, cursorX: e.clientX, cursorY: e.clientY } : null);
-  }, [dragging, draggingWall, selectionBox]);
+  }, [dragging, draggingWall, selectionBox, isPanning, panStart]);
 
   // Snap to nearest placed module edge within SNAP_THRESHOLD cells
   const SNAP_THRESHOLD = 1;
@@ -434,6 +461,12 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
   };
 
   const onMouseUp = useCallback((e) => {
+    // Stop panning
+    if (isPanning) {
+      setIsPanning(false);
+      return;
+    }
+    
     // Handle furniture drag
     if (dragging?.isFurniture) {
       const rect = gridRef.current.getBoundingClientRect();
@@ -1066,6 +1099,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
         style={{
           width: GRID_COLS * scaledCellW,
           height: GRID_ROWS * scaledCellH,
+          cursor: isPanning ? 'grabbing' : 'default',
           backgroundImage: `
             linear-gradient(to right, #D1D5DB 1px, transparent 1px),
             linear-gradient(to bottom, #D1D5DB 1px, transparent 1px),
