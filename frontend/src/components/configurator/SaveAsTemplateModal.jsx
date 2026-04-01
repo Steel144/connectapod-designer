@@ -52,6 +52,7 @@ export default function SaveAsTemplateModal({ open, onClose, placedModules, wall
     const totalSqm = placedModules.reduce((s, m) => s + (m.sqm || 0), 0);
     const moduleList = placedModules.map(m => m.label || m.type).join(", ");
     try {
+      console.log("🤖 Calling AI to generate description...");
       const result = await base44.integrations.Core.InvokeLLM({
         prompt: `You are helping name and describe a modular home design for Connectapod (a New Zealand modular home builder).
 Design details:
@@ -71,10 +72,13 @@ Generate a concise, appealing customer-facing name (e.g. "2 Bedroom Granny Flat 
           },
         },
       });
+      console.log("✅ AI result:", result);
       setForm(f => ({ ...f, name: result.name || f.name, description: result.description || f.description }));
       toast.success("AI suggestions applied!");
+      console.log("✅ Toast should appear now");
     } catch (err) {
-      toast.error("AI suggest failed");
+      console.error("❌ AI suggest failed:", err);
+      toast.error(`AI suggest failed: ${err.message || 'Unknown error'}`);
     }
     setSuggesting(false);
   };
@@ -82,19 +86,27 @@ Generate a concise, appealing customer-facing name (e.g. "2 Bedroom Granny Flat 
   const handleImageUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    console.log("📤 Uploading image:", file.name);
     setUploading(true);
     try {
       const formData = new FormData();
       formData.append("file", file);
       const apiUrl = import.meta.env.VITE_BACKEND_URL || "";
+      console.log("API URL:", apiUrl);
       const res = await fetch(`${apiUrl}/api/upload`, { method: "POST", body: formData });
       const data = await res.json();
+      console.log("📥 Upload response:", data);
       if (data.url) {
         setForm(f => ({ ...f, heroImage: data.url }));
+        console.log("✅ Hero image set to:", data.url);
         toast.success("Image uploaded!");
+      } else {
+        console.error("❌ No URL in response");
+        toast.error("Image upload failed: No URL returned");
       }
     } catch (err) {
-      toast.error("Image upload failed");
+      console.error("❌ Image upload error:", err);
+      toast.error(`Image upload failed: ${err.message || 'Unknown error'}`);
     }
     setUploading(false);
   };
@@ -117,8 +129,12 @@ Generate a concise, appealing customer-facing name (e.g. "2 Bedroom Granny Flat 
     setSaving(true);
     const totalSqm = placedModules.reduce((s, m) => s + (m.sqm || 0), 0);
 
+    console.log("💾 Saving design template...");
+    console.log("Form data:", form);
+    console.log("Hero Image in form:", form.heroImage);
+
     try {
-      const result = await base44.entities.DesignTemplate.create({
+      const payload = {
         name: form.name.trim(),
         description: form.description.trim(),
         categories: form.categories,
@@ -135,15 +151,22 @@ Generate a concise, appealing customer-facing name (e.g. "2 Bedroom Granny Flat 
           modules: placedModules.map(m => m.type),
           layout: { grid: placedModules, walls, furniture },
         },
-      });
+      };
+      
+      console.log("📤 Sending payload to API:", payload);
+      
+      const result = await base44.entities.DesignTemplate.create(payload);
 
       console.log("✅ Design template saved successfully:", result);
+      console.log("✅ Saved hero image:", result.heroImage);
+      alert("✅ SUCCESS! Design saved to database.\n\nName: " + result.name + "\nHero Image: " + (result.heroImage || "None"));
       toast.success("Saved to Design Template catalogue!");
       setSaving(false);
       onClose();
       setForm({ name: "", description: "", categories: [], use_cases: [], build_type: [], budget_range: "", bedrooms: "", bathrooms: "", size_sqm: "", starting_price: "", is_featured: false, heroImage: "" });
     } catch (error) {
       console.error("❌ Failed to save design template:", error);
+      alert("❌ ERROR: Failed to save design\n\n" + (error.message || 'Unknown error'));
       toast.error(`Failed to save: ${error.message || 'Unknown error'}`);
       setSaving(false);
     }
