@@ -63,7 +63,7 @@ Design details:
 - Use cases: ${form.use_cases.join(", ") || "not selected"}
 
 Generate a concise, appealing customer-facing name (e.g. "2 Bedroom Granny Flat 75m²") and a short 1-2 sentence description for a design card. Be specific and practical.
-Return JSON with "name" and "description" fields.`;
+Return ONLY a JSON object with "name" and "description" fields, nothing else.`;
 
       const response = await fetch(`${import.meta.env.VITE_BACKEND_URL || ""}/api/ai/generate-description`, {
         method: "POST",
@@ -74,36 +74,47 @@ Return JSON with "name" and "description" fields.`;
       if (!response.ok) throw new Error("AI API request failed");
       
       const data = await response.json();
-      console.log("✅ AI raw response:", data);
+      console.log("✅ AI raw response from backend:", JSON.stringify(data, null, 2));
+      console.log("Type of data.description:", typeof data.description);
       
-      // The backend returns { description: "JSON string" }
-      // We need to parse the JSON string
-      let result = {};
+      let name = "";
+      let description = "";
       
+      // The backend returns: { description: "some text" }
+      // The text might be a JSON string like: {"name": "...", "description": "..."}
       if (data.description) {
-        // Try to parse the description as JSON
-        try {
-          const parsed = JSON.parse(data.description);
-          result = parsed;
-          console.log("✅ Parsed JSON from description:", result);
-        } catch (e) {
-          console.warn("⚠️ Description is not JSON, using as-is");
-          result = { description: data.description };
+        const descText = data.description.trim();
+        console.log("Description text:", descText);
+        
+        // Check if it starts with { (JSON)
+        if (descText.startsWith('{')) {
+          try {
+            const parsed = JSON.parse(descText);
+            console.log("✅ Successfully parsed JSON:", parsed);
+            name = parsed.name || "";
+            description = parsed.description || "";
+          } catch (e) {
+            console.error("❌ Failed to parse JSON:", e);
+            // Use the whole thing as description
+            description = descText;
+          }
+        } else {
+          // Not JSON, use as-is
+          description = descText;
         }
-      } else {
-        result = data;
       }
       
-      if (result.name || result.description) {
+      console.log("Final values - Name:", name, "Description:", description);
+      
+      if (name || description) {
         setForm(f => ({ 
           ...f, 
-          name: result.name || f.name, 
-          description: result.description || f.description 
+          name: name || f.name, 
+          description: description || f.description 
         }));
         toast.success("✅ AI suggestions applied!");
-        console.log("✅ Form updated - Name:", result.name, "Description:", result.description);
       } else {
-        toast.error("AI returned unexpected format");
+        toast.error("AI returned empty response");
       }
     } catch (err) {
       console.error("❌ AI suggest failed:", err);
