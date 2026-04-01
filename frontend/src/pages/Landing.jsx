@@ -5,7 +5,8 @@ import { useNavigate } from "react-router-dom";
 import HeroSection from "@/components/landing/HeroSection";
 import DesignQuiz from "@/components/landing/DesignQuiz";
 import DesignCard from "@/components/landing/DesignCard";
-import { ArrowRight, SlidersHorizontal, HardHat } from "lucide-react";
+import { ArrowRight, SlidersHorizontal, HardHat, Lock } from "lucide-react";
+import { useAuth } from "@/lib/AuthContext";
 
 // Score a design against quiz answers (higher = better match)
 function scoreDesign(design, answers) {
@@ -23,8 +24,11 @@ function scoreDesign(design, answers) {
 
 export default function Landing() {
   const navigate = useNavigate();
+  const { user, login } = useAuth();
   const [phase, setPhase] = useState("hero"); // hero | quiz | results
   const [quizAnswers, setQuizAnswers] = useState(null);
+  const [showAdminLogin, setShowAdminLogin] = useState(false);
+  const [adminPassword, setAdminPassword] = useState("");
 
   const { data: designs = [], isLoading } = useQuery({
     queryKey: ["designTemplates"],
@@ -92,6 +96,68 @@ export default function Landing() {
 
   return (
     <div className="min-h-screen bg-[#F8F7F5]">
+      {/* Admin Login Button - Top Right */}
+      {user?.role !== 'admin' && (
+        <div className="fixed top-4 right-4 z-50">
+          <button
+            onClick={() => setShowAdminLogin(true)}
+            className="flex items-center gap-2 px-3 py-2 bg-gray-800 text-white text-xs font-medium hover:bg-gray-700 transition-colors rounded"
+          >
+            <Lock size={12} /> Admin
+          </button>
+        </div>
+      )}
+      
+      {/* Admin Login Modal */}
+      {showAdminLogin && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full mx-4">
+            <h3 className="text-lg font-bold mb-4">Admin Login</h3>
+            <input
+              type="password"
+              value={adminPassword}
+              onChange={(e) => setAdminPassword(e.target.value)}
+              placeholder="Enter admin password"
+              className="w-full px-3 py-2 border border-gray-300 rounded mb-4"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  if (login(adminPassword)) {
+                    setShowAdminLogin(false);
+                    setAdminPassword("");
+                  } else {
+                    alert("Incorrect password");
+                  }
+                }
+              }}
+            />
+            <div className="flex gap-2">
+              <button
+                onClick={() => {
+                  if (login(adminPassword)) {
+                    setShowAdminLogin(false);
+                    setAdminPassword("");
+                  } else {
+                    alert("Incorrect password");
+                  }
+                }}
+                className="flex-1 px-4 py-2 bg-[#F15A22] text-white rounded hover:bg-[#d94e1a]"
+              >
+                Login
+              </button>
+              <button
+                onClick={() => {
+                  setShowAdminLogin(false);
+                  setAdminPassword("");
+                }}
+                className="flex-1 px-4 py-2 border border-gray-300 rounded hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      
       {phase === "hero" && (
         <HeroSection onStartQuiz={() => setPhase("quiz")} />
       )}

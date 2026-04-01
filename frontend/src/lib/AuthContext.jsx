@@ -2,27 +2,65 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const AuthContext = createContext();
 
-// Default admin user - everyone has admin access
-const DEFAULT_ADMIN_USER = { 
-  role: 'admin',
-  id: 'default-admin',
-  name: 'Admin User'
-};
+// Admin password (set your own password here)
+const ADMIN_PASSWORD = 'admin123'; // Change this to your preferred password
 
 export function AuthProvider({ children }) {
+  const [user, setUser] = useState(null);
   const [isLoadingAuth] = useState(false);
   const [isLoadingPublicSettings] = useState(false);
   const [authError] = useState(null);
 
-  // Always use the default admin user - no state changes, no re-renders
+  // Check localStorage for admin session on mount
+  useEffect(() => {
+    const isAdmin = localStorage.getItem('isAdmin') === 'true';
+    if (isAdmin) {
+      setUser({ 
+        role: 'admin',
+        id: 'admin',
+        name: 'Admin User'
+      });
+    } else {
+      setUser({
+        role: 'public',
+        id: 'public-user',
+        name: 'Guest'
+      });
+    }
+  }, []);
+
+  const login = (password) => {
+    if (password === ADMIN_PASSWORD) {
+      localStorage.setItem('isAdmin', 'true');
+      setUser({ 
+        role: 'admin',
+        id: 'admin',
+        name: 'Admin User'
+      });
+      return true;
+    }
+    return false;
+  };
+
+  const logout = () => {
+    localStorage.removeItem('isAdmin');
+    setUser({
+      role: 'public',
+      id: 'public-user',
+      name: 'Guest'
+    });
+  };
+
   return (
     <AuthContext.Provider
       value={{
-        user: DEFAULT_ADMIN_USER,
+        user,
         isLoadingAuth,
         isLoadingPublicSettings,
         authError,
         navigateToLogin: () => {},
+        login,
+        logout,
       }}
     >
       {children}
