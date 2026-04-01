@@ -51,9 +51,32 @@ export default function SaveAsTemplateModal({ open, onClose, placedModules, wall
     setSuggesting(true);
     const totalSqm = placedModules.reduce((s, m) => s + (m.sqm || 0), 0);
     const moduleList = placedModules.map(m => m.label || m.type).join(", ");
+    
+    // Use existing name if provided
+    const existingName = form.name.trim();
+    
     try {
       console.log("🤖 Calling AI to generate description...");
-      const prompt = `You are helping name and describe a modular home design for Connectapod (a New Zealand modular home builder).
+      
+      let prompt;
+      if (existingName) {
+        // If name exists, only generate description using that name
+        prompt = `You are helping write a description for a modular home design for Connectapod (a New Zealand modular home builder).
+
+Design name: ${existingName}
+Design details:
+- Modules: ${moduleList || "none"}
+- Total size: ${Math.round(totalSqm)}m²
+- Bedrooms: ${form.bedrooms || "unknown"}
+- Bathrooms: ${form.bathrooms || "unknown"}
+- Categories: ${form.categories.join(", ") || "not selected"}
+- Use cases: ${form.use_cases.join(", ") || "not selected"}
+
+Write a short 1-2 sentence description for a design card that uses the name "${existingName}". Be specific, appealing, and practical.
+Return ONLY the description text, no JSON.`;
+      } else {
+        // If no name, generate both
+        prompt = `You are helping name and describe a modular home design for Connectapod (a New Zealand modular home builder).
 Design details:
 - Modules: ${moduleList || "none"}
 - Total size: ${Math.round(totalSqm)}m²
@@ -64,6 +87,7 @@ Design details:
 
 Generate a concise, appealing customer-facing name (e.g. "2 Bedroom Granny Flat 75m²") and a short 1-2 sentence description for a design card. Be specific and practical.
 Return ONLY a JSON object with "name" and "description" fields, nothing else.`;
+      }
 
       const response = await fetch(`${import.meta.env.VITE_BACKEND_URL || ""}/api/ai/generate-description`, {
         method: "POST",
@@ -75,20 +99,22 @@ Return ONLY a JSON object with "name" and "description" fields, nothing else.`;
       
       const data = await response.json();
       console.log("✅ AI raw response from backend:", JSON.stringify(data, null, 2));
-      console.log("Type of data.description:", typeof data.description);
       
-      let name = "";
-      let description = "";
-      
-      // The backend returns: { description: "some text" }
-      // The text might be wrapped in markdown: ```json\n{...}\n```
-      if (data.description) {
+      if (existingName) {
+        // Only description was requested
+        const descText = data.description.trim();
+        setForm(f => ({ ...f, description: descText }));
+        console.log("✅ Description updated:", descText);
+      } else {
+        // Both name and description requested
         let descText = data.description.trim();
-        console.log("Description text:", descText);
         
         // Remove markdown code fences (```json ... ``` or ``` ... ```)
         descText = descText.replace(/^```(?:json)?\s*\n?/i, '').replace(/\n?```\s*$/i, '').trim();
         console.log("After removing markdown:", descText);
+        
+        let name = "";
+        let description = "";
         
         // Check if it starts with { (JSON)
         if (descText.startsWith('{')) {
@@ -99,27 +125,21 @@ Return ONLY a JSON object with "name" and "description" fields, nothing else.`;
             description = parsed.description || "";
           } catch (e) {
             console.error("❌ Failed to parse JSON:", e);
-            // Use the whole thing as description
             description = descText;
           }
         } else {
-          // Not JSON, use as-is
           description = descText;
         }
-      }
-      
-      console.log("Final values - Name:", name, "Description:", description);
-      
-      if (name || description) {
+        
         setForm(f => ({ 
           ...f, 
           name: name || f.name, 
           description: description || f.description 
         }));
-        toast.success("✅ AI suggestions applied!");
-      } else {
-        toast.error("AI returned empty response");
+        console.log("✅ Name:", name, "Description:", description);
       }
+      
+      toast.success("✅ AI suggestions applied!");
     } catch (err) {
       console.error("❌ AI suggest failed:", err);
       toast.error(`AI suggest failed: ${err.message || 'Unknown error'}`);
