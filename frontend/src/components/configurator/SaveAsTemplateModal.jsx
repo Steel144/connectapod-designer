@@ -74,26 +74,37 @@ Return JSON with "name" and "description" fields.`;
       if (!response.ok) throw new Error("AI API request failed");
       
       const data = await response.json();
-      console.log("✅ AI result:", data);
+      console.log("✅ AI raw response:", data);
       
-      // Try to parse JSON from description if it's a string
-      let result = data;
-      if (typeof data.description === 'string' && data.description.includes('{')) {
+      // The backend returns { description: "JSON string" }
+      // We need to parse the JSON string
+      let result = {};
+      
+      if (data.description) {
+        // Try to parse the description as JSON
         try {
-          result = JSON.parse(data.description);
+          const parsed = JSON.parse(data.description);
+          result = parsed;
+          console.log("✅ Parsed JSON from description:", result);
         } catch (e) {
-          // If not JSON, use the description as-is
+          console.warn("⚠️ Description is not JSON, using as-is");
           result = { description: data.description };
         }
+      } else {
+        result = data;
       }
       
-      setForm(f => ({ 
-        ...f, 
-        name: result.name || f.name, 
-        description: result.description || f.description 
-      }));
-      toast.success("AI suggestions applied!");
-      console.log("✅ Form updated with AI suggestions");
+      if (result.name || result.description) {
+        setForm(f => ({ 
+          ...f, 
+          name: result.name || f.name, 
+          description: result.description || f.description 
+        }));
+        toast.success("✅ AI suggestions applied!");
+        console.log("✅ Form updated - Name:", result.name, "Description:", result.description);
+      } else {
+        toast.error("AI returned unexpected format");
+      }
     } catch (err) {
       console.error("❌ AI suggest failed:", err);
       toast.error(`AI suggest failed: ${err.message || 'Unknown error'}`);
