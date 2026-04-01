@@ -117,29 +117,36 @@ Generate a concise, appealing customer-facing name (e.g. "2 Bedroom Granny Flat 
     setSaving(true);
     const totalSqm = placedModules.reduce((s, m) => s + (m.sqm || 0), 0);
 
-    await base44.entities.DesignTemplate.create({
-      name: form.name.trim(),
-      description: form.description.trim(),
-      categories: form.categories,
-      use_cases: form.use_cases,
-      build_type: form.build_type,
-      budget_range: form.budget_range || undefined,
-      bedrooms: form.bedrooms !== "" ? Number(form.bedrooms) : undefined,
-      bathrooms: form.bathrooms !== "" ? Number(form.bathrooms) : undefined,
-      size_sqm: form.size_sqm !== "" ? Number(form.size_sqm) : (totalSqm > 0 ? Math.round(totalSqm) : undefined),
-      starting_price: form.starting_price !== "" ? Number(form.starting_price) : undefined,
-      is_featured: form.is_featured,
-      heroImage: form.heroImage || undefined,
-      template_payload: {
-        modules: placedModules.map(m => m.type),
-        layout: { grid: placedModules, walls, furniture },
-      },
-    });
+    try {
+      const result = await base44.entities.DesignTemplate.create({
+        name: form.name.trim(),
+        description: form.description.trim(),
+        categories: form.categories,
+        use_cases: form.use_cases,
+        build_type: form.build_type,
+        budget_range: form.budget_range || undefined,
+        bedrooms: form.bedrooms !== "" ? Number(form.bedrooms) : undefined,
+        bathrooms: form.bathrooms !== "" ? Number(form.bathrooms) : undefined,
+        size_sqm: form.size_sqm !== "" ? Number(form.size_sqm) : (totalSqm > 0 ? Math.round(totalSqm) : undefined),
+        starting_price: form.starting_price !== "" ? Number(form.starting_price) : undefined,
+        is_featured: form.is_featured,
+        heroImage: form.heroImage || undefined,
+        template_payload: {
+          modules: placedModules.map(m => m.type),
+          layout: { grid: placedModules, walls, furniture },
+        },
+      });
 
-    toast.success("Saved to Design Template catalogue!");
-    setSaving(false);
-    onClose();
-    setForm({ name: "", description: "", categories: [], use_cases: [], build_type: [], budget_range: "", bedrooms: "", bathrooms: "", size_sqm: "", starting_price: "", is_featured: false, heroImage: "" });
+      console.log("✅ Design template saved successfully:", result);
+      toast.success("Saved to Design Template catalogue!");
+      setSaving(false);
+      onClose();
+      setForm({ name: "", description: "", categories: [], use_cases: [], build_type: [], budget_range: "", bedrooms: "", bathrooms: "", size_sqm: "", starting_price: "", is_featured: false, heroImage: "" });
+    } catch (error) {
+      console.error("❌ Failed to save design template:", error);
+      toast.error(`Failed to save: ${error.message || 'Unknown error'}`);
+      setSaving(false);
+    }
   };
 
   return (
