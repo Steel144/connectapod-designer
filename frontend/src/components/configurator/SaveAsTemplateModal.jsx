@@ -53,8 +53,7 @@ export default function SaveAsTemplateModal({ open, onClose, placedModules, wall
     const moduleList = placedModules.map(m => m.label || m.type).join(", ");
     try {
       console.log("🤖 Calling AI to generate description...");
-      const result = await base44.integrations.Core.InvokeLLM({
-        prompt: `You are helping name and describe a modular home design for Connectapod (a New Zealand modular home builder).
+      const prompt = `You are helping name and describe a modular home design for Connectapod (a New Zealand modular home builder).
 Design details:
 - Modules: ${moduleList || "none"}
 - Total size: ${Math.round(totalSqm)}m²
@@ -63,19 +62,38 @@ Design details:
 - Categories: ${form.categories.join(", ") || "not selected"}
 - Use cases: ${form.use_cases.join(", ") || "not selected"}
 
-Generate a concise, appealing customer-facing name (e.g. "2 Bedroom Granny Flat 75m²") and a short 1-2 sentence description for a design card. Be specific and practical.`,
-        response_json_schema: {
-          type: "object",
-          properties: {
-            name: { type: "string" },
-            description: { type: "string" },
-          },
-        },
+Generate a concise, appealing customer-facing name (e.g. "2 Bedroom Granny Flat 75m²") and a short 1-2 sentence description for a design card. Be specific and practical.
+Return JSON with "name" and "description" fields.`;
+
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL || ""}/api/ai/generate-description`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt }),
       });
-      console.log("✅ AI result:", result);
-      setForm(f => ({ ...f, name: result.name || f.name, description: result.description || f.description }));
+
+      if (!response.ok) throw new Error("AI API request failed");
+      
+      const data = await response.json();
+      console.log("✅ AI result:", data);
+      
+      // Try to parse JSON from description if it's a string
+      let result = data;
+      if (typeof data.description === 'string' && data.description.includes('{')) {
+        try {
+          result = JSON.parse(data.description);
+        } catch (e) {
+          // If not JSON, use the description as-is
+          result = { description: data.description };
+        }
+      }
+      
+      setForm(f => ({ 
+        ...f, 
+        name: result.name || f.name, 
+        description: result.description || f.description 
+      }));
       toast.success("AI suggestions applied!");
-      console.log("✅ Toast should appear now");
+      console.log("✅ Form updated with AI suggestions");
     } catch (err) {
       console.error("❌ AI suggest failed:", err);
       toast.error(`AI suggest failed: ${err.message || 'Unknown error'}`);
@@ -96,13 +114,17 @@ Generate a concise, appealing customer-facing name (e.g. "2 Bedroom Granny Flat 
       const res = await fetch(`${apiUrl}/api/upload`, { method: "POST", body: formData });
       const data = await res.json();
       console.log("📥 Upload response:", data);
-      if (data.url) {
-        setForm(f => ({ ...f, heroImage: data.url }));
-        console.log("✅ Hero image set to:", data.url);
-        toast.success("Image uploaded!");
+      
+      // Backend returns file_url not url
+      const imageUrl = data.file_url || data.url;
+      
+      if (imageUrl) {
+        setForm(f => ({ ...f, heroImage: imageUrl }));
+        console.log("✅ Hero image set to:", imageUrl);
+        toast.success("✅ Image uploaded successfully!");
       } else {
-        console.error("❌ No URL in response");
-        toast.error("Image upload failed: No URL returned");
+        console.error("❌ No URL in response:", data);
+        toast.error("Image upload failed: No URL in response");
       }
     } catch (err) {
       console.error("❌ Image upload error:", err);
@@ -335,15 +357,29 @@ Generate a concise, appealing customer-facing name (e.g. "2 Bedroom Granny Flat 
         </div>
 
         {/* Footer */}
-        <div className="px-5 py-4 border-t border-gray-100 flex justify-end gap-3 sticky bottom-0 bg-white">
-          <button onClick={onClose} className="px-4 py-2 text-sm text-gray-600 border border-gray-200 hover:border-gray-400 transition-colors">Cancel</button>
-          <button
-            onClick={handleSave}
-            disabled={saving}
-            className="flex items-center gap-2 px-5 py-2 text-sm font-semibold bg-[#F15A22] text-white hover:bg-[#d94e1a] disabled:opacity-50 transition-colors"
-          >
-            <Save size={14} /> {saving ? "Saving…" : "Save to Catalogue"}
-          </button>
+        <div className="px-5 py-4 border-t border-gray-100 sticky bottom-0 bg-white">
+          {/* Validation warnings */}
+          {(!form.name.trim() || form.categories.length === 0) && (
+            <div className="mb-3 p-3 bg-yellow-50 border border-yellow-200 text-yellow-800 text-xs">
+              <p className="font-semibold mb-1">⚠️ Required fields missing:</p>
+              <ul className="list-disc list-inside space-y-0.5">
+                {!form.name.trim() && <li>Design Name is required</li>}
+                {form.categories.length === 0 && <li>At least one Category must be selected</li>}
+              </ul>
+            </div>
+          )}
+          
+          <div className="flex justify-end gap-3">
+            <button onClick={onClose} className="px-4 py-2 text-sm text-gray-600 border border-gray-200 hover:border-gray-400 transition-colors">Cancel</button>
+            <button
+              onClick={handleSave}
+              disabled={saving || !form.name.trim() || form.categories.length === 0}
+              className="flex items-center gap-2 px-5 py-2 text-sm font-semibold bg-[#F15A22] text-white hover:bg-[#d94e1a] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              title={!form.name.trim() || form.categories.length === 0 ? "Please fill in required fields" : ""}
+            >
+              <Save size={14} /> {saving ? "Saving…" : "Save to Catalogue"}
+            </button>
+          </div>
         </div>
       </div>
     </div>
