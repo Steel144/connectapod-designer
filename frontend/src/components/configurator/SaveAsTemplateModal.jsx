@@ -145,8 +145,21 @@ Return JSON with "name" and "description" fields.`;
   };
 
   const handleSave = async () => {
-    if (!form.name.trim()) { toast.error("Please enter a name"); return; }
-    if (form.categories.length === 0) { toast.error("Please select at least one category"); return; }
+    // Strict validation - all important fields must be filled
+    const validationErrors = [];
+    if (!form.name.trim()) validationErrors.push("Design Name");
+    if (!form.description.trim()) validationErrors.push("Description");
+    if (form.categories.length === 0) validationErrors.push("At least one Category");
+    if (form.use_cases.length === 0) validationErrors.push("At least one Use Case");
+    if (!form.budget_range) validationErrors.push("Budget Range");
+    if (form.bedrooms === "") validationErrors.push("Bedrooms");
+    if (form.bathrooms === "") validationErrors.push("Bathrooms");
+    if (form.starting_price === "") validationErrors.push("Starting Price");
+
+    if (validationErrors.length > 0) {
+      toast.error(`Missing required fields: ${validationErrors.join(", ")}`);
+      return;
+    }
 
     setSaving(true);
     const totalSqm = placedModules.reduce((s, m) => s + (m.sqm || 0), 0);
@@ -162,11 +175,11 @@ Return JSON with "name" and "description" fields.`;
         categories: form.categories,
         use_cases: form.use_cases,
         build_type: form.build_type,
-        budget_range: form.budget_range || undefined,
-        bedrooms: form.bedrooms !== "" ? Number(form.bedrooms) : undefined,
-        bathrooms: form.bathrooms !== "" ? Number(form.bathrooms) : undefined,
+        budget_range: form.budget_range,
+        bedrooms: Number(form.bedrooms),
+        bathrooms: Number(form.bathrooms),
         size_sqm: form.size_sqm !== "" ? Number(form.size_sqm) : (totalSqm > 0 ? Math.round(totalSqm) : undefined),
-        starting_price: form.starting_price !== "" ? Number(form.starting_price) : undefined,
+        starting_price: Number(form.starting_price),
         is_featured: form.is_featured,
         heroImage: form.heroImage || undefined,
         template_payload: {
@@ -359,23 +372,48 @@ Return JSON with "name" and "description" fields.`;
         {/* Footer */}
         <div className="px-5 py-4 border-t border-gray-100 sticky bottom-0 bg-white">
           {/* Validation warnings */}
-          {(!form.name.trim() || form.categories.length === 0) && (
-            <div className="mb-3 p-3 bg-yellow-50 border border-yellow-200 text-yellow-800 text-xs">
-              <p className="font-semibold mb-1">⚠️ Required fields missing:</p>
-              <ul className="list-disc list-inside space-y-0.5">
-                {!form.name.trim() && <li>Design Name is required</li>}
-                {form.categories.length === 0 && <li>At least one Category must be selected</li>}
-              </ul>
-            </div>
-          )}
+          {(() => {
+            const missing = [];
+            if (!form.name.trim()) missing.push("Design Name");
+            if (!form.description.trim()) missing.push("Description");
+            if (form.categories.length === 0) missing.push("Category");
+            if (form.use_cases.length === 0) missing.push("Use Case");
+            if (!form.budget_range) missing.push("Budget Range");
+            if (form.bedrooms === "") missing.push("Bedrooms");
+            if (form.bathrooms === "") missing.push("Bathrooms");
+            if (form.starting_price === "") missing.push("Starting Price");
+            
+            return missing.length > 0 ? (
+              <div className="mb-3 p-3 bg-yellow-50 border border-yellow-200 text-yellow-800 text-xs">
+                <p className="font-semibold mb-1">⚠️ Required fields missing ({missing.length}):</p>
+                <ul className="list-disc list-inside space-y-0.5">
+                  {missing.map(field => <li key={field}>{field}</li>)}
+                </ul>
+              </div>
+            ) : null;
+          })()}
           
           <div className="flex justify-end gap-3">
             <button onClick={onClose} className="px-4 py-2 text-sm text-gray-600 border border-gray-200 hover:border-gray-400 transition-colors">Cancel</button>
             <button
               onClick={handleSave}
-              disabled={saving || !form.name.trim() || form.categories.length === 0}
+              disabled={
+                saving || 
+                !form.name.trim() || 
+                !form.description.trim() || 
+                form.categories.length === 0 || 
+                form.use_cases.length === 0 || 
+                !form.budget_range || 
+                form.bedrooms === "" || 
+                form.bathrooms === "" || 
+                form.starting_price === ""
+              }
               className="flex items-center gap-2 px-5 py-2 text-sm font-semibold bg-[#F15A22] text-white hover:bg-[#d94e1a] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-              title={!form.name.trim() || form.categories.length === 0 ? "Please fill in required fields" : ""}
+              title={
+                !form.name.trim() || !form.description.trim() || form.categories.length === 0 || form.use_cases.length === 0 || !form.budget_range || form.bedrooms === "" || form.bathrooms === "" || form.starting_price === ""
+                  ? "Please fill in all required fields" 
+                  : ""
+              }
             >
               <Save size={14} /> {saving ? "Saving…" : "Save to Catalogue"}
             </button>
