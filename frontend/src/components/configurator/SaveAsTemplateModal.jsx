@@ -81,10 +81,14 @@ Return ONLY a JSON object with "name" and "description" fields, nothing else.`;
       let description = "";
       
       // The backend returns: { description: "some text" }
-      // The text might be a JSON string like: {"name": "...", "description": "..."}
+      // The text might be wrapped in markdown: ```json\n{...}\n```
       if (data.description) {
-        const descText = data.description.trim();
+        let descText = data.description.trim();
         console.log("Description text:", descText);
+        
+        // Remove markdown code fences (```json ... ``` or ``` ... ```)
+        descText = descText.replace(/^```(?:json)?\s*\n?/i, '').replace(/\n?```\s*$/i, '').trim();
+        console.log("After removing markdown:", descText);
         
         // Check if it starts with { (JSON)
         if (descText.startsWith('{')) {
