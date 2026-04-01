@@ -63,6 +63,7 @@ export default function AdminDesigns() {
       bathrooms: design.bathrooms ?? "",
       starting_price: design.starting_price || "",
       heroImage: design.heroImage || "",
+      categories: design.categories || [], // Add categories
     });
   };
 
@@ -249,6 +250,22 @@ Keep it professional, highlight the key benefits, and make it sound appealing to
                         onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
                         rows={3}
                       />
+                    </div>
+                    
+                    {/* Categories Field */}
+                    <div>
+                      <Label>Categories (comma-separated)</Label>
+                      <Input
+                        value={Array.isArray(editForm.categories) ? editForm.categories.join(", ") : ""}
+                        onChange={(e) => setEditForm({ 
+                          ...editForm, 
+                          categories: e.target.value.split(",").map(c => c.trim()).filter(Boolean)
+                        })}
+                        placeholder="Family, Guest Accommodation, Studio"
+                      />
+                      <p className="text-xs text-gray-500 mt-1">
+                        e.g., "Family, Guest Accommodation"
+                      </p>
                     </div>
                   </div>
                 ) : (
