@@ -76,6 +76,12 @@ export default function Landing() {
     navigate("/Configurator");
   };
 
+  const handleStartBlank = () => {
+    // Clear any existing template and go to blank configurator
+    sessionStorage.removeItem("load_template");
+    navigate("/Configurator");
+  };
+
   if (phase === "quiz") {
     return <DesignQuiz onComplete={handleQuizComplete} onSkip={handleSkipQuiz} />;
   }
@@ -106,6 +112,13 @@ export default function Landing() {
             )}
           </div>
           <div className="flex items-center gap-3">
+            {/* Start Blank button - always visible */}
+            <button
+              onClick={handleStartBlank}
+              className="flex items-center gap-2 px-5 py-2.5 bg-gray-900 text-white text-sm font-semibold hover:bg-gray-800 transition-colors"
+            >
+              Start Blank Design
+            </button>
             {quizAnswers && (
               <button
                 onClick={() => setPhase("quiz")}
