@@ -77,8 +77,12 @@ export default function Landing() {
   };
 
   const handleStartBlank = () => {
-    // Clear any existing template and go to blank configurator
+    // Clear ALL stored design data for a truly blank start
     sessionStorage.removeItem("load_template");
+    localStorage.removeItem("configurator_modules");
+    localStorage.removeItem("configurator_walls");
+    localStorage.removeItem("configurator_furniture");
+    localStorage.removeItem("configurator_last_saved_name");
     navigate("/Configurator");
   };
 
