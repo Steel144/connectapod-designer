@@ -7,6 +7,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import DesignMiniPreview from "@/components/configurator/DesignMiniPreview";
 import InstructionsModal from "@/components/InstructionsModal";
 import EditTemplateModal from "@/components/catalogue/EditTemplateModal";
+import { useAuth } from "@/lib/AuthContext";
 
 const CATEGORY_LABELS = {
   granny_flat: "Granny Flat",
@@ -28,14 +29,13 @@ const USE_CASE_LABELS = {
 export default function DesignCatalogue() {
   const navigate = useNavigate();
   const qc = useQueryClient();
+  const { user } = useAuth();
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [showInstructions, setShowInstructions] = useState(false);
   const [editingTemplate, setEditingTemplate] = useState(null);
-  const [isAdmin, setIsAdmin] = useState(false);
-
-  useEffect(() => {
-    base44.auth?.me?.().then(u => { if (u?.role === "admin") setIsAdmin(true); }).catch(() => {});
-  }, []);
+  const [hoveredTemplate, setHoveredTemplate] = useState(null);
+  
+  const isAdmin = user?.role === 'admin';
 
   const { data: designTemplates = [], isLoading: loadingTemplates } = useQuery({
     queryKey: ["designTemplates"],
@@ -174,7 +174,11 @@ export default function DesignCatalogue() {
               {filtered.map((template) => (
                 <div key={template.id} className="bg-white border border-gray-200 overflow-hidden hover:shadow-lg transition-all group flex flex-col">
                   {/* Mini grid preview */}
-                  <div className="bg-[#F5F5F3] h-48 relative overflow-hidden border-b border-gray-100">
+                  <div 
+                    className="bg-[#F5F5F3] h-48 relative overflow-hidden border-b border-gray-100"
+                    onMouseEnter={() => setHoveredTemplate(template.id)}
+                    onMouseLeave={() => setHoveredTemplate(null)}
+                  >
                     {isAdmin && (
                       <div className="absolute top-2 left-2 flex gap-1 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
                         <button
@@ -193,13 +197,25 @@ export default function DesignCatalogue() {
                         </button>
                       </div>
                     )}
-                    {template._grid.length > 0 ? (
-                      <DesignMiniPreview grid={template._grid} walls={template._walls} furniture={template.template_payload?.layout?.furniture || []} />
-                    ) : template.heroImage ? (
+                    
+                    {/* Show hero image if exists, otherwise floor plan */}
+                    {template.heroImage ? (
                       <img src={template.heroImage} alt={template.name} className="w-full h-full object-cover" />
+                    ) : template._grid.length > 0 ? (
+                      <DesignMiniPreview grid={template._grid} walls={template._walls} furniture={template.template_payload?.layout?.furniture || []} />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-gray-300 text-xs">No preview</div>
                     )}
+
+                    {/* Hover popup: show floor plan if hero image exists */}
+                    {hoveredTemplate === template.id && template.heroImage && template._grid.length > 0 && (
+                      <div className="absolute inset-0 bg-white/95 backdrop-blur-sm flex items-center justify-center p-4 z-20">
+                        <div className="w-full h-full border-2 border-[#F15A22] overflow-hidden">
+                          <DesignMiniPreview grid={template._grid} walls={template._walls} furniture={template.template_payload?.layout?.furniture || []} />
+                        </div>
+                      </div>
+                    )}
+
                     {template.is_featured && (
                       <div className="absolute top-2 right-2 flex items-center gap-1 bg-[#F15A22] text-white text-[10px] font-bold px-2 py-0.5">
                         <Star size={9} /> Featured

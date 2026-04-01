@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
-import { X, Save, Sparkles } from "lucide-react";
+import { X, Save, Sparkles, Upload } from "lucide-react";
 import { toast } from "sonner";
 
 const CATEGORIES = [
@@ -41,16 +41,19 @@ export default function SaveAsTemplateModal({ open, onClose, placedModules, wall
     size_sqm: "",
     starting_price: "",
     is_featured: false,
+    heroImage: "",
   });
   const [saving, setSaving] = useState(false);
   const [suggesting, setSuggesting] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
   const handleSuggest = async () => {
     setSuggesting(true);
     const totalSqm = placedModules.reduce((s, m) => s + (m.sqm || 0), 0);
     const moduleList = placedModules.map(m => m.label || m.type).join(", ");
-    const result = await base44.integrations.Core.InvokeLLM({
-      prompt: `You are helping name and describe a modular home design for Connectapod (a New Zealand modular home builder).
+    try {
+      const result = await base44.integrations.Core.InvokeLLM({
+        prompt: `You are helping name and describe a modular home design for Connectapod (a New Zealand modular home builder).
 Design details:
 - Modules: ${moduleList || "none"}
 - Total size: ${Math.round(totalSqm)}m²
@@ -60,16 +63,40 @@ Design details:
 - Use cases: ${form.use_cases.join(", ") || "not selected"}
 
 Generate a concise, appealing customer-facing name (e.g. "2 Bedroom Granny Flat 75m²") and a short 1-2 sentence description for a design card. Be specific and practical.`,
-      response_json_schema: {
-        type: "object",
-        properties: {
-          name: { type: "string" },
-          description: { type: "string" },
+        response_json_schema: {
+          type: "object",
+          properties: {
+            name: { type: "string" },
+            description: { type: "string" },
+          },
         },
-      },
-    });
-    setForm(f => ({ ...f, name: result.name || f.name, description: result.description || f.description }));
+      });
+      setForm(f => ({ ...f, name: result.name || f.name, description: result.description || f.description }));
+      toast.success("AI suggestions applied!");
+    } catch (err) {
+      toast.error("AI suggest failed");
+    }
     setSuggesting(false);
+  };
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      const apiUrl = import.meta.env.VITE_BACKEND_URL || "";
+      const res = await fetch(`${apiUrl}/api/upload`, { method: "POST", body: formData });
+      const data = await res.json();
+      if (data.url) {
+        setForm(f => ({ ...f, heroImage: data.url }));
+        toast.success("Image uploaded!");
+      }
+    } catch (err) {
+      toast.error("Image upload failed");
+    }
+    setUploading(false);
   };
 
   if (!open) return null;
@@ -102,6 +129,7 @@ Generate a concise, appealing customer-facing name (e.g. "2 Bedroom Granny Flat 
       size_sqm: form.size_sqm !== "" ? Number(form.size_sqm) : (totalSqm > 0 ? Math.round(totalSqm) : undefined),
       starting_price: form.starting_price !== "" ? Number(form.starting_price) : undefined,
       is_featured: form.is_featured,
+      heroImage: form.heroImage || undefined,
       template_payload: {
         modules: placedModules.map(m => m.type),
         layout: { grid: placedModules, walls, furniture },
@@ -111,7 +139,7 @@ Generate a concise, appealing customer-facing name (e.g. "2 Bedroom Granny Flat 
     toast.success("Saved to Design Template catalogue!");
     setSaving(false);
     onClose();
-    setForm({ name: "", description: "", categories: [], use_cases: [], build_type: [], budget_range: "", bedrooms: "", bathrooms: "", size_sqm: "", starting_price: "", is_featured: false });
+    setForm({ name: "", description: "", categories: [], use_cases: [], build_type: [], budget_range: "", bedrooms: "", bathrooms: "", size_sqm: "", starting_price: "", is_featured: false, heroImage: "" });
   };
 
   return (
@@ -157,6 +185,30 @@ Generate a concise, appealing customer-facing name (e.g. "2 Bedroom Granny Flat 
                 rows={2}
                 className="w-full px-3 py-2 text-sm border border-gray-200 focus:outline-none focus:border-[#F15A22] resize-none"
               />
+            </div>
+          </div>
+
+          {/* Hero Image Upload */}
+          <div>
+            <label className="text-xs font-semibold text-gray-700 uppercase tracking-widest block mb-1.5">Hero Image</label>
+            <div className="space-y-2">
+              {form.heroImage && (
+                <div className="relative w-full h-32 border border-gray-200 overflow-hidden group">
+                  <img src={form.heroImage} alt="Hero" className="w-full h-full object-cover" />
+                  <button
+                    onClick={() => setForm(f => ({ ...f, heroImage: "" }))}
+                    className="absolute top-1 right-1 p-1 bg-red-500 text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    <X size={12} />
+                  </button>
+                </div>
+              )}
+              <label className="flex items-center justify-center gap-2 px-4 py-2 border border-gray-200 cursor-pointer hover:border-[#F15A22] hover:text-[#F15A22] transition-colors text-sm">
+                <Upload size={14} />
+                {uploading ? "Uploading…" : form.heroImage ? "Change Image" : "Upload Image"}
+                <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" disabled={uploading} />
+              </label>
+              <p className="text-xs text-gray-400">Optional. If not provided, the floor plan preview will be shown.</p>
             </div>
           </div>
 

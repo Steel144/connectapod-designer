@@ -1,5 +1,5 @@
-const API_BASE_URL = import.meta.env.REACT_APP_BACKEND_URL ? 
-  `${import.meta.env.REACT_APP_BACKEND_URL}/api` : 
+const API_BASE_URL = import.meta.env.VITE_BACKEND_URL ? 
+  `${import.meta.env.VITE_BACKEND_URL}/api` : 
   '/api'; // Use relative path for proxy
 
 class APIClient {

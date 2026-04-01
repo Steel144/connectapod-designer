@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Sparkles, Upload, X } from "lucide-react";
+import { toast } from "sonner";
 
 const CATEGORIES = ["granny_flat", "minor_dwelling", "standalone_home", "studio", "multi_unit"];
 const USE_CASES = ["rental_income", "family", "home_office", "guest_accommodation", "multi_generational", "bach"];
@@ -40,8 +42,11 @@ export default function EditTemplateModal({ template, onClose }) {
     categories: template.categories || [],
     use_cases: template.use_cases || [],
     budget_range: template.budget_range || "",
+    heroImage: template.heroImage || "",
   });
   const [saving, setSaving] = useState(false);
+  const [suggesting, setSuggesting] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
   const set = (key, val) => setForm(f => ({ ...f, [key]: val }));
 
@@ -49,6 +54,60 @@ export default function EditTemplateModal({ template, onClose }) {
     const arr = f[key] || [];
     return { ...f, [key]: arr.includes(val) ? arr.filter(x => x !== val) : [...arr, val] };
   });
+
+  const handleSuggest = async () => {
+    setSuggesting(true);
+    const payload = template.template_payload || {};
+    const grid = payload.layout?.grid || [];
+    const totalSqm = grid.reduce((s, m) => s + (m.sqm || 0), 0);
+    const moduleList = grid.map(m => m.label || m.type).join(", ");
+    try {
+      const result = await base44.integrations.Core.InvokeLLM({
+        prompt: `You are helping name and describe a modular home design for Connectapod (a New Zealand modular home builder).
+Design details:
+- Modules: ${moduleList || "none"}
+- Total size: ${Math.round(totalSqm || form.size_sqm || 0)}m²
+- Bedrooms: ${form.bedrooms || "unknown"}
+- Bathrooms: ${form.bathrooms || "unknown"}
+- Categories: ${form.categories.join(", ") || "not selected"}
+- Use cases: ${form.use_cases.join(", ") || "not selected"}
+
+Generate a concise, appealing customer-facing name (e.g. "2 Bedroom Granny Flat 75m²") and a short 1-2 sentence description for a design card. Be specific and practical.`,
+        response_json_schema: {
+          type: "object",
+          properties: {
+            name: { type: "string" },
+            description: { type: "string" },
+          },
+        },
+      });
+      setForm(f => ({ ...f, name: result.name || f.name, description: result.description || f.description }));
+      toast.success("AI suggestions applied!");
+    } catch (err) {
+      toast.error("AI suggest failed");
+    }
+    setSuggesting(false);
+  };
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      const apiUrl = import.meta.env.VITE_BACKEND_URL || "";
+      const res = await fetch(`${apiUrl}/api/upload`, { method: "POST", body: formData });
+      const data = await res.json();
+      if (data.url) {
+        setForm(f => ({ ...f, heroImage: data.url }));
+        toast.success("Image uploaded!");
+      }
+    } catch (err) {
+      toast.error("Image upload failed");
+    }
+    setUploading(false);
+  };
 
   const handleSave = async () => {
     setSaving(true);
@@ -74,12 +133,44 @@ export default function EditTemplateModal({ template, onClose }) {
 
         <div className="space-y-4 py-2">
           <div>
+            <div className="flex items-center justify-between mb-1">
+              <Label>Name &amp; Description</Label>
+              <button
+                onClick={handleSuggest}
+                disabled={suggesting}
+                className="flex items-center gap-1.5 px-2.5 py-1 text-xs text-[#F15A22] border border-[#F15A22] hover:bg-[#F15A22] hover:text-white transition-colors disabled:opacity-50"
+              >
+                <Sparkles size={11} /> {suggesting ? "Suggesting…" : "AI Suggest"}
+              </button>
+            </div>
             <Label>Name</Label>
             <Input value={form.name} onChange={e => set("name", e.target.value)} />
           </div>
           <div>
             <Label>Description</Label>
             <Textarea value={form.description} onChange={e => set("description", e.target.value)} rows={3} />
+          </div>
+
+          <div>
+            <Label>Hero Image</Label>
+            <div className="space-y-2">
+              {form.heroImage && (
+                <div className="relative w-full h-32 border border-gray-200 overflow-hidden group">
+                  <img src={form.heroImage} alt="Hero" className="w-full h-full object-cover" />
+                  <button
+                    onClick={() => setForm(f => ({ ...f, heroImage: "" }))}
+                    className="absolute top-1 right-1 p-1 bg-red-500 text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    <X size={12} />
+                  </button>
+                </div>
+              )}
+              <label className="flex items-center justify-center gap-2 px-4 py-2 border border-gray-200 cursor-pointer hover:border-[#F15A22] hover:text-[#F15A22] transition-colors text-sm">
+                <Upload size={14} />
+                {uploading ? "Uploading…" : form.heroImage ? "Change Image" : "Upload Image"}
+                <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" disabled={uploading} />
+              </label>
+            </div>
           </div>
 
           <div className="grid grid-cols-3 gap-3">

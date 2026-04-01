@@ -20,6 +20,7 @@ const USE_CASE_LABELS = {
 };
 
 export default function DesignCard({ design, onSelect, isFeatured }) {
+  const [showFloorPlan, setShowFloorPlan] = React.useState(false);
   const primaryCategory = design.categories?.[0];
   const heroImage = design.heroImage;
   const grid = design.template_payload?.layout?.grid || [];
@@ -35,18 +36,33 @@ export default function DesignCard({ design, onSelect, isFeatured }) {
       onClick={() => onSelect(design)}
     >
       {/* Preview */}
-      <div className="relative h-64 overflow-hidden bg-[#F5F5F3] flex-shrink-0">
-        {hasPlanPreview ? (
-          <DesignMiniPreview grid={grid} walls={walls} furniture={furniture} />
-        ) : heroImage ? (
+      <div 
+        className="relative h-64 overflow-hidden bg-[#F5F5F3] flex-shrink-0"
+        onMouseEnter={() => setShowFloorPlan(true)}
+        onMouseLeave={() => setShowFloorPlan(false)}
+      >
+        {/* Show hero image first if it exists, otherwise floor plan */}
+        {heroImage ? (
           <img
             src={heroImage}
             alt={design.name}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           />
+        ) : hasPlanPreview ? (
+          <DesignMiniPreview grid={grid} walls={walls} furniture={furniture} />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-gray-300 text-xs">No preview</div>
         )}
+
+        {/* Hover popup: show floor plan if hero image exists */}
+        {showFloorPlan && heroImage && hasPlanPreview && (
+          <div className="absolute inset-0 bg-white/95 backdrop-blur-sm flex items-center justify-center p-4 z-20">
+            <div className="w-full h-full border-2 border-[#F15A22] overflow-hidden">
+              <DesignMiniPreview grid={grid} walls={walls} furniture={furniture} />
+            </div>
+          </div>
+        )}
+
         {isFeatured && (
           <div className="absolute top-0 left-0 right-0 bg-[#F15A22] text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 text-center">
             Popular Choice
