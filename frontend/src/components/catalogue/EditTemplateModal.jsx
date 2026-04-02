@@ -61,9 +61,19 @@ export default function EditTemplateModal({ template, onClose }) {
     const grid = payload.layout?.grid || [];
     const totalSqm = grid.reduce((s, m) => s + (m.sqm || 0), 0);
     const moduleList = grid.map(m => m.label || m.type).join(", ");
+    
+    // Use existing name if provided
+    const existingName = form.name.trim();
+    
     try {
-      const result = await base44.integrations.Core.InvokeLLM({
-        prompt: `You are helping name and describe a modular home design for Connectapod (a New Zealand modular home builder).
+      console.log("🤖 Calling AI to generate description...");
+      
+      let prompt;
+      if (existingName) {
+        // If name exists, only generate description using that name
+        prompt = `You are helping write a description for a modular home design for Connectapod (a New Zealand modular home builder).
+
+Design name: ${existingName}
 Design details:
 - Modules: ${moduleList || "none"}
 - Total size: ${Math.round(totalSqm || form.size_sqm || 0)}m²
@@ -72,19 +82,73 @@ Design details:
 - Categories: ${form.categories.join(", ") || "not selected"}
 - Use cases: ${form.use_cases.join(", ") || "not selected"}
 
-Generate a concise, appealing customer-facing name (e.g. "2 Bedroom Granny Flat 75m²") and a short 1-2 sentence description for a design card. Be specific and practical.`,
-        response_json_schema: {
-          type: "object",
-          properties: {
-            name: { type: "string" },
-            description: { type: "string" },
-          },
-        },
+Write a short 1-2 sentence description for a design card that uses the name "${existingName}". Be specific, appealing, and practical.
+Return ONLY the description text, no JSON.`;
+      } else {
+        // If no name, generate both
+        prompt = `You are helping name and describe a modular home design for Connectapod (a New Zealand modular home builder).
+Design details:
+- Modules: ${moduleList || "none"}
+- Total size: ${Math.round(totalSqm || form.size_sqm || 0)}m²
+- Bedrooms: ${form.bedrooms || "unknown"}
+- Bathrooms: ${form.bathrooms || "unknown"}
+- Categories: ${form.categories.join(", ") || "not selected"}
+- Use cases: ${form.use_cases.join(", ") || "not selected"}
+
+Generate a concise, appealing customer-facing name (e.g. "2 Bedroom Granny Flat 75m²") and a short 1-2 sentence description for a design card. Be specific and practical.
+Return ONLY a JSON object with "name" and "description" fields, nothing else.`;
+      }
+
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL || ""}/api/ai/generate-description`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt }),
       });
-      setForm(f => ({ ...f, name: result.name || f.name, description: result.description || f.description }));
-      toast.success("AI suggestions applied!");
+
+      if (!response.ok) throw new Error("AI API request failed");
+      
+      const data = await response.json();
+      console.log("✅ AI raw response from backend:", JSON.stringify(data, null, 2));
+      
+      if (existingName) {
+        // Only description was requested
+        const descText = data.description.trim();
+        setForm(f => ({ ...f, description: descText }));
+        console.log("✅ Description updated:", descText);
+      } else {
+        // Both name and description requested
+        let descText = data.description.trim();
+        
+        // Remove markdown code fences
+        descText = descText.replace(/^```(?:json)?\s*\n?/i, '').replace(/\n?```\s*$/i, '').trim();
+        
+        let name = "";
+        let description = "";
+        
+        if (descText.startsWith('{')) {
+          try {
+            const parsed = JSON.parse(descText);
+            name = parsed.name || "";
+            description = parsed.description || "";
+          } catch (e) {
+            description = descText;
+          }
+        } else {
+          description = descText;
+        }
+        
+        setForm(f => ({ 
+          ...f, 
+          name: name || f.name, 
+          description: description || f.description 
+        }));
+        console.log("✅ Name:", name, "Description:", description);
+      }
+      
+      toast.success("✅ AI suggestions applied!");
     } catch (err) {
-      toast.error("AI suggest failed");
+      console.error("❌ AI suggest failed:", err);
+      toast.error(`AI suggest failed: ${err.message || 'Unknown error'}`);
     }
     setSuggesting(false);
   };
