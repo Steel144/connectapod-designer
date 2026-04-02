@@ -357,8 +357,16 @@ Keep it professional, highlight the key benefits, and make it sound appealing to
 
                       <div className="grid grid-cols-5 gap-4 text-sm">
                         <div>
-                          <p className="text-gray-500 text-xs">Size</p>
-                          <p className="font-semibold">{design.size_sqm || "—"}m²</p>
+                          <p className="text-gray-500 text-xs">Area</p>
+                          {design.internal_sqm > 0 && design.deck_sqm > 0 ? (
+                            <div className="space-y-0.5">
+                              <p className="font-semibold text-xs">{design.internal_sqm}m² int</p>
+                              <p className="font-semibold text-xs">{design.deck_sqm}m² deck</p>
+                              <p className="font-semibold text-[10px] text-gray-500">{design.size_sqm}m² total</p>
+                            </div>
+                          ) : (
+                            <p className="font-semibold">{design.size_sqm || "—"}m²</p>
+                          )}
                         </div>
                         <div>
                           <p className="text-gray-500 text-xs">Bedrooms</p>
