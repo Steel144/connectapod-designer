@@ -414,11 +414,11 @@ Return ONLY a JSON object with "name" and "description" fields, nothing else.`;
           {/* Specs row */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-xs font-semibold text-gray-700 uppercase tracking-widest block mb-1.5">Bedrooms</label>
+              <label className="text-xs font-semibold text-gray-700 uppercase tracking-widest block mb-1.5">Bedrooms *</label>
               <input type="number" min="0" value={form.bedrooms} onChange={e => setForm(f => ({ ...f, bedrooms: e.target.value }))} placeholder="e.g. 2" className="w-full px-3 py-2 text-sm border border-gray-200 focus:outline-none focus:border-[#F15A22]" />
             </div>
             <div>
-              <label className="text-xs font-semibold text-gray-700 uppercase tracking-widest block mb-1.5">Bathrooms</label>
+              <label className="text-xs font-semibold text-gray-700 uppercase tracking-widest block mb-1.5">Bathrooms *</label>
               <input type="number" min="0" value={form.bathrooms} onChange={e => setForm(f => ({ ...f, bathrooms: e.target.value }))} placeholder="e.g. 1" className="w-full px-3 py-2 text-sm border border-gray-200 focus:outline-none focus:border-[#F15A22]" />
             </div>
             <div>
@@ -426,10 +426,51 @@ Return ONLY a JSON object with "name" and "description" fields, nothing else.`;
               <input type="number" min="0" value={form.size_sqm} onChange={e => setForm(f => ({ ...f, size_sqm: e.target.value }))} placeholder={`Auto: ${Math.round(placedModules.reduce((s,m)=>s+(m.sqm||0),0))}m²`} className="w-full px-3 py-2 text-sm border border-gray-200 focus:outline-none focus:border-[#F15A22]" />
             </div>
             <div>
-              <label className="text-xs font-semibold text-gray-700 uppercase tracking-widest block mb-1.5">Starting Price ($NZD)</label>
+              <label className="text-xs font-semibold text-gray-700 uppercase tracking-widest block mb-1.5">Starting Price ($NZD) *</label>
               <input type="number" min="0" value={form.starting_price} onChange={e => setForm(f => ({ ...f, starting_price: e.target.value }))} placeholder="e.g. 150000" className="w-full px-3 py-2 text-sm border border-gray-200 focus:outline-none focus:border-[#F15A22]" />
             </div>
           </div>
+          
+          {/* Area Breakdown Display */}
+          {(() => {
+            const internalSqm = placedModules.reduce((sum, m) => {
+              const isDeck = 
+                m.chassis === "DK" || m.chassis === "SO" || 
+                m.type?.includes("-D-") || m.type?.includes("-SO-") ||
+                m.label?.toLowerCase().includes("deck") || m.label?.toLowerCase().includes("soffit");
+              return isDeck ? sum : sum + (m.sqm || 0);
+            }, 0);
+            const deckSqm = placedModules.reduce((sum, m) => {
+              const isDeck = 
+                m.chassis === "DK" || m.chassis === "SO" || 
+                m.type?.includes("-D-") || m.type?.includes("-SO-") ||
+                m.label?.toLowerCase().includes("deck") || m.label?.toLowerCase().includes("soffit");
+              return isDeck ? sum + (m.sqm || 0) : sum;
+            }, 0);
+            
+            if (internalSqm > 0 && deckSqm > 0) {
+              return (
+                <div className="bg-blue-50 border border-blue-200 p-3 text-xs">
+                  <p className="font-semibold text-blue-900 mb-1.5">📊 Area Breakdown:</p>
+                  <div className="space-y-1 text-blue-800">
+                    <div className="flex justify-between">
+                      <span>Internal Floor Area:</span>
+                      <span className="font-semibold">{internalSqm.toFixed(1)} m²</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Deck Area:</span>
+                      <span className="font-semibold">{deckSqm.toFixed(1)} m²</span>
+                    </div>
+                    <div className="flex justify-between border-t border-blue-300 pt-1 mt-1">
+                      <span className="font-semibold">Total:</span>
+                      <span className="font-bold">{(internalSqm + deckSqm).toFixed(1)} m²</span>
+                    </div>
+                  </div>
+                </div>
+              );
+            }
+            return null;
+          })()}
 
           {/* Featured toggle */}
           <div className="flex items-center gap-3">
