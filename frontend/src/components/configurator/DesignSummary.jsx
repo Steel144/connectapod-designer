@@ -5,16 +5,22 @@ import { GROUP_ICONS } from "./ModulePanel.jsx";
 import DesignMiniPreview from "./DesignMiniPreview.jsx";
 
 export default function DesignSummary({ placedModules, walls = [], furniture = [], onClear, onQuote }) {
+  // Debug: log modules to see their properties
+  console.log("📊 Design Summary - All Modules:", placedModules);
+  
   // Separate internal and deck areas
   const internalSqm = placedModules.reduce((sum, m) => {
-    const isDeck = m.chassis === "DK" || m.chassis === "SO";
+    const isDeck = m.chassis === "DK" || m.chassis === "SO" || m.type?.startsWith("DK") || m.type?.startsWith("SO");
+    console.log(`Module: ${m.label || m.type}, chassis: ${m.chassis}, type: ${m.type}, isDeck: ${isDeck}, sqm: ${m.sqm}`);
     return isDeck ? sum : sum + (m.sqm || 0);
   }, 0);
   
   const deckSqm = placedModules.reduce((sum, m) => {
-    const isDeck = m.chassis === "DK" || m.chassis === "SO";
+    const isDeck = m.chassis === "DK" || m.chassis === "SO" || m.type?.startsWith("DK") || m.type?.startsWith("SO");
     return isDeck ? sum + (m.sqm || 0) : sum;
   }, 0);
+  
+  console.log(`📊 Internal: ${internalSqm.toFixed(1)} m², Deck: ${deckSqm.toFixed(1)} m², Total: ${(internalSqm + deckSqm).toFixed(1)} m²`);
   
   const totalSqm = internalSqm + deckSqm;
   const totalPrice = placedModules.reduce((sum, m) => sum + (m.price || 0), 0) + walls.reduce((sum, w) => sum + (w.price || 0), 0);
