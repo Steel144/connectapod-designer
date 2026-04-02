@@ -5,7 +5,18 @@ import { GROUP_ICONS } from "./ModulePanel.jsx";
 import DesignMiniPreview from "./DesignMiniPreview.jsx";
 
 export default function DesignSummary({ placedModules, walls = [], furniture = [], onClear, onQuote }) {
-  const totalSqm = placedModules.reduce((sum, m) => sum + (m.sqm || 0), 0);
+  // Separate internal and deck areas
+  const internalSqm = placedModules.reduce((sum, m) => {
+    const isDeck = m.chassis === "DK" || m.chassis === "SO";
+    return isDeck ? sum : sum + (m.sqm || 0);
+  }, 0);
+  
+  const deckSqm = placedModules.reduce((sum, m) => {
+    const isDeck = m.chassis === "DK" || m.chassis === "SO";
+    return isDeck ? sum + (m.sqm || 0) : sum;
+  }, 0);
+  
+  const totalSqm = internalSqm + deckSqm;
   const totalPrice = placedModules.reduce((sum, m) => sum + (m.price || 0), 0) + walls.reduce((sum, w) => sum + (w.price || 0), 0);
   const moduleCount = placedModules.length;
   const wallCount = walls.length;
@@ -35,10 +46,38 @@ export default function DesignSummary({ placedModules, walls = [], furniture = [
           <span className="text-gray-600">Walls:</span>
           <span className="font-semibold text-gray-800">{wallCount}</span>
         </div>
-        <div className="flex justify-between items-center border-b border-gray-100 pb-2">
-          <span className="text-gray-600">Total Area:</span>
-          <span className="font-semibold text-gray-800">{totalSqm.toFixed(1)} m²</span>
-        </div>
+        
+        {/* Internal Floor Area */}
+        {internalSqm > 0 && (
+          <div className="flex justify-between items-center border-b border-gray-100 pb-2">
+            <span className="text-gray-600">Internal Floor Area:</span>
+            <span className="font-semibold text-gray-800">{internalSqm.toFixed(1)} m²</span>
+          </div>
+        )}
+        
+        {/* Deck Area */}
+        {deckSqm > 0 && (
+          <div className="flex justify-between items-center border-b border-gray-100 pb-2">
+            <span className="text-gray-600">Deck Area:</span>
+            <span className="font-semibold text-gray-800">{deckSqm.toFixed(1)} m²</span>
+          </div>
+        )}
+        
+        {/* Total Area (only show if both exist, otherwise redundant) */}
+        {internalSqm > 0 && deckSqm > 0 && (
+          <div className="flex justify-between items-center border-b border-gray-100 pb-2">
+            <span className="text-gray-600">Total Area:</span>
+            <span className="font-semibold text-gray-800">{totalSqm.toFixed(1)} m²</span>
+          </div>
+        )}
+        
+        {/* If only one type exists, show as Total Area */}
+        {(internalSqm === 0 || deckSqm === 0) && totalSqm > 0 && (
+          <div className="flex justify-between items-center border-b border-gray-100 pb-2">
+            <span className="text-gray-600">Total Area:</span>
+            <span className="font-semibold text-gray-800">{totalSqm.toFixed(1)} m²</span>
+          </div>
+        )}
         <div className="flex justify-between items-center pb-2">
           <span className="text-gray-600">Base Price:</span>
           <span className="font-semibold text-gray-800">${(totalPrice / 1000).toFixed(0)}k</span>
