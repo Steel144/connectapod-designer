@@ -1,5 +1,5 @@
 import React from "react";
-import { Maximize2, BedDouble, Bath, ArrowRight } from "lucide-react";
+import { Maximize2, BedDouble, Bath, ArrowRight, Layers } from "lucide-react";
 import DesignMiniPreview from "@/components/configurator/DesignMiniPreview";
 
 const CATEGORY_LABELS = {
