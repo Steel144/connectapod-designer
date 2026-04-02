@@ -187,6 +187,48 @@ Generate a concise, appealing customer-facing name (e.g. "2 Bedroom Granny Flat 
               <Input type="number" value={form.bathrooms} onChange={e => set("bathrooms", e.target.value)} />
             </div>
           </div>
+          
+          {/* Area Breakdown Display */}
+          {(() => {
+            const grid = template.template_payload?.layout?.grid || [];
+            const internalSqm = grid.reduce((sum, m) => {
+              const isDeck = 
+                m.chassis === "DK" || m.chassis === "SO" || 
+                m.type?.includes("-D-") || m.type?.includes("-SO-") ||
+                m.label?.toLowerCase().includes("deck") || m.label?.toLowerCase().includes("soffit");
+              return isDeck ? sum : sum + (m.sqm || 0);
+            }, 0);
+            const deckSqm = grid.reduce((sum, m) => {
+              const isDeck = 
+                m.chassis === "DK" || m.chassis === "SO" || 
+                m.type?.includes("-D-") || m.type?.includes("-SO-") ||
+                m.label?.toLowerCase().includes("deck") || m.label?.toLowerCase().includes("soffit");
+              return isDeck ? sum + (m.sqm || 0) : sum;
+            }, 0);
+            
+            if (internalSqm > 0 && deckSqm > 0) {
+              return (
+                <div className="bg-blue-50 border border-blue-200 p-3 text-xs">
+                  <p className="font-semibold text-blue-900 mb-1.5">📊 Area Breakdown:</p>
+                  <div className="space-y-1 text-blue-800">
+                    <div className="flex justify-between">
+                      <span>Internal Floor Area:</span>
+                      <span className="font-semibold">{internalSqm.toFixed(1)} m²</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Deck Area:</span>
+                      <span className="font-semibold">{deckSqm.toFixed(1)} m²</span>
+                    </div>
+                    <div className="flex justify-between border-t border-blue-300 pt-1 mt-1">
+                      <span className="font-semibold">Total:</span>
+                      <span className="font-bold">{(internalSqm + deckSqm).toFixed(1)} m²</span>
+                    </div>
+                  </div>
+                </div>
+              );
+            }
+            return null;
+          })()}
 
           <div className="grid grid-cols-2 gap-3">
             <div>
