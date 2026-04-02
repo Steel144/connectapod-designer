@@ -208,11 +208,37 @@ Return ONLY a JSON object with "name" and "description" fields, nothing else.`;
     }
 
     setSaving(true);
+    
+    // Calculate total and separated areas
     const totalSqm = placedModules.reduce((s, m) => s + (m.sqm || 0), 0);
+    
+    // Calculate internal and deck areas using same logic as DesignSummary
+    const internalSqm = placedModules.reduce((sum, m) => {
+      const isDeck = 
+        m.chassis === "DK" || 
+        m.chassis === "SO" || 
+        m.type?.includes("-D-") || 
+        m.type?.includes("-SO-") ||
+        m.label?.toLowerCase().includes("deck") || 
+        m.label?.toLowerCase().includes("soffit");
+      return isDeck ? sum : sum + (m.sqm || 0);
+    }, 0);
+    
+    const deckSqm = placedModules.reduce((sum, m) => {
+      const isDeck = 
+        m.chassis === "DK" || 
+        m.chassis === "SO" || 
+        m.type?.includes("-D-") || 
+        m.type?.includes("-SO-") ||
+        m.label?.toLowerCase().includes("deck") || 
+        m.label?.toLowerCase().includes("soffit");
+      return isDeck ? sum + (m.sqm || 0) : sum;
+    }, 0);
 
     console.log("💾 Saving design template...");
     console.log("Form data:", form);
     console.log("Hero Image in form:", form.heroImage);
+    console.log("Area breakdown - Internal:", internalSqm, "Deck:", deckSqm, "Total:", totalSqm);
 
     try {
       const payload = {
@@ -225,6 +251,8 @@ Return ONLY a JSON object with "name" and "description" fields, nothing else.`;
         bedrooms: Number(form.bedrooms),
         bathrooms: Number(form.bathrooms),
         size_sqm: form.size_sqm !== "" ? Number(form.size_sqm) : (totalSqm > 0 ? Math.round(totalSqm) : undefined),
+        internal_sqm: internalSqm > 0 ? Math.round(internalSqm * 10) / 10 : undefined,
+        deck_sqm: deckSqm > 0 ? Math.round(deckSqm * 10) / 10 : undefined,
         starting_price: Number(form.starting_price),
         is_featured: form.is_featured,
         heroImage: form.heroImage || undefined,

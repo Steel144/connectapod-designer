@@ -41,6 +41,8 @@ class DesignTemplate(BaseModel):
     name: str
     description: Optional[str] = None
     size_sqm: Optional[float] = None
+    internal_sqm: Optional[float] = None
+    deck_sqm: Optional[float] = None
     bedrooms: Optional[int] = None
     bathrooms: Optional[int] = None
     starting_price: Optional[float] = None
