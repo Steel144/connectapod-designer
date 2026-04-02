@@ -242,8 +242,24 @@ export default function DesignCatalogue() {
                         {template.bathrooms > 0 && (
                           <span className="flex items-center gap-1"><Bath size={11} className="text-[#F15A22]" />{template.bathrooms} bath</span>
                         )}
-                        {template.size_sqm > 0 && (
-                          <span className="flex items-center gap-1"><Maximize2 size={11} className="text-[#F15A22]" />{template.size_sqm}m²</span>
+                        
+                        {/* Area display - show separated if both exist, otherwise total */}
+                        {template.internal_sqm > 0 && template.deck_sqm > 0 ? (
+                          <>
+                            <span className="flex items-center gap-1" title="Internal Floor Area">
+                              <Maximize2 size={11} className="text-[#F15A22]" />
+                              {template.internal_sqm}m² int
+                            </span>
+                            <span className="flex items-center gap-1" title="Deck Area">
+                              <Layers size={11} className="text-[#F15A22]" />
+                              {template.deck_sqm}m² deck
+                            </span>
+                          </>
+                        ) : template.size_sqm > 0 && (
+                          <span className="flex items-center gap-1">
+                            <Maximize2 size={11} className="text-[#F15A22]" />
+                            {template.size_sqm}m²
+                          </span>
                         )}
                       </div>
 

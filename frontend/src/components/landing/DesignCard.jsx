@@ -85,7 +85,19 @@ export default function DesignCard({ design, onSelect, isFeatured }) {
         <div className="mt-auto">
           {/* Stats */}
           <div className="flex items-center gap-4 mb-4 text-sm text-gray-600">
-            {design.size_sqm && (
+            {/* Area display - show separated if both exist, otherwise total */}
+            {design.internal_sqm > 0 && design.deck_sqm > 0 ? (
+              <>
+                <span className="flex items-center gap-1.5" title="Internal Floor Area">
+                  <Maximize2 size={13} className="text-[#F15A22]" />
+                  {design.internal_sqm}m² int
+                </span>
+                <span className="flex items-center gap-1.5" title="Deck Area">
+                  <Layers size={13} className="text-[#F15A22]" />
+                  {design.deck_sqm}m² deck
+                </span>
+              </>
+            ) : design.size_sqm && (
               <span className="flex items-center gap-1.5">
                 <Maximize2 size={13} className="text-[#F15A22]" />
                 {design.size_sqm}m²
