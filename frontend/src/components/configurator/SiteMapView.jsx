@@ -365,10 +365,11 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
                 <MapRefCapture mapRef={mapRef} />
                 <MapSync center={getAdjustedCenter()} zoom={mapZoom} />
                 <MapControlHandler onZoomChange={setMapZoom} />
+                {/* LINZ Aerial Imagery for New Zealand */}
                 <TileLayer
-                  url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-                  attribution='&copy; Esri'
-                  maxZoom={22}
+                  url="https://basemaps.linz.govt.nz/v1/tiles/aerial/EPSG:3857/{z}/{x}/{y}.webp?api=d01ev1qyt8bknf8m9z573x3xvhd"
+                  attribution='&copy; <a href="https://data.linz.govt.nz">LINZ</a>'
+                  maxZoom={21}
                   crossOrigin="anonymous"
                 />
                 <ZoomControl position="bottomright" />
