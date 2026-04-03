@@ -409,25 +409,8 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
                   crossOrigin="anonymous"
                 />
                 
-                {/* LINZ Property Boundaries via WMS - conditional */}
-                {showBoundaries && (
-                  <WMSLayer
-                    url="https://gis.wcc.govt.nz/arcgis/services/PropertyAndBoundaries/Property/MapServer/WMSServer"
-                    layers="0"
-                    opacity={0.8}
-                    attribution="Property Boundaries - Wellington City Council / LINZ"
-                  />
-                )}
-                
-                {/* LINZ Street Address WMS - as alternative parcel layer */}
-                {showParcels && (
-                  <WMSLayer
-                    url="https://gis.wcc.govt.nz/arcgis/services/PropertyAndBoundaries/Property/MapServer/WMSServer"
-                    layers="1,2"
-                    opacity={0.6}
-                    attribution="Address Points - Wellington City Council / LINZ"
-                  />
-                )}
+                {/* Property boundaries currently not available due to CORS restrictions */}
+                {/* WMS services block browser requests - boundaries visible via LINZ Data Service */}
                 <ZoomControl position="bottomright" />
                 <CircleMarker center={coordinates} radius={8} pathOptions={{ color: '#F15A22', fillColor: '#F15A22', fillOpacity: 1 }}>
                   <Popup>Site Location</Popup>
@@ -523,38 +506,29 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
           </div>
           
           <div className="border-t border-gray-200 pt-3 mt-3">
-            <label className="text-xs font-semibold text-gray-600 block mb-2">Map Layers (LINZ Data)</label>
-            <div className="space-y-2">
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input 
-                  type="checkbox" 
-                  checked={showBoundaries} 
-                  onChange={(e) => setShowBoundaries(e.target.checked)}
-                  className="w-4 h-4 text-orange-600 rounded focus:ring-orange-500"
-                  style={{ accentColor: '#F15A22' }}
-                />
-                <span className="text-xs text-gray-700">Property Boundaries</span>
-              </label>
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input 
-                  type="checkbox" 
-                  checked={showParcels} 
-                  onChange={(e) => setShowParcels(e.target.checked)}
-                  className="w-4 h-4 text-orange-600 rounded focus:ring-orange-500"
-                  style={{ accentColor: '#F15A22' }}
-                />
-                <span className="text-xs text-gray-700">Address Points</span>
-              </label>
-              <div className="text-xs text-gray-500 italic mt-2 pt-2 border-t border-gray-100">
-                Wind zones available via{' '}
+            <label className="text-xs font-semibold text-gray-600 block mb-2">Additional Resources</label>
+            <div className="space-y-2 text-xs">
+              <div>
+                <a 
+                  href="https://data.linz.govt.nz/layer/122657-nz-property-boundaries/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-orange-600 hover:underline flex items-center gap-1"
+                >
+                  📐 Property Boundaries (LINZ)
+                </a>
+                <p className="text-gray-500 text-xs mt-0.5">View cadastral boundaries</p>
+              </div>
+              <div>
                 <a 
                   href="https://www.branz.co.nz/branz-maps-zones/" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="text-orange-600 hover:underline"
+                  className="text-orange-600 hover:underline flex items-center gap-1"
                 >
-                  BRANZ Maps
+                  🌪️ Wind Zones (BRANZ Maps)
                 </a>
+                <p className="text-gray-500 text-xs mt-0.5">Building wind classifications</p>
               </div>
             </div>
           </div>
