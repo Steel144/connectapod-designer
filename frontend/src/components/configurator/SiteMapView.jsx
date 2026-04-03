@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { MapContainer, TileLayer, useMap, ZoomControl, CircleMarker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import 'leaflet.wms';
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -19,6 +20,31 @@ import { base44 } from '@/api/base44Client';
 const CSS_SCALE = 2;
 const CANVAS_PX_PER_CELL = 20;
 const CELL_M = 0.6;
+
+// Component to add WMS layers to the map
+function WMSLayer({ url, layers, format = 'image/png', transparent = true, opacity = 0.7, attribution = 'LINZ' }) {
+  const map = useMap();
+  
+  useEffect(() => {
+    const wmsLayer = L.tileLayer.wms(url, {
+      layers: layers,
+      format: format,
+      transparent: transparent,
+      opacity: opacity,
+      attribution: attribution,
+      version: '1.1.1',
+      maxZoom: 21,
+    });
+    
+    wmsLayer.addTo(map);
+    
+    return () => {
+      map.removeLayer(wmsLayer);
+    };
+  }, [map, url, layers, format, transparent, opacity, attribution]);
+  
+  return null;
+}
 
 function MapControlHandler({ onZoomChange }) {
   const map = useMap();
@@ -383,23 +409,23 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
                   crossOrigin="anonymous"
                 />
                 
-                {/* LINZ Property Boundaries (Cadastral) - conditional */}
+                {/* LINZ Property Boundaries via WMS - conditional */}
                 {showBoundaries && (
-                  <TileLayer
-                    url="https://basemaps.linz.govt.nz/v1/tiles/nz-property-titles/EPSG:3857/{z}/{x}/{y}.png?api=d01ev1qyt8bknf8m9z573x3xvhd"
-                    maxZoom={21}
-                    opacity={0.7}
-                    crossOrigin="anonymous"
+                  <WMSLayer
+                    url="https://gis.wcc.govt.nz/arcgis/services/PropertyAndBoundaries/Property/MapServer/WMSServer"
+                    layers="0"
+                    opacity={0.8}
+                    attribution="Property Boundaries - Wellington City Council / LINZ"
                   />
                 )}
                 
-                {/* LINZ Parcels (detailed boundaries) - conditional */}
+                {/* LINZ Street Address WMS - as alternative parcel layer */}
                 {showParcels && (
-                  <TileLayer
-                    url="https://basemaps.linz.govt.nz/v1/tiles/parcels/EPSG:3857/{z}/{x}/{y}.png?api=d01ev1qyt8bknf8m9z573x3xvhd"
-                    maxZoom={21}
-                    opacity={0.8}
-                    crossOrigin="anonymous"
+                  <WMSLayer
+                    url="https://gis.wcc.govt.nz/arcgis/services/PropertyAndBoundaries/Property/MapServer/WMSServer"
+                    layers="1,2"
+                    opacity={0.6}
+                    attribution="Address Points - Wellington City Council / LINZ"
                   />
                 )}
                 <ZoomControl position="bottomright" />
@@ -497,7 +523,7 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
           </div>
           
           <div className="border-t border-gray-200 pt-3 mt-3">
-            <label className="text-xs font-semibold text-gray-600 block mb-2">Map Layers</label>
+            <label className="text-xs font-semibold text-gray-600 block mb-2">Map Layers (LINZ Data)</label>
             <div className="space-y-2">
               <label className="flex items-center gap-2 cursor-pointer">
                 <input 
@@ -517,8 +543,19 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
                   className="w-4 h-4 text-orange-600 rounded focus:ring-orange-500"
                   style={{ accentColor: '#F15A22' }}
                 />
-                <span className="text-xs text-gray-700">Parcel Details</span>
+                <span className="text-xs text-gray-700">Address Points</span>
               </label>
+              <div className="text-xs text-gray-500 italic mt-2 pt-2 border-t border-gray-100">
+                Wind zones available via{' '}
+                <a 
+                  href="https://www.branz.co.nz/branz-maps-zones/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-orange-600 hover:underline"
+                >
+                  BRANZ Maps
+                </a>
+              </div>
             </div>
           </div>
         </div>
