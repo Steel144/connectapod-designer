@@ -218,6 +218,144 @@ function makeMiteredRakeTrimmer(x0, y0, x1, y1, nX, nY, dropY, bottomTrim, trimZ
 }
 
 /**
+ * Add windows to the module
+ * Windows are placed on the long sides (non-gable walls)
+ */
+function addWindows(params, materials, group) {
+  const { width, length, wallHeight } = params;
+  
+  const xL = -width / 2;
+  const xR = width / 2;
+  const zF = length / 2;
+  const zB = -length / 2;
+  
+  // Window dimensions (standard modular building windows)
+  const windowWidth = 1.2;
+  const windowHeight = 1.2;
+  const windowFromGround = 0.9;
+  const windowY = windowFromGround + windowHeight / 2;
+  const windowDepth = 0.05;
+  
+  // Glass material with proper transparency
+  const glassMaterial = new THREE.MeshPhysicalMaterial({
+    color: 0x88ccee,
+    transparent: true,
+    opacity: 0.4,
+    roughness: 0.1,
+    metalness: 0.1,
+    transmission: 0.8,
+    reflectivity: 0.9,
+  });
+  
+  // Window frame material
+  const frameMaterial = new THREE.MeshStandardMaterial({
+    color: 0x2a2a2a,
+    roughness: 0.3,
+    metalness: 0.6,
+  });
+  
+  // Add windows on the front wall (Z = zF, runs along X-axis)
+  // Place 2 windows evenly spaced
+  const windowSpacing = width / 3;
+  for (let i = -1; i <= 1; i += 2) {
+    const windowX = i * windowSpacing / 2;
+    
+    // Glass pane
+    const glass = new THREE.Mesh(
+      new THREE.BoxGeometry(windowWidth, windowHeight, windowDepth),
+      glassMaterial
+    );
+    glass.position.set(windowX, windowY, zF);
+    glass.castShadow = false;
+    glass.receiveShadow = true;
+    group.add(glass);
+    
+    // Frame
+    const frameThickness = 0.05;
+    // Top frame
+    const topFrame = new THREE.Mesh(
+      new THREE.BoxGeometry(windowWidth + frameThickness * 2, frameThickness, frameThickness),
+      frameMaterial
+    );
+    topFrame.position.set(windowX, windowY + windowHeight / 2, zF);
+    group.add(topFrame);
+    
+    // Bottom frame
+    const bottomFrame = new THREE.Mesh(
+      new THREE.BoxGeometry(windowWidth + frameThickness * 2, frameThickness, frameThickness),
+      frameMaterial
+    );
+    bottomFrame.position.set(windowX, windowY - windowHeight / 2, zF);
+    group.add(bottomFrame);
+    
+    // Left frame
+    const leftFrame = new THREE.Mesh(
+      new THREE.BoxGeometry(frameThickness, windowHeight, frameThickness),
+      frameMaterial
+    );
+    leftFrame.position.set(windowX - windowWidth / 2, windowY, zF);
+    group.add(leftFrame);
+    
+    // Right frame
+    const rightFrame = new THREE.Mesh(
+      new THREE.BoxGeometry(frameThickness, windowHeight, frameThickness),
+      frameMaterial
+    );
+    rightFrame.position.set(windowX + windowWidth / 2, windowY, zF);
+    group.add(rightFrame);
+  }
+  
+  // Add windows on the back wall (Z = zB)
+  for (let i = -1; i <= 1; i += 2) {
+    const windowX = i * windowSpacing / 2;
+    
+    // Glass pane
+    const glass = new THREE.Mesh(
+      new THREE.BoxGeometry(windowWidth, windowHeight, windowDepth),
+      glassMaterial
+    );
+    glass.position.set(windowX, windowY, zB);
+    glass.castShadow = false;
+    glass.receiveShadow = true;
+    group.add(glass);
+    
+    // Frame
+    const frameThickness = 0.05;
+    // Top frame
+    const topFrame = new THREE.Mesh(
+      new THREE.BoxGeometry(windowWidth + frameThickness * 2, frameThickness, frameThickness),
+      frameMaterial
+    );
+    topFrame.position.set(windowX, windowY + windowHeight / 2, zB);
+    group.add(topFrame);
+    
+    // Bottom frame
+    const bottomFrame = new THREE.Mesh(
+      new THREE.BoxGeometry(windowWidth + frameThickness * 2, frameThickness, frameThickness),
+      frameMaterial
+    );
+    bottomFrame.position.set(windowX, windowY - windowHeight / 2, zB);
+    group.add(bottomFrame);
+    
+    // Left frame
+    const leftFrame = new THREE.Mesh(
+      new THREE.BoxGeometry(frameThickness, windowHeight, frameThickness),
+      frameMaterial
+    );
+    leftFrame.position.set(windowX - windowWidth / 2, windowY, zB);
+    group.add(leftFrame);
+    
+    // Right frame
+    const rightFrame = new THREE.Mesh(
+      new THREE.BoxGeometry(frameThickness, windowHeight, frameThickness),
+      frameMaterial
+    );
+    rightFrame.position.set(windowX + windowWidth / 2, windowY, zB);
+    group.add(rightFrame);
+  }
+}
+
+/**
  * Create a detailed module with flashing, trims, cedar boards, and roof seams
  * @param {Object} params - Module parameters
  * @param {number} params.width - Module width
@@ -329,6 +467,9 @@ export function createDetailedModule(params, materials) {
   
   // Position the group
   group.position.set(position.x, position.y, position.z);
+  
+  // Add windows to the module
+  addWindows(params, materials, group);
   
   return group;
 }
