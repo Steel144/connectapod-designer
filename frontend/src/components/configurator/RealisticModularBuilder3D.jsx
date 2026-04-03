@@ -442,16 +442,24 @@ export default function RealisticModularBuilder3D({ placedModules = [], walls = 
         });
         
         // Create detailed module with advanced geometry (flashing, cedar, trim, roof seams)
+        // Swap dimensions: use depth as width and width as length to get correct orientation
+        // Then rotate 90° so gables appear on the 5.2m ends and ridge runs along 3m
         const detailedModuleGroup = createDetailedModule(
           {
-            width: moduleWorldWidth,
-            length: moduleWorldDepth,
+            width: moduleWorldDepth,   // 5.2m
+            length: moduleWorldWidth,  // 3m
             wallHeight: MODULE_STUD_HEIGHT,
             pitch: ROOF_PITCH,
-            position: { x: modX, y: 0, z: modZ }
+            position: { x: 0, y: 0, z: 0 }  // Position at origin first
           },
           materials
         );
+        
+        // Rotate 90 degrees around Y-axis to swap X/Z orientation
+        detailedModuleGroup.rotation.y = Math.PI / 2;
+        
+        // Now position the rotated group
+        detailedModuleGroup.position.set(modX, 0, modZ);
         
         scene.add(detailedModuleGroup);
         
@@ -537,40 +545,46 @@ export default function RealisticModularBuilder3D({ placedModules = [], walls = 
       // Module 1 at (0, 0)
       const testModule1 = createDetailedModule(
         {
-          width: MODULE_WIDTH,
-          length: MODULE_DEPTH,
+          width: MODULE_DEPTH,   // 5.2m
+          length: MODULE_WIDTH,  // 3m
           wallHeight: MODULE_STUD_HEIGHT,
           pitch: ROOF_PITCH,
-          position: { x: MODULE_WIDTH / 2, y: 0, z: MODULE_DEPTH / 2 }
+          position: { x: 0, y: 0, z: 0 }
         },
         materials
       );
+      testModule1.rotation.y = Math.PI / 2;
+      testModule1.position.set(MODULE_WIDTH / 2, 0, MODULE_DEPTH / 2);
       scene.add(testModule1);
       
       // Module 2 - joins to the right
       const testModule2 = createDetailedModule(
         {
-          width: MODULE_WIDTH,
-          length: MODULE_DEPTH,
+          width: MODULE_DEPTH,
+          length: MODULE_WIDTH,
           wallHeight: MODULE_STUD_HEIGHT,
           pitch: ROOF_PITCH,
-          position: { x: MODULE_WIDTH + MODULE_WIDTH / 2, y: 0, z: MODULE_DEPTH / 2 }
+          position: { x: 0, y: 0, z: 0 }
         },
         materials
       );
+      testModule2.rotation.y = Math.PI / 2;
+      testModule2.position.set(MODULE_WIDTH + MODULE_WIDTH / 2, 0, MODULE_DEPTH / 2);
       scene.add(testModule2);
       
       // Module 3 - joins to the back
       const testModule3 = createDetailedModule(
         {
-          width: MODULE_WIDTH,
-          length: MODULE_DEPTH,
+          width: MODULE_DEPTH,
+          length: MODULE_WIDTH,
           wallHeight: MODULE_STUD_HEIGHT,
           pitch: ROOF_PITCH,
-          position: { x: MODULE_WIDTH / 2, y: 0, z: MODULE_DEPTH + MODULE_DEPTH / 2 }
+          position: { x: 0, y: 0, z: 0 }
         },
         materials
       );
+      testModule3.rotation.y = Math.PI / 2;
+      testModule3.position.set(MODULE_WIDTH / 2, 0, MODULE_DEPTH + MODULE_DEPTH / 2);
       scene.add(testModule3);
       
       buildingCenterX = MODULE_WIDTH;
