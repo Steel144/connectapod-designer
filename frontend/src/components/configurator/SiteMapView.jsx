@@ -66,6 +66,14 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
   const floorPlanOverlayRef = useRef(null);
   const mapRef = useRef(null);
   const mapContainerRef = useRef(null);
+  
+  // Layer toggles
+  const [showBoundaries, setShowBoundaries] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('sitemap_showBoundaries')) ?? true; } catch { return true; }
+  });
+  const [showParcels, setShowParcels] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('sitemap_showParcels')) ?? false; } catch { return false; }
+  });
 
   const [mapZoom, setMapZoom] = useState(() => {
     try { return JSON.parse(localStorage.getItem('sitemap_mapZoom')) ?? 21; } catch { return 21; }
@@ -98,6 +106,8 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
   useEffect(() => { if (coordinates) localStorage.setItem('sitemap_coordinates', JSON.stringify(coordinates)); }, [coordinates]);
   useEffect(() => { if (siteAddress) localStorage.setItem('sitemap_address', siteAddress); }, [siteAddress]);
   useEffect(() => { localStorage.setItem('sitemap_panelPos', JSON.stringify(panelPosition)); }, [panelPosition]);
+  useEffect(() => { localStorage.setItem('sitemap_showBoundaries', JSON.stringify(showBoundaries)); }, [showBoundaries]);
+  useEffect(() => { localStorage.setItem('sitemap_showParcels', JSON.stringify(showParcels)); }, [showParcels]);
 
   const getAdjustedCenter = () => {
     if (!coordinates) return [0, 0];
@@ -372,6 +382,26 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
                   maxZoom={21}
                   crossOrigin="anonymous"
                 />
+                
+                {/* LINZ Property Boundaries (Cadastral) - conditional */}
+                {showBoundaries && (
+                  <TileLayer
+                    url="https://basemaps.linz.govt.nz/v1/tiles/nz-property-titles/EPSG:3857/{z}/{x}/{y}.png?api=d01ev1qyt8bknf8m9z573x3xvhd"
+                    maxZoom={21}
+                    opacity={0.7}
+                    crossOrigin="anonymous"
+                  />
+                )}
+                
+                {/* LINZ Parcels (detailed boundaries) - conditional */}
+                {showParcels && (
+                  <TileLayer
+                    url="https://basemaps.linz.govt.nz/v1/tiles/parcels/EPSG:3857/{z}/{x}/{y}.png?api=d01ev1qyt8bknf8m9z573x3xvhd"
+                    maxZoom={21}
+                    opacity={0.8}
+                    crossOrigin="anonymous"
+                  />
+                )}
                 <ZoomControl position="bottomright" />
                 <CircleMarker center={coordinates} radius={8} pathOptions={{ color: '#F15A22', fillColor: '#F15A22', fillOpacity: 1 }}>
                   <Popup>Site Location</Popup>
@@ -463,6 +493,32 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
             <div className="flex items-center gap-2">
               <input type="range" min="0" max="360" step="1" value={overlayRotation} onChange={(e) => setOverlayRotation(parseInt(e.target.value))} className="flex-1" style={{ accentColor: '#F15A22' }} />
               <span className="text-xs text-gray-600 w-8 text-right">{overlayRotation}°</span>
+            </div>
+          </div>
+          
+          <div className="border-t border-gray-200 pt-3 mt-3">
+            <label className="text-xs font-semibold text-gray-600 block mb-2">Map Layers</label>
+            <div className="space-y-2">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input 
+                  type="checkbox" 
+                  checked={showBoundaries} 
+                  onChange={(e) => setShowBoundaries(e.target.checked)}
+                  className="w-4 h-4 text-orange-600 rounded focus:ring-orange-500"
+                  style={{ accentColor: '#F15A22' }}
+                />
+                <span className="text-xs text-gray-700">Property Boundaries</span>
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input 
+                  type="checkbox" 
+                  checked={showParcels} 
+                  onChange={(e) => setShowParcels(e.target.checked)}
+                  className="w-4 h-4 text-orange-600 rounded focus:ring-orange-500"
+                  style={{ accentColor: '#F15A22' }}
+                />
+                <span className="text-xs text-gray-700">Parcel Details</span>
+              </label>
             </div>
           </div>
         </div>
