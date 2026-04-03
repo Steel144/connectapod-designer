@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import { createDetailedModule, createDetailedMaterials } from "./DetailedModuleGeometry";
 
 // Module specifications
 const MODULE_WIDTH = 3.0;
