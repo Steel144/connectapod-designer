@@ -403,28 +403,10 @@ export default function RealisticModularBuilder3D({ placedModules = [], walls = 
     
     const roofTrayTexture = createRoofTrayTexture();
 
-    // Create materials
-    const materials = createRealisticMaterials();
+    // Create materials - using detailed materials from user's script
+    const materials = createDetailedMaterials();
     
-    // Roof uses BOLD striped pattern
-    materials.roof = new THREE.MeshStandardMaterial({
-      map: roofTrayTexture,
-      color: 0xffffff, // Pure white to see texture clearly
-      roughness: 0.7,
-      metalness: 0.0, // No metalness
-      side: THREE.DoubleSide,
-    });
-    
-    // Walls use vertical tray texture
-    materials.cladding1 = new THREE.MeshStandardMaterial({
-      map: trayTexture,
-      color: 0x808080,
-      roughness: 0.5,
-      metalness: 0.3,
-      side: THREE.DoubleSide,
-      emissive: 0x202020,
-      emissiveIntensity: 0.2,
-    });
+    console.log('✅ Using detailed materials with flashing, cedar, trim, and seams');
 
     // Calculate building center
     let buildingCenterX = 0;
@@ -432,7 +414,7 @@ export default function RealisticModularBuilder3D({ placedModules = [], walls = 
 
     // Build modules - position them correctly to connect
     if (placedModules.length > 0) {
-      console.log('🔧 NEW CODE LOADED - Building', placedModules.length, 'modules with FIXED positioning');
+      console.log('🔧 Building', placedModules.length, 'modules with DETAILED GEOMETRY (flashing, cedar, trim, seams)');
       
       placedModules.forEach((module, idx) => {
         // FIXED: Use module's actual grid position (x, y) converted using 0.6m cell size
@@ -448,7 +430,7 @@ export default function RealisticModularBuilder3D({ placedModules = [], walls = 
         const modX = module.x * GRID_CELL_SIZE + moduleWorldWidth / 2;
         const modZ = module.y * GRID_CELL_SIZE + moduleWorldDepth / 2;
         
-        console.log(`✅ Module ${idx} FIXED POSITIONING:`, { 
+        console.log(`✅ Module ${idx} with DETAILED GEOMETRY:`, { 
           gridX: module.x, 
           gridY: module.y,
           gridW: module.w,
@@ -456,13 +438,24 @@ export default function RealisticModularBuilder3D({ placedModules = [], walls = 
           worldX: modX, 
           worldZ: modZ,
           worldWidth: moduleWorldWidth,
-          worldDepth: moduleWorldDepth,
-          boxExtends: `(${modX-moduleWorldWidth/2}, ${modZ-moduleWorldDepth/2}) to (${modX+moduleWorldWidth/2}, ${modZ+moduleWorldDepth/2})`
+          worldDepth: moduleWorldDepth
         });
         
-        // Use the actual module size for building, not hardcoded 3m
-        const moduleObj = buildSingleModule(materials, { x: modX, y: 0, z: modZ }, moduleWorldWidth, moduleWorldDepth);
-        scene.add(moduleObj);
+        // Create detailed module with advanced geometry (flashing, cedar, trim, roof seams)
+        const detailedModuleGroup = createDetailedModule(
+          {
+            width: moduleWorldWidth,
+            length: moduleWorldDepth,
+            wallHeight: MODULE_STUD_HEIGHT,
+            pitch: ROOF_PITCH,
+            position: { x: modX, y: 0, z: modZ }
+          },
+          materials
+        );
+        
+        scene.add(detailedModuleGroup);
+        
+        console.log(`   ✨ Added detailed 3D model with flashing, cedar boards, trim, and roof seams`);
       });
       
       // Render standalone walls with tray roofing cladding (reuse trayTexture from above)
@@ -538,19 +531,46 @@ export default function RealisticModularBuilder3D({ placedModules = [], walls = 
         avgGridY 
       });
     } else {
-      // Test with 3 adjacent modules to demonstrate joining
-      console.log('No modules in placedModules, showing 3 test modules');
+      // Test with 3 adjacent modules to demonstrate detailed geometry
+      console.log('No modules in placedModules, showing 3 test modules with DETAILED GEOMETRY');
       
-      // Module 1 at grid (0, 0) → world center at (1.5, 0, 2.6)
-      const testModule1 = buildSingleModule(materials, { x: MODULE_WIDTH / 2, y: 0, z: MODULE_DEPTH / 2 });
+      // Module 1 at (0, 0)
+      const testModule1 = createDetailedModule(
+        {
+          width: MODULE_WIDTH,
+          length: MODULE_DEPTH,
+          wallHeight: MODULE_STUD_HEIGHT,
+          pitch: ROOF_PITCH,
+          position: { x: MODULE_WIDTH / 2, y: 0, z: MODULE_DEPTH / 2 }
+        },
+        materials
+      );
       scene.add(testModule1);
       
-      // Module 2 at grid (1, 0) → world center at (4.5, 0, 2.6) - joins to the right
-      const testModule2 = buildSingleModule(materials, { x: MODULE_WIDTH + MODULE_WIDTH / 2, y: 0, z: MODULE_DEPTH / 2 });
+      // Module 2 - joins to the right
+      const testModule2 = createDetailedModule(
+        {
+          width: MODULE_WIDTH,
+          length: MODULE_DEPTH,
+          wallHeight: MODULE_STUD_HEIGHT,
+          pitch: ROOF_PITCH,
+          position: { x: MODULE_WIDTH + MODULE_WIDTH / 2, y: 0, z: MODULE_DEPTH / 2 }
+        },
+        materials
+      );
       scene.add(testModule2);
       
-      // Module 3 at grid (0, 1) → world center at (1.5, 0, 7.8) - joins to the back
-      const testModule3 = buildSingleModule(materials, { x: MODULE_WIDTH / 2, y: 0, z: MODULE_DEPTH + MODULE_DEPTH / 2 });
+      // Module 3 - joins to the back
+      const testModule3 = createDetailedModule(
+        {
+          width: MODULE_WIDTH,
+          length: MODULE_DEPTH,
+          wallHeight: MODULE_STUD_HEIGHT,
+          pitch: ROOF_PITCH,
+          position: { x: MODULE_WIDTH / 2, y: 0, z: MODULE_DEPTH + MODULE_DEPTH / 2 }
+        },
+        materials
+      );
       scene.add(testModule3);
       
       buildingCenterX = MODULE_WIDTH;
@@ -609,10 +629,10 @@ export default function RealisticModularBuilder3D({ placedModules = [], walls = 
     <div ref={mountRef} className="w-full h-full relative" style={{ touchAction: "none" }}>
       <div className="absolute top-4 left-4 bg-white/90 backdrop-blur px-4 py-3 shadow-lg text-sm border border-gray-200">
         <div className="font-semibold text-gray-800">
-          {placedModules.length || 1} Module{(placedModules.length || 1) !== 1 ? 's' : ''}
+          {placedModules.length || 3} Module{(placedModules.length || 3) !== 1 ? 's' : ''}
         </div>
-        <div className="text-xs text-gray-500">3m × 5.2m × 2.4m</div>
-        <div className="text-xs text-gray-500">Realistic materials</div>
+        <div className="text-xs text-gray-500">High-Detail 3D Model</div>
+        <div className="text-xs text-green-600 font-medium mt-1">✨ Flashing • Cedar • Trim • Seams</div>
       </div>
       <div className="absolute bottom-4 right-4 bg-black/70 backdrop-blur px-3 py-2 text-white text-xs space-y-1">
         <div>🖱️ Left drag: Rotate</div>
