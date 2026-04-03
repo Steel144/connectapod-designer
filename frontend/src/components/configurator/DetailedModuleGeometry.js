@@ -243,14 +243,14 @@ export function createDetailedModule(params, materials) {
   const leftFlashInnerX = xL + 0.10 + 0.265 / 2;
   const rightFlashInnerX = xR - 0.10 - 0.265 / 2;
   
-  // Main body - REMOVED per user request (dark walls removed)
-  // const body = new THREE.Mesh(
-  //   new THREE.BoxGeometry(width, wallHeight, length),
-  //   materials.skin
-  // );
-  // body.position.y = wallHeight / 2;
-  // body.castShadow = body.receiveShadow = true;
-  // group.add(body);
+  // Main body
+  const body = new THREE.Mesh(
+    new THREE.BoxGeometry(width, wallHeight, length),
+    materials.skin
+  );
+  body.position.y = wallHeight / 2;
+  body.castShadow = body.receiveShadow = true;
+  group.add(body);
   
   // Roof triangles
   const ridgeFront = { x: 0, y: yR, z: zF };

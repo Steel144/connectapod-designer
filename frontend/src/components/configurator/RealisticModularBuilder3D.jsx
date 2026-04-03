@@ -466,60 +466,8 @@ export default function RealisticModularBuilder3D({ placedModules = [], walls = 
         console.log(`   ✨ Added detailed 3D model with flashing, cedar boards, trim, and roof seams`);
       });
       
-      // Render standalone walls with tray roofing cladding (reuse trayTexture from above)
-      console.log(`🏗️ Rendering ${walls.length} walls with 600mm tray roofing`);
-      
-      walls.forEach((wall, idx) => {
-        const GRID_CELL_SIZE = 0.6;
-        const WALL_HEIGHT = 2.4;
-        const WALL_THICKNESS = 0.05;
-        
-        // Convert grid position to world position
-        const wallWorldX = wall.x * GRID_CELL_SIZE;
-        const wallWorldZ = wall.y * GRID_CELL_SIZE;
-        
-        // Determine wall dimensions based on orientation
-        let wallWidth, wallDepth;
-        if (wall.orientation === 'horizontal' || wall.face === 'W' || wall.face === 'Y') {
-          // Horizontal wall (runs along X axis)
-          wallWidth = 3.0; // Width of one module
-          wallDepth = WALL_THICKNESS;
-        } else {
-          // Vertical wall (runs along Z axis)
-          wallWidth = WALL_THICKNESS;
-          wallDepth = 5.2; // Depth of one module
-        }
-        
-        // Create wall geometry
-        const wallGeometry = new THREE.BoxGeometry(wallWidth, WALL_HEIGHT, wallDepth);
-        
-        // Apply tray roofing material
-        const wallMaterial = new THREE.MeshStandardMaterial({
-          map: trayTexture,
-          color: 0x3a3a3a, // Dark grey metal
-          roughness: 0.6,
-          metalness: 0.5,
-        });
-        
-        const wallMesh = new THREE.Mesh(wallGeometry, wallMaterial);
-        
-        // Position wall - centered at grid position + half dimensions
-        wallMesh.position.set(
-          wallWorldX + wallWidth / 2,
-          WALL_HEIGHT / 2,
-          wallWorldZ + wallDepth / 2
-        );
-        
-        scene.add(wallMesh);
-        
-        console.log(`📍 Tray wall ${idx}:`, {
-          type: wall.type,
-          face: wall.face,
-          gridPos: { x: wall.x, y: wall.y },
-          worldPos: { x: wallWorldX, z: wallWorldZ },
-          dimensions: { w: wallWidth, h: WALL_HEIGHT, d: wallDepth }
-        });
-      });
+      // Standalone walls removed per user request
+      // (Previously rendered dark tray roofing walls outside modules)
       
       // Calculate center of all modules for camera - use new coordinate system
       const GRID_CELL_SIZE = 0.6;
