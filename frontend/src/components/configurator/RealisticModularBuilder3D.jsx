@@ -442,10 +442,11 @@ export default function RealisticModularBuilder3D({ placedModules = [], walls = 
         });
         
         // Create detailed module with advanced geometry (flashing, cedar, trim, roof seams)
+        // NOTE: Swapping width/length to match original orientation (ridge along X-axis)
         const detailedModuleGroup = createDetailedModule(
           {
-            width: moduleWorldWidth,
-            length: moduleWorldDepth,
+            width: moduleWorldDepth,   // Swapped: depth becomes width
+            length: moduleWorldWidth,  // Swapped: width becomes length
             wallHeight: MODULE_STUD_HEIGHT,
             pitch: ROOF_PITCH,
             position: { x: modX, y: 0, z: modZ }
