@@ -334,11 +334,19 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
                                 const leftPx = Math.round(scale * offsetCells * CELL_M * PX_PER_M);
                                 const widthPx = Math.round(scale * widthCells * CELL_M * PX_PER_M);
                                 
+                                // Calculate correct wall width in meters for this face
+                                const wallWidthM = widthCells * CELL_M;
+                                
                                 // When container is flipped, also flip images back to correct orientation
+                                // Also update wall.width to match the correct dimension for this face
                                 const modifiedWall = shouldFlip ? {
                                   ...wall,
-                                  flipped: !(wall.flipped || false)
-                                } : wall;
+                                  flipped: !(wall.flipped || false),
+                                  width: wallWidthM
+                                } : {
+                                  ...wall,
+                                  width: wallWidthM
+                                };
                                 
                                 return (
                                   <div 
