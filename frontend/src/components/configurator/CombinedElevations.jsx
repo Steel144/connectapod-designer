@@ -278,17 +278,40 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
                           };
                           const hasAny = mods.some(mod => findWall(mod, face));
                           if (!hasAny) return null;
+                          
+                          // Apply flip to W elevation (same as main building elevations)
+                          const shouldFlip = face === "W";
+                          
                           return (
                             <div key={face} style={{ display: "block", marginBottom: "40px" }}>
                               <div style={{ fontSize: "14px", fontWeight: "bold", color: "black", textTransform: "uppercase", letterSpacing: "0.05em", backgroundColor: "#fed7aa", padding: "8px 12px", borderRadius: "4px", width: "fit-content", marginLeft: "4px", marginBottom: "16px" }}>
                                 {faceLabels[face]}
                               </div>
-                              <div style={{ display: "flex", gap: "2px", minWidth: "max-content" }}>
+                              <div style={{ 
+                                display: "flex", 
+                                gap: "2px", 
+                                minWidth: "max-content",
+                                transform: shouldFlip ? "scaleX(-1)" : undefined
+                              }}>
                                 {mods.map((mod, idx) => {
                                   const wall = findWall(mod, face);
-                                  return wall ? (
-                                    <ElevationImage key={`${pavNum}-${face}-${idx}`} wall={wall} label={`${face}${idx + 1}`} face={face} isPavilion={true} />
-                                  ) : null;
+                                  if (!wall) return null;
+                                  
+                                  // If W elevation is flipped, also flip each image back
+                                  const modifiedWall = shouldFlip && wall ? {
+                                    ...wall,
+                                    flipped: !(wall.flipped || false)
+                                  } : wall;
+                                  
+                                  return (
+                                    <ElevationImage 
+                                      key={`${pavNum}-${face}-${idx}`} 
+                                      wall={modifiedWall} 
+                                      label={`${face}${idx + 1}`} 
+                                      face={face} 
+                                      isPavilion={true} 
+                                    />
+                                  );
                                 })}
                               </div>
                             </div>
