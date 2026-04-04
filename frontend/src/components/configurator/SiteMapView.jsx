@@ -543,7 +543,7 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
                 try {
                   const saved = JSON.parse(localStorage.getItem("connectapod_save_details") || "{}");
                   if (saved.homeAddress) {
-                    setAddress(saved.homeAddress);
+                    setSiteAddress(saved.homeAddress);
                   }
                 } catch {}
               }}
