@@ -393,7 +393,7 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
                                     leftPx={leftPx}
                                     widthPx={widthPx}
                                     heightPx={wallHPx}
-                                    objectFit="cover"
+                                    objectFit="fill"
                                     showLabel={false}
                                   />
                                 );
