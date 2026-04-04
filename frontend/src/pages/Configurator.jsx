@@ -1091,9 +1091,10 @@ export default function Configurator() {
               <button onClick={() => setViewMode("2d")} className={`flex items-center gap-1.5 px-3 py-1.5 text-xs transition-all ${viewMode === "2d" ? "bg-[#F15A22] text-white" : "bg-white text-gray-600 hover:text-[#F15A22]"}`} style={{ clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 50%, calc(100% - 6px) 100%, 0 100%)" }}>
               <Grid2X2 size={13} /> 2D
             </button>
-            <button onClick={() => setViewMode("3d")} className={`flex items-center gap-1.5 px-3 py-1.5 text-xs transition-all ${viewMode === "3d" ? "bg-[#F15A22] text-white" : "bg-white text-gray-600 hover:text-[#F15A22]"}`} style={{ clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 50%, calc(100% - 6px) 100%, 0 100%)" }}>
+            {/* 3D button hidden for now */}
+            {false && <button onClick={() => setViewMode("3d")} className={`flex items-center gap-1.5 px-3 py-1.5 text-xs transition-all ${viewMode === "3d" ? "bg-[#F15A22] text-white" : "bg-white text-gray-600 hover:text-[#F15A22]"}`} style={{ clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 50%, calc(100% - 6px) 100%, 0 100%)" }}>
               <Box size={13} /> 3D
-            </button>
+            </button>}
             <button onClick={() => setViewMode("elevations")} className={`flex items-center gap-1.5 px-3 py-1.5 text-xs transition-all ${viewMode === "elevations" ? "bg-[#F15A22] text-white" : "bg-white text-gray-600 hover:text-[#F15A22]"}`} style={{ clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 50%, calc(100% - 6px) 100%, 0 100%)" }}>
               <Image size={13} /> Elevations
             </button>
