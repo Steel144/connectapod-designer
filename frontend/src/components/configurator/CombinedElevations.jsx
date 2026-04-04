@@ -33,9 +33,8 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
   useEffect(() => {
     if (!centeredRef.current && containerRef.current && contentRef.current) {
       setTimeout(() => {
-        const scrollWidth = contentRef.current.scrollWidth;
-        const containerWidth = containerRef.current.clientWidth;
-        containerRef.current.scrollLeft = (scrollWidth - containerWidth) / 2;
+        // Start from left side instead of center
+        containerRef.current.scrollLeft = 0;
         centeredRef.current = true;
       }, 0);
     }
