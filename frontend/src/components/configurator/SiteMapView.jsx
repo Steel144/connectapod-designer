@@ -132,6 +132,29 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
     "Nelson": "M", "Tasman": "M", "Otago": "M", "Southland": "M",
   };
 
+  // City/district-level Z-factor lookup (NZS 1170.5) for finer accuracy
+  const CITY_EQ_MAP = {
+    // Low (Z < 0.15)
+    "kaitaia": "L", "paihia": "L", "russell": "L", "kaikohe": "L", "whangarei": "L",
+    "dargaville": "L", "warkworth": "L", "auckland": "L", "manukau": "L",
+    "waiuku": "L", "pukekohe": "L", "hamilton": "L",
+    // Medium (0.15 ≤ Z < 0.3)
+    "thames": "M", "matamata": "M", "te puke": "M", "tauranga": "M",
+    "putaruru": "M", "tokoroa": "M", "otorohanga": "M", "te kuiti": "M",
+    "mangakino": "M", "rotorua": "M", "kawerau": "M", "taupo": "M",
+    "new plymouth": "M", "hawera": "M", "whanganui": "M", "palmerston north": "M",
+    "napier": "M", "hastings": "M", "nelson": "M", "blenheim": "M",
+    "timaru": "M", "oamaru": "M", "dunedin": "M", "invercargill": "M",
+    "queenstown": "M", "wanaka": "M", "ashburton": "M",
+    // High (Z ≥ 0.3)
+    "whakatane": "H", "opotiki": "H", "gisborne": "H",
+    "wellington": "H", "porirua": "H", "lower hutt": "H", "upper hutt": "H",
+    "hutt": "H", "paraparaumu": "H", "kapiti": "H", "masterton": "H",
+    "wainuiomata": "H", "eastbourne": "H",
+    "christchurch": "H", "kaikoura": "H", "greymouth": "H", "hokitika": "H",
+    "westport": "H", "hanmer springs": "H",
+  };
+
   const [eqZone, setEqZone] = useState(() => {
     try { return localStorage.getItem('sitemap_eqZone') || ''; } catch { return ''; }
   });
@@ -386,8 +409,10 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
           if (!windZone) {
             handleWindZoneChange(zone);
           }
-          // Auto-detect earthquake zone
-          const eqZ = REGION_EQ_MAP[region] || 'M';
+          // Auto-detect earthquake zone (city-level first, then region fallback)
+          const addressObj2 = data[0].address || {};
+          const cityName = (addressObj2.city || addressObj2.town || addressObj2.village || '').toLowerCase();
+          const eqZ = CITY_EQ_MAP[cityName] || REGION_EQ_MAP[region] || 'M';
           if (!eqZone) {
             handleEqZoneChange(eqZ);
           }
