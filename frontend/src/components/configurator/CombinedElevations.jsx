@@ -82,15 +82,43 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
   const totalDepthCells = allMaxY - allMinY;
   const zoomBarHeight = 48;
 
-  // Get pavilion walls data
+  // Get pavilion walls data - improved logic matching main building
   const findWall = (mod, face) => {
     const WALL_OFFSET = 0.31;
+    
+    // For Z and X, find walls within the module's depth range
+    if (face === "Z" || face === "X") {
+      const candidates = walls.filter(w => {
+        if (w.face !== face) return false;
+        // Wall should be within module's Y range (depth)
+        const withinDepth = w.y >= mod.y - 1 && w.y < mod.y + mod.h + 1;
+        if (!withinDepth) return false;
+        
+        if (face === "Z") {
+          // Z face is at left edge (mod.x)
+          const nearLeft = Math.abs(w.x - mod.x) < 2;
+          return nearLeft;
+        }
+        if (face === "X") {
+          // X face is at right edge (mod.x + mod.w)
+          const nearRight = Math.abs(w.x - (mod.x + mod.w - WALL_OFFSET)) < 2;
+          return nearRight;
+        }
+        return false;
+      });
+      
+      if (candidates.length === 0) return null;
+      
+      // Pick the wall closest to expected position
+      const expectedX = face === "Z" ? mod.x : (mod.x + mod.w - WALL_OFFSET);
+      return candidates.sort((a, b) => Math.abs(a.x - expectedX) - Math.abs(b.x - expectedX))[0];
+    }
+    
+    // For W and Y, use simple position matching
     return walls.find(w => {
       if (w.face !== face) return false;
       if (face === "Y") return Math.abs(w.x - mod.x) < 0.5 && Math.abs(w.y - (mod.y + mod.h)) < 0.5;
       if (face === "W") return Math.abs(w.x - mod.x) < 0.5 && Math.abs(w.y - (mod.y - WALL_OFFSET)) < 0.5;
-      if (face === "Z") return Math.abs(w.y - mod.y) < 0.5 && Math.abs(w.x - mod.x) < 0.5;
-      if (face === "X") return Math.abs(w.y - mod.y) < 0.5 && Math.abs(w.x - (mod.x + mod.w - WALL_OFFSET)) < 0.5;
       return false;
     }) || null;
   };
