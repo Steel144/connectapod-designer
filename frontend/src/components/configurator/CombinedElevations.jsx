@@ -243,7 +243,6 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
                   WALL_H_M={WALL_H_M}
                   slotOffsets={{ 1: slotOffset1Z, 2: slotOffset2Z, 3: slotOffset3Z }}
                   labelMap={labelMapZ}
-                  globalMaxDepthCells={globalMaxDepthCells}
                 />
               </div>
               <div style={{ display: "inline-block", verticalAlign: "top" }}>
@@ -260,7 +259,6 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
                   slotOffsets={{ 1: slotOffset1X, 2: slotOffset2X, 3: slotOffset3X }}
                   slotScales={{ 3: slotScale3X }}
                   labelMap={labelMapX}
-                  globalMaxDepthCells={globalMaxDepthCells}
                 />
               </div>
             </div>
@@ -334,8 +332,9 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
                           pavMinCoord = Math.min(...mods.map(m => m.y));
                           pavMaxCoord = Math.max(...mods.map(m => m.y + m.h));
                           pavWidthCells = pavMaxCoord - pavMinCoord;
-                          // Use globalMaxDepthCells for consistent container sizing
-                          pavWidthPx = Math.round(scale * globalMaxDepthCells * CELL_M * PX_PER_M * 1.1);
+                          // Use the max depth across pavilion modules for container
+                          const maxPavDepth = Math.max(...mods.map(m => m.h));
+                          pavWidthPx = Math.round(scale * maxPavDepth * CELL_M * PX_PER_M * 1.1);
                         } else {
                           // For W and Y (horizontal elevations), use X-axis (width)
                           pavMinCoord = Math.min(...mods.map(m => m.x));
@@ -370,7 +369,7 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
                                 
                                 if (isVerticalElevation) {
                                   offsetCells = 0;
-                                  widthCells = globalMaxDepthCells;
+                                  widthCells = mod.h;
                                 } else {
                                   offsetCells = mod.x - pavMinCoord;
                                   widthCells = mod.w;
@@ -434,7 +433,7 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
                                 const wall = findWall(mod, face);
                                 if (!wall) return null;
                                 
-                                const widthCells = isVerticalElevation ? globalMaxDepthCells : mod.w;
+                                const widthCells = isVerticalElevation ? mod.h : mod.w;
                                 const widthPx = isVerticalElevation 
                                   ? Math.round(scale * widthCells * CELL_M * PX_PER_M * 1.1)
                                   : Math.round(scale * widthCells * CELL_M * PX_PER_M);

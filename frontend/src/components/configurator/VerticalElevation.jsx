@@ -13,18 +13,14 @@ const VerticalElevation = memo(function VerticalElevation({
   WALL_H_M,
   slotOffsets = {},
   slotScales = {},
-  labelMap = {},
-  globalMaxDepthCells = null
+  labelMap = {}
 }) {
   if (layers.length === 0) return null;
-
-  // Use globalMaxDepthCells if provided, otherwise fall back to local max
-  const maxDepthCells = globalMaxDepthCells || Math.max(...layers.flatMap(l => l.slots.map(s => s.depthCells)));
 
   let maxContentWidth = Math.round(scale * totalDepthCells * CELL_M * PX_PER_M);
   layers.forEach(layer => {
     layer.slots.forEach(slot => {
-      const slotRight = Math.round(scale * slot.yOffsetCells * CELL_M * PX_PER_M) + Math.round(scale * maxDepthCells * CELL_M * PX_PER_M);
+      const slotRight = Math.round(scale * slot.yOffsetCells * CELL_M * PX_PER_M) + Math.round(scale * slot.depthCells * CELL_M * PX_PER_M);
       maxContentWidth = Math.max(maxContentWidth, slotRight);
     });
   });
@@ -46,7 +42,7 @@ const VerticalElevation = memo(function VerticalElevation({
           {layers.map((layer) => {
              return layer.slots.map((slot, si) => {
                 const elevationNum = si + 1;
-                const baseWidthPx = Math.round(scale * maxDepthCells * CELL_M * PX_PER_M);
+                const baseWidthPx = Math.round(scale * slot.depthCells * CELL_M * PX_PER_M);
                 const scaleMultiplier = slotScales[elevationNum] || 1.1;
                 const slotWidthPx = Math.round(baseWidthPx * scaleMultiplier);
                 const baseLeftPx = Math.round(scale * slot.yOffsetCells * CELL_M * PX_PER_M);
