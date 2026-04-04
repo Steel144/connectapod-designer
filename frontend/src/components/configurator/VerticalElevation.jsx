@@ -13,12 +13,13 @@ const VerticalElevation = memo(function VerticalElevation({
   WALL_H_M,
   slotOffsets = {},
   slotScales = {},
-  labelMap = {}
+  labelMap = {},
+  globalMaxDepthCells = null
 }) {
   if (layers.length === 0) return null;
 
-  // Use the maximum depthCells across all slots so every Z/X elevation renders at the same width
-  const maxDepthCells = Math.max(...layers.flatMap(l => l.slots.map(s => s.depthCells)));
+  // Use globalMaxDepthCells if provided, otherwise fall back to local max
+  const maxDepthCells = globalMaxDepthCells || Math.max(...layers.flatMap(l => l.slots.map(s => s.depthCells)));
 
   let maxContentWidth = Math.round(scale * totalDepthCells * CELL_M * PX_PER_M);
   layers.forEach(layer => {

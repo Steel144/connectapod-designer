@@ -84,6 +84,9 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
   const totalDepthCells = allMaxY - allMinY;
   const zoomBarHeight = 48;
 
+  // Global max module depth — ensures ALL Z/X elevations (building + pavilion) render at the same width
+  const globalMaxDepthCells = Math.max(...placedModules.map(m => m.h));
+
   // Get pavilion walls data - improved logic matching main building
   const findWall = (mod, face) => {
     const WALL_OFFSET = 0.31;
@@ -239,6 +242,7 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
                   WALL_H_M={WALL_H_M}
                   slotOffsets={{ 1: slotOffset1Z, 2: slotOffset2Z, 3: slotOffset3Z }}
                   labelMap={labelMapZ}
+                  globalMaxDepthCells={globalMaxDepthCells}
                 />
               </div>
               <div style={{ display: "inline-block", verticalAlign: "top" }}>
@@ -255,6 +259,7 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
                   slotOffsets={{ 1: slotOffset1X, 2: slotOffset2X, 3: slotOffset3X }}
                   slotScales={{ 3: slotScale3X }}
                   labelMap={labelMapX}
+                  globalMaxDepthCells={globalMaxDepthCells}
                 />
               </div>
             </div>
@@ -320,15 +325,13 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
                         // Calculate pavilion bounds based on elevation type
                         let pavMinCoord, pavMaxCoord, pavWidthCells, pavWidthPx;
                         
-                        // For Z/X, use the max module depth so all end-walls render at the same size
-                        const maxModDepthCells = Math.max(...mods.map(m => m.h));
-                        
                         if (isVerticalElevation) {
                           // For Z and X (vertical elevations), use Y-axis (depth)
                           pavMinCoord = Math.min(...mods.map(m => m.y));
                           pavMaxCoord = Math.max(...mods.map(m => m.y + m.h));
                           pavWidthCells = pavMaxCoord - pavMinCoord;
-                          pavWidthPx = Math.round(scale * pavWidthCells * CELL_M * PX_PER_M);
+                          // Use globalMaxDepthCells for consistent container sizing
+                          pavWidthPx = Math.round(scale * globalMaxDepthCells * CELL_M * PX_PER_M * 1.1);
                         } else {
                           // For W and Y (horizontal elevations), use X-axis (width)
                           pavMinCoord = Math.min(...mods.map(m => m.x));
@@ -361,9 +364,9 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
                                 let offsetCells, widthCells;
                                 
                                 if (isVerticalElevation) {
-                                  // For Z and X: position by Y, use max depth for consistent sizing
-                                  offsetCells = mod.y - pavMinCoord;
-                                  widthCells = maxModDepthCells;
+                                  // For Z and X: use globalMaxDepthCells for consistent sizing with building
+                                  offsetCells = 0;
+                                  widthCells = globalMaxDepthCells;
                                 } else {
                                   // For W and Y: position by X, width by W (width)
                                   offsetCells = mod.x - pavMinCoord;
@@ -371,7 +374,9 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
                                 }
                                 
                                 const leftPx = Math.round(scale * offsetCells * CELL_M * PX_PER_M);
-                                const widthPx = Math.round(scale * widthCells * CELL_M * PX_PER_M);
+                                const widthPx = isVerticalElevation 
+                                  ? Math.round(scale * widthCells * CELL_M * PX_PER_M * 1.1)
+                                  : Math.round(scale * widthCells * CELL_M * PX_PER_M);
                                 
                                 // Calculate correct wall width in meters for this face
                                 const wallWidthM = widthCells * CELL_M;
