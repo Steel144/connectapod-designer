@@ -376,8 +376,9 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
                                 }
                                 
                                 const leftPx = Math.round(scale * offsetCells * CELL_M * PX_PER_M);
+                                const isConnection = isVerticalElevation && mod.h < maxPavDepth;
                                 const widthPx = isVerticalElevation 
-                                  ? Math.round(scale * widthCells * CELL_M * PX_PER_M * 1.1)
+                                  ? Math.round(scale * widthCells * CELL_M * PX_PER_M * (isConnection ? 1.0 : 1.1))
                                   : Math.round(scale * widthCells * CELL_M * PX_PER_M);
                                 
                                 const wallWidthM = widthCells * CELL_M;
@@ -434,8 +435,9 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
                                 if (!wall) return null;
                                 
                                 const widthCells = isVerticalElevation ? mod.h : mod.w;
+                                const isConnectionLabel = isVerticalElevation && mod.h < maxPavDepth;
                                 const widthPx = isVerticalElevation 
-                                  ? Math.round(scale * widthCells * CELL_M * PX_PER_M * 1.1)
+                                  ? Math.round(scale * widthCells * CELL_M * PX_PER_M * (isConnectionLabel ? 1.0 : 1.1))
                                   : Math.round(scale * widthCells * CELL_M * PX_PER_M);
                                 
                                 // Look up wall details from customWalls

@@ -17,6 +17,9 @@ const VerticalElevation = memo(function VerticalElevation({
 }) {
   if (layers.length === 0) return null;
 
+  // Determine max depth to identify connection modules (smaller depth = connection)
+  const maxSlotDepth = Math.max(...layers.flatMap(l => l.slots.map(s => s.depthCells)));
+
   let maxContentWidth = Math.round(scale * totalDepthCells * CELL_M * PX_PER_M);
   layers.forEach(layer => {
     layer.slots.forEach(slot => {
@@ -43,7 +46,9 @@ const VerticalElevation = memo(function VerticalElevation({
              return layer.slots.map((slot, si) => {
                 const elevationNum = si + 1;
                 const baseWidthPx = Math.round(scale * slot.depthCells * CELL_M * PX_PER_M);
-                const scaleMultiplier = slotScales[elevationNum] || 1.1;
+                // Connection modules (smaller depth) get no multiplier; standard modules get 1.1x
+                const isConnection = slot.depthCells < maxSlotDepth;
+                const scaleMultiplier = isConnection ? 1.0 : (slotScales[elevationNum] || 1.1);
                 const slotWidthPx = Math.round(baseWidthPx * scaleMultiplier);
                 const baseLeftPx = Math.round(scale * slot.yOffsetCells * CELL_M * PX_PER_M);
                 const extraOffsetPx = slotOffsets[elevationNum] ? Math.round(scale * slotOffsets[elevationNum] * PX_PER_M) : 0;
