@@ -320,6 +320,9 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
                         // Calculate pavilion bounds based on elevation type
                         let pavMinCoord, pavMaxCoord, pavWidthCells, pavWidthPx;
                         
+                        // For Z/X, use the max module depth so all end-walls render at the same size
+                        const maxModDepthCells = Math.max(...mods.map(m => m.h));
+                        
                         if (isVerticalElevation) {
                           // For Z and X (vertical elevations), use Y-axis (depth)
                           pavMinCoord = Math.min(...mods.map(m => m.y));
@@ -358,9 +361,9 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
                                 let offsetCells, widthCells;
                                 
                                 if (isVerticalElevation) {
-                                  // For Z and X: position by Y, width by H (depth)
+                                  // For Z and X: position by Y, use max depth for consistent sizing
                                   offsetCells = mod.y - pavMinCoord;
-                                  widthCells = mod.h;
+                                  widthCells = maxModDepthCells;
                                 } else {
                                   // For W and Y: position by X, width by W (width)
                                   offsetCells = mod.x - pavMinCoord;

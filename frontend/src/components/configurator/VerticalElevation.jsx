@@ -17,10 +17,13 @@ const VerticalElevation = memo(function VerticalElevation({
 }) {
   if (layers.length === 0) return null;
 
+  // Use the maximum depthCells across all slots so every Z/X elevation renders at the same width
+  const maxDepthCells = Math.max(...layers.flatMap(l => l.slots.map(s => s.depthCells)));
+
   let maxContentWidth = Math.round(scale * totalDepthCells * CELL_M * PX_PER_M);
   layers.forEach(layer => {
     layer.slots.forEach(slot => {
-      const slotRight = Math.round(scale * slot.yOffsetCells * CELL_M * PX_PER_M) + Math.round(scale * slot.depthCells * CELL_M * PX_PER_M);
+      const slotRight = Math.round(scale * slot.yOffsetCells * CELL_M * PX_PER_M) + Math.round(scale * maxDepthCells * CELL_M * PX_PER_M);
       maxContentWidth = Math.max(maxContentWidth, slotRight);
     });
   });
@@ -42,7 +45,7 @@ const VerticalElevation = memo(function VerticalElevation({
           {layers.map((layer) => {
              return layer.slots.map((slot, si) => {
                 const elevationNum = si + 1;
-                const baseWidthPx = Math.round(scale * slot.depthCells * CELL_M * PX_PER_M);
+                const baseWidthPx = Math.round(scale * maxDepthCells * CELL_M * PX_PER_M);
                 const scaleMultiplier = slotScales[elevationNum] || 1.1;
                 const slotWidthPx = Math.round(baseWidthPx * scaleMultiplier);
                 const baseLeftPx = Math.round(scale * slot.yOffsetCells * CELL_M * PX_PER_M);
