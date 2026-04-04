@@ -1296,6 +1296,7 @@ export default function Configurator() {
               placedModules={placedModules} 
               stickyTop={navBarHeight} 
               showHeader={true} 
+              customWalls={customWalls}
               onWallSelect={(wall) => {
                 setSelectedWall(wall);
                 setHoveredWall(wall);

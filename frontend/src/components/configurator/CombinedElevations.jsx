@@ -23,7 +23,7 @@ const getModulePavilion = (mod) => {
   return null;
 };
 
-export default function CombinedElevations({ walls = [], placedModules = [], stickyTop = 0, navBarHeight = 0, showHeader = true, onWallSelect, selectedWall = null, wallTypes = [], onWallReplace, onOpenWallsMenu }) {
+export default function CombinedElevations({ walls = [], placedModules = [], stickyTop = 0, navBarHeight = 0, showHeader = true, onWallSelect, selectedWall = null, wallTypes = [], onWallReplace, onOpenWallsMenu, customWalls = [] }) {
    const [replaceOpen, setReplaceOpen] = React.useState(false);
   const [zoom, setZoom] = useState(50);
   const containerRef = useRef(null);
@@ -344,10 +344,12 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
                         const shouldFlip = face === "W";
                         
                         return (
-                          <div key={face} style={{ display: "block", marginBottom: "24px" }}>
+                          <div key={face} style={{ display: "block", marginBottom: "40px" }}>
                             <div style={{ fontSize: "14px", fontWeight: "bold", color: "black", textTransform: "uppercase", letterSpacing: "0.05em", backgroundColor: "#fed7aa", padding: "8px 12px", borderRadius: "4px", width: "fit-content", marginLeft: "4px", marginBottom: "16px" }}>
                               {faceLabels[face]}
                             </div>
+                            
+                            {/* Elevation images with dividers */}
                             <div style={{ 
                               position: "relative", 
                               display: "inline-block", 
@@ -360,15 +362,12 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
                                 const wall = findWall(mod, face);
                                 if (!wall) return null;
                                 
-                                // Calculate position and width based on elevation type
                                 let offsetCells, widthCells;
                                 
                                 if (isVerticalElevation) {
-                                  // For Z and X: use globalMaxDepthCells for consistent sizing with building
                                   offsetCells = 0;
                                   widthCells = globalMaxDepthCells;
                                 } else {
-                                  // For W and Y: position by X, width by W (width)
                                   offsetCells = mod.x - pavMinCoord;
                                   widthCells = mod.w;
                                 }
@@ -378,11 +377,8 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
                                   ? Math.round(scale * widthCells * CELL_M * PX_PER_M * 1.1)
                                   : Math.round(scale * widthCells * CELL_M * PX_PER_M);
                                 
-                                // Calculate correct wall width in meters for this face
                                 const wallWidthM = widthCells * CELL_M;
                                 
-                                // When container is flipped, also flip images back to correct orientation
-                                // Also update wall.width to match the correct dimension for this face
                                 const modifiedWall = shouldFlip ? {
                                   ...wall,
                                   flipped: !(wall.flipped || false),
@@ -395,19 +391,89 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
                                 };
                                 
                                 return (
-                                  <ElevationSlot
-                                    key={`${pavNum}-${face}-${mod.x}-${mod.y}`}
-                                    slot={{ wall: modifiedWall, face }}
-                                    leftPx={leftPx}
-                                    widthPx={widthPx}
-                                    heightPx={wallHPx}
-                                    objectFit="fill"
-                                    showLabel={false}
-                                  />
+                                  <React.Fragment key={`${pavNum}-${face}-${mod.x}-${mod.y}`}>
+                                    <ElevationSlot
+                                      slot={{ wall: modifiedWall, face }}
+                                      leftPx={leftPx}
+                                      widthPx={widthPx}
+                                      heightPx={wallHPx}
+                                      objectFit="fill"
+                                      showLabel={false}
+                                    />
+                                    {/* Orange divider line at module boundary */}
+                                    {!isVerticalElevation && idx < mods.length - 1 && (
+                                      <div style={{
+                                        position: "absolute",
+                                        left: leftPx + widthPx,
+                                        top: 0,
+                                        width: 2,
+                                        height: "100%",
+                                        backgroundColor: "#F15A22",
+                                        zIndex: 10
+                                      }} />
+                                    )}
+                                  </React.Fragment>
                                 );
                               })}
                               {/* Ground line */}
-                              <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 2, backgroundColor: "#374151" }} />
+                              <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 2, backgroundColor: "#374151", zIndex: 2 }} />
+                            </div>
+                            
+                            {/* Wall labels underneath */}
+                            <div style={{ 
+                              display: "flex", 
+                              flexDirection: isVerticalElevation ? "column" : "row",
+                              gap: isVerticalElevation ? "8px" : "0",
+                              marginTop: "10px",
+                              transform: shouldFlip ? "scaleX(-1)" : undefined
+                            }}>
+                              {mods.map((mod, idx) => {
+                                const wall = findWall(mod, face);
+                                if (!wall) return null;
+                                
+                                const widthCells = isVerticalElevation ? globalMaxDepthCells : mod.w;
+                                const widthPx = isVerticalElevation 
+                                  ? Math.round(scale * widthCells * CELL_M * PX_PER_M * 1.1)
+                                  : Math.round(scale * widthCells * CELL_M * PX_PER_M);
+                                
+                                // Look up wall details from customWalls
+                                const wallDetail = customWalls.find(cw => cw.code === wall.type);
+                                const wallName = wall.label || wallDetail?.name || wall.type || "—";
+                                const wallCode = wall.type || wallDetail?.code || "—";
+                                const winH = wallDetail?.windowHeight;
+                                const winW = wallDetail?.windowWidth;
+                                const windowSize = (winH || winW) ? `${winH || "—"} x ${winW || "—"}mm` : null;
+                                const doorH = wallDetail?.doorHeight;
+                                const doorW = wallDetail?.doorWidth;
+                                const doorSize = (doorH || doorW) ? `${doorH || "—"} x ${doorW || "—"}mm` : null;
+                                
+                                return (
+                                  <div key={`label-${pavNum}-${face}-${mod.x}-${mod.y}`} style={{ 
+                                    width: widthPx, 
+                                    flexShrink: 0,
+                                    borderLeft: !isVerticalElevation && idx > 0 ? "2px solid #F15A22" : undefined,
+                                    paddingLeft: !isVerticalElevation && idx > 0 ? "6px" : "2px",
+                                    paddingTop: "4px"
+                                  }}>
+                                    <div style={{ fontSize: Math.max(9, Math.round(scale * 11)), fontWeight: 600, color: "#374151", lineHeight: 1.3 }}>
+                                      {wallName}
+                                    </div>
+                                    <div style={{ fontSize: Math.max(8, Math.round(scale * 10)), color: "#6b7280", lineHeight: 1.3, fontFamily: "monospace" }}>
+                                      {wallCode}
+                                    </div>
+                                    {windowSize && (
+                                      <div style={{ fontSize: Math.max(8, Math.round(scale * 9)), color: "#9ca3af", lineHeight: 1.3 }}>
+                                        Window: {windowSize}
+                                      </div>
+                                    )}
+                                    {doorSize && (
+                                      <div style={{ fontSize: Math.max(8, Math.round(scale * 9)), color: "#9ca3af", lineHeight: 1.3 }}>
+                                        Door: {doorSize}
+                                      </div>
+                                    )}
+                                  </div>
+                                );
+                              })}
                             </div>
                           </div>
                         );
