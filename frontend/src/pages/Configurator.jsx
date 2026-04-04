@@ -1771,6 +1771,7 @@ export default function Configurator() {
         walls={walls}
         printMode={pendingPrintMode}
         currentSiteAddress={siteAddress}
+        onSiteAddressChange={setSiteAddress}
         onConfirm={(details, replace = false) => {
            if (detailsModalMode === 'print') {
              // Combine clientFirstName and clientFamilyName into clientName for print details

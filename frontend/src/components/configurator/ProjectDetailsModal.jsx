@@ -163,7 +163,8 @@ export default function ProjectDetailsModal({
   walls = [],
   printMode = null, // 'plans' or 'elevations'
   designs = [],
-  currentSiteAddress = ""
+  currentSiteAddress = "",
+  onSiteAddressChange = null
 }) {
   const [projectName, setProjectName] = useState("");
   const [clientFirstName, setClientFirstName] = useState("");
@@ -202,6 +203,7 @@ export default function ProjectDetailsModal({
       phone
     };
     saveToLocalStorage(details);
+    if (onSiteAddressChange) onSiteAddressChange(siteAddress);
     return details;
   };
 
