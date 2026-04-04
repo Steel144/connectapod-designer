@@ -254,60 +254,93 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
                 Pavilion Elevations
               </div>
               
-              <div style={{ display: "flex", flexDirection: "column", gap: "80px" }}>
-                {[3, 2, 1].map(pavNum => {
-                  const mods = pavilionModules[pavNum];
-                  if (!mods || mods.length === 0) return null;
+              {[3, 2, 1].map(pavNum => {
+                const mods = pavilionModules[pavNum];
+                if (!mods || mods.length === 0) return null;
 
-                  const pavLabels = { 3: "Pavilion 1", 2: "Connection", 1: "Pavilion 2" };
-                  const pavLabel = pavLabels[pavNum];
+                const pavLabels = { 3: "Pavilion 1", 2: "Connection", 1: "Pavilion 2" };
+                const pavLabel = pavLabels[pavNum];
+                
+                // Build layers for this pavilion (same format as building elevations)
+                const pavilionLayers = {
+                  W: [],
+                  Y: [],
+                  Z: [],
+                  X: []
+                };
+                
+                // Convert pavilion mods to layer format
+                mods.forEach((mod, idx) => {
+                  ['W', 'Y', 'Z', 'X'].forEach(face => {
+                    const wall = findWall(mod, face);
+                    if (wall) {
+                      const slot = {
+                        wall: wall,
+                        widthCells: mod.w || 5,
+                        xOffsetCells: mod.x || idx * 5,
+                        heightCells: mod.h || 1,
+                        yOffsetCells: mod.y || 0
+                      };
+                      
+                      if (!pavilionLayers[face][0]) {
+                        pavilionLayers[face][0] = { slots: [] };
+                      }
+                      pavilionLayers[face][0].slots.push(slot);
+                    }
+                  });
+                });
 
-                  return (
-                    <div key={pavNum} style={{ display: "block" }}>
-                      <div style={{ fontSize: "13px", fontWeight: "bold", backgroundColor: "#fed7aa", color: "#000", padding: "10px 16px", borderRadius: "4px", marginBottom: "32px", width: "fit-content" }}>
-                        {pavLabel}
-                      </div>
-
-                      <div style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
-                        {["W", "Y", "Z", "X"].map(face => {
-                          const faceLabels = { 
-                            Y: "Y — South Elevation", 
-                            W: "W — North Elevation", 
-                            Z: "Z — West Elevation", 
-                            X: "X — East Elevation" 
-                          };
-                          const hasAny = mods.some(mod => findWall(mod, face));
-                          if (!hasAny) return null;
-                          
-                          return (
-                            <div key={face} style={{ display: "block", marginBottom: "24px" }}>
-                              <div style={{ fontSize: "14px", fontWeight: "bold", color: "black", textTransform: "uppercase", letterSpacing: "0.05em", backgroundColor: "#fed7aa", padding: "8px 12px", borderRadius: "4px", width: "fit-content", marginLeft: "4px", marginBottom: "16px" }}>
-                                {faceLabels[face]}
-                              </div>
-                              <div style={{ display: "flex", gap: "2px", minWidth: "max-content" }}>
-                                {mods.map((mod, idx) => {
-                                  const wall = findWall(mod, face);
-                                  if (!wall) return null;
-                                  
-                                  return (
-                                    <ElevationImage 
-                                      key={`${pavNum}-${face}-${idx}`} 
-                                      wall={wall} 
-                                      label={`${face}${idx + 1}`} 
-                                      face={face} 
-                                      isPavilion={true} 
-                                    />
-                                  );
-                                })}
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
+                return (
+                  <div key={pavNum} style={{ marginBottom: "60px" }}>
+                    <div style={{ fontSize: "13px", fontWeight: "bold", backgroundColor: "#fed7aa", color: "#000", padding: "10px 16px", borderRadius: "4px", marginBottom: "32px", width: "fit-content" }}>
+                      {pavLabel}
                     </div>
-                  );
-                })}
-              </div>
+                    
+                    {/* Use same components as building elevations */}
+                    <HorizontalElevation 
+                      layers={pavilionLayers.W} 
+                      label="W — North Elevation" 
+                      color="#22c55e"
+                      totalWidthPx={totalWidthPx}
+                      wallHPx={wallHPx}
+                      scale={scale}
+                      CELL_M={CELL_M}
+                      PX_PER_M={PX_PER_M}
+                      flip={true}
+                    />
+                    <HorizontalElevation 
+                      layers={pavilionLayers.Y} 
+                      label="Y — South Elevation" 
+                      color="#3b82f6"
+                      totalWidthPx={totalWidthPx}
+                      wallHPx={wallHPx}
+                      scale={scale}
+                      CELL_M={CELL_M}
+                      PX_PER_M={PX_PER_M}
+                    />
+                    <VerticalElevation 
+                      layers={pavilionLayers.Z} 
+                      label="Z — West Elevation" 
+                      color="#f59e0b"
+                      endElevationHPx={endElevationHPx}
+                      scale={scale}
+                      CELL_M={CELL_M}
+                      PX_PER_M={PX_PER_M}
+                      labelMap={{}}
+                    />
+                    <VerticalElevation 
+                      layers={pavilionLayers.X} 
+                      label="X — East Elevation" 
+                      color="#ef4444"
+                      endElevationHPx={endElevationHPx}
+                      scale={scale}
+                      CELL_M={CELL_M}
+                      PX_PER_M={PX_PER_M}
+                      labelMap={{}}
+                    />
+                  </div>
+                );
+              })}
             </div>
           )}
         </div>
