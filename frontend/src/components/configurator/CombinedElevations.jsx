@@ -278,24 +278,46 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
                         const hasAny = mods.some(mod => findWall(mod, face));
                         if (!hasAny) return null;
                         
+                        // Calculate pavilion bounds for proper width
+                        const pavMinX = Math.min(...mods.map(m => m.x));
+                        const pavMaxX = Math.max(...mods.map(m => m.x + m.w));
+                        const pavWidthCells = pavMaxX - pavMinX;
+                        const pavWidthPx = Math.round(scale * pavWidthCells * CELL_M * PX_PER_M);
+                        
+                        // Apply flip for W (North) elevation like main building
+                        const shouldFlip = face === "W";
+                        
                         return (
                           <div key={face} style={{ display: "block", marginBottom: "24px" }}>
                             <div style={{ fontSize: "14px", fontWeight: "bold", color: "black", textTransform: "uppercase", letterSpacing: "0.05em", backgroundColor: "#fed7aa", padding: "8px 12px", borderRadius: "4px", width: "fit-content", marginLeft: "4px", marginBottom: "16px" }}>
                               {faceLabels[face]}
                             </div>
-                            <div style={{ position: "relative", display: "inline-block", minWidth: "max-content", height: wallHPx, backgroundColor: "#f9fafb" }}>
-                              {[mods[2], mods[3], mods[1], mods[0]].map((mod, idx) => {
-                                if (!mod) return null;
+                            <div style={{ 
+                              position: "relative", 
+                              display: "inline-block", 
+                              width: pavWidthPx, 
+                              height: wallHPx, 
+                              backgroundColor: "#f9fafb",
+                              transform: shouldFlip ? "scaleX(-1)" : undefined
+                            }}>
+                              {mods.map((mod, idx) => {
                                 const wall = findWall(mod, face);
                                 if (!wall) return null;
                                 
-                                // Calculate position based on module's actual grid position
-                                const leftPx = Math.round(scale * (mod.x || 0) * CELL_M * PX_PER_M);
-                                const widthPx = Math.round(scale * (mod.w || 5) * CELL_M * PX_PER_M);
+                                // Calculate position based on module's grid coordinate relative to pavilion min
+                                const offsetCells = mod.x - pavMinX;
+                                const leftPx = Math.round(scale * offsetCells * CELL_M * PX_PER_M);
+                                const widthPx = Math.round(scale * mod.w * CELL_M * PX_PER_M);
+                                
+                                // When container is flipped, also flip images back to correct orientation
+                                const modifiedWall = shouldFlip ? {
+                                  ...wall,
+                                  flipped: !(wall.flipped || false)
+                                } : wall;
                                 
                                 return (
                                   <div 
-                                    key={`${pavNum}-${face}-${idx}`}
+                                    key={`${pavNum}-${face}-${mod.x}-${mod.y}`}
                                     style={{ 
                                       position: "absolute", 
                                       left: leftPx, 
@@ -304,7 +326,7 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
                                     }}
                                   >
                                     <ElevationImage 
-                                      wall={wall} 
+                                      wall={modifiedWall} 
                                       label={`${face}${idx + 1}`} 
                                       face={face} 
                                       isPavilion={true} 
@@ -314,7 +336,6 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
                               })}
                               {/* Ground line */}
                               <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 2, backgroundColor: "#374151" }} />
-                            </div>
                             </div>
                           </div>
                         );
