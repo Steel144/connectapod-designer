@@ -448,10 +448,17 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
                   crossOrigin="anonymous"
                 />
                 
-                {/* Property boundaries currently not available due to CORS restrictions */}
-                {/* WMS services block browser requests - boundaries visible via LINZ Data Service */}
+                {/* LINZ Property Boundaries via WMTS tile proxy */}
+                {showBoundaries && (
+                  <TileLayer
+                    url={`${import.meta.env.VITE_BACKEND_URL || ''}/api/linz/wmts-tile/{z}/{x}/{y}`}
+                    opacity={0.7}
+                    maxZoom={21}
+                    attribution="LINZ"
+                  />
+                )}
                 
-                {/* LINZ Property Boundary GeoJSON */}
+                {/* LINZ Property Boundary GeoJSON (for specific fetched boundary) */}
                 {showBoundaries && propertyBoundary && (
                   <GeoJSON
                     data={propertyBoundary}

@@ -398,6 +398,52 @@ async def generate_description(request: AIGenerateRequest):
         print(f"AI generation error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+
+from fastapi import Request, Response
+
+@app.get("/api/linz/wmts-tile/{z}/{x}/{y}")
+async def linz_wmts_tile(z: int, x: int, y: int):
+    """Proxy LINZ WMTS tile requests to avoid exposing API key"""
+    linz_api_key = os.getenv("LINZ_API_KEY")
+    if not linz_api_key:
+        raise HTTPException(status_code=500, detail="LINZ API key not configured")
+    
+    tile_url = f"https://tiles-cdn.koordinates.com/services;key={linz_api_key}/tiles/v4/layer=50804,style=auto/EPSG:3857/{z}/{x}/{y}.png"
+    
+    try:
+        async with httpx.AsyncClient(timeout=15.0) as client:
+            response = await client.get(tile_url)
+            return Response(
+                content=response.content,
+                media_type="image/png",
+                headers={"Cache-Control": "public, max-age=86400"}
+            )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/linz/wms-proxy")
+async def linz_wms_proxy(request: Request):
+    """Proxy LINZ WMS requests to avoid CORS issues"""
+    linz_api_key = os.getenv("LINZ_API_KEY")
+    if not linz_api_key:
+        raise HTTPException(status_code=500, detail="LINZ API key not configured")
+    
+    # Forward all query params to LINZ WMS
+    params = dict(request.query_params)
+    wms_url = f"https://data.linz.govt.nz/services;key={linz_api_key}/wms"
+    
+    try:
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            response = await client.get(wms_url, params=params)
+            return Response(
+                content=response.content,
+                media_type=response.headers.get("content-type", "image/png"),
+                headers={"Cache-Control": "public, max-age=3600"}
+            )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @app.get("/api/linz/property-boundary")
 async def get_property_boundary(lat: float, lon: float):
     """
