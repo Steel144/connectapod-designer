@@ -25,26 +25,22 @@ const HorizontalElevation = memo(function HorizontalElevation({
         height: wallHPx, 
         backgroundColor: "#f9fafb", 
         overflow: "hidden",
+        transform: flip ? "scaleX(-1)" : undefined  // Flip container to reverse order
       }}>
          {layers.map((layer, li) => {
            let moduleNum = 0;
            
            return layer.slots.map((slot, si) => {
              moduleNum++;
-             let leftPx = Math.round(scale * slot.xOffsetCells * CELL_M * PX_PER_M);
+             const leftPx = Math.round(scale * slot.xOffsetCells * CELL_M * PX_PER_M);
              const widthPx = Math.round(scale * slot.widthCells * CELL_M * PX_PER_M);
              
-             // If flipped, mirror the position (right to left)
-             if (flip) {
-               leftPx = totalWidthPx - leftPx - widthPx;
-             }
-             
-             // Create modified slot with flipped wall
+             // When container is flipped, also flip images back so they face correct direction
              const modifiedSlot = {
                ...slot,
                wall: slot.wall ? {
                  ...slot.wall,
-                 flipped: flip  // Set to flip value directly
+                 flipped: flip ? true : (slot.wall.flipped || false)  // Flip images back when container is flipped
                } : null
              };
              
