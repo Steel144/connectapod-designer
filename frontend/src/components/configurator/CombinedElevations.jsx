@@ -292,7 +292,7 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
                                 gap: "2px", 
                                 minWidth: "max-content"
                               }}>
-                                {mods.map((mod, idx) => {
+                                {(face === "W" ? [...mods].reverse() : mods).map((mod, idx) => {
                                   const wall = findWall(mod, face);
                                   if (!wall) return null;
                                   
