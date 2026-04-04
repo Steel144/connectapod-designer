@@ -116,6 +116,31 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
   });
   const [detectedRegion, setDetectedRegion] = useState('');
 
+  // Earthquake zone mapping (NZS 1170.5 Z-factor based)
+  const EQ_ZONES = [
+    { code: "L",  label: "Low",     z: "Z < 0.15",     desc: "Northland, Auckland" },
+    { code: "M",  label: "Medium",  z: "0.15 ≤ Z < 0.3", desc: "Waikato, BOP, Taranaki" },
+    { code: "H",  label: "High",    z: "Z ≥ 0.3",      desc: "Wellington, Gisborne, Canterbury" },
+  ];
+
+  const REGION_EQ_MAP = {
+    "Northland": "L", "Auckland": "L",
+    "Waikato": "M", "Bay of Plenty": "M", "Taranaki": "M", "Manawatū-Whanganui": "M",
+    "Manawatu-Wanganui": "M", "Hawke's Bay": "M",
+    "Wellington": "H", "Gisborne": "H",
+    "Canterbury": "H", "West Coast": "H", "Marlborough": "H",
+    "Nelson": "M", "Tasman": "M", "Otago": "M", "Southland": "M",
+  };
+
+  const [eqZone, setEqZone] = useState(() => {
+    try { return localStorage.getItem('sitemap_eqZone') || ''; } catch { return ''; }
+  });
+
+  const handleEqZoneChange = (code) => {
+    setEqZone(code);
+    localStorage.setItem('sitemap_eqZone', code);
+  };
+
   const detectRegionFromAddress = (addressObj) => {
     const region = addressObj?.state || addressObj?.region || addressObj?.county || '';
     for (const [key, zone] of Object.entries(REGION_WIND_MAP)) {
@@ -336,7 +361,12 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
           if (!windZone) {
             handleWindZoneChange(zone);
           }
-          toast.success(`Location found! Suggested wind zone: ${zone} (${region})`);
+          // Auto-detect earthquake zone
+          const eqZ = REGION_EQ_MAP[region] || 'M';
+          if (!eqZone) {
+            handleEqZoneChange(eqZ);
+          }
+          toast.success(`Location found! Wind: ${zone}, EQ: ${eqZ} (${region})`);
           
           // Fetch property boundary from LINZ if enabled
           if (showBoundaries) {
@@ -620,6 +650,36 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
               {WIND_ZONES.map(wz => (
                 <option key={wz.code} value={wz.code}>
                   {wz.label} — {wz.speed} — {wz.desc}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Earthquake Zone */}
+          <div>
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-xs font-semibold text-gray-600">
+                Earthquake Zone{detectedRegion ? ` (${detectedRegion})` : ''}
+              </label>
+              <a 
+                href="https://www.building.govt.nz/managing-buildings/managing-earthquake-prone-buildings/how-the-earthquake-prone-building-system-works/z-values-seismic-risk" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-xs text-orange-600 hover:text-orange-700 hover:underline"
+              >
+                NZS Z-Values
+              </a>
+            </div>
+            <select
+              data-testid="eq-zone-select"
+              value={eqZone}
+              onChange={(e) => handleEqZoneChange(e.target.value)}
+              className="w-full text-sm border border-gray-300 rounded px-2 py-1.5 bg-white focus:outline-none focus:ring-1 focus:ring-orange-500"
+            >
+              <option value="">Select earthquake zone...</option>
+              {EQ_ZONES.map(ez => (
+                <option key={ez.code} value={ez.code}>
+                  {ez.label} — {ez.z} — {ez.desc}
                 </option>
               ))}
             </select>
