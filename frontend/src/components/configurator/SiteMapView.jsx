@@ -535,22 +535,6 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
                 {loading ? <Loader2 className="w-3 h-3 animate-spin" /> : 'Find'}
               </button>
             </div>
-            
-            {/* Same as Home Address button */}
-            <button
-              data-testid="copy-home-address-btn"
-              onClick={() => {
-                try {
-                  const saved = JSON.parse(localStorage.getItem("connectapod_save_details") || "{}");
-                  if (saved.homeAddress) {
-                    setSiteAddress(saved.homeAddress);
-                  }
-                } catch {}
-              }}
-              className="text-xs text-orange-600 hover:text-orange-700 hover:underline cursor-pointer mt-1"
-            >
-              Same as home address
-            </button>
           </div>
 
           <div>
