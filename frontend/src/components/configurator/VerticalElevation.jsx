@@ -63,7 +63,7 @@ const VerticalElevation = memo(function VerticalElevation({
                    heightPx={endElevationHPx}
                    labelNum={displayLabel}
                    objectFit="fill"
-                   showLabel={true}
+                   showLabel={false}
                  />
                );
              });
