@@ -290,23 +290,16 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
                               <div style={{ 
                                 display: "flex", 
                                 gap: "2px", 
-                                minWidth: "max-content",
-                                transform: shouldFlip ? "scaleX(-1)" : undefined  // Same as building elevations
+                                minWidth: "max-content"
                               }}>
-                                {mods.map((mod, idx) => {
+                                {(shouldFlip ? [...mods].reverse() : mods).map((mod, idx) => {
                                   const wall = findWall(mod, face);
                                   if (!wall) return null;
-                                  
-                                  // EXACT same logic as HorizontalElevation component
-                                  const modifiedWall = wall ? {
-                                    ...wall,
-                                    flipped: shouldFlip ? !(wall.flipped || false) : (wall.flipped || false)
-                                  } : null;
                                   
                                   return (
                                     <ElevationImage 
                                       key={`${pavNum}-${face}-${idx}`} 
-                                      wall={modifiedWall} 
+                                      wall={wall} 
                                       label={`${face}${idx + 1}`} 
                                       face={face} 
                                       isPavilion={true} 
