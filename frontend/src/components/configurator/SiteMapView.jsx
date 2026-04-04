@@ -458,19 +458,6 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
                   />
                 )}
                 
-                {/* LINZ Property Boundary GeoJSON (for specific fetched boundary) */}
-                {showBoundaries && propertyBoundary && (
-                  <GeoJSON
-                    data={propertyBoundary}
-                    style={{
-                      color: '#F15A22',
-                      weight: 4,
-                      opacity: 1,
-                      fillColor: '#F15A22',
-                      fillOpacity: 0.15
-                    }}
-                  />
-                )}
                 
                 <ZoomControl position="bottomright" />
                 <CircleMarker center={coordinates} radius={8} pathOptions={{ color: '#F15A22', fillColor: '#F15A22', fillOpacity: 1 }}>
