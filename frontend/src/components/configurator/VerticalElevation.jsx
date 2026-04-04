@@ -62,9 +62,8 @@ const VerticalElevation = memo(function VerticalElevation({
                    widthPx={slotWidthPx}
                    heightPx={endElevationHPx}
                    labelNum={displayLabel}
-                   objectFit="contain"
+                   objectFit="cover"
                    showLabel={false}
-                   autoWidth={true}
                  />
                );
              });
