@@ -85,3 +85,7 @@ android-sdk/
 # (Secrets should be injected via Emergent platform, not committed)
 !backend/.env
 !frontend/.env
+-e 
+# Environment files
+*.env
+*.env.*
