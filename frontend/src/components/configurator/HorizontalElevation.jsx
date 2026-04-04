@@ -28,12 +28,13 @@ const HorizontalElevation = memo(function HorizontalElevation({
       }}>
          {layers.map((layer, li) => {
            let moduleNum = 0;
+           
            return layer.slots.map((slot, si) => {
              moduleNum++;
              let leftPx = Math.round(scale * slot.xOffsetCells * CELL_M * PX_PER_M);
              const widthPx = Math.round(scale * slot.widthCells * CELL_M * PX_PER_M);
              
-             // If flipped, mirror the position and flip the image
+             // If flipped, mirror the position (right to left)
              if (flip) {
                leftPx = totalWidthPx - leftPx - widthPx;
              }
@@ -45,7 +46,7 @@ const HorizontalElevation = memo(function HorizontalElevation({
                    ...slot,
                    wall: slot.wall ? {
                      ...slot.wall,
-                     flipped: flip ? !slot.wall.flipped : slot.wall.flipped  // Toggle flip
+                     flipped: flip ? true : (slot.wall.flipped || false)  // Force flip when mirroring
                    } : slot.wall
                  }}
                  leftPx={leftPx}
