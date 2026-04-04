@@ -291,17 +291,17 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
                                 display: "flex", 
                                 gap: "2px", 
                                 minWidth: "max-content",
-                                transform: shouldFlip ? "scaleX(-1)" : undefined
+                                transform: shouldFlip ? "scaleX(-1)" : undefined  // Same as building elevations
                               }}>
-                                {(shouldFlip ? [...mods].reverse() : mods).map((mod, idx) => {
+                                {mods.map((mod, idx) => {
                                   const wall = findWall(mod, face);
                                   if (!wall) return null;
                                   
-                                  // If W elevation is flipped, also flip each image back
-                                  const modifiedWall = shouldFlip && wall ? {
+                                  // EXACT same logic as HorizontalElevation component
+                                  const modifiedWall = wall ? {
                                     ...wall,
-                                    flipped: !(wall.flipped || false)
-                                  } : wall;
+                                    flipped: shouldFlip ? !(wall.flipped || false) : (wall.flipped || false)
+                                  } : null;
                                   
                                   return (
                                     <ElevationImage 
