@@ -50,10 +50,8 @@ const VerticalElevation = memo(function VerticalElevation({
                 const scaleMultiplier = slotScales[elevationNum] || 1.1;
                 const slotWidthPx = Math.round(baseWidthPx * scaleMultiplier);
                 const baseLeftPx = Math.round(scale * slot.yOffsetCells * CELL_M * PX_PER_M);
-                const scaledOffsetAdjustment = !slotScales[elevationNum] ? Math.round(scale * -0.14 * PX_PER_M) : 0;
-                const slotLeftPx = baseLeftPx + scaledOffsetAdjustment;
                 const extraOffsetPx = slotOffsets[elevationNum] ? Math.round(scale * slotOffsets[elevationNum] * PX_PER_M) : 0;
-                const leftPx = slotLeftPx + extraOffsetPx + 50;
+                const leftPx = baseLeftPx + extraOffsetPx + 50;
 
                const displayLabel = labelMap[elevationNum] || elevationNum;
                const topPx = Math.round(scale * 0.02 * PX_PER_M);

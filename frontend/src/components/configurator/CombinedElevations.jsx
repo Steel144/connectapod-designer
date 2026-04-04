@@ -59,11 +59,12 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
 
   const { minX, maxX, allMinY, allMaxY, wElevation, yElevation, zElevation, xElevation } = useElevationGeometry(placedModules, walls);
   
-  const slotOffset1Z = -0.02;
-  const slotOffset2Z = 0.14;
+  // Manual offset overrides removed — consistent sizing via globalMaxDepthCells eliminates the need
+  const slotOffset1Z = 0;
+  const slotOffset2Z = 0;
   const slotOffset3Z = 0;
-  const slotOffset1X = -0.02;
-  const slotOffset2X = 0.15;
+  const slotOffset1X = 0;
+  const slotOffset2X = 0;
   const slotOffset3X = 0;
   const slotScale3X = 1.1;
   const labelMapZ = { 1: "P1", 2: "C", 3: "P2" };
