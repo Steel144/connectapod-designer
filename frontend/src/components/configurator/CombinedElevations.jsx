@@ -284,26 +284,15 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
                               <div style={{ fontSize: "14px", fontWeight: "bold", color: "black", textTransform: "uppercase", letterSpacing: "0.05em", backgroundColor: "#fed7aa", padding: "8px 12px", borderRadius: "4px", width: "fit-content", marginLeft: "4px", marginBottom: "16px" }}>
                                 {faceLabels[face]}
                               </div>
-                              <div style={{ 
-                                display: "flex", 
-                                gap: "2px", 
-                                minWidth: "max-content",
-                                transform: face === "W" ? "scaleX(-1)" : undefined
-                              }}>
-                                {mods.map((mod, idx) => {
+                              <div style={{ display: "flex", gap: "2px", minWidth: "max-content" }}>
+                                {(face === "W" ? [...mods].reverse() : mods).map((mod, idx) => {
                                   const wall = findWall(mod, face);
                                   if (!wall) return null;
-                                  
-                                  // For W elevation, toggle flip (same as building elevations)
-                                  const modifiedWall = (face === "W" && wall) ? {
-                                    ...wall,
-                                    flipped: !(wall.flipped || false)
-                                  } : wall;
                                   
                                   return (
                                     <ElevationImage 
                                       key={`${pavNum}-${face}-${idx}`} 
-                                      wall={modifiedWall} 
+                                      wall={wall} 
                                       label={`${face}${idx + 1}`} 
                                       face={face} 
                                       isPavilion={true} 
