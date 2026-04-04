@@ -26,6 +26,16 @@ const USE_CASE_LABELS = {
   bach: "Bach",
 };
 
+const CELL_M = 0.6;
+
+const isDeckModule = (m) =>
+  m.chassis === "DK" || 
+  m.chassis === "SO" || 
+  m.type?.includes("-D-") || 
+  m.type?.includes("-SO-") ||
+  m.label?.toLowerCase().includes("deck") || 
+  m.label?.toLowerCase().includes("soffit");
+
 export default function DesignCatalogue() {
   const navigate = useNavigate();
   const qc = useQueryClient();
@@ -78,7 +88,27 @@ export default function DesignCatalogue() {
         const img = wallCode ? (wallImages[wallCode] || null) : null;
         return { ...w, elevationImage: img || w.elevationImage || null };
       });
-      return { ...t, _grid: grid, _walls: walls };
+      
+      // Dynamically calculate internal/deck sqm from grid modules
+      let internal_sqm = t.internal_sqm;
+      let deck_sqm = t.deck_sqm;
+      if (internal_sqm == null || deck_sqm == null) {
+        const rawGrid = payload.layout?.grid || [];
+        let calcInternal = 0;
+        let calcDeck = 0;
+        rawGrid.forEach(m => {
+          const area = m.sqm || (m.w * m.h * CELL_M * CELL_M);
+          if (isDeckModule(m)) {
+            calcDeck += area;
+          } else {
+            calcInternal += area;
+          }
+        });
+        if (internal_sqm == null) internal_sqm = calcInternal;
+        if (deck_sqm == null) deck_sqm = calcDeck;
+      }
+      
+      return { ...t, _grid: grid, _walls: walls, internal_sqm, deck_sqm };
     }),
     [designTemplates, floorPlanImages, wallImages]
   );
@@ -248,13 +278,21 @@ export default function DesignCatalogue() {
                           <>
                             <span className="flex items-center gap-1" title="Internal Floor Area">
                               <Maximize2 size={11} className="text-[#F15A22]" />
-                              {template.internal_sqm}m² int
+                              {Number(template.internal_sqm).toFixed(1)}m² int
                             </span>
                             <span className="flex items-center gap-1" title="Deck Area">
                               <Layers size={11} className="text-[#F15A22]" />
-                              {template.deck_sqm}m² deck
+                              {Number(template.deck_sqm).toFixed(1)}m² deck
+                            </span>
+                            <span className="flex items-center gap-1 text-gray-400" title="Total Area">
+                              {(Number(template.internal_sqm) + Number(template.deck_sqm)).toFixed(1)}m² total
                             </span>
                           </>
+                        ) : template.internal_sqm > 0 ? (
+                          <span className="flex items-center gap-1">
+                            <Maximize2 size={11} className="text-[#F15A22]" />
+                            {Number(template.internal_sqm).toFixed(1)}m²
+                          </span>
                         ) : template.size_sqm > 0 && (
                           <span className="flex items-center gap-1">
                             <Maximize2 size={11} className="text-[#F15A22]" />
