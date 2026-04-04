@@ -39,16 +39,19 @@ const HorizontalElevation = memo(function HorizontalElevation({
                leftPx = totalWidthPx - leftPx - widthPx;
              }
              
+             // Create modified slot with flipped wall
+             const modifiedSlot = {
+               ...slot,
+               wall: slot.wall ? {
+                 ...slot.wall,
+                 flipped: flip  // Set to flip value directly
+               } : null
+             };
+             
              return (
                <ElevationSlot
                  key={`${li}-${si}`}
-                 slot={{
-                   ...slot,
-                   wall: slot.wall ? {
-                     ...slot.wall,
-                     flipped: flip ? true : (slot.wall.flipped || false)  // Force flip when mirroring
-                   } : slot.wall
-                 }}
+                 slot={modifiedSlot}
                  leftPx={leftPx}
                  widthPx={widthPx}
                  heightPx={wallHPx}
