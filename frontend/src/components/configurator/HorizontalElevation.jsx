@@ -25,18 +25,29 @@ const HorizontalElevation = memo(function HorizontalElevation({
         height: wallHPx, 
         backgroundColor: "#f9fafb", 
         overflow: "hidden",
-        transform: flip ? "scaleX(-1)" : undefined  // Flip horizontally if flip=true
       }}>
          {layers.map((layer, li) => {
            let moduleNum = 0;
            return layer.slots.map((slot, si) => {
              moduleNum++;
-             const leftPx = Math.round(scale * slot.xOffsetCells * CELL_M * PX_PER_M);
+             let leftPx = Math.round(scale * slot.xOffsetCells * CELL_M * PX_PER_M);
              const widthPx = Math.round(scale * slot.widthCells * CELL_M * PX_PER_M);
+             
+             // If flipped, mirror the position and flip the image
+             if (flip) {
+               leftPx = totalWidthPx - leftPx - widthPx;
+             }
+             
              return (
                <ElevationSlot
                  key={`${li}-${si}`}
-                 slot={slot}
+                 slot={{
+                   ...slot,
+                   wall: slot.wall ? {
+                     ...slot.wall,
+                     flipped: flip ? !slot.wall.flipped : slot.wall.flipped  // Toggle flip
+                   } : slot.wall
+                 }}
                  leftPx={leftPx}
                  widthPx={widthPx}
                  heightPx={wallHPx}
