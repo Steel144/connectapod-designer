@@ -141,6 +141,31 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
     localStorage.setItem('sitemap_eqZone', code);
   };
 
+  // Corrosion zone mapping (NZS 3604 / BRANZ)
+  const CORROSION_ZONES = [
+    { code: "B", label: "Zone B", desc: "Low — Inland >20km from coast" },
+    { code: "C", label: "Zone C", desc: "Medium — 500m–20km from coast" },
+    { code: "D", label: "Zone D", desc: "High — Within 500m of coast/harbour" },
+    { code: "E", label: "Zone E", desc: "Very High — Surf beaches (treated as D)" },
+  ];
+
+  const REGION_CORROSION_MAP = {
+    "Northland": "C", "Auckland": "C", "Waikato": "B", "Bay of Plenty": "C",
+    "Gisborne": "C", "Hawke's Bay": "C", "Taranaki": "C",
+    "Manawatū-Whanganui": "B", "Manawatu-Wanganui": "B", "Wellington": "C",
+    "Nelson": "C", "Tasman": "C", "Marlborough": "C",
+    "West Coast": "C", "Canterbury": "B", "Otago": "B", "Southland": "C",
+  };
+
+  const [corrZone, setCorrZone] = useState(() => {
+    try { return localStorage.getItem('sitemap_corrZone') || ''; } catch { return ''; }
+  });
+
+  const handleCorrZoneChange = (code) => {
+    setCorrZone(code);
+    localStorage.setItem('sitemap_corrZone', code);
+  };
+
   const detectRegionFromAddress = (addressObj) => {
     const region = addressObj?.state || addressObj?.region || addressObj?.county || '';
     for (const [key, zone] of Object.entries(REGION_WIND_MAP)) {
@@ -366,7 +391,12 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
           if (!eqZone) {
             handleEqZoneChange(eqZ);
           }
-          toast.success(`Location found! Wind: ${zone}, EQ: ${eqZ} (${region})`);
+          // Auto-detect corrosion zone
+          const corrZ = REGION_CORROSION_MAP[region] || 'C';
+          if (!corrZone) {
+            handleCorrZoneChange(corrZ);
+          }
+          toast.success(`Location found! Wind: ${zone}, EQ: ${eqZ}, Corrosion: ${corrZ} (${region})`);
           
           // Fetch property boundary from LINZ if enabled
           if (showBoundaries) {
@@ -680,6 +710,36 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
               {EQ_ZONES.map(ez => (
                 <option key={ez.code} value={ez.code}>
                   {ez.label} — {ez.z} — {ez.desc}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Corrosion Zone */}
+          <div>
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-xs font-semibold text-gray-600">
+                Corrosion Zone{detectedRegion ? ` (${detectedRegion})` : ''}
+              </label>
+              <a 
+                href="https://www.branz.co.nz/branz-maps-zones/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-xs text-orange-600 hover:text-orange-700 hover:underline"
+              >
+                BRANZ Corrosion Map
+              </a>
+            </div>
+            <select
+              data-testid="corrosion-zone-select"
+              value={corrZone}
+              onChange={(e) => handleCorrZoneChange(e.target.value)}
+              className="w-full text-sm border border-gray-300 rounded px-2 py-1.5 bg-white focus:outline-none focus:ring-1 focus:ring-orange-500"
+            >
+              <option value="">Select corrosion zone...</option>
+              {CORROSION_ZONES.map(cz => (
+                <option key={cz.code} value={cz.code}>
+                  {cz.label} — {cz.desc}
                 </option>
               ))}
             </select>
