@@ -326,14 +326,13 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
                         
                         // Calculate pavilion bounds based on elevation type
                         let pavMinCoord, pavMaxCoord, pavWidthCells, pavWidthPx;
+                        const maxPavDepth = Math.max(...mods.map(m => m.h));
                         
                         if (isVerticalElevation) {
                           // For Z and X (vertical elevations), use Y-axis (depth)
                           pavMinCoord = Math.min(...mods.map(m => m.y));
                           pavMaxCoord = Math.max(...mods.map(m => m.y + m.h));
                           pavWidthCells = pavMaxCoord - pavMinCoord;
-                          // Use the max depth across pavilion modules for container
-                          const maxPavDepth = Math.max(...mods.map(m => m.h));
                           pavWidthPx = Math.round(scale * maxPavDepth * CELL_M * PX_PER_M * 1.1);
                         } else {
                           // For W and Y (horizontal elevations), use X-axis (width)
