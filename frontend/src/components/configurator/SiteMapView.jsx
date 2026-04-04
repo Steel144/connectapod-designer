@@ -118,9 +118,9 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
 
   // Earthquake zone mapping (NZS 1170.5 Z-factor based)
   const EQ_ZONES = [
-    { code: "L",  label: "Low",     z: "Z < 0.15",     desc: "Northland, Auckland" },
-    { code: "M",  label: "Medium",  z: "0.15 ≤ Z < 0.3", desc: "Waikato, BOP, Taranaki" },
-    { code: "H",  label: "High",    z: "Z ≥ 0.3",      desc: "Wellington, Gisborne, Canterbury" },
+    { code: "L",  label: "Low",     z: "Z < 0.15",     desc: "Low seismic hazard" },
+    { code: "M",  label: "Medium",  z: "0.15 ≤ Z < 0.3", desc: "Moderate seismic hazard" },
+    { code: "H",  label: "High",    z: "Z ≥ 0.3",      desc: "High seismic hazard" },
   ];
 
   const REGION_EQ_MAP = {
