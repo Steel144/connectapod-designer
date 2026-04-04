@@ -3,6 +3,7 @@ import { ZoomIn, ZoomOut } from "lucide-react";
 import { useElevationGeometry } from "@/hooks/useElevationGeometry";
 import HorizontalElevation from "./HorizontalElevation";
 import VerticalElevation from "./VerticalElevation";
+import ElevationSlot from "./ElevationSlot";
 
 const CELL_M = 0.6;
 const PX_PER_M = 100;
@@ -354,23 +355,15 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
                                 };
                                 
                                 return (
-                                  <div 
+                                  <ElevationSlot
                                     key={`${pavNum}-${face}-${mod.x}-${mod.y}`}
-                                    style={{ 
-                                      position: "absolute", 
-                                      left: leftPx, 
-                                      width: widthPx,
-                                      height: "100%"
-                                    }}
-                                  >
-                                    <ElevationImage 
-                                      wall={modifiedWall} 
-                                      label={`${face}${idx + 1}`} 
-                                      face={face} 
-                                      isPavilion={true}
-                                      forceWidth={`${widthPx}px`}
-                                    />
-                                  </div>
+                                    slot={{ wall: modifiedWall, face }}
+                                    leftPx={leftPx}
+                                    widthPx={widthPx}
+                                    heightPx={wallHPx}
+                                    objectFit="fill"
+                                    showLabel={false}
+                                  />
                                 );
                               })}
                               {/* Ground line */}
