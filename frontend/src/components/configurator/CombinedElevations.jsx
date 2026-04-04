@@ -246,6 +246,70 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
               PX_PER_M={PX_PER_M}
             />
           </div>
+
+          {/* Pavilion Elevations Section */}
+          {hasPavilions && (
+            <div style={{ display: "block", marginTop: "80px", paddingTop: "40px", borderTop: "2px solid #e5e7eb" }}>
+              <div style={{ fontSize: "16px", fontWeight: "bold", color: "#374151", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "40px" }}>
+                Pavilion Elevations
+              </div>
+              
+              <div style={{ display: "flex", flexDirection: "column", gap: "80px" }}>
+                {[3, 2, 1].map(pavNum => {
+                  const mods = pavilionModules[pavNum];
+                  if (!mods || mods.length === 0) return null;
+
+                  const pavLabels = { 3: "Pavilion 1", 2: "Connection", 1: "Pavilion 2" };
+                  const pavLabel = pavLabels[pavNum];
+
+                  return (
+                    <div key={pavNum} style={{ display: "block" }}>
+                      <div style={{ fontSize: "13px", fontWeight: "bold", backgroundColor: "#fed7aa", color: "#000", padding: "10px 16px", borderRadius: "4px", marginBottom: "32px", width: "fit-content" }}>
+                        {pavLabel}
+                      </div>
+
+                      <div style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
+                        {["W", "Y", "Z", "X"].map(face => {
+                          const faceLabels = { 
+                            Y: "Y — South Elevation", 
+                            W: "W — North Elevation", 
+                            Z: "Z — West Elevation", 
+                            X: "X — East Elevation" 
+                          };
+                          const hasAny = mods.some(mod => findWall(mod, face));
+                          if (!hasAny) return null;
+                          
+                          return (
+                            <div key={face} style={{ display: "block", marginBottom: "24px" }}>
+                              <div style={{ fontSize: "14px", fontWeight: "bold", color: "black", textTransform: "uppercase", letterSpacing: "0.05em", backgroundColor: "#fed7aa", padding: "8px 12px", borderRadius: "4px", width: "fit-content", marginLeft: "4px", marginBottom: "16px" }}>
+                                {faceLabels[face]}
+                              </div>
+                              <div style={{ display: "flex", gap: "2px", minWidth: "max-content" }}>
+                                {mods.map((mod, idx) => {
+                                  const wall = findWall(mod, face);
+                                  if (!wall) return null;
+                                  
+                                  return (
+                                    <ElevationImage 
+                                      key={`${pavNum}-${face}-${idx}`} 
+                                      wall={wall} 
+                                      label={`${face}${idx + 1}`} 
+                                      face={face} 
+                                      isPavilion={true} 
+                                    />
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
