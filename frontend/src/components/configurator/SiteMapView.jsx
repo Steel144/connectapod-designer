@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { MapContainer, TileLayer, useMap, ZoomControl, CircleMarker, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer, useMap, ZoomControl, CircleMarker, Popup, GeoJSON } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet.wms';
@@ -100,6 +100,10 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
   const [showParcels, setShowParcels] = useState(() => {
     try { return JSON.parse(localStorage.getItem('sitemap_showParcels')) ?? false; } catch { return false; }
   });
+  
+  // Property boundary from LINZ
+  const [propertyBoundary, setPropertyBoundary] = useState(null);
+  const [boundaryLoading, setBoundaryLoading] = useState(false);
 
   const [mapZoom, setMapZoom] = useState(() => {
     try { return JSON.parse(localStorage.getItem('sitemap_mapZoom')) ?? 21; } catch { return 21; }
@@ -222,6 +226,36 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
     if (onScreenshotReady) onScreenshotReady(captureMapScreenshot);
   }, [captureMapScreenshot, onScreenshotReady]);
 
+  // Fetch property boundary from LINZ
+  const fetchPropertyBoundary = async (lat, lon) => {
+    setBoundaryLoading(true);
+    try {
+      const API_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8001';
+      const response = await fetch(
+        `${API_URL}/api/linz/property-boundary?lat=${lat}&lon=${lon}`
+      );
+      
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && data.geojson) {
+          setPropertyBoundary(data.geojson);
+          toast.success('Property boundary loaded');
+        } else {
+          setPropertyBoundary(null);
+          toast.info('No property boundary found at this location');
+        }
+      } else {
+        throw new Error('Failed to fetch boundary');
+      }
+    } catch (err) {
+      console.error('[SiteMapView] Property boundary error:', err);
+      setPropertyBoundary(null);
+      toast.error('Could not load property boundary');
+    } finally {
+      setBoundaryLoading(false);
+    }
+  };
+
   const geocodeAddress = async () => {
     if (!siteAddress.trim()) {
       toast.error('Please enter an address first');
@@ -256,6 +290,11 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
           setMapKey(newKey);
           localStorage.setItem('sitemap_mapkey', newKey);
           toast.success('Location found!');
+          
+          // Fetch property boundary from LINZ if enabled
+          if (showBoundaries) {
+            fetchPropertyBoundary(parseFloat(lat), parseFloat(lon));
+          }
         } else {
           toast.error('Address not found. Try a more specific address.');
         }
@@ -411,6 +450,21 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
                 
                 {/* Property boundaries currently not available due to CORS restrictions */}
                 {/* WMS services block browser requests - boundaries visible via LINZ Data Service */}
+                
+                {/* LINZ Property Boundary GeoJSON */}
+                {showBoundaries && propertyBoundary && (
+                  <GeoJSON
+                    data={propertyBoundary}
+                    style={{
+                      color: '#F15A22',
+                      weight: 4,
+                      opacity: 1,
+                      fillColor: '#F15A22',
+                      fillOpacity: 0.15
+                    }}
+                  />
+                )}
+                
                 <ZoomControl position="bottomright" />
                 <CircleMarker center={coordinates} radius={8} pathOptions={{ color: '#F15A22', fillColor: '#F15A22', fillOpacity: 1 }}>
                   <Popup>Site Location</Popup>
@@ -506,19 +560,39 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
           </div>
           
           <div className="border-t border-gray-200 pt-3 mt-3">
+            <div className="flex items-center justify-between mb-2">
+              <label className="text-xs font-semibold text-gray-600">Property Boundary</label>
+              {boundaryLoading && <span className="text-xs text-gray-500">Loading...</span>}
+            </div>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input 
+                type="checkbox" 
+                checked={showBoundaries} 
+                onChange={(e) => {
+                  const checked = e.target.checked;
+                  setShowBoundaries(checked);
+                  // Fetch boundary if enabled and we have coordinates
+                  if (checked && coordinates) {
+                    fetchPropertyBoundary(coordinates[0], coordinates[1]);
+                  } else if (!checked) {
+                    setPropertyBoundary(null);
+                  }
+                }}
+                className="w-4 h-4 text-orange-600 rounded focus:ring-orange-500"
+                style={{ accentColor: '#F15A22' }}
+              />
+              <span className="text-xs text-gray-700">Show LINZ Property Boundary</span>
+            </label>
+            {propertyBoundary && (
+              <div className="text-xs text-green-600 mt-1 ml-6">
+                ✓ Boundary displayed
+              </div>
+            )}
+          </div>
+          
+          <div className="border-t border-gray-200 pt-3 mt-3">
             <label className="text-xs font-semibold text-gray-600 block mb-2">Additional Resources</label>
             <div className="space-y-2 text-xs">
-              <div>
-                <a 
-                  href="https://data.linz.govt.nz/layer/122657-nz-property-boundaries/" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-orange-600 hover:underline flex items-center gap-1"
-                >
-                  📐 Property Boundaries (LINZ)
-                </a>
-                <p className="text-gray-500 text-xs mt-0.5">View cadastral boundaries</p>
-              </div>
               <div>
                 <a 
                   href="https://www.branz.co.nz/branz-maps-zones/" 

@@ -10,6 +10,7 @@ import shutil
 from pathlib import Path
 from emergentintegrations.llm.chat import LlmChat, UserMessage
 from dotenv import load_dotenv
+import httpx
 
 load_dotenv()
 
@@ -395,6 +396,70 @@ async def generate_description(request: AIGenerateRequest):
             
     except Exception as e:
         print(f"AI generation error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/linz/property-boundary")
+async def get_property_boundary(lat: float, lon: float):
+    """
+    Fetch property parcel boundary from LINZ Data Service for given coordinates
+    Layer: NZ Property Titles (50804)
+    Returns GeoJSON polygon of the property boundary
+    """
+    try:
+        linz_api_key = os.getenv("LINZ_API_KEY")
+        if not linz_api_key:
+            raise HTTPException(status_code=500, detail="LINZ API key not configured")
+        
+        # LINZ WFS endpoint for layer 50804 (NZ Property Titles)
+        wfs_url = f"https://data.linz.govt.nz/services;key={linz_api_key}/wfs"
+        
+        # WFS GetFeature request parameters
+        # Use CQL filter with bbox function to find parcels
+        buffer = 0.001  # ~100m buffer in degrees
+        min_lon = lon - buffer
+        min_lat = lat - buffer  
+        max_lon = lon + buffer
+        max_lat = lat + buffer
+        
+        params = {
+            "SERVICE": "WFS",
+            "VERSION": "2.0.0",
+            "REQUEST": "GetFeature",
+            "typeNames": "layer-50804",
+            "outputFormat": "json",
+            "cql_filter": f"bbox(shape,{min_lat},{min_lon},{max_lat},{max_lon})",
+            "count": "10"
+        }
+        
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            response = await client.get(wfs_url, params=params)
+            response.raise_for_status()
+            
+            geojson_data = response.json()
+            
+            # Log the response for debugging
+            print(f"LINZ WFS Response: {geojson_data}")
+            
+            # Check if we got any features
+            if not geojson_data.get("features"):
+                return {
+                    "success": False,
+                    "message": "No property boundary found at this location",
+                    "geojson": None
+                }
+            
+            # Return the first matching parcel
+            return {
+                "success": True,
+                "message": f"Found {len(geojson_data['features'])} parcel(s)",
+                "geojson": geojson_data
+            }
+            
+    except httpx.HTTPError as e:
+        print(f"LINZ API error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to fetch from LINZ: {str(e)}")
+    except Exception as e:
+        print(f"Property boundary error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == "__main__":
