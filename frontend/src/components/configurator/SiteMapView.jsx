@@ -354,6 +354,12 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
 
   const selectSuggestion = (s) => {
     setSiteAddress(s.display_name);
+    // Sync to localStorage so ProjectDetailsModal picks it up
+    try {
+      const saved = JSON.parse(localStorage.getItem("connectapod_save_details") || "{}");
+      saved.siteAddress = s.display_name;
+      localStorage.setItem("connectapod_save_details", JSON.stringify(saved));
+    } catch {}
     setSuggestions([]);
     setShowSuggestions(false);
   };
