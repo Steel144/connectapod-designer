@@ -173,7 +173,7 @@ async def upload_file(file: UploadFile = File(...)):
             shutil.copyfileobj(file.file, buffer)
         
         file_url = f"/api/files/{filename}"
-        return {"file_url": file_url}
+        return {"url": file_url, "file_url": file_url}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
