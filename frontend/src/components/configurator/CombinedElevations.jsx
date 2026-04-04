@@ -284,7 +284,8 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
                               {faceLabels[face]}
                             </div>
                             <div style={{ display: "flex", gap: "2px", minWidth: "max-content" }}>
-                              {mods.map((mod, idx) => {
+                              {[mods[2], mods[3], mods[1], mods[0]].map((mod, idx) => {
+                                if (!mod) return null;
                                 const wall = findWall(mod, face);
                                 if (!wall) return null;
                                 
