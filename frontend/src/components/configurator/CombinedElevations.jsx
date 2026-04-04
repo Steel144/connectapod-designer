@@ -278,11 +278,25 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
                         const hasAny = mods.some(mod => findWall(mod, face));
                         if (!hasAny) return null;
                         
-                        // Calculate pavilion bounds for proper width
-                        const pavMinX = Math.min(...mods.map(m => m.x));
-                        const pavMaxX = Math.max(...mods.map(m => m.x + m.w));
-                        const pavWidthCells = pavMaxX - pavMinX;
-                        const pavWidthPx = Math.round(scale * pavWidthCells * CELL_M * PX_PER_M);
+                        // Determine if this is a vertical (side) or horizontal (front/back) elevation
+                        const isVerticalElevation = face === "Z" || face === "X";
+                        
+                        // Calculate pavilion bounds based on elevation type
+                        let pavMinCoord, pavMaxCoord, pavWidthCells, pavWidthPx;
+                        
+                        if (isVerticalElevation) {
+                          // For Z and X (vertical elevations), use Y-axis (depth)
+                          pavMinCoord = Math.min(...mods.map(m => m.y));
+                          pavMaxCoord = Math.max(...mods.map(m => m.y + m.h));
+                          pavWidthCells = pavMaxCoord - pavMinCoord;
+                          pavWidthPx = Math.round(scale * pavWidthCells * CELL_M * PX_PER_M);
+                        } else {
+                          // For W and Y (horizontal elevations), use X-axis (width)
+                          pavMinCoord = Math.min(...mods.map(m => m.x));
+                          pavMaxCoord = Math.max(...mods.map(m => m.x + m.w));
+                          pavWidthCells = pavMaxCoord - pavMinCoord;
+                          pavWidthPx = Math.round(scale * pavWidthCells * CELL_M * PX_PER_M);
+                        }
                         
                         // Apply flip for W (North) elevation like main building
                         const shouldFlip = face === "W";
@@ -304,10 +318,21 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
                                 const wall = findWall(mod, face);
                                 if (!wall) return null;
                                 
-                                // Calculate position based on module's grid coordinate relative to pavilion min
-                                const offsetCells = mod.x - pavMinX;
+                                // Calculate position and width based on elevation type
+                                let offsetCells, widthCells;
+                                
+                                if (isVerticalElevation) {
+                                  // For Z and X: position by Y, width by H (depth)
+                                  offsetCells = mod.y - pavMinCoord;
+                                  widthCells = mod.h;
+                                } else {
+                                  // For W and Y: position by X, width by W (width)
+                                  offsetCells = mod.x - pavMinCoord;
+                                  widthCells = mod.w;
+                                }
+                                
                                 const leftPx = Math.round(scale * offsetCells * CELL_M * PX_PER_M);
-                                const widthPx = Math.round(scale * mod.w * CELL_M * PX_PER_M);
+                                const widthPx = Math.round(scale * widthCells * CELL_M * PX_PER_M);
                                 
                                 // When container is flipped, also flip images back to correct orientation
                                 const modifiedWall = shouldFlip ? {
