@@ -281,7 +281,7 @@ export default function DesignCatalogue() {
                               {Number(template.internal_sqm).toFixed(1)}m² int
                             </span>
                             <span className="flex items-center gap-1" title="Deck Area">
-                              <Layers size={11} className="text-[#F15A22]" />
+                              <Maximize2 size={11} className="text-[#F15A22]" />
                               {Number(template.deck_sqm).toFixed(1)}m² deck
                             </span>
                             <span className="flex items-center gap-1 text-gray-400" title="Total Area">
