@@ -162,7 +162,8 @@ export default function ProjectDetailsModal({
   placedModules = [],
   walls = [],
   printMode = null, // 'plans' or 'elevations'
-  designs = []
+  designs = [],
+  currentSiteAddress = ""
 }) {
   const [projectName, setProjectName] = useState("");
   const [clientFirstName, setClientFirstName] = useState("");
@@ -182,13 +183,13 @@ export default function ProjectDetailsModal({
       setClientFirstName(saved.clientFirstName || "");
       setClientFamilyName(saved.clientFamilyName || "");
       setHomeAddress(saved.homeAddress || "");
-      setSiteAddress(saved.siteAddress || "");
+      setSiteAddress(currentSiteAddress || saved.siteAddress || "");
       setEmail(saved.email || "");
       setPhone(saved.phone || "");
       setSaveAsMode(false);
       setSaveAsName("");
     }
-  }, [open]);
+  }, [open, currentSiteAddress]);
 
   const handleSaveDetails = () => {
     const details = {
