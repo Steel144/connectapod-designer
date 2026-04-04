@@ -20,11 +20,11 @@ const VerticalElevation = memo(function VerticalElevation({
   // Determine max depth to identify connection modules (smaller depth = connection)
   const maxSlotDepth = Math.max(...layers.flatMap(l => l.slots.map(s => s.depthCells)));
 
-  let maxContentWidth = Math.round(scale * totalDepthCells * CELL_M * PX_PER_M);
+  // Calculate total content width using cumulative 1.1x allocated widths
+  let totalAllocatedWidth = 0;
   layers.forEach(layer => {
     layer.slots.forEach(slot => {
-      const slotRight = Math.round(scale * slot.yOffsetCells * CELL_M * PX_PER_M) + Math.round(scale * slot.depthCells * CELL_M * PX_PER_M);
-      maxContentWidth = Math.max(maxContentWidth, slotRight);
+      totalAllocatedWidth += Math.round(scale * slot.depthCells * CELL_M * PX_PER_M * 1.1);
     });
   });
 
@@ -38,21 +38,29 @@ const VerticalElevation = memo(function VerticalElevation({
       <div style={{ fontSize: "14px", fontWeight: "bold", color: "black", textTransform: "uppercase", letterSpacing: "0.05em", backgroundColor: "#fed7aa", padding: "8px 12px", borderRadius: "4px", width: "fit-content", marginLeft: "4px", marginBottom: "16px" }}>
         {label}
       </div>
-      <div style={{ position: "relative", width: maxContentWidth + 100, height: endElevationHPx, backgroundColor: "transparent", overflow: "hidden", paddingLeft: 50, paddingRight: 50, boxSizing: "border-box" }}>
+      <div style={{ position: "relative", width: totalAllocatedWidth + 100, height: endElevationHPx, backgroundColor: "transparent", overflow: "hidden", paddingLeft: 50, paddingRight: 50, boxSizing: "border-box" }}>
 
           <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 2, backgroundColor: "#374151", zIndex: 2 }} />
 
           {layers.map((layer) => {
+             let cumulativeLeft = 0;
              return layer.slots.map((slot, si) => {
                 const elevationNum = si + 1;
-                const baseWidthPx = Math.round(scale * slot.depthCells * CELL_M * PX_PER_M);
-                // Connection modules (smaller depth) get no multiplier; standard modules get 1.1x
                 const isConnection = slot.depthCells < maxSlotDepth;
-                const scaleMultiplier = isConnection ? 1.0 : (slotScales[elevationNum] || 1.1);
-                const slotWidthPx = Math.round(baseWidthPx * scaleMultiplier);
-                const baseLeftPx = Math.round(scale * slot.yOffsetCells * CELL_M * PX_PER_M);
-                const extraOffsetPx = slotOffsets[elevationNum] ? Math.round(scale * slotOffsets[elevationNum] * PX_PER_M) : 0;
-                const leftPx = baseLeftPx + extraOffsetPx + 50;
+                
+                // Every slot gets a 1.1x allocation for spacing
+                const allocatedWidthPx = Math.round(scale * slot.depthCells * CELL_M * PX_PER_M * 1.1);
+                
+                // Connection modules render at 1.0x, standard at 1.1x
+                const renderWidthPx = isConnection 
+                  ? Math.round(scale * slot.depthCells * CELL_M * PX_PER_M)
+                  : allocatedWidthPx;
+                
+                // Center connection modules within their allocated space
+                const centerOffset = isConnection ? Math.round((allocatedWidthPx - renderWidthPx) / 2) : 0;
+                const leftPx = cumulativeLeft + centerOffset + 50;
+                
+                cumulativeLeft += allocatedWidthPx;
 
                const displayLabel = labelMap[elevationNum] || elevationNum;
                const topPx = Math.round(scale * 0.02 * PX_PER_M);
@@ -62,7 +70,7 @@ const VerticalElevation = memo(function VerticalElevation({
                    slot={slot}
                    leftPx={leftPx}
                    topPx={topPx}
-                   widthPx={slotWidthPx}
+                   widthPx={renderWidthPx}
                    heightPx={endElevationHPx}
                    labelNum={displayLabel}
                    objectFit="fill"
