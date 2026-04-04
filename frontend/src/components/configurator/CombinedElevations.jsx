@@ -264,6 +264,10 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
 
                   return (
                     <div key={pavNum} style={{ display: "inline-block", verticalAlign: "top" }}>
+                      <div style={{ fontSize: "11px", fontWeight: "bold", backgroundColor: "#fed7aa", padding: "8px 12px", borderRadius: "4px", marginBottom: "16px", width: "fit-content" }}>
+                        {pavLabel}
+                      </div>
+
                       <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
                         {["W", "Y", "Z", "X"].map(face => {
                           const faceLabels = { Y: "Y Face (Outside/Top)", W: "W Face (Outside/Bottom)", Z: "Z Face (West)", X: "X Face (East)" };
