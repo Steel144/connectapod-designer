@@ -290,16 +290,23 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
                               <div style={{ 
                                 display: "flex", 
                                 gap: "2px", 
-                                minWidth: "max-content"
+                                minWidth: "max-content",
+                                transform: face === "W" ? "scaleX(-1)" : undefined
                               }}>
-                                {(face === "W" ? [...mods].reverse() : mods).map((mod, idx) => {
+                                {mods.map((mod, idx) => {
                                   const wall = findWall(mod, face);
                                   if (!wall) return null;
+                                  
+                                  // Toggle flip for W elevation (same as building)
+                                  const modifiedWall = face === "W" && wall ? {
+                                    ...wall,
+                                    flipped: !(wall.flipped || false)
+                                  } : wall;
                                   
                                   return (
                                     <ElevationImage 
                                       key={`${pavNum}-${face}-${idx}`} 
-                                      wall={wall} 
+                                      wall={modifiedWall} 
                                       label={`${face}${idx + 1}`} 
                                       face={face} 
                                       isPavilion={true} 
