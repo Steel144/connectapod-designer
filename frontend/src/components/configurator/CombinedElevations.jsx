@@ -279,34 +279,20 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
                           const hasAny = mods.some(mod => findWall(mod, face));
                           if (!hasAny) return null;
                           
-                          // Apply flip to W elevation (same as main building elevations)
-                          const shouldFlip = face === "W";
-                          
                           return (
                             <div key={face} style={{ display: "block", marginBottom: "40px" }}>
                               <div style={{ fontSize: "14px", fontWeight: "bold", color: "black", textTransform: "uppercase", letterSpacing: "0.05em", backgroundColor: "#fed7aa", padding: "8px 12px", borderRadius: "4px", width: "fit-content", marginLeft: "4px", marginBottom: "16px" }}>
                                 {faceLabels[face]}
                               </div>
-                              <div style={{ 
-                                display: "flex", 
-                                gap: "2px", 
-                                minWidth: "max-content",
-                                transform: face === "W" ? "scaleX(-1)" : undefined
-                              }}>
+                              <div style={{ display: "flex", gap: "2px", minWidth: "max-content" }}>
                                 {mods.map((mod, idx) => {
                                   const wall = findWall(mod, face);
                                   if (!wall) return null;
                                   
-                                  // Toggle flip for W elevation (same as building)
-                                  const modifiedWall = face === "W" && wall ? {
-                                    ...wall,
-                                    flipped: !(wall.flipped || false)
-                                  } : wall;
-                                  
                                   return (
                                     <ElevationImage 
                                       key={`${pavNum}-${face}-${idx}`} 
-                                      wall={modifiedWall} 
+                                      wall={wall} 
                                       label={`${face}${idx + 1}`} 
                                       face={face} 
                                       isPavilion={true} 
