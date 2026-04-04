@@ -104,15 +104,20 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
 
   const imgHeight = Math.round((zoom / 100) * 480);
 
-  const ElevationImage = ({ wall, label, face, isPavilion = false }) => {
+  const ElevationImage = ({ wall, label, face, isPavilion = false, forceWidth = null }) => {
     const wallWidthM = wall.width ?? (wall.length ? wall.length * CELL_M : CELL_M);
     const wallWidthPx = Math.round((zoom / 100) * wallWidthM * 100);
     const isSelected = selectedWall?.id === wall.id;
+    
+    // Use forced width for pavilions to ensure correct dimensional scaling
+    const containerWidth = forceWidth ?? (wall.elevationImage ? "auto" : `${wallWidthPx}px`);
+    const imageWidth = forceWidth ? "100%" : "auto";
+    
     return (
       <div className="flex flex-col items-center gap-2 shrink-0 relative">
         <div
           className={`overflow-hidden bg-white border transition-colors relative ${isSelected ? "border-blue-500 shadow-md" : (isPavilion ? "border-[#F15A22] hover:border-orange-600 cursor-pointer hover:shadow-md" : "border-gray-200 cursor-pointer hover:border-[#F15A22]")}`}
-          style={{ height: `${imgHeight}px`, width: wall.elevationImage ? "auto" : `${wallWidthPx}px` }}
+          style={{ height: `${imgHeight}px`, width: containerWidth }}
           onClick={() => onWallSelect?.(wall)}
         >
           {isSelected && (
@@ -134,7 +139,7 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
             <img
               src={wall.elevationImage}
               alt={label}
-              style={{ height: "100%", width: "auto", display: "block", transform: wall.flipped ? "scaleX(-1)" : undefined, pointerEvents: "none" }}
+              style={{ height: "100%", width: imageWidth, display: "block", transform: wall.flipped ? "scaleX(-1)" : undefined, pointerEvents: "none", objectFit: forceWidth ? "fill" : "contain" }}
             />
           ) : (
             <div
@@ -362,7 +367,8 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
                                       wall={modifiedWall} 
                                       label={`${face}${idx + 1}`} 
                                       face={face} 
-                                      isPavilion={true} 
+                                      isPavilion={true}
+                                      forceWidth={`${widthPx}px`}
                                     />
                                   </div>
                                 );
