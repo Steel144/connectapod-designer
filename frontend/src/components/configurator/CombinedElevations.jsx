@@ -33,8 +33,9 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
   useEffect(() => {
     if (!centeredRef.current && containerRef.current && contentRef.current) {
       setTimeout(() => {
-        // Start from left side instead of center
-        containerRef.current.scrollLeft = 0;
+        // Start from left side of actual content (skip the left padding)
+        // The content has 2400px left padding, so scroll to that position
+        containerRef.current.scrollLeft = 2300; // Slight offset from padding edge
         centeredRef.current = true;
       }, 0);
     }
