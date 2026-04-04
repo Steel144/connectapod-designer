@@ -293,7 +293,7 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
                                 minWidth: "max-content",
                                 transform: shouldFlip ? "scaleX(-1)" : undefined
                               }}>
-                                {mods.map((mod, idx) => {
+                                {(shouldFlip ? [...mods].reverse() : mods).map((mod, idx) => {
                                   const wall = findWall(mod, face);
                                   if (!wall) return null;
                                   
