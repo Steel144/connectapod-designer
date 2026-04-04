@@ -44,6 +44,9 @@ const VerticalElevation = memo(function VerticalElevation({
 
           {layers.map((layer) => {
              let cumulativeLeft = 0;
+             const hasConnection = layer.slots.some(s => s.depthCells < maxSlotDepth);
+             const closingOffsetPx = hasConnection ? Math.round(scale * 0.2 * PX_PER_M) : 0;
+             
              return layer.slots.map((slot, si) => {
                 const elevationNum = si + 1;
                 const isConnection = slot.depthCells < maxSlotDepth;
@@ -58,7 +61,15 @@ const VerticalElevation = memo(function VerticalElevation({
                 
                 // Center connection modules within their allocated space
                 const centerOffset = isConnection ? Math.round((allocatedWidthPx - renderWidthPx) / 2) : 0;
-                const leftPx = cumulativeLeft + centerOffset + 50;
+                
+                // Close white space: shift first pavilion right 200mm, last pavilion left 200mm
+                let closeGapOffset = 0;
+                if (hasConnection && !isConnection) {
+                  const isBeforeConnection = layer.slots.slice(si + 1).some(s => s.depthCells < maxSlotDepth);
+                  closeGapOffset = isBeforeConnection ? closingOffsetPx : -closingOffsetPx;
+                }
+                
+                const leftPx = cumulativeLeft + centerOffset + closeGapOffset + 50;
                 
                 cumulativeLeft += allocatedWidthPx;
 
