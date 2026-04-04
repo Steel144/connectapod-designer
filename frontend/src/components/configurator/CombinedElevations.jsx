@@ -234,6 +234,7 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
               scale={scale}
               CELL_M={CELL_M}
               PX_PER_M={PX_PER_M}
+              flip={true}
             />
             <HorizontalElevation 
               layers={yElevation} 

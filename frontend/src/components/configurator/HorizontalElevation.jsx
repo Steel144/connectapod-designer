@@ -9,7 +9,8 @@ const HorizontalElevation = memo(function HorizontalElevation({
   wallHPx,
   scale,
   CELL_M,
-  PX_PER_M
+  PX_PER_M,
+  flip = false  // Add flip prop
 }) {
   if (layers.length === 0) return null;
 
@@ -18,7 +19,14 @@ const HorizontalElevation = memo(function HorizontalElevation({
       <div style={{ fontSize: "14px", fontWeight: "bold", color: "black", textTransform: "uppercase", letterSpacing: "0.05em", backgroundColor: "#fed7aa", padding: "8px 12px", borderRadius: "4px", width: "fit-content", marginLeft: "4px", marginBottom: "16px" }}>
         {label}
       </div>
-      <div style={{ position: "relative", width: totalWidthPx, height: wallHPx, backgroundColor: "#f9fafb", overflow: "hidden" }}>
+      <div style={{ 
+        position: "relative", 
+        width: totalWidthPx, 
+        height: wallHPx, 
+        backgroundColor: "#f9fafb", 
+        overflow: "hidden",
+        transform: flip ? "scaleX(-1)" : undefined  // Flip horizontally if flip=true
+      }}>
          {layers.map((layer, li) => {
            let moduleNum = 0;
            return layer.slots.map((slot, si) => {
