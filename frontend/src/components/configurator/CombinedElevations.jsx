@@ -419,14 +419,14 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
                               <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 2, backgroundColor: "#374151", zIndex: 2 }} />
                             </div>
                             
-                            {/* Wall labels underneath - never flipped */}
+                            {/* Wall labels underneath - never flipped, but reversed order for W face to match flipped images */}
                             <div style={{ 
                               display: "flex", 
                               flexDirection: isVerticalElevation ? "column" : "row",
                               gap: isVerticalElevation ? "8px" : "0",
                               marginTop: "10px"
                             }}>
-                              {mods.map((mod, idx) => {
+                              {(shouldFlip ? [...mods].reverse() : mods).map((mod, idx) => {
                                 const wall = findWall(mod, face);
                                 if (!wall) return null;
                                 
