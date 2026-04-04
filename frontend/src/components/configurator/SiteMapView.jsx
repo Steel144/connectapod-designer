@@ -646,6 +646,7 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
           onMouseUp={handlePanelDragEnd}
           onMouseLeave={handlePanelDragEnd}
         >
+          <p className="text-xs text-gray-400 italic leading-tight">Zone values are indicative only and should be verified for accuracy before use.</p>
           <div>
             <label className="text-sm font-semibold text-gray-700 block mb-2">Site Address</label>
             <div className="flex gap-2">
@@ -815,23 +816,6 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
                 ✓ Boundary displayed
               </div>
             )}
-          </div>
-          
-          <div className="border-t border-gray-200 pt-3 mt-3">
-            <label className="text-xs font-semibold text-gray-600 block mb-2">Additional Resources</label>
-            <div className="space-y-2 text-xs">
-              <div>
-                <a 
-                  href="https://www.branz.co.nz/branz-maps-zones/" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-orange-600 hover:underline flex items-center gap-1"
-                >
-                  🌪️ Wind Zones (BRANZ Maps)
-                </a>
-                <p className="text-gray-500 text-xs mt-0.5">Building wind classifications</p>
-              </div>
-            </div>
           </div>
         </div>
       )}
