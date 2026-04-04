@@ -45,7 +45,7 @@ const VerticalElevation = memo(function VerticalElevation({
           {layers.map((layer) => {
              let cumulativeLeft = 0;
              const hasConnection = layer.slots.some(s => s.depthCells < maxSlotDepth);
-             const closingOffsetPx = hasConnection ? Math.round(scale * 0.2 * PX_PER_M) : 0;
+             const closingOffsetPx = hasConnection ? Math.round(scale * 0.3 * PX_PER_M) : 0;
              
              return layer.slots.map((slot, si) => {
                 const elevationNum = si + 1;
