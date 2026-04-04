@@ -270,12 +270,19 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
 
                       <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
                         {["W", "Y", "Z", "X"].map(face => {
-                          const faceLabels = { Y: "Y Face (Outside/Top)", W: "W Face (Outside/Bottom)", Z: "Z Face (West)", X: "X Face (East)" };
+                          const faceLabels = { 
+                            Y: "Y — South Elevation", 
+                            W: "W — North Elevation", 
+                            Z: "Z — West Elevation", 
+                            X: "X — East Elevation" 
+                          };
                           const hasAny = mods.some(mod => findWall(mod, face));
                           if (!hasAny) return null;
                           return (
-                            <div key={face}>
-                              <div style={{ fontSize: "10px", color: "#666", marginBottom: "12px", fontWeight: "500" }}>{faceLabels[face]}</div>
+                            <div key={face} style={{ display: "block", marginBottom: "40px" }}>
+                              <div style={{ fontSize: "14px", fontWeight: "bold", color: "black", textTransform: "uppercase", letterSpacing: "0.05em", backgroundColor: "#fed7aa", padding: "8px 12px", borderRadius: "4px", width: "fit-content", marginLeft: "4px", marginBottom: "16px" }}>
+                                {faceLabels[face]}
+                              </div>
                               <div style={{ display: "flex", gap: "2px", minWidth: "max-content" }}>
                                 {mods.map((mod, idx) => {
                                   const wall = findWall(mod, face);
