@@ -28,9 +28,9 @@ const ElevationSlot = memo(function ElevationSlot({
           src={wall.elevationImage}
           alt={wall.label || wall.type || slot.face}
           style={{
-            width: "100%",
+            width: objectFit === "contain" ? "auto" : "100%",
             height: "100%",
-            objectFit,
+            objectFit: objectFit === "contain" ? "none" : objectFit,
             display: "block",
             transform: wall.flipped ? "scaleX(-1)" : undefined,
           }}
