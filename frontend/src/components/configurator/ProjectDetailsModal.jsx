@@ -508,16 +508,18 @@ export default function ProjectDetailsModal({
             <AddressAutocomplete value={homeAddress} onChange={setHomeAddress} />
           </div>
           <div>
-            <Label className="text-xs text-gray-600">Site Address</Label>
+            <div className="flex items-center justify-between">
+              <Label className="text-xs text-gray-600">Site Address</Label>
+              <button
+                type="button"
+                data-testid="copy-home-address-btn"
+                onClick={() => { if (homeAddress) setSiteAddress(homeAddress); }}
+                className="text-xs text-orange-600 hover:text-orange-700 hover:underline cursor-pointer"
+              >
+                Same as home address
+              </button>
+            </div>
             <AddressAutocomplete value={siteAddress} onChange={setSiteAddress} />
-            <button
-              type="button"
-              data-testid="copy-home-address-btn"
-              onClick={() => { if (homeAddress) setSiteAddress(homeAddress); }}
-              className="text-xs text-orange-600 hover:text-orange-700 hover:underline cursor-pointer mt-1"
-            >
-              Same as home address
-            </button>
           </div>
         </div>
 
