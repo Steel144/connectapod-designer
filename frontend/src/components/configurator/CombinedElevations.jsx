@@ -271,21 +271,38 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
                 
                 // Convert pavilion mods to layer format
                 mods.forEach((mod, idx) => {
-                  ['W', 'Y', 'Z', 'X'].forEach(face => {
+                  // Horizontal elevations (W, Y)
+                  ['W', 'Y'].forEach(face => {
                     const wall = findWall(mod, face);
                     if (wall) {
                       const slot = {
                         wall: wall,
                         widthCells: mod.w || 5,
-                        xOffsetCells: mod.x || idx * 5,
-                        heightCells: mod.h || 1,
-                        yOffsetCells: mod.y || 0
+                        xOffsetCells: mod.x || (idx * 5)
                       };
                       
                       if (!pavilionLayers[face][0]) {
                         pavilionLayers[face][0] = { slots: [] };
                       }
                       pavilionLayers[face][0].slots.push(slot);
+                    }
+                  });
+                  
+                  // Vertical elevations (Z, X) - need colX
+                  ['Z', 'X'].forEach(face => {
+                    const wall = findWall(mod, face);
+                    if (wall) {
+                      const slot = {
+                        wall: wall,
+                        heightCells: mod.h || 1
+                      };
+                      
+                      const layer = {
+                        colX: mod.x || idx,
+                        slots: [slot]
+                      };
+                      
+                      pavilionLayers[face].push(layer);
                     }
                   });
                 });
