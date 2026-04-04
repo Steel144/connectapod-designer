@@ -36,11 +36,13 @@ const HorizontalElevation = memo(function HorizontalElevation({
              const widthPx = Math.round(scale * slot.widthCells * CELL_M * PX_PER_M);
              
              // When container is flipped, also flip images back so they face correct direction
+             // BUT preserve the original flip state from 2D model
              const modifiedSlot = {
                ...slot,
                wall: slot.wall ? {
                  ...slot.wall,
-                 flipped: flip ? true : (slot.wall.flipped || false)  // Flip images back when container is flipped
+                 // Toggle the flip: if wall was flipped in 2D and we flip for elevation, they cancel out
+                 flipped: flip ? !(slot.wall.flipped || false) : (slot.wall.flipped || false)
                } : null
              };
              
