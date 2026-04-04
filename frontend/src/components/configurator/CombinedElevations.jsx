@@ -296,8 +296,11 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
               </div>
               
               {[3, 2, 1].map(pavNum => {
-                const mods = pavilionModules[pavNum];
-                if (!mods || mods.length === 0) return null;
+                const rawMods = pavilionModules[pavNum];
+                if (!rawMods || rawMods.length === 0) return null;
+                
+                // Sort modules by x position for consistent ordering
+                const mods = [...rawMods].sort((a, b) => a.x - b.x);
 
                 const pavLabels = { 3: "Pavilion 1", 2: "Connection", 1: "Pavilion 2" };
                 const pavLabel = pavLabels[pavNum];
