@@ -93,6 +93,45 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
   const mapRef = useRef(null);
   const mapContainerRef = useRef(null);
   
+  // Wind zone mapping and state
+  const WIND_ZONES = [
+    { code: "L",  label: "Low (L)",            speed: "<32 m/s",  desc: "Sheltered inland areas" },
+    { code: "M",  label: "Medium (M)",          speed: "37 m/s",   desc: "Most urban areas" },
+    { code: "H",  label: "High (H)",            speed: "44 m/s",   desc: "Coastal/exposed areas" },
+    { code: "VH", label: "Very High (VH)",      speed: "50 m/s",   desc: "Very exposed/hilltops" },
+    { code: "EH", label: "Extra High (EH)",     speed: "55 m/s",   desc: "Extreme exposure" },
+    { code: "SD", label: "Specific Design (SD)", speed: ">55 m/s", desc: "Requires engineer" },
+  ];
+
+  const REGION_WIND_MAP = {
+    "Auckland": "M", "Wellington": "H", "Northland": "M", "Gisborne": "H",
+    "Taranaki": "H", "Hawke's Bay": "M", "Manawatū-Whanganui": "M", "Manawatu-Wanganui": "M",
+    "Bay of Plenty": "M", "Waikato": "M",
+    "Canterbury": "M", "West Coast": "H", "Southland": "H", "Nelson": "M",
+    "Tasman": "M", "Marlborough": "M", "Otago": "M",
+  };
+
+  const [windZone, setWindZone] = useState(() => {
+    try { return localStorage.getItem('sitemap_windZone') || ''; } catch { return ''; }
+  });
+  const [detectedRegion, setDetectedRegion] = useState('');
+
+  const detectRegionFromAddress = (addressObj) => {
+    const region = addressObj?.state || addressObj?.region || addressObj?.county || '';
+    for (const [key, zone] of Object.entries(REGION_WIND_MAP)) {
+      if (region.toLowerCase().includes(key.toLowerCase())) {
+        return { region: key, zone };
+      }
+    }
+    // Try display_name as fallback
+    return { region: region || 'Unknown', zone: 'M' };
+  };
+
+  const handleWindZoneChange = (code) => {
+    setWindZone(code);
+    localStorage.setItem('sitemap_windZone', code);
+  };
+  
   // Layer toggles
   const [showBoundaries, setShowBoundaries] = useState(() => {
     try { return JSON.parse(localStorage.getItem('sitemap_showBoundaries')) ?? true; } catch { return true; }
@@ -289,7 +328,15 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
           const newKey = `${lat}-${lon}`;
           setMapKey(newKey);
           localStorage.setItem('sitemap_mapkey', newKey);
-          toast.success('Location found!');
+          
+          // Auto-detect wind zone from region
+          const addressObj = data[0].address || {};
+          const { region, zone } = detectRegionFromAddress(addressObj);
+          setDetectedRegion(region);
+          if (!windZone) {
+            handleWindZoneChange(zone);
+          }
+          toast.success(`Location found! Suggested wind zone: ${zone} (${region})`);
           
           // Fetch property boundary from LINZ if enabled
           if (showBoundaries) {
@@ -360,6 +407,11 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
       saved.siteAddress = s.display_name;
       localStorage.setItem("connectapod_save_details", JSON.stringify(saved));
     } catch {}
+    // Auto-detect region for wind zone
+    if (s.address) {
+      const { region } = detectRegionFromAddress(s.address);
+      setDetectedRegion(region);
+    }
     setSuggestions([]);
     setShowSuggestions(false);
   };
@@ -541,6 +593,36 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
                 {loading ? <Loader2 className="w-3 h-3 animate-spin" /> : 'Find'}
               </button>
             </div>
+          </div>
+
+          {/* Wind Zone */}
+          <div>
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-xs font-semibold text-gray-600">
+                Wind Zone{detectedRegion ? ` (${detectedRegion})` : ''}
+              </label>
+              <a 
+                href="https://www.branz.co.nz/branz-maps-zones/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-xs text-orange-600 hover:text-orange-700 hover:underline"
+              >
+                Verify at BRANZ Maps
+              </a>
+            </div>
+            <select
+              data-testid="wind-zone-select"
+              value={windZone}
+              onChange={(e) => handleWindZoneChange(e.target.value)}
+              className="w-full text-sm border border-gray-300 rounded px-2 py-1.5 bg-white focus:outline-none focus:ring-1 focus:ring-orange-500"
+            >
+              <option value="">Select wind zone...</option>
+              {WIND_ZONES.map(wz => (
+                <option key={wz.code} value={wz.code}>
+                  {wz.label} — {wz.speed} — {wz.desc}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div>
