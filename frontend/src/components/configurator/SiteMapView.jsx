@@ -646,7 +646,6 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
           onMouseUp={handlePanelDragEnd}
           onMouseLeave={handlePanelDragEnd}
         >
-          <p className="text-xs text-gray-400 italic leading-tight">Zone values are indicative only and should be verified for accuracy before use.</p>
           <div>
             <label className="text-sm font-semibold text-gray-700 block mb-2">Site Address</label>
             <div className="flex gap-2">
@@ -680,6 +679,8 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
               </button>
             </div>
           </div>
+
+          <p className="text-xs text-red-500 italic leading-tight">Zone values are indicative only and should be verified for accuracy before use.</p>
 
           {/* Wind Zone */}
           <div>
