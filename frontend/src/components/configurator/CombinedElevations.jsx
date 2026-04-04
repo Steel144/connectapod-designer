@@ -310,7 +310,6 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
                           X: "X — East Elevation" 
                         };
                         const hasAny = mods.some(mod => findWall(mod, face));
-                        console.log(`Pavilion ${pavNum} ${face}: hasAny=${hasAny}, mods.length=${mods.length}`);
                         if (!hasAny) return null;
                         
                         // Determine if this is a vertical (side) or horizontal (front/back) elevation
@@ -378,14 +377,12 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
                                   ...wall,
                                   flipped: !(wall.flipped || false),
                                   width: wallWidthM,
-                                  length: widthCells  // Store cells for debugging
+                                  length: widthCells
                                 } : {
                                   ...wall,
                                   width: wallWidthM,
                                   length: widthCells
                                 };
-                                
-                                console.log(`Pavilion ${pavNum} ${face} - mod at (${mod.x},${mod.y}) size ${mod.w}x${mod.h}, widthCells=${widthCells}, widthPx=${widthPx}, wallWidthM=${wallWidthM}`);
                                 
                                 return (
                                   <ElevationSlot
