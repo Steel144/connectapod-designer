@@ -68,6 +68,8 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
   const labelMapZ = { 1: "P1", 2: "C", 3: "P2" };
   const labelMapX = { 1: "P2", 2: "C", 3: "P1" };
 
+  console.log("CombinedElevations - placedModules:", placedModules.length, "walls:", walls.length);
+  
   if (placedModules.length === 0) {
     return (
       <div className="w-full h-full flex items-center justify-center bg-gray-50">
