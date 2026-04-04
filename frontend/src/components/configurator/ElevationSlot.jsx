@@ -8,7 +8,8 @@ const ElevationSlot = memo(function ElevationSlot({
   heightPx, 
   labelNum,
   objectFit = "cover",
-  showLabel = true 
+  showLabel = true,
+  autoWidth = false  // Allow container to auto-size based on image
 }) {
   const wall = slot.wall;
 
@@ -18,7 +19,7 @@ const ElevationSlot = memo(function ElevationSlot({
         position: "absolute",
         left: leftPx,
         top: topPx,
-        width: widthPx,
+        width: autoWidth ? "auto" : widthPx,
         height: heightPx,
         overflow: "hidden",
       }}
@@ -28,9 +29,9 @@ const ElevationSlot = memo(function ElevationSlot({
           src={wall.elevationImage}
           alt={wall.label || wall.type || slot.face}
           style={{
-            width: objectFit === "contain" ? "auto" : "100%",
+            width: autoWidth ? "auto" : (objectFit === "contain" ? "auto" : "100%"),
             height: "100%",
-            objectFit: objectFit === "contain" ? "none" : objectFit,
+            objectFit: autoWidth ? "none" : objectFit,
             display: "block",
             transform: wall.flipped ? "scaleX(-1)" : undefined,
           }}

@@ -64,6 +64,7 @@ const VerticalElevation = memo(function VerticalElevation({
                    labelNum={displayLabel}
                    objectFit="contain"
                    showLabel={false}
+                   autoWidth={true}
                  />
                );
              });
