@@ -1207,176 +1207,120 @@ export default function Configurator() {
 
       {/* ── DESKTOP TOP BAR ── */}
       {!isMobile && (
-        <div ref={navBarRef} className={`${viewMode === "building" ? "fixed" : "absolute"} top-0 left-0 right-0 z-30 flex items-center px-4 py-3 bg-white border-b border-gray-200 overflow-x-auto gap-3 min-w-0`}>
-          <div className="shrink-0 flex flex-col gap-0.5">
-            <img src="https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/1a43e85d2_Connectapod-01.png" alt="Designer" style={{ height: "25px", width: "auto" }} />
-            <span className="text-[10px] text-gray-400 tracking-widest uppercase">Design Studio</span>
-          </div>
-
-          {/* ── Workflow Buttons (Step Indicator Integrated) ── */}
-          <div className="flex items-center gap-0 ml-4 shrink-0">
-            {/* 1. Design Catalogue */}
-            <StepButton step={1} label="Design Catalogue" icon={<LayoutTemplate size={13} />} isActive={false} isCompleted={completedSteps.includes(1)} currentStep={currentStep} isDropdown>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <button className={`flex items-center gap-1.5 px-3 py-1.5 text-xs transition-all ${stepBtnClass(1, currentStep, completedSteps, false)}`} style={stepBtnStyle}>
-                    <StepBadge step={1} currentStep={currentStep} completedSteps={completedSteps} />
-                    <LayoutTemplate size={13} /> Design Catalogue
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="start">
-                  <DropdownMenuItem asChild>
-                    <Link to={createPageUrl("DesignCatalogue")} className="flex items-center gap-2 cursor-pointer">
-                      <LayoutTemplate size={13} /> Starter Designs
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => { setShowSaved(true); setViewMode("2d"); }}>
-                    <FolderOpen size={13} /> My Designs {designs.length > 0 && `(${designs.length})`}
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </StepButton>
-
-            <StepConnector done={completedSteps.includes(1)} />
-
-            {/* 2. 2D */}
-            <button onClick={() => setViewMode("2d")} className={`flex items-center gap-1.5 px-3 py-1.5 text-xs transition-all ${stepBtnClass(2, currentStep, completedSteps, viewMode === "2d")}`} style={stepBtnStyle}>
-              <StepBadge step={2} currentStep={currentStep} completedSteps={completedSteps} />
-              <Grid2X2 size={13} /> 2D
-            </button>
-
-            <StepConnector done={completedSteps.includes(2)} />
-
-            {/* 3. Elevations */}
-            <button onClick={() => setViewMode("elevations")} className={`flex items-center gap-1.5 px-3 py-1.5 text-xs transition-all ${stepBtnClass(3, currentStep, completedSteps, viewMode === "elevations")}`} style={stepBtnStyle}>
-              <StepBadge step={3} currentStep={currentStep} completedSteps={completedSteps} />
-              <Image size={13} /> Elevations
-            </button>
-
-            <StepConnector done={completedSteps.includes(3)} />
-
-            {/* 4. Site Map */}
-            <button onClick={() => setViewMode("sitemap")} className={`flex items-center gap-1.5 px-3 py-1.5 text-xs transition-all ${stepBtnClass(4, currentStep, completedSteps, viewMode === "sitemap")}`} style={stepBtnStyle}>
-              <StepBadge step={4} currentStep={currentStep} completedSteps={completedSteps} />
-              <Map size={13} /> Site Map
-            </button>
-
-            <StepConnector done={completedSteps.includes(4)} />
-
-            {/* 5. Save */}
-            <button onClick={() => setDetailsModalMode('save')} disabled={placedModules.length === 0 || saveMutation.isPending} className={`flex items-center gap-1.5 px-3 py-1.5 text-xs transition-all ${placedModules.length === 0 ? "opacity-40 text-gray-400 bg-white border border-gray-200" : stepBtnClass(5, currentStep, completedSteps, detailsModalMode === "save")}`} style={stepBtnStyle}>
-              <StepBadge step={5} currentStep={currentStep} completedSteps={completedSteps} />
-              <Save size={13} /> {saveMutation.isPending ? "Saving…" : "Save"}
-            </button>
-
-            <StepConnector done={completedSteps.includes(5)} />
-
-            {/* 6. Share */}
-            <button onClick={handleShare} disabled={placedModules.length === 0 || shareLoading} data-testid="share-design-btn" className={`flex items-center gap-1.5 px-3 py-1.5 text-xs transition-all ${placedModules.length === 0 ? "opacity-40 text-gray-400 bg-white border border-gray-200" : stepBtnClass(6, currentStep, completedSteps, shareModalOpen)}`} style={stepBtnStyle}>
-              <StepBadge step={6} currentStep={currentStep} completedSteps={completedSteps} />
-              <Share2 size={13} /> {shareLoading ? "Sharing…" : "Share"}
-            </button>
-
-            <StepConnector done={completedSteps.includes(6)} />
-
-            {/* 7. Print */}
-            <PrintMenu placedModules={placedModules} walls={walls} onPrint={async (mode) => {
-              if (mode === 'site-plan' && captureMapScreenshotRef.current) {
-                const shot = await captureMapScreenshotRef.current();
-                if (shot) setSiteMapScreenshot(shot);
-              }
-              setPendingPrintMode(mode);
-              setDetailsModalMode('print');
-            }} stepBadge={<StepBadge step={7} currentStep={currentStep} completedSteps={completedSteps} />} />
-
-            <StepConnector done={false} />
-
-            {/* 8. Get Estimate */}
-            <button onClick={() => setDetailsModalMode('estimate')} disabled={placedModules.length === 0} className={`flex items-center gap-1.5 px-3 py-1.5 text-xs transition-all ${placedModules.length === 0 ? "opacity-40 text-gray-400 bg-white border border-gray-200" : stepBtnClass(8, currentStep, completedSteps, detailsModalMode === "estimate")}`} style={stepBtnStyle}>
-              <StepBadge step={8} currentStep={currentStep} completedSteps={completedSteps} />
-              Get Estimate
-            </button>
-          </div>
-
-          {/* ── Right side: Undo, Settings, Zoom, Admin ── */}
-          <div className="flex items-center gap-2 ml-auto shrink-0">
-            <button onClick={handleUndo} disabled={history.length === 0} title="Undo (Ctrl+Z)" className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-gray-600 bg-white border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22] disabled:opacity-30 transition-all" style={{ clipPath: "polygon(0 0, calc(100% - 8px) 0, 100% 50%, calc(100% - 8px) 100%, 0 100%)" }}>
-              <Undo2 size={13} /> Undo {history.length > 0 && <span className="text-[10px] text-gray-400">({history.length})</span>}
-            </button>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-gray-600 hover:text-[#F15A22] border border-gray-200 bg-white hover:border-[#F15A22] transition-all">
-                  <Settings size={13} /> Settings
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-52">
-               <DropdownMenuItem onClick={() => setShowLabels(v => !v)} className="flex items-center justify-between cursor-pointer">
-                 <span className="flex items-center gap-2"><Eye size={13} /> Show Labels</span>
-                 {showLabels && <Check size={12} className="text-[#F15A22]" />}
-               </DropdownMenuItem>
-               <DropdownMenuItem onClick={() => setShowFurniture(v => !v)} className="flex items-center justify-between cursor-pointer">
-                 <span className="flex items-center gap-2"><Eye size={13} /> Show Furniture</span>
-                 {showFurniture && <Check size={12} className="text-[#F15A22]" />}
-               </DropdownMenuItem>
-               <DropdownMenuItem onClick={() => setShowPhotoImages(v => !v)} className="flex items-center justify-between cursor-pointer">
-                 <span className="flex items-center gap-2"><Image size={13} /> {showPhotoImages ? "Photo Images" : "Line Drawings"}</span>
-                 {showPhotoImages && <Check size={12} className="text-[#F15A22]" />}
-               </DropdownMenuItem>
-               <DropdownMenuItem onClick={() => setShowDimensions(v => !v)} className="flex items-center justify-between cursor-pointer">
-                 <span className="flex items-center gap-2"><Eye size={13} /> Show Dimensions</span>
-                 {showDimensions && <Check size={12} className="text-[#F15A22]" />}
-               </DropdownMenuItem>
-               <DropdownMenuItem onClick={() => setShowTooltips(v => !v)} className="flex items-center justify-between cursor-pointer">
-                 <span className="flex items-center gap-2"><Eye size={13} /> Show Tooltips</span>
-                 {showTooltips && <Check size={12} className="text-[#F15A22]" />}
-               </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-            <div className="flex border border-gray-200 overflow-hidden">
-              <button onClick={() => viewMode === "elevations" ? setElevationZoom(z => Math.max(25, z - 10)) : setGridZoom(z => Math.max(25, z - 10))} title="Zoom out" className="px-2.5 py-1.5 text-xs text-gray-600 hover:text-[#F15A22] transition-all">
-                <ZoomOut size={13} />
-              </button>
-              <button onClick={() => viewMode === "elevations" ? setElevationZoom(100) : setGridZoom(100)} title="Reset zoom" className="px-2 py-1.5 text-xs font-semibold text-gray-600 hover:text-[#F15A22] transition-all min-w-12">
-                {viewMode === "elevations" ? elevationZoom : gridZoom}%
-              </button>
-              <button onClick={() => viewMode === "elevations" ? setElevationZoom(z => Math.min(300, z + 10)) : setGridZoom(z => Math.min(300, z + 10))} title="Zoom in" className="px-2.5 py-1.5 text-xs text-gray-600 hover:text-[#F15A22] transition-all">
-                <ZoomIn size={13} />
-              </button>
+        <div ref={navBarRef} className={`${viewMode === "building" ? "fixed" : "absolute"} top-0 left-0 right-0 z-30 bg-white border-b border-gray-200`}>
+          {/* Row 1: Logo + Utility buttons */}
+          <div className="flex items-center px-4 py-2 gap-3">
+            <div className="shrink-0 flex flex-col gap-0">
+              <img src="https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/1a43e85d2_Connectapod-01.png" alt="Designer" style={{ height: "22px", width: "auto" }} />
+              <span className="text-[9px] text-gray-400 tracking-widest uppercase">Design Studio</span>
             </div>
-            {user?.role === "admin" && (
+            <div className="flex items-center gap-2 ml-auto shrink-0">
+              <button onClick={handleUndo} disabled={history.length === 0} title="Undo (Ctrl+Z)" className="flex items-center gap-1.5 px-3 py-1 text-xs text-gray-500 hover:text-[#F15A22] disabled:opacity-30 transition-all">
+                <Undo2 size={13} /> Undo {history.length > 0 && <span className="text-[10px] text-gray-400">({history.length})</span>}
+              </button>
+              <div className="flex border border-gray-200 overflow-hidden">
+                <button onClick={() => viewMode === "elevations" ? setElevationZoom(z => Math.max(25, z - 10)) : setGridZoom(z => Math.max(25, z - 10))} className="px-2 py-1 text-xs text-gray-500 hover:text-[#F15A22]"><ZoomOut size={12} /></button>
+                <button onClick={() => viewMode === "elevations" ? setElevationZoom(100) : setGridZoom(100)} className="px-1.5 py-1 text-[10px] font-semibold text-gray-500 min-w-10 text-center">{viewMode === "elevations" ? elevationZoom : gridZoom}%</button>
+                <button onClick={() => viewMode === "elevations" ? setElevationZoom(z => Math.min(300, z + 10)) : setGridZoom(z => Math.min(300, z + 10))} className="px-2 py-1 text-xs text-gray-500 hover:text-[#F15A22]"><ZoomIn size={12} /></button>
+              </div>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-white bg-red-600 hover:bg-red-700 border border-red-700 transition-all">
-                    Admin
+                  <button className="flex items-center gap-1 px-2.5 py-1 text-xs text-gray-500 hover:text-[#F15A22] transition-all">
+                    <Settings size={12} /> Settings
                   </button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48">
-                  <DropdownMenuItem onClick={() => setSaveTemplateModalOpen(true)} disabled={placedModules.length === 0}>
-                    <Save size={13} /> Save to Design Catalogue
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link to="/DesignCatalogue" className="flex items-center gap-2 cursor-pointer">
-                      <LayoutTemplate size={13} /> Manage Starter Designs
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link to="/FloorCatalogue" className="flex items-center gap-2 cursor-pointer">
-                      <BookOpen size={13} /> Floor Catalogue
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link to={createPageUrl("WallCatalogue")} className="flex items-center gap-2 cursor-pointer">
-                      <BookOpen size={13} /> Wall Catalogue
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link to="/admin/dashboard" className="flex items-center gap-2 cursor-pointer">
-                      <Users size={13} /> Client Dashboard
-                    </Link>
-                  </DropdownMenuItem>
+                <DropdownMenuContent align="end" className="w-52">
+                 <DropdownMenuItem onClick={() => setShowLabels(v => !v)} className="flex items-center justify-between cursor-pointer">
+                   <span className="flex items-center gap-2"><Eye size={13} /> Show Labels</span>
+                   {showLabels && <Check size={12} className="text-[#F15A22]" />}
+                 </DropdownMenuItem>
+                 <DropdownMenuItem onClick={() => setShowFurniture(v => !v)} className="flex items-center justify-between cursor-pointer">
+                   <span className="flex items-center gap-2"><Eye size={13} /> Show Furniture</span>
+                   {showFurniture && <Check size={12} className="text-[#F15A22]" />}
+                 </DropdownMenuItem>
+                 <DropdownMenuItem onClick={() => setShowPhotoImages(v => !v)} className="flex items-center justify-between cursor-pointer">
+                   <span className="flex items-center gap-2"><Image size={13} /> {showPhotoImages ? "Photo Images" : "Line Drawings"}</span>
+                   {showPhotoImages && <Check size={12} className="text-[#F15A22]" />}
+                 </DropdownMenuItem>
+                 <DropdownMenuItem onClick={() => setShowDimensions(v => !v)} className="flex items-center justify-between cursor-pointer">
+                   <span className="flex items-center gap-2"><Eye size={13} /> Show Dimensions</span>
+                   {showDimensions && <Check size={12} className="text-[#F15A22]" />}
+                 </DropdownMenuItem>
+                 <DropdownMenuItem onClick={() => setShowTooltips(v => !v)} className="flex items-center justify-between cursor-pointer">
+                   <span className="flex items-center gap-2"><Eye size={13} /> Show Tooltips</span>
+                   {showTooltips && <Check size={12} className="text-[#F15A22]" />}
+                 </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-            )}
+              {user?.role === "admin" && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button className="flex items-center gap-1 px-2.5 py-1 text-xs text-white bg-red-600 hover:bg-red-700 transition-all">Admin</button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-48">
+                    <DropdownMenuItem onClick={() => setSaveTemplateModalOpen(true)} disabled={placedModules.length === 0}>
+                      <Save size={13} /> Save to Design Catalogue
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link to="/DesignCatalogue" className="flex items-center gap-2 cursor-pointer"><LayoutTemplate size={13} /> Manage Starter Designs</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link to="/FloorCatalogue" className="flex items-center gap-2 cursor-pointer"><BookOpen size={13} /> Floor Catalogue</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link to={createPageUrl("WallCatalogue")} className="flex items-center gap-2 cursor-pointer"><BookOpen size={13} /> Wall Catalogue</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link to="/admin/dashboard" className="flex items-center gap-2 cursor-pointer"><Users size={13} /> Client Dashboard</Link></DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
+            </div>
+          </div>
+
+          {/* Row 2: Chevron Step Bar */}
+          <div className="flex items-stretch overflow-x-auto" style={{ height: 32 }}>
+            {[
+              { step: 1, label: "CHOOSE YOUR DESIGN", action: () => { setShowSaved(true); setViewMode("2d"); }, prefix: true },
+              { step: 2, label: "EDIT", action: () => setViewMode("2d"), isActive: viewMode === "2d" },
+              { step: 3, label: "ELEVATIONS", action: () => setViewMode("elevations"), isActive: viewMode === "elevations" },
+              { step: 4, label: "SITE PLAN", action: () => setViewMode("sitemap"), isActive: viewMode === "sitemap" },
+              { step: 5, label: "SAVE", action: () => setDetailsModalMode('save'), isActive: detailsModalMode === "save", disabled: placedModules.length === 0 },
+              { step: 6, label: "SHARE", action: handleShare, isActive: shareModalOpen, disabled: placedModules.length === 0 },
+              { step: 7, label: "PRICE", action: () => setDetailsModalMode('estimate'), isActive: detailsModalMode === "estimate", disabled: placedModules.length === 0 },
+              { step: 8, label: "PRINT", action: () => {
+                setPendingPrintMode('plans');
+                setDetailsModalMode('print');
+              }, disabled: placedModules.length === 0 },
+              { step: 9, label: "ORDER", action: () => {}, disabled: true },
+            ].map((item, idx, arr) => {
+              const isDone = completedSteps.includes(item.step) || item.step < currentStep;
+              const isCurrentActive = item.isActive || currentStep === item.step;
+              const isFuture = !isDone && !isCurrentActive;
+              const isDisabled = item.disabled;
+
+              return (
+                <button
+                  key={item.step}
+                  onClick={!isDisabled ? item.action : undefined}
+                  disabled={isDisabled}
+                  data-testid={`step-btn-${item.step}`}
+                  className="relative flex items-center gap-1.5 shrink-0 transition-all"
+                  style={{
+                    background: isDisabled ? "#e5e7eb" : isCurrentActive ? "#d94e1a" : "#F15A22",
+                    color: isDisabled ? "#9ca3af" : "white",
+                    paddingLeft: item.prefix ? 12 : 18,
+                    paddingRight: 12,
+                    height: 32,
+                    clipPath: idx === arr.length - 1
+                      ? "polygon(0 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 0 100%, 8px 50%)"
+                      : "polygon(0 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 0 100%, 8px 50%)",
+                    marginLeft: idx === 0 ? 0 : -4,
+                    opacity: isDisabled ? 0.5 : isFuture ? 0.7 : 1,
+                    cursor: isDisabled ? "default" : "pointer",
+                  }}
+                >
+                  {item.prefix && <span className="text-[10px] font-bold tracking-wider text-white/80 mr-0.5">STEP</span>}
+                  <span className="w-5 h-5 flex items-center justify-center rounded-full border-2 border-white text-[10px] font-bold flex-shrink-0" style={{ background: isDone ? "white" : "transparent", color: isDone ? "#F15A22" : "white" }}>
+                    {isDone ? <Check size={10} strokeWidth={3} /> : item.step}
+                  </span>
+                  <span className="text-[11px] font-bold tracking-wide whitespace-nowrap">{item.label}</span>
+                </button>
+              );
+            })}
           </div>
         </div>
       )}
