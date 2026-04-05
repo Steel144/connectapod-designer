@@ -333,10 +333,11 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
                         let pavMinCoord, pavWidthPx;
                         
                         if (isVerticalElevation) {
-                          // Sum allocated widths for all Z/X modules with walls
+                          // Sum allocated widths for all Z/X modules with walls in this pavilion
                           let totalAllocated = 0;
                           faceMods.forEach(m => {
-                            if (findWall(m, face)) {
+                            const w = findWall(m, face);
+                            if (w && w.y >= m.y && w.y < m.y + m.h) {
                               totalAllocated += Math.round(scale * m.h * CELL_M * PX_PER_M * 1.1);
                             }
                           });
@@ -352,7 +353,8 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
                         const zxPositions = new Map();
                         if (isVerticalElevation) {
                           faceMods.forEach(mod => {
-                            if (findWall(mod, face)) {
+                            const w = findWall(mod, face);
+                            if (w && w.y >= mod.y && w.y < mod.y + mod.h) {
                               const allocWidth = Math.round(scale * mod.h * CELL_M * PX_PER_M * 1.1);
                               const isConn = mod.h < maxPavDepth;
                               const renderWidth = isConn
@@ -386,6 +388,12 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
                               {faceMods.map((mod, idx) => {
                                 const wall = findWall(mod, face);
                                 if (!wall) return null;
+                                
+                                // For Z/X pavilion faces, reject walls outside the module's strict depth range
+                                // This prevents Connection walls from bleeding into adjacent pavilion views
+                                if (isVerticalElevation && (wall.y < mod.y || wall.y >= mod.y + mod.h)) {
+                                  return null;
+                                }
                                 
                                 let leftPx, widthPx, widthCells;
                                 
@@ -454,6 +462,7 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
                               {(shouldFlip ? [...faceMods].reverse() : faceMods).map((mod, idx) => {
                                 const wall = findWall(mod, face);
                                 if (!wall) return null;
+                                if (isVerticalElevation && (wall.y < mod.y || wall.y >= mod.y + mod.h)) return null;
                                 
                                 const widthCells = isVerticalElevation ? mod.h : mod.w;
                                 const isConnectionLabel = isVerticalElevation && mod.h < maxPavDepth;
