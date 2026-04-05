@@ -135,6 +135,7 @@ export default function Configurator() {
   const [shareModalOpen, setShareModalOpen] = useState(false);
   const [shareUrl, setShareUrl] = useState("");
   const [shareLoading, setShareLoading] = useState(false);
+  const [loadedDesignId, setLoadedDesignId] = useState(null);
 
   const isMobile = useIsMobile();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -315,6 +316,7 @@ export default function Configurator() {
       queryClient.invalidateQueries({ queryKey: ["homeDesigns"] });
       toast.success("Design saved!");
       setLastSavedName(data.name);
+      setLoadedDesignId(data.id || null);
       localStorage.setItem("configurator_last_saved_name", data.name);
       setSaveModalOpen(false);
     },
@@ -919,15 +921,26 @@ export default function Configurator() {
       ...extra,
     };
 
+    // If we have a loaded design ID and replace is requested, update directly by ID
+    if (replace && loadedDesignId) {
+      await base44.entities.HomeDesign.update(loadedDesignId, payload);
+      queryClient.invalidateQueries({ queryKey: ["homeDesigns"] });
+      toast.success("Design updated!");
+      setLastSavedName(name);
+      localStorage.setItem("configurator_last_saved_name", name);
+      return;
+    }
+
+    // Fallback: match by name if replace is requested
     if (replace) {
-      const existing = designs.find(d => d.name?.toLowerCase() === name.toLowerCase());
-      if (existing) {
-        await base44.entities.HomeDesign.update(existing.id, payload);
+      const match = designs.find(d => d.name?.toLowerCase() === name.toLowerCase());
+      if (match) {
+        await base44.entities.HomeDesign.update(match.id, payload);
         queryClient.invalidateQueries({ queryKey: ["homeDesigns"] });
         toast.success("Design updated!");
         setLastSavedName(name);
+        setLoadedDesignId(match.id);
         localStorage.setItem("configurator_last_saved_name", name);
-        setSaveModalOpen(false);
         return;
       }
     }
@@ -1028,6 +1041,7 @@ export default function Configurator() {
     setFurniture(loadedFurniture);
     setLoadCounter(c => c + 1);
     setShowSaved(false);
+    setLoadedDesignId(design.id || null);
     toast.success(`Loaded "${design.name}"`);
   };
 
@@ -1823,6 +1837,7 @@ export default function Configurator() {
         mode={detailsModalMode}
         onClose={() => setDetailsModalMode(null)}
         designs={designs}
+        loadedDesignId={loadedDesignId}
         placedModules={placedModules}
         walls={walls}
         printMode={pendingPrintMode}

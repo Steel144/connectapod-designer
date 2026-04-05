@@ -163,6 +163,7 @@ export default function ProjectDetailsModal({
   walls = [],
   printMode = null, // 'plans' or 'elevations'
   designs = [],
+  loadedDesignId = null,
   currentSiteAddress = "",
   onSiteAddressChange = null
 }) {
@@ -176,6 +177,7 @@ export default function ProjectDetailsModal({
   const [generating, setGenerating] = useState(false);
   const [saveAsMode, setSaveAsMode] = useState(false);
   const [saveAsName, setSaveAsName] = useState("");
+  const [showOverwriteWarning, setShowOverwriteWarning] = useState(false);
 
   useEffect(() => {
     if (open) {
@@ -189,6 +191,7 @@ export default function ProjectDetailsModal({
       setPhone(saved.phone || "");
       setSaveAsMode(false);
       setSaveAsName("");
+      setShowOverwriteWarning(false);
     }
   }, [open, currentSiteAddress]);
 
@@ -548,6 +551,33 @@ export default function ProjectDetailsModal({
           </div>
         )}
 
+        {showOverwriteWarning && (
+          <div className="border border-amber-300 bg-amber-50 p-3 space-y-2">
+            <p className="text-xs text-amber-800">
+              A design named <span className="font-semibold">"{projectName.trim()}"</span> already exists. Do you want to overwrite it?
+            </p>
+            <div className="flex gap-2 justify-end">
+              <Button variant="outline" size="sm" onClick={() => setShowOverwriteWarning(false)} className="rounded-none text-xs h-8">
+                Back
+              </Button>
+              <Button variant="outline" size="sm" onClick={() => {
+                setShowOverwriteWarning(false);
+                setSaveAsName(projectName.trim() + " (Copy)");
+                setSaveAsMode(true);
+              }} className="rounded-none text-xs h-8 text-gray-600">
+                Save As New
+              </Button>
+              <Button size="sm" onClick={() => {
+                const details = handleSaveDetails();
+                setShowOverwriteWarning(false);
+                onConfirm(details, true);
+              }} className="rounded-none text-xs h-8 bg-amber-600 hover:bg-amber-700 text-white">
+                Overwrite
+              </Button>
+            </div>
+          </div>
+        )}
+
         <div className="flex gap-2 pt-1">
           <Button variant="outline" onClick={onClose} className="flex-1 rounded-none border-gray-200 text-gray-500 h-9">
             <X size={14} className="mr-1.5" /> Cancel
@@ -591,12 +621,23 @@ export default function ProjectDetailsModal({
                   <Button 
                     onClick={() => {
                       const details = handleSaveDetails();
-                      const isDuplicate = designs.some(d => d.name?.toLowerCase() === details.projectName?.toLowerCase()?.trim());
-                      onConfirm(details, isDuplicate);
+                      const trimName = details.projectName?.trim()?.toLowerCase();
+                      const matchingDesign = designs.find(d => d.name?.toLowerCase() === trimName);
+                      
+                      if (matchingDesign && matchingDesign.id !== loadedDesignId) {
+                        // Name matches a DIFFERENT design — warn before overwriting
+                        setShowOverwriteWarning(true);
+                      } else if (matchingDesign && matchingDesign.id === loadedDesignId) {
+                        // Updating the same design we loaded — overwrite directly
+                        onConfirm(details, true);
+                      } else {
+                        // No match — save as new
+                        onConfirm(details, false);
+                      }
                     }} 
                     className="flex-1 bg-[#F15A22] hover:bg-[#d94e1a] text-white rounded-none h-9"
                   >
-                    <FileText size={14} className="mr-1.5" /> Save
+                    <FileText size={14} className="mr-1.5" /> {loadedDesignId ? "Save" : "Save"}
                   </Button>
                 </>
               )}
