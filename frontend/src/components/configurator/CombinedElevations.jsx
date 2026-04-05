@@ -310,8 +310,8 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
                       {pavLabel}
                     </div>
 
-                    <div style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
-                      {["W", "Y", "Z", "X"].map(face => {
+                    <div style={{ display: "block" }}>
+                      {["Z", "X", "W", "Y"].map(face => {
                         const faceLabels = { 
                           Y: "Y — South Elevation", 
                           W: "W — North Elevation", 
@@ -323,30 +323,53 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
                         
                         // Determine if this is a vertical (side) or horizontal (front/back) elevation
                         const isVerticalElevation = face === "Z" || face === "X";
-                        
-                        // Calculate pavilion bounds based on elevation type
-                        let pavMinCoord, pavMaxCoord, pavWidthCells, pavWidthPx;
                         const maxPavDepth = Math.max(...mods.map(m => m.h));
                         
+                        // For Z/X: sort modules by Y and use cumulative positioning
+                        const faceMods = isVerticalElevation
+                          ? [...mods].sort((a, b) => a.y - b.y)
+                          : mods;
+                        
+                        let pavMinCoord, pavWidthPx;
+                        
                         if (isVerticalElevation) {
-                          // For Z and X (vertical elevations), use Y-axis (depth)
-                          pavMinCoord = Math.min(...mods.map(m => m.y));
-                          pavMaxCoord = Math.max(...mods.map(m => m.y + m.h));
-                          pavWidthCells = pavMaxCoord - pavMinCoord;
-                          pavWidthPx = Math.round(scale * maxPavDepth * CELL_M * PX_PER_M * 1.1);
+                          // Sum allocated widths for all Z/X modules with walls
+                          let totalAllocated = 0;
+                          faceMods.forEach(m => {
+                            if (findWall(m, face)) {
+                              totalAllocated += Math.round(scale * m.h * CELL_M * PX_PER_M * 1.1);
+                            }
+                          });
+                          pavWidthPx = totalAllocated || Math.round(scale * maxPavDepth * CELL_M * PX_PER_M * 1.1);
                         } else {
-                          // For W and Y (horizontal elevations), use X-axis (width)
                           pavMinCoord = Math.min(...mods.map(m => m.x));
-                          pavMaxCoord = Math.max(...mods.map(m => m.x + m.w));
-                          pavWidthCells = pavMaxCoord - pavMinCoord;
-                          pavWidthPx = Math.round(scale * pavWidthCells * CELL_M * PX_PER_M);
+                          const pavMaxCoord = Math.max(...mods.map(m => m.x + m.w));
+                          pavWidthPx = Math.round(scale * (pavMaxCoord - pavMinCoord) * CELL_M * PX_PER_M);
+                        }
+                        
+                        // Pre-compute cumulative positions for Z/X
+                        let zxCumLeft = 0;
+                        const zxPositions = new Map();
+                        if (isVerticalElevation) {
+                          faceMods.forEach(mod => {
+                            if (findWall(mod, face)) {
+                              const allocWidth = Math.round(scale * mod.h * CELL_M * PX_PER_M * 1.1);
+                              const isConn = mod.h < maxPavDepth;
+                              const renderWidth = isConn
+                                ? Math.round(scale * mod.h * CELL_M * PX_PER_M)
+                                : allocWidth;
+                              const centerOff = isConn ? Math.round((allocWidth - renderWidth) / 2) : 0;
+                              zxPositions.set(`${mod.x}-${mod.y}`, { left: zxCumLeft + centerOff, width: renderWidth });
+                              zxCumLeft += allocWidth;
+                            }
+                          });
                         }
                         
                         // Apply flip for W (North) elevation like main building
                         const shouldFlip = face === "W";
                         
                         return (
-                          <div key={face} style={{ display: "block", marginBottom: "40px" }}>
+                          <div key={face} style={{ display: isVerticalElevation ? "inline-block" : "block", marginBottom: "40px", marginRight: isVerticalElevation ? "16px" : undefined, verticalAlign: "top" }}>
                             <div style={{ fontSize: "14px", fontWeight: "bold", color: "black", textTransform: "uppercase", letterSpacing: "0.05em", backgroundColor: "#fed7aa", padding: "8px 12px", borderRadius: "4px", width: "fit-content", marginLeft: "4px", marginBottom: "16px" }}>
                               {faceLabels[face]}
                             </div>
@@ -360,25 +383,24 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
                               backgroundColor: "#f9fafb",
                               transform: shouldFlip ? "scaleX(-1)" : undefined
                             }}>
-                              {mods.map((mod, idx) => {
+                              {faceMods.map((mod, idx) => {
                                 const wall = findWall(mod, face);
                                 if (!wall) return null;
                                 
-                                let offsetCells, widthCells;
+                                let leftPx, widthPx, widthCells;
                                 
                                 if (isVerticalElevation) {
-                                  offsetCells = 0;
+                                  const pos = zxPositions.get(`${mod.x}-${mod.y}`);
+                                  if (!pos) return null;
+                                  leftPx = pos.left;
+                                  widthPx = pos.width;
                                   widthCells = mod.h;
                                 } else {
-                                  offsetCells = mod.x - pavMinCoord;
+                                  const offsetCells = mod.x - pavMinCoord;
                                   widthCells = mod.w;
+                                  leftPx = Math.round(scale * offsetCells * CELL_M * PX_PER_M);
+                                  widthPx = Math.round(scale * widthCells * CELL_M * PX_PER_M);
                                 }
-                                
-                                const leftPx = Math.round(scale * offsetCells * CELL_M * PX_PER_M);
-                                const isConnection = isVerticalElevation && mod.h < maxPavDepth;
-                                const widthPx = isVerticalElevation 
-                                  ? Math.round(scale * widthCells * CELL_M * PX_PER_M * (isConnection ? 1.0 : 1.1))
-                                  : Math.round(scale * widthCells * CELL_M * PX_PER_M);
                                 
                                 const wallWidthM = widthCells * CELL_M;
                                 
@@ -404,7 +426,7 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
                                       showLabel={false}
                                     />
                                     {/* Orange divider line at module boundary */}
-                                    {!isVerticalElevation && idx < mods.length - 1 && (
+                                    {!isVerticalElevation && idx < faceMods.length - 1 && (
                                       <div style={{
                                         position: "absolute",
                                         left: leftPx + widthPx,
@@ -429,7 +451,7 @@ export default function CombinedElevations({ walls = [], placedModules = [], sti
                               gap: isVerticalElevation ? "8px" : "0",
                               marginTop: "10px"
                             }}>
-                              {(shouldFlip ? [...mods].reverse() : mods).map((mod, idx) => {
+                              {(shouldFlip ? [...faceMods].reverse() : faceMods).map((mod, idx) => {
                                 const wall = findWall(mod, face);
                                 if (!wall) return null;
                                 
