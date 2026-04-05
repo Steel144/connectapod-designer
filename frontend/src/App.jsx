@@ -21,6 +21,7 @@ import Landing from './pages/Landing';
 import FloorCatalogue from './pages/Catalogue';
 import AdminDesigns from './pages/AdminDesigns';
 import SharedDesign from './pages/SharedDesign';
+import AdminDashboard from './pages/AdminDashboard';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -68,6 +69,7 @@ const AuthenticatedApp = () => {
       ))}
       <Route path="*" element={<PageNotFound />} />
       <Route path="/shared/:shareId" element={<SharedDesign />} />
+      <Route path="/admin/dashboard" element={<AdminDashboard />} />
     </Routes>
   );
 };

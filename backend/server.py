@@ -67,6 +67,12 @@ class HomeDesign(BaseModel):
     totalSqm: Optional[float] = 0
     estimatedPrice: Optional[float] = 0
     moduleCount: Optional[int] = 0
+    clientFirstName: Optional[str] = ""
+    clientFamilyName: Optional[str] = ""
+    email: Optional[str] = ""
+    phone: Optional[str] = ""
+    homeAddress: Optional[str] = ""
+    siteAddress: Optional[str] = ""
     created_date: Optional[datetime] = None
 
 class ModuleEntry(BaseModel):
@@ -214,7 +220,11 @@ async def delete_design_template(id: str):
 
 @app.post("/api/entities/HomeDesign")
 async def create_home_design(design: HomeDesign):
-    return await create_document("home_designs", design.dict(exclude_none=True))
+    result = await create_document("home_designs", design.dict(exclude_none=True))
+    # Fire email notification (non-blocking)
+    import asyncio
+    asyncio.create_task(send_lead_notification(design.dict(exclude_none=True)))
+    return result
 
 @app.get("/api/entities/HomeDesign")
 async def list_home_designs(sort: str = "-created_date"):
@@ -226,7 +236,11 @@ async def get_home_design(id: str):
 
 @app.put("/api/entities/HomeDesign/{id}")
 async def update_home_design(id: str, data: Dict[str, Any] = Body(...)):
-    return await update_document("home_designs", id, data)
+    result = await update_document("home_designs", id, data)
+    # Fire email notification on update too (non-blocking)
+    import asyncio
+    asyncio.create_task(send_lead_notification(data))
+    return result
 
 @app.delete("/api/entities/HomeDesign/{id}")
 async def delete_home_design(id: str):
@@ -268,6 +282,77 @@ async def get_shared_design(share_id: str):
     if not doc:
         raise HTTPException(status_code=404, detail="Shared design not found")
     return doc
+
+# ============ ADMIN DASHBOARD ============
+
+@app.get("/api/admin/stats")
+async def admin_stats():
+    leads_count = await db["home_designs"].count_documents({})
+    shares_count = await db["shared_designs"].count_documents({})
+    new_leads = await db["home_designs"].count_documents({"viewed_by_admin": {"$ne": True}})
+    return {"leads": leads_count, "shares": shares_count, "newLeads": new_leads}
+
+@app.get("/api/admin/leads")
+async def admin_leads():
+    docs = await db["home_designs"].find({}, {"_id": 0}).sort("created_date", -1).to_list(500)
+    # Mark all as viewed
+    await db["home_designs"].update_many({"viewed_by_admin": {"$ne": True}}, {"$set": {"viewed_by_admin": True}})
+    return docs
+
+@app.get("/api/admin/shares")
+async def admin_shares():
+    docs = await db["shared_designs"].find({}, {"_id": 0}).sort("created_date", -1).to_list(500)
+    return docs
+
+# ============ EMAIL NOTIFICATION ============
+
+async def send_lead_notification(design_data: dict):
+    """Send email notification when a design is saved with client details."""
+    resend_key = os.environ.get("RESEND_API_KEY", "")
+    if not resend_key:
+        return  # Skip if no API key configured
+    try:
+        import resend
+        import asyncio
+        resend.api_key = resend_key
+        sender = os.environ.get("SENDER_EMAIL", "onboarding@resend.dev")
+        recipient = os.environ.get("NOTIFICATION_EMAIL", "support@steelframeman.co.nz")
+        client_name = f"{design_data.get('clientFirstName', '')} {design_data.get('clientFamilyName', '')}".strip() or "Unknown"
+        project = design_data.get("name", "Untitled")
+        email = design_data.get("email", "Not provided")
+        phone = design_data.get("phone", "Not provided")
+        address = design_data.get("siteAddress", "Not provided")
+        modules = design_data.get("moduleCount", 0)
+        sqm = design_data.get("totalSqm", 0)
+        price = design_data.get("estimatedPrice", 0)
+        html = f"""
+        <div style="font-family:Arial,sans-serif;max-width:500px;margin:0 auto;">
+          <div style="background:#F15A22;padding:16px 20px;">
+            <h2 style="color:white;margin:0;font-size:16px;">New Design Saved</h2>
+          </div>
+          <div style="padding:20px;border:1px solid #e5e7eb;">
+            <table style="width:100%;border-collapse:collapse;">
+              <tr><td style="padding:6px 0;font-size:12px;color:#6b7280;">Client</td><td style="padding:6px 0;font-size:13px;font-weight:600;">{client_name}</td></tr>
+              <tr><td style="padding:6px 0;font-size:12px;color:#6b7280;">Project</td><td style="padding:6px 0;font-size:13px;">{project}</td></tr>
+              <tr><td style="padding:6px 0;font-size:12px;color:#6b7280;">Email</td><td style="padding:6px 0;font-size:13px;">{email}</td></tr>
+              <tr><td style="padding:6px 0;font-size:12px;color:#6b7280;">Phone</td><td style="padding:6px 0;font-size:13px;">{phone}</td></tr>
+              <tr><td style="padding:6px 0;font-size:12px;color:#6b7280;">Site Address</td><td style="padding:6px 0;font-size:13px;">{address}</td></tr>
+              <tr><td style="padding:6px 0;font-size:12px;color:#6b7280;">Design</td><td style="padding:6px 0;font-size:13px;">{modules} modules, {sqm:.1f} m²</td></tr>
+              <tr><td style="padding:6px 0;font-size:12px;color:#6b7280;">Est. Price</td><td style="padding:6px 0;font-size:13px;color:#F15A22;font-weight:600;">${price/1000:.0f}k</td></tr>
+            </table>
+          </div>
+          <p style="font-size:11px;color:#9ca3af;margin-top:12px;">Connectapod Design Platform</p>
+        </div>
+        """
+        params = {
+            "from": sender,
+            "to": [recipient],
+            "subject": f"New Design: {project} — {client_name}",
+            "html": html,
+        }
+        await asyncio.to_thread(resend.Emails.send, params)
+    except Exception as e:
+        print(f"Email notification failed (non-blocking): {e}")
 
 # ============ MODULE ENTRIES ============
 

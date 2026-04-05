@@ -6,11 +6,13 @@ import ConfigGrid from "@/components/configurator/ConfigGrid";
 import DesignSummary from "@/components/configurator/DesignSummary";
 
 import SaveDesignModal from "@/components/configurator/SaveDesignModal";
+import StepIndicator from "@/components/configurator/StepIndicator";
+import GuidedTooltip from "@/components/configurator/GuidedTooltip";
 import SaveAsTemplateModal from "@/components/configurator/SaveAsTemplateModal";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { BookOpen, FolderOpen, Save, Trash2, ChevronLeft, ChevronRight, Undo2, Box, Grid2X2, Image, LayoutTemplate, Menu, X, ChevronUp, ChevronDown, Settings, Eye, EyeOff, Check, Map, Share2, Copy, ExternalLink } from "lucide-react";
+import { BookOpen, FolderOpen, Save, Trash2, ChevronLeft, ChevronRight, Undo2, Box, Grid2X2, Image, LayoutTemplate, Menu, X, ChevronUp, ChevronDown, Settings, Eye, EyeOff, Check, Map, Share2, Copy, ExternalLink, Users } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
@@ -136,6 +138,9 @@ export default function Configurator() {
   const [shareUrl, setShareUrl] = useState("");
   const [shareLoading, setShareLoading] = useState(false);
   const [loadedDesignId, setLoadedDesignId] = useState(null);
+  const [completedSteps, setCompletedSteps] = useState(() => {
+    try { return JSON.parse(localStorage.getItem("connectapod_completed_steps") || "[]"); } catch { return []; }
+  });
 
   const isMobile = useIsMobile();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -333,6 +338,47 @@ export default function Configurator() {
       toast.error("Failed to delete design");
     },
   });
+
+  // ── Step Indicator Logic ──
+  const currentStep = (() => {
+    if (shareModalOpen) return 6;
+    if (detailsModalMode === "save") return 5;
+    if (viewMode === "sitemap") return 4;
+    if (viewMode === "elevations") return 3;
+    if (placedModules.length > 0) return 2;
+    return 1;
+  })();
+
+  const markStepComplete = (stepId) => {
+    setCompletedSteps(prev => {
+      if (prev.includes(stepId)) return prev;
+      const next = [...prev, stepId];
+      localStorage.setItem("connectapod_completed_steps", JSON.stringify(next));
+      return next;
+    });
+  };
+
+  useEffect(() => {
+    if (placedModules.length > 0) markStepComplete(1);
+    if (placedModules.length > 0 && viewMode !== "2d") markStepComplete(2);
+    if (viewMode === "elevations") markStepComplete(3);
+    if (viewMode === "sitemap") markStepComplete(4);
+  }, [placedModules.length, viewMode]);
+
+  useEffect(() => {
+    if (lastSavedName) markStepComplete(5);
+  }, [lastSavedName]);
+
+  const handleStepClick = (stepId) => {
+    switch (stepId) {
+      case 1: setShowSaved(true); setViewMode("2d"); break;
+      case 2: setViewMode("2d"); break;
+      case 3: setViewMode("elevations"); break;
+      case 4: setViewMode("sitemap"); break;
+      case 5: setDetailsModalMode("save"); break;
+      case 6: if (placedModules.length > 0) handleShare(); break;
+    }
+  };
 
   const [isDraggingFromPanel, setIsDraggingFromPanel] = useState(false);
   const handleDragStart = (e, mod) => {
@@ -1254,6 +1300,11 @@ export default function Configurator() {
                       <BookOpen size={13} /> Wall Catalogue
                     </Link>
                   </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/admin/dashboard" className="flex items-center gap-2 cursor-pointer">
+                      <Users size={13} /> Client Dashboard
+                    </Link>
+                  </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             )}
@@ -1261,6 +1312,21 @@ export default function Configurator() {
           </div>
         </div>
       )}
+
+      {/* ── STEP INDICATOR ── */}
+      {!isMobile && (
+        <div className={`${viewMode === "building" ? "fixed" : "absolute"} left-0 right-0 z-30`} style={{ top: navBarHeight }}>
+          <StepIndicator currentStep={currentStep} completedSteps={completedSteps} onStepClick={handleStepClick} />
+        </div>
+      )}
+
+      {/* ── GUIDED TOOLTIPS ── */}
+      <GuidedTooltip tipId="select-design" show={currentStep === 1 && placedModules.length === 0} />
+      <GuidedTooltip tipId="customise" show={currentStep === 2 && viewMode === "2d" && !completedSteps.includes(2)} />
+      <GuidedTooltip tipId="elevations" show={viewMode === "elevations" && !completedSteps.includes(3)} />
+      <GuidedTooltip tipId="sitemap" show={viewMode === "sitemap" && !completedSteps.includes(4)} />
+      <GuidedTooltip tipId="save" show={detailsModalMode === "save" && !completedSteps.includes(5)} />
+      <GuidedTooltip tipId="share" show={shareModalOpen && !completedSteps.includes(6)} />
 
       {/* ── MOBILE TOP BAR ── */}
       {isMobile && (
