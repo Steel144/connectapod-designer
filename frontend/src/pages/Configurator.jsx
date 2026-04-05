@@ -147,7 +147,7 @@ export default function Configurator() {
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
 
   const [panelCollapsed, setPanelCollapsed] = useState(false);
-  const [panelPos, setPanelPos] = useState({ x: 16, y: 60 });
+  const [panelPos, setPanelPos] = useState({ x: 16, y: 96 });
   const [draggingPanel, setDraggingPanel] = useState(null);
   const [summaryPos, setSummaryPos] = useState({ x: window.innerWidth - 256 - 16, y: 300 });
   const [draggingSummary, setDraggingSummary] = useState(null);
