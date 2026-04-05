@@ -19,56 +19,79 @@ Complete migration from the proprietary Base44 platform to a FastAPI + MongoDB +
 
 ## What's Been Implemented
 
+### Share Design Feature (Completed April 2026)
+- Share button in configurator toolbar creates a snapshot of current design
+- Backend `POST /api/share` creates shared design with unique 8-char alphanumeric slug
+- Backend `GET /api/shared/{share_id}` returns shared design data (public, no auth)
+- Shared viewer page at `/shared/:shareId` with 3 tabs: Floor Plan, Elevations, Summary
+- Copy-to-clipboard share URL modal
+- 404 error page for invalid share links
+- MongoDB collection: `shared_designs`
+
+### Pavilion Elevation Fixes (Completed April 2026)
+- Z/X pavilion elevations displayed side-by-side (inline-block) matching building layout
+- Cumulative positioning for Z/X pavilion modules (no more stacking at position 0)
+- Strict depth boundary check prevents Connection walls bleeding into adjacent pavilion views
+- Front/back pavilion background shading in horizontal (W/Y) elevations
+
 ### Elevation System (Completed April 2026)
 - Z/X elevation consistent sizing using cumulative positioning
-- Connection modules display at correct proportional width (1.0x, no wall thickness multiplier)
-- Standard modules use 1.1x multiplier (accounts for ~5.2m actual width with walls)
-- Connection modules centered between pavilions with 300mm closing offset
-- Orange divider lines at pavilion module boundaries (W/Y elevations)
+- Connection modules display at correct proportional width
+- Orange divider lines at pavilion module boundaries
 - Wall labels on pavilion elevations (name, code, window/door sizes)
-- W (North) elevation labels properly ordered for flipped display
-- Unified title styling across All Elevations / Building Elevations / Pavilion Elevations
-- Removed all legacy manual offset hacks
+- Unified title styling across All/Building/Pavilion Elevations
+
+### NZ Environmental Zones (Completed April 2026)
+- Wind, Earthquake, Corrosion zone auto-detection on Site Map
+- Granular city-level Z-factor lookup for Earthquake zones
+- Red disclaimer text below address
 
 ### Site Map (Completed April 2026)
-- LINZ WMTS tile proxy (`/api/linz/wmts-tile/{z}/{x}/{y}`) for full property boundary coverage
-- Removed orange GeoJSON boundary overlay (replaced by WMTS tiles)
-- Property boundaries now visible across entire map view
+- LINZ WMTS tile proxy for property boundaries
+- Full map coverage with Nominatim geocoding
 
 ### Design Catalogue (Completed April 2026)
-- Dynamic deck/internal area calculation from grid modules when stored values missing
-- Shows: internal m², deck m², total m² (with Maximize2 icon for both)
-- "Manage Starter Designs" links to DesignCatalogue page
+- Dynamic deck/internal area calculation
+- Image uploader fix
 
 ### Project Details & Address Sync (Completed April 2026)
-- "Same as home address" button on Save panel (right of Site Address label)
-- Bidirectional site address sync between Site Map panel and Save/Print panels
-- Image uploader in design catalogue editor fixed (response key mismatch)
+- Bidirectional site address sync between panels
 
 ### Authentication
 - Mocked via AuthContext.jsx with hardcoded admin password: `admin123`
 
 ### 3rd Party Integrations
 - LINZ Data Service API (Mapping/Boundaries) — API key in backend .env
+- Nominatim OpenStreetMap (Geocoding) — Public API
 - OpenAI GPT-4o (Text Generation) — Emergent LLM Key
 
 ## Key Files
+- `/app/frontend/src/pages/SharedDesign.jsx` - Shared design viewer page
+- `/app/frontend/src/pages/Configurator.jsx` - Main configurator (Share button + modal)
 - `/app/frontend/src/components/configurator/CombinedElevations.jsx` - Pavilion elevation rendering
-- `/app/frontend/src/components/configurator/VerticalElevation.jsx` - Building Z/X elevation rendering
-- `/app/frontend/src/components/configurator/ElevationSlot.jsx` - Core image rendering wrapper
+- `/app/frontend/src/components/configurator/VerticalElevation.jsx` - Building Z/X rendering
+- `/app/frontend/src/components/configurator/HorizontalElevation.jsx` - Building W/Y rendering
 - `/app/frontend/src/components/configurator/SiteMapView.jsx` - Site Map with LINZ WMTS
-- `/app/frontend/src/components/configurator/ProjectDetailsModal.jsx` - Save/print details
-- `/app/frontend/src/pages/DesignCatalogue.jsx` - Design catalogue with area calculations
 - `/app/frontend/src/hooks/useElevationGeometry.js` - Elevation slot geometry
-- `/app/backend/server.py` - Backend API
+- `/app/backend/server.py` - Backend API (includes share endpoints)
 - `/app/rebuild-frontend.sh` - MANDATORY build script
+
+## Key API Endpoints
+- `POST /api/share` - Create shared design snapshot, returns `{ share_id }`
+- `GET /api/shared/{share_id}` - Fetch shared design (public)
+- `GET /api/linz/boundary-tiles/{z}/{x}/{y}.png` - LINZ WMTS proxy
+- `POST /api/upload` - Image upload
+- CRUD: `/api/entities/{DesignTemplate|HomeDesign|ModuleEntry|WallEntry|FloorPlanImage|WallImage}`
 
 ## Upcoming Tasks (P1)
 - Lead Capture Funnel: Before entering designer or before export, collect name, email, phone, project details. Push to CRM/Email.
 
 ## Future Tasks (P2)
-- Enforce build rules and Smart Configuration Engine logic (cladding, roof types, interior layouts, structural options)
-- Real-Time Pricing Engine (dynamic cost updates based on size, materials, complexity)
+- Enforce build rules and Smart Configuration Engine logic
+- Real-Time Pricing Engine
+- Re-enable/Fix 3D Viewer
 
 ## DB Schema
-- `design_templates`: { id, name, description, category, size_sqm, internal_sqm, deck_sqm, price, modules, walls, heroImage }
+- `design_templates`: { id, name, description, category, template_payload: { modules, layout } }
+- `home_designs`: { id, name, grid, walls, furniture, totalSqm, estimatedPrice, moduleCount }
+- `shared_designs`: { share_id, name, grid, walls, furniture, totalSqm, estimatedPrice, moduleCount, clientFirstName, clientFamilyName, siteAddress, created_date }

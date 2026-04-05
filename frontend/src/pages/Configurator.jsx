@@ -10,7 +10,7 @@ import SaveAsTemplateModal from "@/components/configurator/SaveAsTemplateModal";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { BookOpen, FolderOpen, Save, Trash2, ChevronLeft, ChevronRight, Undo2, Box, Grid2X2, Image, LayoutTemplate, Menu, X, ChevronUp, ChevronDown, Settings, Eye, EyeOff, Check, Map } from "lucide-react";
+import { BookOpen, FolderOpen, Save, Trash2, ChevronLeft, ChevronRight, Undo2, Box, Grid2X2, Image, LayoutTemplate, Menu, X, ChevronUp, ChevronDown, Settings, Eye, EyeOff, Check, Map, Share2, Copy, ExternalLink } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
@@ -132,6 +132,9 @@ export default function Configurator() {
     try { return localStorage.getItem("configurator_last_saved_name") || ""; } catch { return ""; }
   });
   const [elevationZoom, setElevationZoom] = useState(100);
+  const [shareModalOpen, setShareModalOpen] = useState(false);
+  const [shareUrl, setShareUrl] = useState("");
+  const [shareLoading, setShareLoading] = useState(false);
 
   const isMobile = useIsMobile();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -932,6 +935,55 @@ export default function Configurator() {
     saveMutation.mutate(payload);
   };
 
+  const handleShare = async () => {
+    if (placedModules.length === 0) return;
+    setShareLoading(true);
+    try {
+      const totalSqm = placedModules.reduce((s, m) => s + (m.sqm || 0), 0);
+      const estimatedPrice = placedModules.reduce((s, m) => s + (m.price || 0), 0) + walls.reduce((s, w) => s + (w.price || 0), 0);
+      const gridToSave = placedModules.map(m => ({
+        id: m.id, type: m.type, label: m.label, x: m.x, y: m.y, w: m.w, h: m.h,
+        sqm: m.sqm || 0, price: m.price || 0, color: m.color, border: m.border,
+        groupKey: m.groupKey, rotation: m.rotation, flipped: m.flipped,
+        floorPlanImage: floorPlanImages[m.type] || m.floorPlanImage || null,
+      }));
+      const wallsToSave = walls.map(w => ({
+        id: w.id, type: w.type || w.mpCode, label: w.label, x: w.x, y: w.y,
+        face: w.face, orientation: w.orientation, length: w.length, rotation: w.rotation,
+        flipped: w.flipped || false, elevationImage: w.elevationImage || null,
+        mpCode: w.mpCode, description: w.description, variants: w.variants,
+        price: w.price || 0, width: w.width, height: w.height,
+      }));
+      const printDetails = (() => { try { return JSON.parse(localStorage.getItem("connectapod_print_details")) || {}; } catch { return {}; } })();
+      const saveDetails = (() => { try { return JSON.parse(localStorage.getItem("connectapod_save_details")) || {}; } catch { return {}; } })();
+      const res = await fetch("/api/share", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: lastSavedName || printDetails.projectName || "My Design",
+          grid: gridToSave,
+          walls: wallsToSave,
+          furniture,
+          totalSqm,
+          estimatedPrice,
+          moduleCount: placedModules.length,
+          clientFirstName: printDetails.clientFirstName || saveDetails.clientFirstName || "",
+          clientFamilyName: printDetails.clientFamilyName || saveDetails.clientFamilyName || "",
+          siteAddress: saveDetails.siteAddress || "",
+        }),
+      });
+      if (!res.ok) throw new Error("Failed to create share link");
+      const { share_id } = await res.json();
+      const url = `${window.location.origin}/shared/${share_id}`;
+      setShareUrl(url);
+      setShareModalOpen(true);
+    } catch (e) {
+      toast.error("Failed to create share link");
+    } finally {
+      setShareLoading(false);
+    }
+  };
+
   const handleLoad = (design) => {
     // Use both the ref (for sync access) and the live query data (wallImages/floorPlanImages)
     // to ensure images are applied even when data is already cached and ref is current
@@ -1100,6 +1152,9 @@ export default function Configurator() {
             </button>
               <button onClick={() => setDetailsModalMode('save')} disabled={placedModules.length === 0 || saveMutation.isPending} className={`flex items-center gap-1.5 px-3 py-1.5 text-xs transition-all ${placedModules.length === 0 || saveMutation.isPending ? "bg-white text-gray-400 opacity-40" : "bg-white text-gray-600 border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22]"}`} style={{ clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 50%, calc(100% - 6px) 100%, 0 100%)" }}>
                 <Save size={13} /> {saveMutation.isPending ? "Saving…" : "Save"}
+              </button>
+              <button onClick={handleShare} disabled={placedModules.length === 0 || shareLoading} data-testid="share-design-btn" className={`flex items-center gap-1.5 px-3 py-1.5 text-xs transition-all ${placedModules.length === 0 || shareLoading ? "bg-white text-gray-400 opacity-40" : "bg-[#F15A22] text-white hover:bg-[#d94e1a]"}`} style={{ clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 50%, calc(100% - 6px) 100%, 0 100%)" }}>
+                <Share2 size={13} /> {shareLoading ? "Sharing…" : "Share"}
               </button>
               <button onClick={() => setViewMode("sitemap")} className={`flex items-center gap-1.5 px-3 py-1.5 text-xs transition-all ${viewMode === "sitemap" ? "bg-[#F15A22] text-white" : "bg-white text-gray-600 hover:text-[#F15A22]"}`} style={{ clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 50%, calc(100% - 6px) 100%, 0 100%)" }}>
                 <Map size={13} /> Site Map
@@ -1808,6 +1863,42 @@ export default function Configurator() {
         walls={walls}
         furniture={furniture}
       />
+
+      {/* Share Modal */}
+      {shareModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => setShareModalOpen(false)}>
+          <div className="bg-white shadow-2xl border border-gray-200 w-full max-w-md mx-4" onClick={e => e.stopPropagation()} data-testid="share-modal">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+              <h2 className="text-sm font-bold text-gray-800 flex items-center gap-2"><Share2 size={15} /> Share Design</h2>
+              <button onClick={() => setShareModalOpen(false)} className="text-gray-400 hover:text-gray-600" data-testid="share-modal-close"><X size={16} /></button>
+            </div>
+            <div className="p-5 space-y-4">
+              <p className="text-xs text-gray-500">Anyone with this link can view this design configuration.</p>
+              <div className="flex items-center gap-2">
+                <input
+                  readOnly
+                  value={shareUrl}
+                  className="flex-1 px-3 py-2.5 text-xs bg-gray-50 border border-gray-200 text-gray-700 font-mono select-all"
+                  data-testid="share-url-input"
+                  onClick={e => e.target.select()}
+                />
+                <button
+                  data-testid="copy-share-url-btn"
+                  onClick={() => {
+                    navigator.clipboard.writeText(shareUrl).then(() => toast.success("Link copied!"));
+                  }}
+                  className="px-3 py-2.5 bg-[#F15A22] text-white text-xs font-medium hover:bg-[#d94e1a] transition-all flex items-center gap-1.5 whitespace-nowrap"
+                >
+                  <Copy size={13} /> Copy
+                </button>
+              </div>
+              <a href={shareUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-xs text-[#F15A22] hover:underline" data-testid="open-share-link">
+                <ExternalLink size={12} /> Open in new tab
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Copyright footer */}
       {!isMobile && (

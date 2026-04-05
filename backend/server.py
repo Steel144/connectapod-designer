@@ -6,6 +6,8 @@ from typing import List, Optional, Dict, Any
 from datetime import datetime
 import os
 import uuid
+import string
+import random
 import shutil
 from pathlib import Path
 from emergentintegrations.llm.chat import LlmChat, UserMessage
@@ -229,6 +231,43 @@ async def update_home_design(id: str, data: Dict[str, Any] = Body(...)):
 @app.delete("/api/entities/HomeDesign/{id}")
 async def delete_home_design(id: str):
     return await delete_document("home_designs", id)
+
+# ============ SHARED DESIGNS ============
+
+def generate_share_id(length=8):
+    chars = string.ascii_lowercase + string.digits
+    return ''.join(random.choices(chars, k=length))
+
+@app.post("/api/share")
+async def create_shared_design(data: Dict[str, Any] = Body(...)):
+    share_id = generate_share_id()
+    # Ensure unique share_id
+    while await db["shared_designs"].find_one({"share_id": share_id}):
+        share_id = generate_share_id()
+    doc = {
+        "share_id": share_id,
+        "name": data.get("name", "Shared Design"),
+        "grid": data.get("grid", []),
+        "walls": data.get("walls", []),
+        "furniture": data.get("furniture", []),
+        "totalSqm": data.get("totalSqm", 0),
+        "estimatedPrice": data.get("estimatedPrice", 0),
+        "moduleCount": data.get("moduleCount", 0),
+        "clientFirstName": data.get("clientFirstName", ""),
+        "clientFamilyName": data.get("clientFamilyName", ""),
+        "siteAddress": data.get("siteAddress", ""),
+        "created_date": datetime.utcnow(),
+    }
+    doc_to_insert = doc.copy()
+    await db["shared_designs"].insert_one(doc_to_insert)
+    return {"share_id": share_id}
+
+@app.get("/api/shared/{share_id}")
+async def get_shared_design(share_id: str):
+    doc = await db["shared_designs"].find_one({"share_id": share_id}, {"_id": 0})
+    if not doc:
+        raise HTTPException(status_code=404, detail="Shared design not found")
+    return doc
 
 # ============ MODULE ENTRIES ============
 
