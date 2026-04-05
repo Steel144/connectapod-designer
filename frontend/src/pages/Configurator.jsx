@@ -44,6 +44,34 @@ import RealisticModularBuilder3D from "@/components/configurator/RealisticModula
 const generateId = () => `mod-${Math.random().toString(36).substr(2, 9)}`;
 const generateWallId = () => `wall-${Math.random().toString(36).substr(2, 9)}`;
 
+// ── Step indicator helpers (integrated into toolbar) ──
+function StepBadge({ step, currentStep, completedSteps }) {
+  const isActive = currentStep === step;
+  const isDone = completedSteps.includes(step) || step < currentStep;
+  return (
+    <span className={`inline-flex items-center justify-center w-4 h-4 text-[9px] font-bold flex-shrink-0 rounded-full transition-all ${
+      isActive ? "bg-[#F15A22] text-white" : isDone ? "bg-green-500 text-white" : "bg-gray-200 text-gray-400"
+    }`}>
+      {isDone && !isActive ? <Check size={9} strokeWidth={3} /> : step}
+    </span>
+  );
+}
+
+function StepConnector({ done }) {
+  return <div className={`w-2 h-px flex-shrink-0 ${done ? "bg-green-400" : "bg-gray-200"}`} />;
+}
+
+function StepButton({ children }) {
+  return <>{children}</>;
+}
+
+function stepBtnClass(step, currentStep, completedSteps, isViewActive) {
+  if (isViewActive) return "bg-[#F15A22] text-white";
+  if (step === currentStep) return "bg-white text-[#F15A22] border border-[#F15A22]";
+  if (completedSteps.includes(step) || step < currentStep) return "bg-white text-gray-600 border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22]";
+  return "bg-white text-gray-400 border border-gray-200";
+}
+
 function SavedDesigns({ designs, onLoad, onDelete }) {
   const [confirmDeleteId, setConfirmDeleteId] = React.useState(null);
   if (designs.length === 0) {
@@ -147,7 +175,7 @@ export default function Configurator() {
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
 
   const [panelCollapsed, setPanelCollapsed] = useState(false);
-  const [panelPos, setPanelPos] = useState({ x: 16, y: 132 });
+  const [panelPos, setPanelPos] = useState({ x: 16, y: 70 });
   const [draggingPanel, setDraggingPanel] = useState(null);
   const [summaryPos, setSummaryPos] = useState({ x: window.innerWidth - 256 - 16, y: 300 });
   const [draggingSummary, setDraggingSummary] = useState(null);
@@ -1170,70 +1198,111 @@ export default function Configurator() {
     return <PrintRouter mode={printMode} walls={walls} placedModules={placedModules} furniture={furniture} customWalls={customWalls} printDetails={printDetails} onClose={() => setPrintMode(null)} showLabels={showLabels} showFurniture={showFurniture} showPhotoImages={showPhotoImages} showDimensions={showDimensions} siteAddress={siteAddress} siteMapFloorPlanImage={siteMapFloorPlanImage} siteMapScreenshot={siteMapScreenshot} />;
   }
 
+  // ── Step badge & button helpers ──
+  const stepBtnStyle = { clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 50%, calc(100% - 6px) 100%, 0 100%)" };
+
   return (
     <>
     <div className={`bg-white ${viewMode === "building" ? "fixed inset-0 overflow-auto" : "w-screen h-screen overflow-hidden relative"} flex flex-col`}>
 
       {/* ── DESKTOP TOP BAR ── */}
       {!isMobile && (
-        <div ref={navBarRef} className={`${viewMode === "building" ? "fixed" : "absolute"} top-0 left-0 right-0 z-30 flex items-center px-4 py-4 bg-white border-b border-gray-200 overflow-x-auto gap-4 min-w-0`}>
+        <div ref={navBarRef} className={`${viewMode === "building" ? "fixed" : "absolute"} top-0 left-0 right-0 z-30 flex items-center px-4 py-3 bg-white border-b border-gray-200 overflow-x-auto gap-3 min-w-0`}>
           <div className="shrink-0 flex flex-col gap-0.5">
             <img src="https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/1a43e85d2_Connectapod-01.png" alt="Designer" style={{ height: "25px", width: "auto" }} />
             <span className="text-[10px] text-gray-400 tracking-widest uppercase">Design Studio</span>
           </div>
-          <div className="flex items-center gap-2 ml-auto shrink-0">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-[#F15A22] text-white hover:bg-[#d94e1a] transition-all" style={{ clipPath: "polygon(0 0, calc(100% - 8px) 0, 100% 50%, calc(100% - 8px) 100%, 0 100%)" }}>
-                  <LayoutTemplate size={13} /> Design Catalogue
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start">
-                <DropdownMenuItem asChild>
-                  <Link to={createPageUrl("DesignCatalogue")} className="flex items-center gap-2 cursor-pointer">
-                    <LayoutTemplate size={13} /> Starter Designs
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => { setShowSaved(true); setViewMode("2d"); }}>
-                  <FolderOpen size={13} /> My Designs {designs.length > 0 && `(${designs.length})`}
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-            <div className="flex border border-gray-200 overflow-hidden">
-              <button onClick={() => setViewMode("2d")} className={`flex items-center gap-1.5 px-3 py-1.5 text-xs transition-all ${viewMode === "2d" ? "bg-[#F15A22] text-white" : "bg-white text-gray-600 hover:text-[#F15A22]"}`} style={{ clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 50%, calc(100% - 6px) 100%, 0 100%)" }}>
+
+          {/* ── Workflow Buttons (Step Indicator Integrated) ── */}
+          <div className="flex items-center gap-0 ml-4 shrink-0">
+            {/* 1. Design Catalogue */}
+            <StepButton step={1} label="Design Catalogue" icon={<LayoutTemplate size={13} />} isActive={false} isCompleted={completedSteps.includes(1)} currentStep={currentStep} isDropdown>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className={`flex items-center gap-1.5 px-3 py-1.5 text-xs transition-all ${stepBtnClass(1, currentStep, completedSteps, false)}`} style={stepBtnStyle}>
+                    <StepBadge step={1} currentStep={currentStep} completedSteps={completedSteps} />
+                    <LayoutTemplate size={13} /> Design Catalogue
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start">
+                  <DropdownMenuItem asChild>
+                    <Link to={createPageUrl("DesignCatalogue")} className="flex items-center gap-2 cursor-pointer">
+                      <LayoutTemplate size={13} /> Starter Designs
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => { setShowSaved(true); setViewMode("2d"); }}>
+                    <FolderOpen size={13} /> My Designs {designs.length > 0 && `(${designs.length})`}
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </StepButton>
+
+            <StepConnector done={completedSteps.includes(1)} />
+
+            {/* 2. 2D */}
+            <button onClick={() => setViewMode("2d")} className={`flex items-center gap-1.5 px-3 py-1.5 text-xs transition-all ${stepBtnClass(2, currentStep, completedSteps, viewMode === "2d")}`} style={stepBtnStyle}>
+              <StepBadge step={2} currentStep={currentStep} completedSteps={completedSteps} />
               <Grid2X2 size={13} /> 2D
             </button>
-            {/* 3D button hidden for now */}
-            {false && <button onClick={() => setViewMode("3d")} className={`flex items-center gap-1.5 px-3 py-1.5 text-xs transition-all ${viewMode === "3d" ? "bg-[#F15A22] text-white" : "bg-white text-gray-600 hover:text-[#F15A22]"}`} style={{ clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 50%, calc(100% - 6px) 100%, 0 100%)" }}>
-              <Box size={13} /> 3D
-            </button>}
-            <button onClick={() => setViewMode("elevations")} className={`flex items-center gap-1.5 px-3 py-1.5 text-xs transition-all ${viewMode === "elevations" ? "bg-[#F15A22] text-white" : "bg-white text-gray-600 hover:text-[#F15A22]"}`} style={{ clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 50%, calc(100% - 6px) 100%, 0 100%)" }}>
+
+            <StepConnector done={completedSteps.includes(2)} />
+
+            {/* 3. Elevations */}
+            <button onClick={() => setViewMode("elevations")} className={`flex items-center gap-1.5 px-3 py-1.5 text-xs transition-all ${stepBtnClass(3, currentStep, completedSteps, viewMode === "elevations")}`} style={stepBtnStyle}>
+              <StepBadge step={3} currentStep={currentStep} completedSteps={completedSteps} />
               <Image size={13} /> Elevations
             </button>
-              <button onClick={() => setDetailsModalMode('save')} disabled={placedModules.length === 0 || saveMutation.isPending} className={`flex items-center gap-1.5 px-3 py-1.5 text-xs transition-all ${placedModules.length === 0 || saveMutation.isPending ? "bg-white text-gray-400 opacity-40" : "bg-white text-gray-600 border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22]"}`} style={{ clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 50%, calc(100% - 6px) 100%, 0 100%)" }}>
-                <Save size={13} /> {saveMutation.isPending ? "Saving…" : "Save"}
-              </button>
-              <button onClick={handleShare} disabled={placedModules.length === 0 || shareLoading} data-testid="share-design-btn" className={`flex items-center gap-1.5 px-3 py-1.5 text-xs transition-all ${placedModules.length === 0 || shareLoading ? "bg-white text-gray-400 opacity-40" : shareModalOpen ? "bg-[#F15A22] text-white" : "bg-white text-gray-600 border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22]"}`} style={{ clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 50%, calc(100% - 6px) 100%, 0 100%)" }}>
-                <Share2 size={13} /> {shareLoading ? "Sharing…" : "Share"}
-              </button>
-              <button onClick={() => setViewMode("sitemap")} className={`flex items-center gap-1.5 px-3 py-1.5 text-xs transition-all ${viewMode === "sitemap" ? "bg-[#F15A22] text-white" : "bg-white text-gray-600 hover:text-[#F15A22]"}`} style={{ clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 50%, calc(100% - 6px) 100%, 0 100%)" }}>
-                <Map size={13} /> Site Map
-              </button>
-               <button onClick={() => setDetailsModalMode('estimate')} disabled={placedModules.length === 0} className={`flex items-center gap-1.5 px-3 py-1.5 text-xs transition-all ${placedModules.length === 0 ? "bg-white text-gray-400 opacity-40" : "bg-white text-gray-600 border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22]"}`} style={{ clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 50%, calc(100% - 6px) 100%, 0 100%)" }}>
-                  Get Estimate
-                </button>
-               <PrintMenu placedModules={placedModules} walls={walls} onPrint={async (mode) => {
-                 if (mode === 'site-plan' && captureMapScreenshotRef.current) {
-                   const shot = await captureMapScreenshotRef.current();
-                   if (shot) setSiteMapScreenshot(shot);
-                 }
-                 setPendingPrintMode(mode);
-                 setDetailsModalMode('print');
-               }} />
-               </div>
-               <button onClick={handleUndo} disabled={history.length === 0} title="Undo (Ctrl+Z)" className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-gray-600 bg-white border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22] disabled:opacity-30 transition-all" style={{ clipPath: "polygon(0 0, calc(100% - 8px) 0, 100% 50%, calc(100% - 8px) 100%, 0 100%)" }}>
-               <Undo2 size={13} /> Undo {history.length > 0 && <span className="text-[10px] text-gray-400">({history.length})</span>}
-               </button>
+
+            <StepConnector done={completedSteps.includes(3)} />
+
+            {/* 4. Site Map */}
+            <button onClick={() => setViewMode("sitemap")} className={`flex items-center gap-1.5 px-3 py-1.5 text-xs transition-all ${stepBtnClass(4, currentStep, completedSteps, viewMode === "sitemap")}`} style={stepBtnStyle}>
+              <StepBadge step={4} currentStep={currentStep} completedSteps={completedSteps} />
+              <Map size={13} /> Site Map
+            </button>
+
+            <StepConnector done={completedSteps.includes(4)} />
+
+            {/* 5. Save */}
+            <button onClick={() => setDetailsModalMode('save')} disabled={placedModules.length === 0 || saveMutation.isPending} className={`flex items-center gap-1.5 px-3 py-1.5 text-xs transition-all ${placedModules.length === 0 ? "opacity-40 text-gray-400 bg-white border border-gray-200" : stepBtnClass(5, currentStep, completedSteps, detailsModalMode === "save")}`} style={stepBtnStyle}>
+              <StepBadge step={5} currentStep={currentStep} completedSteps={completedSteps} />
+              <Save size={13} /> {saveMutation.isPending ? "Saving…" : "Save"}
+            </button>
+
+            <StepConnector done={completedSteps.includes(5)} />
+
+            {/* 6. Share */}
+            <button onClick={handleShare} disabled={placedModules.length === 0 || shareLoading} data-testid="share-design-btn" className={`flex items-center gap-1.5 px-3 py-1.5 text-xs transition-all ${placedModules.length === 0 ? "opacity-40 text-gray-400 bg-white border border-gray-200" : stepBtnClass(6, currentStep, completedSteps, shareModalOpen)}`} style={stepBtnStyle}>
+              <StepBadge step={6} currentStep={currentStep} completedSteps={completedSteps} />
+              <Share2 size={13} /> {shareLoading ? "Sharing…" : "Share"}
+            </button>
+
+            <StepConnector done={completedSteps.includes(6)} />
+
+            {/* 7. Print */}
+            <PrintMenu placedModules={placedModules} walls={walls} onPrint={async (mode) => {
+              if (mode === 'site-plan' && captureMapScreenshotRef.current) {
+                const shot = await captureMapScreenshotRef.current();
+                if (shot) setSiteMapScreenshot(shot);
+              }
+              setPendingPrintMode(mode);
+              setDetailsModalMode('print');
+            }} stepBadge={<StepBadge step={7} currentStep={currentStep} completedSteps={completedSteps} />} />
+
+            <StepConnector done={false} />
+
+            {/* 8. Get Estimate */}
+            <button onClick={() => setDetailsModalMode('estimate')} disabled={placedModules.length === 0} className={`flex items-center gap-1.5 px-3 py-1.5 text-xs transition-all ${placedModules.length === 0 ? "opacity-40 text-gray-400 bg-white border border-gray-200" : stepBtnClass(8, currentStep, completedSteps, detailsModalMode === "estimate")}`} style={stepBtnStyle}>
+              <StepBadge step={8} currentStep={currentStep} completedSteps={completedSteps} />
+              Get Estimate
+            </button>
+          </div>
+
+          {/* ── Right side: Undo, Settings, Zoom, Admin ── */}
+          <div className="flex items-center gap-2 ml-auto shrink-0">
+            <button onClick={handleUndo} disabled={history.length === 0} title="Undo (Ctrl+Z)" className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-gray-600 bg-white border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22] disabled:opacity-30 transition-all" style={{ clipPath: "polygon(0 0, calc(100% - 8px) 0, 100% 50%, calc(100% - 8px) 100%, 0 100%)" }}>
+              <Undo2 size={13} /> Undo {history.length > 0 && <span className="text-[10px] text-gray-400">({history.length})</span>}
+            </button>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-gray-600 hover:text-[#F15A22] border border-gray-200 bg-white hover:border-[#F15A22] transition-all">
@@ -1278,7 +1347,7 @@ export default function Configurator() {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-white bg-red-600 hover:bg-red-700 border border-red-700 transition-all">
-                    ⚙ Admin
+                    Admin
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-48">
@@ -1308,15 +1377,7 @@ export default function Configurator() {
                 </DropdownMenuContent>
               </DropdownMenu>
             )}
-
           </div>
-        </div>
-      )}
-
-      {/* ── STEP INDICATOR ── */}
-      {!isMobile && (
-        <div className={`${viewMode === "building" ? "fixed" : "absolute"} left-0 right-0 z-30`} style={{ top: navBarHeight }}>
-          <StepIndicator currentStep={currentStep} completedSteps={completedSteps} onStepClick={handleStepClick} />
         </div>
       )}
 

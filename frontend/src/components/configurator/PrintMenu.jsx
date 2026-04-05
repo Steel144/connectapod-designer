@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { Save, ChevronDown } from "lucide-react";
 import { createPortal } from "react-dom";
 
-export default function PrintMenu({ placedModules, walls, onPrint }) {
+export default function PrintMenu({ placedModules, walls, onPrint, stepBadge }) {
   const [open, setOpen] = useState(false);
   const [pos, setPos] = useState({ top: 0, left: 0 });
   const buttonRef = useRef(null);
@@ -48,7 +48,9 @@ export default function PrintMenu({ placedModules, walls, onPrint }) {
         onClick={handleClick}
         className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-gray-600 bg-white border border-gray-200 hover:border-[#F15A22] hover:text-[#F15A22] transition-all"
         title="Print options"
+        style={{ clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 50%, calc(100% - 6px) 100%, 0 100%)" }}
       >
+        {stepBadge}
         <Save size={13} />
         Print
         <ChevronDown size={12} />
