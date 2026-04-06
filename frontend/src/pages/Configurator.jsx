@@ -78,7 +78,6 @@ function SavedDesigns({ designs, onLoad, onDelete }) {
   if (designs.length === 0) {
     return (
       <div className="text-center py-16 text-gray-400">
-        <p className="text-4xl mb-3">🏡</p>
         <p className="font-medium text-gray-500">No saved designs yet</p>
         <p className="text-sm mt-1">Start building in the Configurator tab</p>
       </div>
@@ -87,94 +86,46 @@ function SavedDesigns({ designs, onLoad, onDelete }) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       {designs.map((d) => (
-        <div key={d.id} className="bg-white border border-gray-200 p-5 hover:shadow-md transition-all group">
-          <div className="flex items-start justify-between mb-3">
-            <h3 className="font-semibold text-gray-800 text-base leading-tight">{d.name}</h3>
+        <div key={d.id} className="bg-white border border-gray-200 overflow-hidden hover:shadow-lg transition-all group flex flex-col">
+          <div className="bg-[#F5F5F3] h-40 relative overflow-hidden border-b border-gray-100">
+            {(d.grid || []).length > 0 ? (
+              <DesignMiniPreview grid={d.grid} walls={d.walls || []} furniture={d.furniture || []} />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center text-gray-300 text-xs">No preview</div>
+            )}
             {confirmDeleteId === d.id ? (
-              <div className="flex items-center gap-1 shrink-0">
+              <div className="absolute top-2 right-2 flex items-center gap-1 bg-white/90 rounded px-2 py-1 shadow-sm z-10">
                 <span className="text-xs text-gray-500 mr-1">Delete?</span>
                 <button onClick={() => { onDelete(d.id); setConfirmDeleteId(null); }} className="p-1 text-red-500 hover:bg-red-50 rounded transition-colors" title="Confirm delete"><Check size={13} /></button>
                 <button onClick={() => setConfirmDeleteId(null)} className="p-1 text-gray-400 hover:bg-gray-100 rounded transition-colors" title="Cancel"><X size={13} /></button>
               </div>
             ) : (
-              <button className="h-7 w-7 flex items-center justify-center opacity-0 group-hover:opacity-100 text-gray-300 hover:text-red-400 transition-all" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setConfirmDeleteId(d.id); }}>
+              <button className="absolute top-2 right-2 h-7 w-7 flex items-center justify-center bg-white/80 rounded opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-500 transition-all z-10" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setConfirmDeleteId(d.id); }}>
                 <Trash2 size={13} />
               </button>
             )}
           </div>
-          <div className="grid grid-cols-3 gap-2 mb-4">
-            <div className="bg-gray-50 border border-gray-100 p-2 text-center">
-              <p className="text-sm font-bold text-gray-700">{d.moduleCount || 0}</p>
-              <p className="text-xs text-gray-400">Modules</p>
-            </div>
-            <div className="bg-gray-50 border border-gray-100 p-2 text-center">
-              <p className="text-sm font-bold text-gray-700">{d.totalSqm || 0}</p>
-              <p className="text-xs text-gray-400">m²</p>
-            </div>
-            <div className="bg-gray-50 border border-gray-100 p-2 text-center">
-              <p className="text-sm font-bold text-gray-700">${((d.estimatedPrice || 0) / 1000).toFixed(0)}k</p>
-              <p className="text-xs text-gray-400">Est.</p>
+          <div className="p-3 flex flex-col flex-1">
+            <h3 className="font-semibold text-gray-900 text-sm mb-1 leading-tight">{d.name}</h3>
+            <div className="mt-auto">
+              <div className="flex items-center gap-3 text-xs text-gray-500 mb-2">
+                <span>{d.moduleCount || 0} modules</span>
+                <span>{Number(d.totalSqm || 0).toFixed(1)} m²</span>
+                <span className="text-[#F15A22] font-semibold">${((d.estimatedPrice || 0) / 1000).toFixed(0)}k</span>
+              </div>
+              <button onClick={() => onLoad(d)} className="w-full flex items-center justify-center gap-1.5 py-2 bg-[#F15A22] text-white text-xs font-semibold hover:bg-[#d94e1a] transition-colors">
+                Open in Configurator <ChevronRight size={12} />
+              </button>
             </div>
           </div>
-          <button onClick={() => onLoad(d)} className="w-full h-8 text-xs bg-[#F15A22] hover:bg-[#d94e1a] text-white flex items-center justify-center gap-1.5">
-            Open in Configurator <ChevronRight size={12} />
-          </button>
         </div>
       ))}
     </div>
   );
 }
 
-function DesignChooserTabs({ designs, starterDesigns, onLoad, onLoadTemplate, onDelete }) {
-  const [view, setView] = React.useState(null); // null = chooser, "starter" or "saved"
-
-  if (view === "starter") {
-    return (
-      <div className="p-4">
-        <button onClick={() => setView(null)} className="flex items-center gap-1 text-xs text-gray-500 hover:text-[#F15A22] mb-3 transition-colors" data-testid="back-to-chooser">
-          <ChevronLeft size={14} /> Back
-        </button>
-        <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">STARTER DESIGNS</h3>
-        {starterDesigns.length === 0 ? (
-          <div className="text-center py-12 text-gray-400"><p>No starter designs available</p></div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {starterDesigns.map((t) => (
-              <div key={t.id} className="bg-white border border-gray-200 overflow-hidden hover:shadow-lg transition-all group flex flex-col">
-                <div className="bg-[#F5F5F3] h-40 relative overflow-hidden border-b border-gray-100">
-                  {t.heroImage ? (
-                    <img src={t.heroImage} alt={t.name} className="w-full h-full object-cover" />
-                  ) : t._grid && t._grid.length > 0 ? (
-                    <DesignMiniPreview grid={t._grid} walls={t._walls || []} furniture={t.template_payload?.layout?.furniture || []} />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-gray-300 text-xs">No preview</div>
-                  )}
-                </div>
-                <div className="p-3 flex flex-col flex-1">
-                  <h4 className="font-semibold text-gray-900 text-sm mb-1 leading-tight">{t.name}</h4>
-                  {t.description && <p className="text-[11px] text-gray-500 mb-2 line-clamp-2">{t.description}</p>}
-                  <div className="mt-auto">
-                    <div className="flex items-center gap-3 text-xs text-gray-500 mb-2">
-                      <span>{t.moduleCount || 0} modules</span>
-                      <span>{(t.totalSqm || 0).toFixed(0)} m²</span>
-                      {t.estimatedPrice > 0 && <span className="text-[#F15A22] font-semibold">${((t.estimatedPrice) / 1000).toFixed(0)}k</span>}
-                    </div>
-                    <button
-                      data-testid={`load-starter-${t.id}`}
-                      onClick={() => onLoadTemplate(t)}
-                      className="w-full flex items-center justify-center gap-1.5 py-2 bg-[#F15A22] text-white text-xs font-semibold hover:bg-[#d94e1a] transition-colors"
-                    >
-                      Start with this design <ChevronRight size={12} />
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-    );
-  }
+function DesignChooserTabs({ designs, starterDesigns, onLoad, onLoadTemplate, onDelete, onClose }) {
+  const [view, setView] = React.useState(null); // null = chooser, "saved"
 
   if (view === "saved") {
     return (
@@ -191,15 +142,16 @@ function DesignChooserTabs({ designs, starterDesigns, onLoad, onLoadTemplate, on
   // Landing: two options
   return (
     <div className="p-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
-      <button
+      <Link
+        to="/DesignCatalogue"
         data-testid="choose-starter-designs"
-        onClick={() => setView("starter")}
-        className="border-2 border-gray-200 hover:border-[#F15A22] rounded-lg p-6 text-left transition-all hover:shadow-md group"
+        onClick={onClose}
+        className="border-2 border-gray-200 hover:border-[#F15A22] rounded-lg p-6 text-left transition-all hover:shadow-md group block"
       >
         <LayoutTemplate size={28} className="text-[#F15A22] mb-3" />
         <h3 className="font-bold text-gray-900 text-base mb-1">Starter Designs</h3>
         <p className="text-xs text-gray-500">Browse {starterDesigns.length} pre-built designs to get started quickly</p>
-      </button>
+      </Link>
       <button
         data-testid="choose-my-designs"
         onClick={() => setView("saved")}
@@ -2006,6 +1958,7 @@ export default function Configurator() {
               onLoad={handleLoad}
               onLoadTemplate={handleLoadTemplate}
               onDelete={(id) => deleteMutation.mutate(id)}
+              onClose={() => setShowSaved(false)}
             />
           </div>
         </div>
