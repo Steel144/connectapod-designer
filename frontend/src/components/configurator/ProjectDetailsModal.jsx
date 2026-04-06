@@ -438,7 +438,7 @@ export default function ProjectDetailsModal({
     if (cs.installVal > 0) {
       additionalItems.push({ label: `Labour (${moduleCount} modules x $${(pc.install_labour_per_module || 0).toLocaleString()})`, amount: cs.labourVal });
       additionalItems.push({ label: `Cranage (${moduleCount} modules x $${(pc.install_cranage_per_module || 0).toLocaleString()})`, amount: cs.cranageVal });
-      if (cs.waterVal > 0) additionalItems.push({ label: "Water & drainage connection", amount: cs.waterVal });
+      if (cs.waterVal > 0) additionalItems.push({ label: `Water & drainage (${cs.wetModuleCount} wet modules x $${(pc.install_water_drainage_per_wetmodule || 0).toLocaleString()})`, amount: cs.waterVal });
       if (cs.electricalVal > 0) additionalItems.push({ label: "Electrical connection", amount: cs.electricalVal });
     }
 
@@ -540,14 +540,18 @@ export default function ProjectDetailsModal({
     const ferryCost = deliveryEstimate ? deliveryEstimate.ferry_cost : 0;
     const labourVal = (pc.install_labour_per_module || 0) * moduleCount;
     const cranageVal = (pc.install_cranage_per_module || 0) * moduleCount;
-    const waterVal = pc.install_water_drainage_per_house || 0;
+    const wetModuleCount = placedModules.filter(m => {
+      const t = (m.type || "").toLowerCase();
+      return t.startsWith("w") || t.startsWith("k") || t.includes("bathroom") || t.includes("kitchen");
+    }).length;
+    const waterVal = (pc.install_water_drainage_per_wetmodule || 0) * wetModuleCount;
     const electricalVal = pc.install_electrical_per_house || 0;
     const installVal = labourVal + cranageVal + waterVal + electricalVal;
     const subtotal = modulesTotal + wallsTotal + sitePrepVal + deliveryVal + installVal;
     const gstRateVal = pc.gst_rate || 15;
     const gstAmount = Math.round(subtotal * gstRateVal / 100);
     const grandTotal = subtotal + gstAmount;
-    return { modulesTotal, wallsTotal, sitePrepBase, siteSurcharge, sitePrepVal, deliveryVal, deliveryHours, needsFerry, ferryCost, labourVal, cranageVal, waterVal, electricalVal, installVal, subtotal, gstRateVal, gstAmount, grandTotal };
+    return { modulesTotal, wallsTotal, sitePrepBase, siteSurcharge, sitePrepVal, deliveryVal, deliveryHours, needsFerry, ferryCost, labourVal, cranageVal, waterVal, wetModuleCount, electricalVal, installVal, subtotal, gstRateVal, gstAmount, grandTotal };
   })();
 
   return (
@@ -673,7 +677,7 @@ export default function ProjectDetailsModal({
                     <span>${costSummary.cranageVal.toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between text-gray-600">
-                    <span>Water & drainage</span>
+                    <span>Water & drainage ({costSummary.wetModuleCount} wet x ${(pc.install_water_drainage_per_wetmodule || 0).toLocaleString()})</span>
                     <span>${costSummary.waterVal.toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between text-gray-600">

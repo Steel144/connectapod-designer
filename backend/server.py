@@ -126,7 +126,7 @@ class PricingConfig(BaseModel):
     ferry_crossing_cost: float = 0
     install_labour_per_module: float = 0
     install_cranage_per_module: float = 0
-    install_water_drainage_per_house: float = 0
+    install_water_drainage_per_wetmodule: float = 0
     install_electrical_per_house: float = 0
     gst_rate: float = 15
 

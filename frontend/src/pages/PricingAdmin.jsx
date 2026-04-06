@@ -151,7 +151,7 @@ export default function PricingAdmin() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <PricingField label="Labour Per Module" value={form.install_labour_per_module} onChange={v => update("install_labour_per_module", v)} suffix="/mod" />
                 <PricingField label="Cranage Per Module" value={form.install_cranage_per_module} onChange={v => update("install_cranage_per_module", v)} suffix="/mod" />
-                <PricingField label="Water & Drainage (per house)" value={form.install_water_drainage_per_house} onChange={v => update("install_water_drainage_per_house", v)} />
+                <PricingField label="Water & Drainage (per wet module)" value={form.install_water_drainage_per_wetmodule} onChange={v => update("install_water_drainage_per_wetmodule", v)} suffix="/mod" />
                 <PricingField label="Electrical Connection (per house)" value={form.install_electrical_per_house} onChange={v => update("install_electrical_per_house", v)} />
               </div>
             </div>
