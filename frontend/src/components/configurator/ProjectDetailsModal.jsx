@@ -429,7 +429,7 @@ export default function ProjectDetailsModal({
     const additionalItems = [];
     if (cs.sitePrepVal > 0) {
       additionalItems.push({ label: `Site Prep & Foundations (${moduleCount} modules)`, amount: cs.sitePrepBase });
-      if (cs.siteSurcharge > 0) additionalItems.push({ label: `  ${siteType === "sloping" ? "Sloping" : "Steep"} site surcharge`, amount: cs.siteSurcharge });
+      if (cs.siteSurcharge > 0) additionalItems.push({ label: `  ${siteType === "sloping" ? "Sloping" : "Steep"} surcharge (${moduleCount} x $${(siteType === "sloping" ? pc.site_prep_sloping_surcharge : pc.site_prep_steep_surcharge || 0).toLocaleString()})`, amount: cs.siteSurcharge });
     }
     if (cs.deliveryVal > 0) {
       additionalItems.push({ label: `Delivery (${cs.deliveryHours}hrs x $${(pc.delivery_rate_per_hour || 0).toLocaleString()}/hr)`, amount: cs.deliveryVal - cs.ferryCost });
@@ -531,8 +531,8 @@ export default function ProjectDetailsModal({
     const modulesTotal = placedModules.reduce((s, m) => s + (m.price || 0), 0);
     const wallsTotal = walls.reduce((s, w) => s + (w.price || 0), 0);
     const sitePrepBase = (pc.site_prep_per_module || 0) * moduleCount;
-    const siteSurcharge = siteType === "sloping" ? (pc.site_prep_sloping_surcharge || 0) :
-                          siteType === "steep" ? (pc.site_prep_steep_surcharge || 0) : 0;
+    const siteSurcharge = siteType === "sloping" ? (pc.site_prep_sloping_surcharge || 0) * moduleCount :
+                          siteType === "steep" ? (pc.site_prep_steep_surcharge || 0) * moduleCount : 0;
     const sitePrepVal = sitePrepBase + siteSurcharge;
     const deliveryVal = deliveryEstimate ? deliveryEstimate.total : 0;
     const deliveryHours = deliveryEstimate ? deliveryEstimate.estimated_hours : 0;
@@ -646,7 +646,7 @@ export default function ProjectDetailsModal({
                   </div>
                   {costSummary.siteSurcharge > 0 && (
                     <div className="flex justify-between text-gray-600">
-                      <span>{siteType === "sloping" ? "Sloping" : "Steep"} surcharge</span>
+                      <span>{siteType === "sloping" ? "Sloping" : "Steep"} surcharge ({moduleCount} x ${(siteType === "sloping" ? pc.site_prep_sloping_surcharge : pc.site_prep_steep_surcharge || 0).toLocaleString()})</span>
                       <span>${costSummary.siteSurcharge.toLocaleString()}</span>
                     </div>
                   )}
