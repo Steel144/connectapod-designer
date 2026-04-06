@@ -32,6 +32,7 @@ const useIsMobile = () => {
 };
 
 import CombinedElevations from "@/components/configurator/CombinedElevations";
+import DesignMiniPreview from "@/components/configurator/DesignMiniPreview";
 import PrintRouter from "@/components/configurator/PrintRouter";
 import PrintMenu from "@/components/configurator/PrintMenu";
 import ProjectDetailsModal from "@/components/configurator/ProjectDetailsModal";
@@ -125,65 +126,52 @@ function SavedDesigns({ designs, onLoad, onDelete }) {
 }
 
 function DesignChooserTabs({ designs, starterDesigns, onLoad, onLoadTemplate, onDelete }) {
-  const [tab, setTab] = React.useState(starterDesigns.length > 0 ? "starter" : "saved");
   return (
-    <div>
-      <div className="flex border-b border-gray-200">
-        <button
-          data-testid="tab-starter-designs"
-          onClick={() => setTab("starter")}
-          className={`flex-1 px-4 py-2.5 text-xs font-semibold tracking-wide transition-all ${tab === "starter" ? "text-[#F15A22] border-b-2 border-[#F15A22]" : "text-gray-400 hover:text-gray-600"}`}
-        >
-          STARTER DESIGNS ({starterDesigns.length})
-        </button>
-        <button
-          data-testid="tab-my-designs"
-          onClick={() => setTab("saved")}
-          className={`flex-1 px-4 py-2.5 text-xs font-semibold tracking-wide transition-all ${tab === "saved" ? "text-[#F15A22] border-b-2 border-[#F15A22]" : "text-gray-400 hover:text-gray-600"}`}
-        >
-          MY DESIGNS ({designs.length})
-        </button>
-      </div>
-      <div className="p-4">
-        {tab === "starter" ? (
-          starterDesigns.length === 0 ? (
-            <div className="text-center py-16 text-gray-400">
-              <p className="font-medium text-gray-500">No starter designs available</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {starterDesigns.map((t) => (
-                <div key={t.id} className="bg-white border border-gray-200 p-5 hover:shadow-md transition-all group">
-                  <h3 className="font-semibold text-gray-800 text-base leading-tight mb-1">{t.name}</h3>
-                  {t.description && <p className="text-xs text-gray-400 mb-3 line-clamp-2">{t.description}</p>}
-                  <div className="grid grid-cols-3 gap-2 mb-4">
-                    <div className="bg-gray-50 border border-gray-100 p-2 text-center">
-                      <p className="text-sm font-bold text-gray-700">{t.moduleCount || 0}</p>
-                      <p className="text-xs text-gray-400">Modules</p>
-                    </div>
-                    <div className="bg-gray-50 border border-gray-100 p-2 text-center">
-                      <p className="text-sm font-bold text-gray-700">{(t.totalSqm || 0).toFixed(0)}</p>
-                      <p className="text-xs text-gray-400">m²</p>
-                    </div>
-                    <div className="bg-gray-50 border border-gray-100 p-2 text-center">
-                      <p className="text-sm font-bold text-gray-700">${((t.estimatedPrice || 0) / 1000).toFixed(0)}k</p>
-                      <p className="text-xs text-gray-400">Est.</p>
-                    </div>
-                  </div>
-                  <button
-                    data-testid={`load-starter-${t.id}`}
-                    onClick={() => onLoadTemplate(t)}
-                    className="w-full h-8 text-xs bg-[#F15A22] hover:bg-[#d94e1a] text-white flex items-center justify-center gap-1.5"
-                  >
-                    Use This Design <ChevronRight size={12} />
-                  </button>
+    <div className="p-4 space-y-6">
+      {/* Starter Designs section */}
+      {starterDesigns.length > 0 && (
+        <div>
+          <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3" data-testid="section-starter-designs">STARTER DESIGNS</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {starterDesigns.map((t) => (
+              <div key={t.id} className="bg-white border border-gray-200 overflow-hidden hover:shadow-lg transition-all group flex flex-col">
+                <div className="bg-[#F5F5F3] h-40 relative overflow-hidden border-b border-gray-100">
+                  {t.heroImage ? (
+                    <img src={t.heroImage} alt={t.name} className="w-full h-full object-cover" />
+                  ) : t._grid && t._grid.length > 0 ? (
+                    <DesignMiniPreview grid={t._grid} walls={t._walls || []} furniture={t.template_payload?.layout?.furniture || []} />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-gray-300 text-xs">No preview</div>
+                  )}
                 </div>
-              ))}
-            </div>
-          )
-        ) : (
-          <SavedDesigns designs={designs} onLoad={onLoad} onDelete={onDelete} />
-        )}
+                <div className="p-3 flex flex-col flex-1">
+                  <h4 className="font-semibold text-gray-900 text-sm mb-1 leading-tight">{t.name}</h4>
+                  {t.description && <p className="text-[11px] text-gray-500 mb-2 line-clamp-2">{t.description}</p>}
+                  <div className="mt-auto">
+                    <div className="flex items-center gap-3 text-xs text-gray-500 mb-2">
+                      <span>{t.moduleCount || 0} modules</span>
+                      <span>{(t.totalSqm || 0).toFixed(0)} m²</span>
+                      {t.estimatedPrice > 0 && <span className="text-[#F15A22] font-semibold">${((t.estimatedPrice) / 1000).toFixed(0)}k</span>}
+                    </div>
+                    <button
+                      data-testid={`load-starter-${t.id}`}
+                      onClick={() => onLoadTemplate(t)}
+                      className="w-full flex items-center justify-center gap-1.5 py-2 bg-[#F15A22] text-white text-xs font-semibold hover:bg-[#d94e1a] transition-colors"
+                    >
+                      Start with this design <ChevronRight size={12} />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* My Saved Designs section */}
+      <div>
+        <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3" data-testid="section-my-designs">MY SAVED DESIGNS</h3>
+        <SavedDesigns designs={designs} onLoad={onLoad} onDelete={onDelete} />
       </div>
     </div>
   );
