@@ -435,7 +435,7 @@ export default function ProjectDetailsModal({
     }
     if (cs.deliveryVal > 0) {
       additionalItems.push({ label: `Delivery (${moduleCount} mod x ${cs.deliveryHours}hrs x 2 x $${(pc.delivery_rate_per_hour || 0).toLocaleString()}/hr)`, amount: cs.deliveryVal - cs.ferryCost });
-      if (cs.needsFerry) additionalItems.push({ label: "  Ferry crossing (North Island)", amount: cs.ferryCost });
+      if (cs.needsFerry) additionalItems.push({ label: `  Ferry crossing (${moduleCount} x $${(pc.ferry_crossing_cost || 0).toLocaleString()})`, amount: cs.ferryCost });
     }
     if (cs.installVal > 0) {
       additionalItems.push({ label: `Labour (${moduleCount} modules x $${(pc.install_labour_per_module || 0).toLocaleString()})`, amount: cs.labourVal });
@@ -540,10 +540,10 @@ export default function ProjectDetailsModal({
     const siteSurcharge = slopingSurchargePerMod + slopingSurchargePerHouse;
     const sitePrepWater = pc.site_prep_water_drainage_per_house || 0;
     const sitePrepVal = sitePrepBase + siteSurcharge + sitePrepWater;
-    const deliveryVal = deliveryEstimate ? (deliveryEstimate.estimated_hours * 2 * (pc.delivery_rate_per_hour || 0) * moduleCount + (deliveryEstimate.needs_ferry ? (pc.ferry_crossing_cost || 0) : 0)) : 0;
+    const deliveryVal = deliveryEstimate ? (deliveryEstimate.estimated_hours * 2 * (pc.delivery_rate_per_hour || 0) * moduleCount + (deliveryEstimate.needs_ferry ? (pc.ferry_crossing_cost || 0) * moduleCount : 0)) : 0;
     const deliveryHours = deliveryEstimate ? deliveryEstimate.estimated_hours : 0;
     const needsFerry = deliveryEstimate ? deliveryEstimate.needs_ferry : false;
-    const ferryCost = needsFerry ? (pc.ferry_crossing_cost || 0) : 0;
+    const ferryCost = needsFerry ? (pc.ferry_crossing_cost || 0) * moduleCount : 0;
     const labourVal = (pc.install_labour_per_module || 0) * moduleCount;
     const cranageVal = (pc.install_cranage_per_module || 0) * moduleCount;
     const wetModuleCount = placedModules.filter(m => {
@@ -680,7 +680,7 @@ export default function ProjectDetailsModal({
                   </div>
                   {costSummary.needsFerry && (
                     <div className="flex justify-between text-gray-600">
-                      <span>Ferry crossing</span>
+                      <span>Ferry crossing ({moduleCount} x ${(pc.ferry_crossing_cost || 0).toLocaleString()})</span>
                       <span>${costSummary.ferryCost.toLocaleString()}</span>
                     </div>
                   )}

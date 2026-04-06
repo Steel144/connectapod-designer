@@ -141,7 +141,7 @@ export default function PricingAdmin() {
               <p className="text-[11px] text-gray-400 mb-3">Cost auto-calculated from 29 Studholme St, Waimate to site address. Ferry added for North Island deliveries.</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <PricingField label="Rate Per Hour" value={form.delivery_rate_per_hour} onChange={v => update("delivery_rate_per_hour", v)} suffix="/hr" />
-                <PricingField label="Ferry Crossing Cost" value={form.ferry_crossing_cost} onChange={v => update("ferry_crossing_cost", v)} />
+                <PricingField label="Ferry Crossing (per module)" value={form.ferry_crossing_cost} onChange={v => update("ferry_crossing_cost", v)} suffix="/mod" />
               </div>
             </div>
 
