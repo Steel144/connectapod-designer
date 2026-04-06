@@ -10,7 +10,7 @@ import StepIndicator from "@/components/configurator/StepIndicator";
 import GuidedTooltip from "@/components/configurator/GuidedTooltip";
 import SaveAsTemplateModal from "@/components/configurator/SaveAsTemplateModal";
 import { toast } from "sonner";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { BookOpen, FolderOpen, Save, Trash2, ChevronLeft, ChevronRight, Undo2, Box, Grid2X2, Image, LayoutTemplate, Menu, X, ChevronUp, ChevronDown, Settings, Eye, EyeOff, Check, Map, Share2, Copy, ExternalLink, Users } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -129,12 +129,19 @@ function DesignChooserTabs({ designs, starterDesigns, onLoad, onLoadTemplate, on
 
   if (view === "saved") {
     return (
-      <div className="p-4">
-        <button onClick={() => setView(null)} className="flex items-center gap-1 text-xs text-gray-500 hover:text-[#F15A22] mb-3 transition-colors" data-testid="back-to-chooser">
-          <ChevronLeft size={14} /> Back
-        </button>
-        <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">MY SAVED DESIGNS</h3>
-        <SavedDesigns designs={designs} onLoad={onLoad} onDelete={onDelete} />
+      <div>
+        <div className="flex items-center gap-3 px-4 py-3 border-b border-gray-100">
+          <button onClick={() => setView(null)} className="text-gray-400 hover:text-[#F15A22] transition-colors" data-testid="back-to-chooser">
+            <ChevronLeft size={20} />
+          </button>
+          <div>
+            <h3 className="text-sm font-bold text-gray-900">My Saved Designs</h3>
+            <p className="text-[11px] text-gray-500">{designs.length} saved design{designs.length !== 1 ? "s" : ""}</p>
+          </div>
+        </div>
+        <div className="p-4">
+          <SavedDesigns designs={designs} onLoad={onLoad} onDelete={onDelete} />
+        </div>
       </div>
     );
   }
@@ -144,6 +151,7 @@ function DesignChooserTabs({ designs, starterDesigns, onLoad, onLoadTemplate, on
     <div className="p-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
       <Link
         to="/DesignCatalogue"
+        state={{ fromChooser: true }}
         data-testid="choose-starter-designs"
         onClick={onClose}
         className="border-2 border-gray-200 hover:border-[#F15A22] rounded-lg p-6 text-left transition-all hover:shadow-md group block"
@@ -167,6 +175,7 @@ function DesignChooserTabs({ designs, starterDesigns, onLoad, onLoadTemplate, on
 
 export default function Configurator() {
   const { user } = useAuth();
+  const location = useLocation();
   const MAX_HISTORY = 10;
   const [history, setHistory] = useState([]);
   const [placedModules, setPlacedModules] = useState(() => {
@@ -199,6 +208,14 @@ export default function Configurator() {
   const [saveModalOpen, setSaveModalOpen] = useState(false);
   const [saveTemplateModalOpen, setSaveTemplateModalOpen] = useState(false);
   const [showSaved, setShowSaved] = useState(false);
+
+  // Open chooser modal when navigating back from DesignCatalogue
+  useEffect(() => {
+    if (location.state?.showChooser) {
+      setShowSaved(true);
+      window.history.replaceState({}, "");
+    }
+  }, [location.state]);
   const [lastSavedName, setLastSavedName] = useState(() => {
     try { return localStorage.getItem("configurator_last_saved_name") || ""; } catch { return ""; }
   });

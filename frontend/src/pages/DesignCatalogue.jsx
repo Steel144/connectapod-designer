@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { ArrowLeft, Maximize2, Layers, Play, HelpCircle, BedDouble, Bath, DollarSign, Star, Pencil, Trash2 } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import DesignMiniPreview from "@/components/configurator/DesignMiniPreview";
@@ -38,6 +38,8 @@ const isDeckModule = (m) =>
 
 export default function DesignCatalogue() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const fromChooser = location.state?.fromChooser;
   const qc = useQueryClient();
   const { user } = useAuth();
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -151,11 +153,11 @@ export default function DesignCatalogue() {
           <div className="flex items-center gap-4">
             <Tooltip>
               <TooltipTrigger asChild>
-                <Link to="/Configurator" className="text-gray-400 hover:text-[#F15A22] transition-colors">
+                <Link to="/Configurator" state={{ showChooser: true }} className="text-gray-400 hover:text-[#F15A22] transition-colors">
                   <ArrowLeft size={20} />
                 </Link>
               </TooltipTrigger>
-              <TooltipContent>Back to Configurator</TooltipContent>
+              <TooltipContent>{fromChooser ? "Back to Choose a Design" : "Back to Configurator"}</TooltipContent>
             </Tooltip>
             <div>
               <h1 className="text-xl font-bold text-gray-900 tracking-tight">Design Catalogue</h1>
