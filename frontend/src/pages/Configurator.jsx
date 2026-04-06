@@ -1637,6 +1637,7 @@ export default function Configurator() {
               className={`bg-white border border-gray-200 shadow-xl flex flex-col overflow-hidden transition-all duration-200 ${
                 panelCollapsed ? "w-0 opacity-0 pointer-events-none" : "w-64 opacity-100"
               }`}
+              style={{ maxHeight: 'calc(100vh - 120px)' }}
               onMouseDown={handlePanelMouseDown}
             >
               <div className="px-4 pt-3 pb-2 border-b border-gray-100 shrink-0 cursor-grab active:cursor-grabbing">
