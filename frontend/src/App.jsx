@@ -23,6 +23,7 @@ import AdminDesigns from './pages/AdminDesigns';
 import SharedDesign from './pages/SharedDesign';
 import AdminDashboard from './pages/AdminDashboard';
 import SavedDesigns from './pages/SavedDesigns';
+import PricingAdmin from './pages/PricingAdmin';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -72,6 +73,7 @@ const AuthenticatedApp = () => {
       <Route path="*" element={<PageNotFound />} />
       <Route path="/shared/:shareId" element={<SharedDesign />} />
       <Route path="/admin/dashboard" element={<AdminDashboard />} />
+      <Route path="/admin/pricing" element={<PricingAdmin />} />
     </Routes>
   );
 };
