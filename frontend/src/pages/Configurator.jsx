@@ -1346,6 +1346,7 @@ export default function Configurator() {
                     <DropdownMenuItem asChild><Link to="/FloorCatalogue" className="flex items-center gap-2 cursor-pointer"><BookOpen size={13} /> Floor Catalogue</Link></DropdownMenuItem>
                     <DropdownMenuItem asChild><Link to={createPageUrl("WallCatalogue")} className="flex items-center gap-2 cursor-pointer"><BookOpen size={13} /> Wall Catalogue</Link></DropdownMenuItem>
                     <DropdownMenuItem asChild><Link to="/admin/dashboard" className="flex items-center gap-2 cursor-pointer"><Users size={13} /> Client Dashboard</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link to="/admin/pricing" className="flex items-center gap-2 cursor-pointer"><DollarSign size={13} /> Pricing Config</Link></DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               )}

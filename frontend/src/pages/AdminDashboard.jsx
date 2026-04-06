@@ -46,10 +46,6 @@ export default function AdminDashboard() {
           <h1 className="text-base font-bold text-gray-800">Admin Dashboard</h1>
         </div>
         <div className="flex items-center gap-3">
-          <Link to="/admin/pricing" className="flex items-center gap-1.5 px-4 py-2 border border-gray-200 text-xs font-medium text-gray-600 hover:text-[#F15A22] hover:border-[#F15A22] transition-all" data-testid="admin-pricing-link">
-            <DollarSign size={13} />
-            Pricing Config
-          </Link>
           <StatsBar />
         </div>
       </div>
