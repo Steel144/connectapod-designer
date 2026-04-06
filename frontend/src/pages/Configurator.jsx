@@ -12,7 +12,7 @@ import SaveAsTemplateModal from "@/components/configurator/SaveAsTemplateModal";
 import { toast } from "sonner";
 import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { BookOpen, FolderOpen, Save, Trash2, ChevronLeft, ChevronRight, Undo2, Box, Grid2X2, Image, LayoutTemplate, Menu, X, ChevronUp, ChevronDown, Settings, Eye, EyeOff, Check, Map, Share2, Copy, ExternalLink, Users } from "lucide-react";
+import { BookOpen, FolderOpen, Save, Trash2, ChevronLeft, ChevronRight, Undo2, Box, Grid2X2, Image, LayoutTemplate, Menu, X, ChevronUp, ChevronDown, Settings, Eye, EyeOff, Check, Map, Share2, Copy, ExternalLink, Users, Layers, Maximize2, DollarSign, Play } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
@@ -87,34 +87,42 @@ function SavedDesigns({ designs, onLoad, onDelete }) {
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       {designs.map((d) => (
         <div key={d.id} className="bg-white border border-gray-200 overflow-hidden hover:shadow-lg transition-all group flex flex-col">
-          <div className="bg-[#F5F5F3] h-40 relative overflow-hidden border-b border-gray-100">
+          <div className="bg-[#F5F5F3] h-48 relative overflow-hidden border-b border-gray-100">
             {(d.grid || []).length > 0 ? (
               <DesignMiniPreview grid={d.grid} walls={d.walls || []} furniture={d.furniture || []} />
             ) : (
               <div className="w-full h-full flex items-center justify-center text-gray-300 text-xs">No preview</div>
             )}
             {confirmDeleteId === d.id ? (
-              <div className="absolute top-2 right-2 flex items-center gap-1 bg-white/90 rounded px-2 py-1 shadow-sm z-10">
+              <div className="absolute top-2 right-2 flex items-center gap-1 bg-white/90 px-2 py-1 shadow-sm z-10">
                 <span className="text-xs text-gray-500 mr-1">Delete?</span>
-                <button onClick={() => { onDelete(d.id); setConfirmDeleteId(null); }} className="p-1 text-red-500 hover:bg-red-50 rounded transition-colors" title="Confirm delete"><Check size={13} /></button>
-                <button onClick={() => setConfirmDeleteId(null)} className="p-1 text-gray-400 hover:bg-gray-100 rounded transition-colors" title="Cancel"><X size={13} /></button>
+                <button onClick={() => { onDelete(d.id); setConfirmDeleteId(null); }} className="p-1.5 bg-white/90 hover:bg-white text-red-500 shadow-sm transition-colors" title="Confirm"><Check size={13} /></button>
+                <button onClick={() => setConfirmDeleteId(null)} className="p-1.5 bg-white/90 hover:bg-white text-gray-400 shadow-sm transition-colors" title="Cancel"><X size={13} /></button>
               </div>
             ) : (
-              <button className="absolute top-2 right-2 h-7 w-7 flex items-center justify-center bg-white/80 rounded opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-500 transition-all z-10" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setConfirmDeleteId(d.id); }}>
-                <Trash2 size={13} />
-              </button>
+              <div className="absolute top-2 right-2 flex gap-1 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
+                <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); setConfirmDeleteId(d.id); }} className="p-1.5 bg-white/90 hover:bg-white text-gray-600 hover:text-red-500 shadow-sm transition-colors" title="Delete">
+                  <Trash2 size={13} />
+                </button>
+              </div>
             )}
           </div>
-          <div className="p-3 flex flex-col flex-1">
+          <div className="p-4 flex flex-col flex-1">
             <h3 className="font-semibold text-gray-900 text-sm mb-1 leading-tight">{d.name}</h3>
             <div className="mt-auto">
-              <div className="flex items-center gap-3 text-xs text-gray-500 mb-2">
-                <span>{d.moduleCount || 0} modules</span>
-                <span>{Number(d.totalSqm || 0).toFixed(1)} m²</span>
-                <span className="text-[#F15A22] font-semibold">${((d.estimatedPrice || 0) / 1000).toFixed(0)}k</span>
+              <div className="flex items-center flex-wrap gap-x-3 gap-y-1 mb-3 text-xs text-gray-600">
+                <span className="flex items-center gap-1"><Layers size={11} className="text-[#F15A22]" />{d.moduleCount || 0} modules</span>
+                <span className="flex items-center gap-1"><Maximize2 size={11} className="text-[#F15A22]" />{Number(d.totalSqm || 0).toFixed(1)}m²</span>
               </div>
-              <button onClick={() => onLoad(d)} className="w-full flex items-center justify-center gap-1.5 py-2 bg-[#F15A22] text-white text-xs font-semibold hover:bg-[#d94e1a] transition-colors">
-                Open in Configurator <ChevronRight size={12} />
+              {(d.estimatedPrice || 0) > 0 && (
+                <div className="flex items-center gap-1 text-xs text-gray-700 font-semibold mb-3">
+                  <DollarSign size={11} className="text-[#F15A22]" />
+                  From ${Number(d.estimatedPrice || 0).toLocaleString()} NZD
+                </div>
+              )}
+              <button onClick={() => onLoad(d)} className="w-full flex items-center justify-center gap-2 py-2 bg-[#F15A22] text-white text-xs font-semibold hover:bg-[#d94e1a] transition-colors">
+                <Play size={11} />
+                Open in Configurator
               </button>
             </div>
           </div>
