@@ -124,8 +124,10 @@ export default function PricingAdmin() {
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <PricingField label="Per Module (flat site)" value={form.site_prep_per_module} onChange={v => update("site_prep_per_module", v)} />
-                <PricingField label="Sloping Site Surcharge" value={form.site_prep_sloping_surcharge} onChange={v => update("site_prep_sloping_surcharge", v)} suffix="/mod" />
-                <PricingField label="Steep Site Surcharge" value={form.site_prep_steep_surcharge} onChange={v => update("site_prep_steep_surcharge", v)} suffix="/mod" />
+                <PricingField label="Sloping Surcharge (per module)" value={form.site_prep_sloping_surcharge_per_module} onChange={v => update("site_prep_sloping_surcharge_per_module", v)} suffix="/mod" />
+                <PricingField label="Sloping Surcharge (per house)" value={form.site_prep_sloping_surcharge_per_house} onChange={v => update("site_prep_sloping_surcharge_per_house", v)} />
+                <PricingField label="Steep Surcharge (per module)" value={form.site_prep_steep_surcharge_per_module} onChange={v => update("site_prep_steep_surcharge_per_module", v)} suffix="/mod" />
+                <PricingField label="Steep Surcharge (per house)" value={form.site_prep_steep_surcharge_per_house} onChange={v => update("site_prep_steep_surcharge_per_house", v)} />
                 <PricingField label="Water & Drainage (per house)" value={form.site_prep_water_drainage_per_house} onChange={v => update("site_prep_water_drainage_per_house", v)} />
               </div>
             </div>

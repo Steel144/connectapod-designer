@@ -429,7 +429,8 @@ export default function ProjectDetailsModal({
     const additionalItems = [];
     if (cs.sitePrepVal > 0) {
       additionalItems.push({ label: `Site Prep & Foundations (${moduleCount} modules)`, amount: cs.sitePrepBase });
-      if (cs.siteSurcharge > 0) additionalItems.push({ label: `  ${siteType === "sloping" ? "Sloping" : "Steep"} surcharge (${moduleCount} x $${(siteType === "sloping" ? pc.site_prep_sloping_surcharge : pc.site_prep_steep_surcharge || 0).toLocaleString()})`, amount: cs.siteSurcharge });
+      if (cs.slopingSurchargePerMod > 0) additionalItems.push({ label: `  ${siteType === "sloping" ? "Sloping" : "Steep"} surcharge (${moduleCount} x $${(siteType === "sloping" ? pc.site_prep_sloping_surcharge_per_module : pc.site_prep_steep_surcharge_per_module || 0).toLocaleString()}/mod)`, amount: cs.slopingSurchargePerMod });
+      if (cs.slopingSurchargePerHouse > 0) additionalItems.push({ label: `  ${siteType === "sloping" ? "Sloping" : "Steep"} surcharge (per house)`, amount: cs.slopingSurchargePerHouse });
       if (cs.sitePrepWater > 0) additionalItems.push({ label: "  Water & drainage (per house)", amount: cs.sitePrepWater });
     }
     if (cs.deliveryVal > 0) {
@@ -532,8 +533,11 @@ export default function ProjectDetailsModal({
     const modulesTotal = placedModules.reduce((s, m) => s + (m.price || 0), 0);
     const wallsTotal = walls.reduce((s, w) => s + (w.price || 0), 0);
     const sitePrepBase = (pc.site_prep_per_module || 0) * moduleCount;
-    const siteSurcharge = siteType === "sloping" ? (pc.site_prep_sloping_surcharge || 0) * moduleCount :
-                          siteType === "steep" ? (pc.site_prep_steep_surcharge || 0) * moduleCount : 0;
+    const slopingSurchargePerMod = siteType === "sloping" ? (pc.site_prep_sloping_surcharge_per_module || 0) * moduleCount :
+                                   siteType === "steep" ? (pc.site_prep_steep_surcharge_per_module || 0) * moduleCount : 0;
+    const slopingSurchargePerHouse = siteType === "sloping" ? (pc.site_prep_sloping_surcharge_per_house || 0) :
+                                     siteType === "steep" ? (pc.site_prep_steep_surcharge_per_house || 0) : 0;
+    const siteSurcharge = slopingSurchargePerMod + slopingSurchargePerHouse;
     const sitePrepWater = pc.site_prep_water_drainage_per_house || 0;
     const sitePrepVal = sitePrepBase + siteSurcharge + sitePrepWater;
     const deliveryVal = deliveryEstimate ? (deliveryEstimate.estimated_hours * 2 * (pc.delivery_rate_per_hour || 0) * moduleCount + (deliveryEstimate.needs_ferry ? (pc.ferry_crossing_cost || 0) : 0)) : 0;
@@ -553,7 +557,7 @@ export default function ProjectDetailsModal({
     const gstRateVal = pc.gst_rate || 15;
     const gstAmount = Math.round(subtotal * gstRateVal / 100);
     const grandTotal = subtotal + gstAmount;
-    return { modulesTotal, wallsTotal, sitePrepBase, siteSurcharge, sitePrepWater, sitePrepVal, deliveryVal, deliveryHours, needsFerry, ferryCost, labourVal, cranageVal, waterVal, wetModuleCount, electricalVal, installVal, subtotal, gstRateVal, gstAmount, grandTotal };
+    return { modulesTotal, wallsTotal, sitePrepBase, slopingSurchargePerMod, slopingSurchargePerHouse, siteSurcharge, sitePrepWater, sitePrepVal, deliveryVal, deliveryHours, needsFerry, ferryCost, labourVal, cranageVal, waterVal, wetModuleCount, electricalVal, installVal, subtotal, gstRateVal, gstAmount, grandTotal };
   })();
 
   return (
@@ -650,10 +654,16 @@ export default function ProjectDetailsModal({
                     <span>{moduleCount} mod x ${(pc.site_prep_per_module || 0).toLocaleString()}</span>
                     <span>${costSummary.sitePrepBase.toLocaleString()}</span>
                   </div>
-                  {costSummary.siteSurcharge > 0 && (
+                  {costSummary.slopingSurchargePerMod > 0 && (
                     <div className="flex justify-between text-gray-600">
-                      <span>{siteType === "sloping" ? "Sloping" : "Steep"} surcharge ({moduleCount} x ${(siteType === "sloping" ? pc.site_prep_sloping_surcharge : pc.site_prep_steep_surcharge || 0).toLocaleString()})</span>
-                      <span>${costSummary.siteSurcharge.toLocaleString()}</span>
+                      <span>{siteType === "sloping" ? "Sloping" : "Steep"} ({moduleCount} x ${(siteType === "sloping" ? pc.site_prep_sloping_surcharge_per_module : pc.site_prep_steep_surcharge_per_module || 0).toLocaleString()}/mod)</span>
+                      <span>${costSummary.slopingSurchargePerMod.toLocaleString()}</span>
+                    </div>
+                  )}
+                  {costSummary.slopingSurchargePerHouse > 0 && (
+                    <div className="flex justify-between text-gray-600">
+                      <span>{siteType === "sloping" ? "Sloping" : "Steep"} (per house)</span>
+                      <span>${costSummary.slopingSurchargePerHouse.toLocaleString()}</span>
                     </div>
                   )}
                   {costSummary.sitePrepWater > 0 && (

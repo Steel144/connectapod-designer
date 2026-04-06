@@ -120,8 +120,10 @@ class DeletedWall(BaseModel):
 
 class PricingConfig(BaseModel):
     site_prep_per_module: float = 0
-    site_prep_sloping_surcharge: float = 0
-    site_prep_steep_surcharge: float = 0
+    site_prep_sloping_surcharge_per_module: float = 0
+    site_prep_sloping_surcharge_per_house: float = 0
+    site_prep_steep_surcharge_per_module: float = 0
+    site_prep_steep_surcharge_per_house: float = 0
     site_prep_water_drainage_per_house: float = 0
     delivery_rate_per_hour: float = 0
     ferry_crossing_cost: float = 0
