@@ -87,7 +87,7 @@ export default function PricingAdmin() {
   const update = (key, val) => setForm(prev => ({ ...prev, [key]: val }));
 
   return (
-    <div className="min-h-screen bg-[#F8F7F5]" data-testid="pricing-admin">
+    <div className="min-h-screen bg-[#F8F7F5] pt-12" data-testid="pricing-admin">
       {/* Header */}
       <div className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-4">
