@@ -752,6 +752,9 @@ export default function ProjectDetailsModal({
                   </div>
                 </div>
               )}
+              {costSummary && (
+                <p className="text-[10px] text-gray-400 mt-3 leading-relaxed">This estimate is indicative only and subject to final confirmation and site inspection to the satisfaction of connectapod.</p>
+              )}
             </div>
           </div>
         ) : (
