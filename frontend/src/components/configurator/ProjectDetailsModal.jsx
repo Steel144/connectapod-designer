@@ -178,6 +178,10 @@ export default function ProjectDetailsModal({
   const [saveAsMode, setSaveAsMode] = useState(false);
   const [saveAsName, setSaveAsName] = useState("");
   const [showOverwriteWarning, setShowOverwriteWarning] = useState(false);
+  const [sitePrep, setSitePrep] = useState("");
+  const [deliveryCharge, setDeliveryCharge] = useState("");
+  const [installationCharge, setInstallationCharge] = useState("");
+  const [gstRate, setGstRate] = useState("15");
 
   useEffect(() => {
     if (open) {
@@ -189,6 +193,10 @@ export default function ProjectDetailsModal({
       setSiteAddress(currentSiteAddress || saved.siteAddress || "");
       setEmail(saved.email || "");
       setPhone(saved.phone || "");
+      setSitePrep(saved.sitePrep || "");
+      setDeliveryCharge(saved.deliveryCharge || "");
+      setInstallationCharge(saved.installationCharge || "");
+      setGstRate(saved.gstRate || "15");
       setSaveAsMode(false);
       setSaveAsName("");
       setShowOverwriteWarning(false);
@@ -203,7 +211,11 @@ export default function ProjectDetailsModal({
       homeAddress,
       siteAddress,
       email,
-      phone
+      phone,
+      sitePrep,
+      deliveryCharge,
+      installationCharge,
+      gstRate
     };
     saveToLocalStorage(details);
     if (onSiteAddressChange) onSiteAddressChange(siteAddress);
@@ -222,7 +234,13 @@ export default function ProjectDetailsModal({
     const totalSqm = placedModules.reduce((s, m) => s + (m.sqm || 0), 0);
     const modulesTotal = placedModules.reduce((s, m) => s + (m.price || 0), 0);
     const wallsTotal = walls.reduce((s, w) => s + (w.price || 0), 0);
-    const grandTotal = modulesTotal + wallsTotal;
+    const sitePrepVal = parseFloat(sitePrep) || 0;
+    const deliveryVal = parseFloat(deliveryCharge) || 0;
+    const installVal = parseFloat(installationCharge) || 0;
+    const subtotal = modulesTotal + wallsTotal + sitePrepVal + deliveryVal + installVal;
+    const gstRateVal = parseFloat(gstRate) || 0;
+    const gstAmount = Math.round(subtotal * gstRateVal / 100);
+    const grandTotal = subtotal + gstAmount;
 
     const doc = new jsPDF();
     const pageW = doc.internal.pageSize.getWidth();
@@ -407,12 +425,65 @@ export default function ProjectDetailsModal({
 
     // Grand total
     y += 4;
+
+    // Additional charges section
+    const additionalItems = [];
+    if (sitePrepVal > 0) additionalItems.push({ label: "Site Prep & Foundations", amount: sitePrepVal });
+    if (deliveryVal > 0) additionalItems.push({ label: "Estimated Delivery Charge", amount: deliveryVal });
+    if (installVal > 0) additionalItems.push({ label: "Installation Charges", amount: installVal });
+
+    if (additionalItems.length > 0) {
+      doc.setFillColor(241, 90, 34);
+      doc.rect(col1, y, pageW - 2 * margin, 7, "F");
+      doc.setTextColor(255, 255, 255);
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(9);
+      doc.text("ADDITIONAL CHARGES", col1 + 3, y + 5);
+      doc.text("TOTAL", col2, y + 5, { align: "right" });
+      y += 10;
+
+      doc.setTextColor(30, 30, 30);
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(8.5);
+      rowAlt = false;
+      additionalItems.forEach(item => {
+        if (rowAlt) {
+          doc.setFillColor(252, 252, 252);
+          doc.rect(col1, y - 2, pageW - 2 * margin, 8, "F");
+        }
+        rowAlt = !rowAlt;
+        doc.text(item.label, col1 + 2, y + 4);
+        doc.text(`$${item.amount.toLocaleString()}`, col2, y + 4, { align: "right" });
+        y += 8;
+      });
+      y += 4;
+    }
+
+    // Subtotal
+    doc.setDrawColor(200, 200, 200);
+    doc.line(col1, y, col2, y);
+    y += 5;
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(9);
+    doc.setTextColor(30, 30, 30);
+    doc.text("Subtotal (excl. GST)", col1 + 2, y + 3);
+    doc.text(`$${subtotal.toLocaleString()}`, col2, y + 3, { align: "right" });
+    y += 8;
+
+    // GST
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(8.5);
+    doc.text(`GST (${gstRateVal}%)`, col1 + 2, y + 3);
+    doc.text(`$${gstAmount.toLocaleString()}`, col2, y + 3, { align: "right" });
+    y += 10;
+
+    // Grand total with GST
     doc.setFillColor(30, 30, 30);
     doc.rect(col1, y, pageW - 2 * margin, 14, "F");
     doc.setTextColor(255, 255, 255);
     doc.setFontSize(11);
     doc.setFont("helvetica", "bold");
-    doc.text("TOTAL ESTIMATE (excl. GST)", col1 + 4, y + 9.5);
+    doc.text("TOTAL ESTIMATE (incl. GST)", col1 + 4, y + 9.5);
     doc.text(`$${grandTotal.toLocaleString()}`, col2 - 2, y + 9.5, { align: "right" });
     y += 20;
 
@@ -430,7 +501,7 @@ export default function ProjectDetailsModal({
     y += 5;
     doc.setTextColor(140, 140, 140);
     doc.setFontSize(7.5);
-    doc.text("This quote is indicative only and subject to final confirmation. Prices exclude GST, delivery, site prep and installation.", col1, y);
+    doc.text("This quote is indicative only and subject to final confirmation. Site prep, delivery and installation charges are estimates only.", col1, y);
     y += 5;
     doc.text(`© ${new Date().getFullYear()} connectapod. All rights reserved.`, col1, y);
     doc.text("www.connectapod.com", col2, y, { align: "right" });
@@ -447,8 +518,14 @@ export default function ProjectDetailsModal({
   const costSummary = !isEstimate ? null : (() => {
     const modulesTotal = placedModules.reduce((s, m) => s + (m.price || 0), 0);
     const wallsTotal = walls.reduce((s, w) => s + (w.price || 0), 0);
-    const grandTotal = modulesTotal + wallsTotal;
-    return { modulesTotal, wallsTotal, grandTotal };
+    const sitePrepVal = parseFloat(sitePrep) || 0;
+    const deliveryVal = parseFloat(deliveryCharge) || 0;
+    const installVal = parseFloat(installationCharge) || 0;
+    const subtotal = modulesTotal + wallsTotal + sitePrepVal + deliveryVal + installVal;
+    const gstRateVal = parseFloat(gstRate) || 0;
+    const gstAmount = Math.round(subtotal * gstRateVal / 100);
+    const grandTotal = subtotal + gstAmount;
+    return { modulesTotal, wallsTotal, sitePrepVal, deliveryVal, installVal, subtotal, gstRateVal, gstAmount, grandTotal };
   })();
 
   return (
@@ -477,11 +554,36 @@ export default function ProjectDetailsModal({
                 <span>${costSummary.wallsTotal.toLocaleString()}</span>
               </div>
             )}
+            {costSummary.sitePrepVal > 0 && (
+              <div className="flex justify-between text-gray-600">
+                <span>Site Prep & Foundations</span>
+                <span>${costSummary.sitePrepVal.toLocaleString()}</span>
+              </div>
+            )}
+            {costSummary.deliveryVal > 0 && (
+              <div className="flex justify-between text-gray-600">
+                <span>Estimated Delivery</span>
+                <span>${costSummary.deliveryVal.toLocaleString()}</span>
+              </div>
+            )}
+            {costSummary.installVal > 0 && (
+              <div className="flex justify-between text-gray-600">
+                <span>Installation Charges</span>
+                <span>${costSummary.installVal.toLocaleString()}</span>
+              </div>
+            )}
+            <div className="border-t border-gray-200 pt-2 flex justify-between text-gray-600">
+              <span>Subtotal (excl. GST)</span>
+              <span>${costSummary.subtotal.toLocaleString()}</span>
+            </div>
+            <div className="flex justify-between text-gray-600">
+              <span>GST ({costSummary.gstRateVal}%)</span>
+              <span>${costSummary.gstAmount.toLocaleString()}</span>
+            </div>
             <div className="border-t border-gray-200 pt-2 flex justify-between font-bold text-gray-900">
-              <span>Total Estimate</span>
+              <span>Total Estimate (incl. GST)</span>
               <span>${costSummary.grandTotal.toLocaleString()}</span>
             </div>
-            <p className="text-[10px] text-gray-400">Excl. GST, delivery, site prep & installation</p>
           </div>
         )}
 
@@ -527,6 +629,35 @@ export default function ProjectDetailsModal({
             </div>
             <AddressAutocomplete value={siteAddress} onChange={setSiteAddress} />
           </div>
+
+          {/* Additional charges - only for estimate mode */}
+          {isEstimate && (
+            <>
+              <div className="border-t border-gray-200 pt-3 mt-1">
+                <p className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold mb-2">Additional Charges</p>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <Label className="text-xs text-gray-600">Site Prep & Foundations ($)</Label>
+                  <Input type="number" value={sitePrep} onChange={e => setSitePrep(e.target.value)} placeholder="0" className="mt-1 rounded-none text-sm h-9" data-testid="site-prep-input" />
+                </div>
+                <div>
+                  <Label className="text-xs text-gray-600">Estimated Delivery ($)</Label>
+                  <Input type="number" value={deliveryCharge} onChange={e => setDeliveryCharge(e.target.value)} placeholder="0" className="mt-1 rounded-none text-sm h-9" data-testid="delivery-charge-input" />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <Label className="text-xs text-gray-600">Installation Charges ($)</Label>
+                  <Input type="number" value={installationCharge} onChange={e => setInstallationCharge(e.target.value)} placeholder="0" className="mt-1 rounded-none text-sm h-9" data-testid="installation-charge-input" />
+                </div>
+                <div>
+                  <Label className="text-xs text-gray-600">GST Rate (%)</Label>
+                  <Input type="number" value={gstRate} onChange={e => setGstRate(e.target.value)} placeholder="15" className="mt-1 rounded-none text-sm h-9" data-testid="gst-rate-input" />
+                </div>
+              </div>
+            </>
+          )}
         </div>
 
         {saveAsMode && (
