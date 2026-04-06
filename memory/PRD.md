@@ -11,45 +11,28 @@ Complete migration from the proprietary Base44 platform to a FastAPI + MongoDB +
 
 ## What's Been Implemented
 
+### Admin Pricing Configuration (Completed April 2026)
+- **Pricing Config DB** (`pricing_config` collection): Stores admin-editable rates
+- **Admin UI tab**: "Pricing Config" in Admin Dashboard with grouped sections:
+  - Site Prep & Foundations: per-module flat rate, sloping surcharge, steep surcharge
+  - Delivery: rate per hour, ferry crossing cost (auto-detects North Island)
+  - Installation: labour per module, cranage per module, water & drainage per house, electrical per house
+  - GST rate (default 15%)
+- **Auto-calculation API**: `GET /api/pricing/delivery-estimate?site_address=...` calculates driving hours from 29 Studholme St, Waimate to site address, detects North Island for ferry crossing
+- **Estimate modal auto-populates** all charges from admin-set rates, no manual entry needed
+- **Site type selector**: Flat / Sloping / Steep dropdown affects site prep costs
+- **PDF generation** includes full breakdown: modules, walls, site prep, delivery (with ferry), installation line items, subtotal, GST, grand total
+
 ### Chevron Step Bar (Completed April 2026)
-- **9-step chevron/arrow toolbar**: STEP 1 CHOOSE YOUR DESIGN → EDIT → ELEVATIONS → SITE PLAN → SAVE → SHARE → PRICE → PRINT → ORDER
-- Orange chevron segments with white-circled numbers, bold uppercase labels
-- First segment has flat left edge, remaining segments have arrow cut-in on left
-- Steps 5-8 activate when modules are placed, ORDER (step 9) is placeholder
-- Active/current step gets darker orange highlight
-- Matches PROCESS.jpg mockup provided by user
+- 9-step chevron/arrow toolbar matching PROCESS.jpg mockup
+- Orange segments, white-circled numbers, bold uppercase labels
 
-### Guided User Flow (Completed April 2026)
-- Steps auto-complete based on user actions, clickable to navigate
-- Persisted in localStorage across sessions
-- **Guided Tooltips**: Context-specific hints on first visit to each section, dismissable with "Got it, don't show again"
+### Design Chooser Flow (Completed April 2026)
+- "Choose a Design" modal with two clear options: Starter Designs → DesignCatalogue page, My Saved Designs → /SavedDesigns page
+- Both pages have identical card format (hero images/mini previews, specs, pricing)
+- Back arrows return to chooser modal
 
-### Admin Dashboard (Completed April 2026)
-- Route: `/admin/dashboard` (password protected: admin123)
-- **Client Leads tab**: All saved designs with client name, project, email, phone, addresses, design stats, expandable detail rows
-- **Shared Designs tab**: All shared links with client info, module count, dates, clickable View links
-- **Stats Bar**: Real-time lead count + "new" badge for unviewed leads
-- **Accessible from**: Admin dropdown menu → "Client Dashboard"
-
-### Email Notifications (Completed April 2026)
-- Auto-sends email to support@steelframeman.co.nz when a design is saved/updated
-- Includes client name, project, email, phone, site address, module count, estimated price
-- **Requires**: `RESEND_API_KEY` in backend .env (gracefully skips if not configured)
-- Non-blocking: failures don't affect save operation
-
-### Save/Overwrite Flow (Completed April 2026)
-- Tracks `loadedDesignId` for direct updates
-- Overwrite warning when name matches a different existing design
-- Save As option for new copies
-
-### Share Design Feature (Completed April 2026)
-- Share button creates design snapshot with unique URL
-- Public viewer at `/shared/:shareId` with Floor Plan, Elevations, Summary tabs
-
-### Pavilion Elevation Fixes (Completed April 2026)
-- Z/X side-by-side layout, cumulative positioning, connection wall bleed prevention
-
-### NZ Environmental Zones, Site Map, Design Catalogue, Address Sync
+### Admin Dashboard, Email, Share, Save/Overwrite
 - All previously completed and stable
 
 ### Authentication
@@ -57,40 +40,41 @@ Complete migration from the proprietary Base44 platform to a FastAPI + MongoDB +
 
 ## Key Files
 - `/app/frontend/src/pages/Configurator.jsx` - Main configurator with chevron step bar
-- `/app/frontend/src/components/configurator/StepIndicator.jsx` - Legacy step indicator
-- `/app/frontend/src/components/configurator/GuidedTooltip.jsx` - First-time hint tooltips
-- `/app/frontend/src/pages/AdminDashboard.jsx` - Admin leads/shares tracking
-- `/app/frontend/src/pages/SharedDesign.jsx` - Public shared design viewer
-- `/app/frontend/src/components/configurator/ProjectDetailsModal.jsx` - Save/overwrite modal
-- `/app/frontend/src/components/configurator/CombinedElevations.jsx` - Pavilion elevations
-- `/app/backend/server.py` - Backend API (admin endpoints, email, share)
+- `/app/frontend/src/pages/AdminDashboard.jsx` - Admin dashboard with Pricing Config tab
+- `/app/frontend/src/pages/SavedDesigns.jsx` - Full-screen saved designs page
+- `/app/frontend/src/components/configurator/ProjectDetailsModal.jsx` - Estimate modal with auto-pricing
+- `/app/backend/server.py` - Backend API (pricing config, delivery estimate, admin, share, email)
 - `/app/rebuild-frontend.sh` - MANDATORY build script
 
 ## Key API Endpoints
-- `GET /api/admin/stats` - Lead/share counts with new badge
-- `GET /api/admin/leads` - All saved designs (marks as viewed)
+- `GET /api/admin/pricing` - Fetch pricing config
+- `PUT /api/admin/pricing` - Update pricing config (admin)
+- `GET /api/pricing/delivery-estimate?site_address=...` - Calculate delivery cost from Waimate
+- `GET /api/admin/stats` - Lead/share counts
+- `GET /api/admin/leads` - All saved designs
 - `GET /api/admin/shares` - All shared designs
 - `POST /api/share` - Create shared design
 - `GET /api/shared/{share_id}` - Fetch shared design (public)
 - CRUD: `/api/entities/{DesignTemplate|HomeDesign|ModuleEntry|WallEntry|FloorPlanImage|WallImage}`
 
+## DB Collections
+- `pricing_config`: { _type: "pricing", site_prep_per_module, site_prep_sloping_surcharge, site_prep_steep_surcharge, delivery_rate_per_hour, ferry_crossing_cost, install_labour_per_module, install_cranage_per_module, install_water_drainage_per_house, install_electrical_per_house, gst_rate, updated_at }
+- `home_designs`: { id, name, grid, walls, furniture, totalSqm, estimatedPrice, moduleCount, clientFirstName, clientFamilyName, email, phone, homeAddress, siteAddress, viewed_by_admin, created_date }
+- `shared_designs`: { share_id, name, grid, walls, furniture, totalSqm, estimatedPrice, moduleCount, clientFirstName, clientFamilyName, siteAddress, created_date }
+- `design_templates`: { id, name, description, category, template_payload: { modules, layout } }
+
 ## Environment Variables (backend .env)
 - `MONGO_URL`, `DB_NAME` - MongoDB
-- `NOTIFICATION_EMAIL` - Email recipient for lead notifications (default: support@steelframeman.co.nz)
-- `RESEND_API_KEY` - Required for email sending (not yet configured)
+- `NOTIFICATION_EMAIL` - Email recipient (support@steelframeman.co.nz)
+- `RESEND_API_KEY` - Configured for email sending
 - `LINZ_API_KEY` - LINZ boundary tiles
 - `EMERGENT_LLM_KEY` - OpenAI integration
 
 ## Upcoming Tasks (P1)
-- Configure Resend API key for live email notifications
-- Lead Capture Funnel enhancement: require client details before first export
+- Verify delivery hour estimates are reasonable for all NZ regions
+- Add more granular distance calculation (currently uses city-name heuristic)
 
 ## Future Tasks (P2)
-- Enforce build rules and Smart Configuration Engine logic
-- Real-Time Pricing Engine
+- Smart Configuration Engine (cladding, roof types, structural rules)
+- Real-Time Pricing Engine (live cost updates as modules are placed)
 - Re-enable/Fix 3D Viewer
-
-## DB Schema
-- `home_designs`: { id, name, grid, walls, furniture, totalSqm, estimatedPrice, moduleCount, clientFirstName, clientFamilyName, email, phone, homeAddress, siteAddress, viewed_by_admin, created_date }
-- `shared_designs`: { share_id, name, grid, walls, furniture, totalSqm, estimatedPrice, moduleCount, clientFirstName, clientFamilyName, siteAddress, created_date }
-- `design_templates`: { id, name, description, category, template_payload: { modules, layout } }

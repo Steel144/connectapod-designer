@@ -178,10 +178,9 @@ export default function ProjectDetailsModal({
   const [saveAsMode, setSaveAsMode] = useState(false);
   const [saveAsName, setSaveAsName] = useState("");
   const [showOverwriteWarning, setShowOverwriteWarning] = useState(false);
-  const [sitePrep, setSitePrep] = useState("");
-  const [deliveryCharge, setDeliveryCharge] = useState("");
-  const [installationCharge, setInstallationCharge] = useState("");
-  const [gstRate, setGstRate] = useState("15");
+  const [pricingConfig, setPricingConfig] = useState(null);
+  const [deliveryEstimate, setDeliveryEstimate] = useState(null);
+  const [siteType, setSiteType] = useState("flat"); // "flat", "sloping", "steep"
 
   useEffect(() => {
     if (open) {
@@ -193,15 +192,26 @@ export default function ProjectDetailsModal({
       setSiteAddress(currentSiteAddress || saved.siteAddress || "");
       setEmail(saved.email || "");
       setPhone(saved.phone || "");
-      setSitePrep(saved.sitePrep || "");
-      setDeliveryCharge(saved.deliveryCharge || "");
-      setInstallationCharge(saved.installationCharge || "");
-      setGstRate(saved.gstRate || "15");
+      setSiteType(saved.siteType || "flat");
       setSaveAsMode(false);
       setSaveAsName("");
       setShowOverwriteWarning(false);
+      // Fetch pricing config
+      fetch("/api/admin/pricing").then(r => r.json()).then(d => setPricingConfig(d)).catch(() => {});
     }
   }, [open, currentSiteAddress]);
+
+  // Fetch delivery estimate when site address changes
+  useEffect(() => {
+    if (!open || !siteAddress || siteAddress.length < 5 || mode !== "estimate") return;
+    const timer = setTimeout(() => {
+      fetch(`/api/pricing/delivery-estimate?site_address=${encodeURIComponent(siteAddress)}`)
+        .then(r => r.json())
+        .then(d => setDeliveryEstimate(d))
+        .catch(() => {});
+    }, 600);
+    return () => clearTimeout(timer);
+  }, [siteAddress, open, mode]);
 
   const handleSaveDetails = () => {
     const details = {
@@ -212,10 +222,7 @@ export default function ProjectDetailsModal({
       siteAddress,
       email,
       phone,
-      sitePrep,
-      deliveryCharge,
-      installationCharge,
-      gstRate
+      siteType
     };
     saveToLocalStorage(details);
     if (onSiteAddressChange) onSiteAddressChange(siteAddress);
@@ -232,15 +239,7 @@ export default function ProjectDetailsModal({
     setGenerating(true);
 
     const totalSqm = placedModules.reduce((s, m) => s + (m.sqm || 0), 0);
-    const modulesTotal = placedModules.reduce((s, m) => s + (m.price || 0), 0);
-    const wallsTotal = walls.reduce((s, w) => s + (w.price || 0), 0);
-    const sitePrepVal = parseFloat(sitePrep) || 0;
-    const deliveryVal = parseFloat(deliveryCharge) || 0;
-    const installVal = parseFloat(installationCharge) || 0;
-    const subtotal = modulesTotal + wallsTotal + sitePrepVal + deliveryVal + installVal;
-    const gstRateVal = parseFloat(gstRate) || 0;
-    const gstAmount = Math.round(subtotal * gstRateVal / 100);
-    const grandTotal = subtotal + gstAmount;
+    const cs = costSummary;
 
     const doc = new jsPDF();
     const pageW = doc.internal.pageSize.getWidth();
@@ -373,7 +372,7 @@ export default function ProjectDetailsModal({
     doc.setFont("helvetica", "bold");
     doc.setFontSize(9);
     doc.text("Modules Subtotal", col1 + 2, y + 3);
-    doc.text(`$${modulesTotal.toLocaleString()}`, col2, y + 3, { align: "right" });
+    doc.text(`$${cs.modulesTotal.toLocaleString()}`, col2, y + 3, { align: "right" });
     y += 10;
 
     // Walls section
@@ -419,7 +418,7 @@ export default function ProjectDetailsModal({
       doc.setFontSize(9);
       doc.setTextColor(30, 30, 30);
       doc.text("Wall Panels Subtotal", col1 + 2, y + 3);
-      doc.text(`$${wallsTotal.toLocaleString()}`, col2, y + 3, { align: "right" });
+      doc.text(`$${cs.wallsTotal.toLocaleString()}`, col2, y + 3, { align: "right" });
       y += 12;
     }
 
@@ -428,9 +427,20 @@ export default function ProjectDetailsModal({
 
     // Additional charges section
     const additionalItems = [];
-    if (sitePrepVal > 0) additionalItems.push({ label: "Site Prep & Foundations", amount: sitePrepVal });
-    if (deliveryVal > 0) additionalItems.push({ label: "Estimated Delivery Charge", amount: deliveryVal });
-    if (installVal > 0) additionalItems.push({ label: "Installation Charges", amount: installVal });
+    if (cs.sitePrepVal > 0) {
+      additionalItems.push({ label: `Site Prep & Foundations (${moduleCount} modules)`, amount: cs.sitePrepBase });
+      if (cs.siteSurcharge > 0) additionalItems.push({ label: `  ${siteType === "sloping" ? "Sloping" : "Steep"} site surcharge`, amount: cs.siteSurcharge });
+    }
+    if (cs.deliveryVal > 0) {
+      additionalItems.push({ label: `Delivery (${cs.deliveryHours}hrs x $${(pc.delivery_rate_per_hour || 0).toLocaleString()}/hr)`, amount: cs.deliveryVal - cs.ferryCost });
+      if (cs.needsFerry) additionalItems.push({ label: "  Ferry crossing (North Island)", amount: cs.ferryCost });
+    }
+    if (cs.installVal > 0) {
+      additionalItems.push({ label: `Labour (${moduleCount} modules x $${(pc.install_labour_per_module || 0).toLocaleString()})`, amount: cs.labourVal });
+      additionalItems.push({ label: `Cranage (${moduleCount} modules x $${(pc.install_cranage_per_module || 0).toLocaleString()})`, amount: cs.cranageVal });
+      if (cs.waterVal > 0) additionalItems.push({ label: "Water & drainage connection", amount: cs.waterVal });
+      if (cs.electricalVal > 0) additionalItems.push({ label: "Electrical connection", amount: cs.electricalVal });
+    }
 
     if (additionalItems.length > 0) {
       doc.setFillColor(241, 90, 34);
@@ -438,7 +448,7 @@ export default function ProjectDetailsModal({
       doc.setTextColor(255, 255, 255);
       doc.setFont("helvetica", "bold");
       doc.setFontSize(9);
-      doc.text("ADDITIONAL CHARGES", col1 + 3, y + 5);
+      doc.text("SITE, DELIVERY & INSTALLATION", col1 + 3, y + 5);
       doc.text("TOTAL", col2, y + 5, { align: "right" });
       y += 10;
 
@@ -467,14 +477,14 @@ export default function ProjectDetailsModal({
     doc.setFontSize(9);
     doc.setTextColor(30, 30, 30);
     doc.text("Subtotal (excl. GST)", col1 + 2, y + 3);
-    doc.text(`$${subtotal.toLocaleString()}`, col2, y + 3, { align: "right" });
+    doc.text(`$${cs.subtotal.toLocaleString()}`, col2, y + 3, { align: "right" });
     y += 8;
 
     // GST
     doc.setFont("helvetica", "normal");
     doc.setFontSize(8.5);
-    doc.text(`GST (${gstRateVal}%)`, col1 + 2, y + 3);
-    doc.text(`$${gstAmount.toLocaleString()}`, col2, y + 3, { align: "right" });
+    doc.text(`GST (${cs.gstRateVal}%)`, col1 + 2, y + 3);
+    doc.text(`$${cs.gstAmount.toLocaleString()}`, col2, y + 3, { align: "right" });
     y += 10;
 
     // Grand total with GST
@@ -484,7 +494,7 @@ export default function ProjectDetailsModal({
     doc.setFontSize(11);
     doc.setFont("helvetica", "bold");
     doc.text("TOTAL ESTIMATE (incl. GST)", col1 + 4, y + 9.5);
-    doc.text(`$${grandTotal.toLocaleString()}`, col2 - 2, y + 9.5, { align: "right" });
+    doc.text(`$${cs.grandTotal.toLocaleString()}`, col2 - 2, y + 9.5, { align: "right" });
     y += 20;
 
     // Summary stats
@@ -515,17 +525,29 @@ export default function ProjectDetailsModal({
   const isEstimate = mode === 'estimate';
   const isPrint = mode === 'print';
   const isSave = mode === 'save';
+  const moduleCount = placedModules.length;
+  const pc = pricingConfig || {};
   const costSummary = !isEstimate ? null : (() => {
     const modulesTotal = placedModules.reduce((s, m) => s + (m.price || 0), 0);
     const wallsTotal = walls.reduce((s, w) => s + (w.price || 0), 0);
-    const sitePrepVal = parseFloat(sitePrep) || 0;
-    const deliveryVal = parseFloat(deliveryCharge) || 0;
-    const installVal = parseFloat(installationCharge) || 0;
+    const sitePrepBase = (pc.site_prep_per_module || 0) * moduleCount;
+    const siteSurcharge = siteType === "sloping" ? (pc.site_prep_sloping_surcharge || 0) :
+                          siteType === "steep" ? (pc.site_prep_steep_surcharge || 0) : 0;
+    const sitePrepVal = sitePrepBase + siteSurcharge;
+    const deliveryVal = deliveryEstimate ? deliveryEstimate.total : 0;
+    const deliveryHours = deliveryEstimate ? deliveryEstimate.estimated_hours : 0;
+    const needsFerry = deliveryEstimate ? deliveryEstimate.needs_ferry : false;
+    const ferryCost = deliveryEstimate ? deliveryEstimate.ferry_cost : 0;
+    const labourVal = (pc.install_labour_per_module || 0) * moduleCount;
+    const cranageVal = (pc.install_cranage_per_module || 0) * moduleCount;
+    const waterVal = pc.install_water_drainage_per_house || 0;
+    const electricalVal = pc.install_electrical_per_house || 0;
+    const installVal = labourVal + cranageVal + waterVal + electricalVal;
     const subtotal = modulesTotal + wallsTotal + sitePrepVal + deliveryVal + installVal;
-    const gstRateVal = parseFloat(gstRate) || 0;
+    const gstRateVal = pc.gst_rate || 15;
     const gstAmount = Math.round(subtotal * gstRateVal / 100);
     const grandTotal = subtotal + gstAmount;
-    return { modulesTotal, wallsTotal, sitePrepVal, deliveryVal, installVal, subtotal, gstRateVal, gstAmount, grandTotal };
+    return { modulesTotal, wallsTotal, sitePrepBase, siteSurcharge, sitePrepVal, deliveryVal, deliveryHours, needsFerry, ferryCost, labourVal, cranageVal, waterVal, electricalVal, installVal, subtotal, gstRateVal, gstAmount, grandTotal };
   })();
 
   return (
@@ -543,9 +565,10 @@ export default function ProjectDetailsModal({
 
         {/* Cost summary for estimate */}
         {isEstimate && costSummary && (
-          <div className="bg-gray-50 border border-gray-100 p-4 space-y-2 text-sm">
+          <div className="bg-gray-50 border border-gray-100 p-4 space-y-1.5 text-sm">
+            <p className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold mb-1">Building</p>
             <div className="flex justify-between text-gray-600">
-              <span>Modules ({placedModules.length})</span>
+              <span>Modules ({moduleCount})</span>
               <span>${costSummary.modulesTotal.toLocaleString()}</span>
             </div>
             {walls.length > 0 && (
@@ -554,25 +577,50 @@ export default function ProjectDetailsModal({
                 <span>${costSummary.wallsTotal.toLocaleString()}</span>
               </div>
             )}
-            {costSummary.sitePrepVal > 0 && (
+
+            <p className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold mt-3 mb-1">Site Prep & Foundations</p>
+            <div className="flex justify-between text-gray-600">
+              <span>{moduleCount} modules x ${(pc.site_prep_per_module || 0).toLocaleString()}</span>
+              <span>${costSummary.sitePrepBase.toLocaleString()}</span>
+            </div>
+            {costSummary.siteSurcharge > 0 && (
               <div className="flex justify-between text-gray-600">
-                <span>Site Prep & Foundations</span>
-                <span>${costSummary.sitePrepVal.toLocaleString()}</span>
+                <span>{siteType === "sloping" ? "Sloping" : "Steep"} site surcharge</span>
+                <span>${costSummary.siteSurcharge.toLocaleString()}</span>
               </div>
             )}
-            {costSummary.deliveryVal > 0 && (
+
+            <p className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold mt-3 mb-1">Delivery</p>
+            <div className="flex justify-between text-gray-600">
+              <span>{costSummary.deliveryHours}hrs x ${(pc.delivery_rate_per_hour || 0).toLocaleString()}/hr</span>
+              <span>${(costSummary.deliveryVal - costSummary.ferryCost).toLocaleString()}</span>
+            </div>
+            {costSummary.needsFerry && (
               <div className="flex justify-between text-gray-600">
-                <span>Estimated Delivery</span>
-                <span>${costSummary.deliveryVal.toLocaleString()}</span>
+                <span>Ferry crossing (North Island)</span>
+                <span>${costSummary.ferryCost.toLocaleString()}</span>
               </div>
             )}
-            {costSummary.installVal > 0 && (
-              <div className="flex justify-between text-gray-600">
-                <span>Installation Charges</span>
-                <span>${costSummary.installVal.toLocaleString()}</span>
-              </div>
-            )}
-            <div className="border-t border-gray-200 pt-2 flex justify-between text-gray-600">
+
+            <p className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold mt-3 mb-1">Installation</p>
+            <div className="flex justify-between text-gray-600">
+              <span>Labour ({moduleCount} modules x ${(pc.install_labour_per_module || 0).toLocaleString()})</span>
+              <span>${costSummary.labourVal.toLocaleString()}</span>
+            </div>
+            <div className="flex justify-between text-gray-600">
+              <span>Cranage ({moduleCount} modules x ${(pc.install_cranage_per_module || 0).toLocaleString()})</span>
+              <span>${costSummary.cranageVal.toLocaleString()}</span>
+            </div>
+            <div className="flex justify-between text-gray-600">
+              <span>Water & drainage connection</span>
+              <span>${costSummary.waterVal.toLocaleString()}</span>
+            </div>
+            <div className="flex justify-between text-gray-600">
+              <span>Electrical connection</span>
+              <span>${costSummary.electricalVal.toLocaleString()}</span>
+            </div>
+
+            <div className="border-t border-gray-200 pt-2 mt-3 flex justify-between text-gray-600">
               <span>Subtotal (excl. GST)</span>
               <span>${costSummary.subtotal.toLocaleString()}</span>
             </div>
@@ -630,33 +678,21 @@ export default function ProjectDetailsModal({
             <AddressAutocomplete value={siteAddress} onChange={setSiteAddress} />
           </div>
 
-          {/* Additional charges - only for estimate mode */}
+          {/* Site type selector - only for estimate mode */}
           {isEstimate && (
-            <>
-              <div className="border-t border-gray-200 pt-3 mt-1">
-                <p className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold mb-2">Additional Charges</p>
-              </div>
-              <div className="grid grid-cols-2 gap-2">
-                <div>
-                  <Label className="text-xs text-gray-600">Site Prep & Foundations ($)</Label>
-                  <Input type="number" value={sitePrep} onChange={e => setSitePrep(e.target.value)} placeholder="0" className="mt-1 rounded-none text-sm h-9" data-testid="site-prep-input" />
-                </div>
-                <div>
-                  <Label className="text-xs text-gray-600">Estimated Delivery ($)</Label>
-                  <Input type="number" value={deliveryCharge} onChange={e => setDeliveryCharge(e.target.value)} placeholder="0" className="mt-1 rounded-none text-sm h-9" data-testid="delivery-charge-input" />
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-2">
-                <div>
-                  <Label className="text-xs text-gray-600">Installation Charges ($)</Label>
-                  <Input type="number" value={installationCharge} onChange={e => setInstallationCharge(e.target.value)} placeholder="0" className="mt-1 rounded-none text-sm h-9" data-testid="installation-charge-input" />
-                </div>
-                <div>
-                  <Label className="text-xs text-gray-600">GST Rate (%)</Label>
-                  <Input type="number" value={gstRate} onChange={e => setGstRate(e.target.value)} placeholder="15" className="mt-1 rounded-none text-sm h-9" data-testid="gst-rate-input" />
-                </div>
-              </div>
-            </>
+            <div>
+              <Label className="text-xs text-gray-600">Site Type</Label>
+              <select
+                value={siteType}
+                onChange={e => setSiteType(e.target.value)}
+                className="mt-1 w-full px-3 py-2 border border-gray-200 text-sm bg-white"
+                data-testid="site-type-select"
+              >
+                <option value="flat">Flat Site</option>
+                <option value="sloping">Sloping Site (surcharge applies)</option>
+                <option value="steep">Steep Site (surcharge applies)</option>
+              </select>
+            </div>
           )}
         </div>
 

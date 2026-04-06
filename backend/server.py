@@ -118,6 +118,18 @@ class DeletedWall(BaseModel):
     id: Optional[str] = None
     wallCode: str
 
+class PricingConfig(BaseModel):
+    site_prep_per_module: float = 0
+    site_prep_sloping_surcharge: float = 0
+    site_prep_steep_surcharge: float = 0
+    delivery_rate_per_hour: float = 0
+    ferry_crossing_cost: float = 0
+    install_labour_per_module: float = 0
+    install_cranage_per_module: float = 0
+    install_water_drainage_per_house: float = 0
+    install_electrical_per_house: float = 0
+    gst_rate: float = 15
+
 # ============ HELPER FUNCTIONS ============
 
 def generate_id():
@@ -303,6 +315,97 @@ async def admin_leads():
 async def admin_shares():
     docs = await db["shared_designs"].find({}, {"_id": 0}).sort("created_date", -1).to_list(500)
     return docs
+
+# ============ PRICING CONFIG ============
+
+@app.get("/api/admin/pricing")
+async def get_pricing():
+    doc = await db["pricing_config"].find_one({"_type": "pricing"}, {"_id": 0})
+    if not doc:
+        defaults = PricingConfig()
+        return defaults.model_dump()
+    doc.pop("_type", None)
+    return doc
+
+@app.put("/api/admin/pricing")
+async def update_pricing(data: PricingConfig):
+    update_data = data.model_dump()
+    update_data["_type"] = "pricing"
+    update_data["updated_at"] = datetime.utcnow().isoformat()
+    await db["pricing_config"].update_one(
+        {"_type": "pricing"},
+        {"$set": update_data},
+        upsert=True
+    )
+    result = update_data.copy()
+    result.pop("_type", None)
+    return result
+
+@app.get("/api/pricing/delivery-estimate")
+async def delivery_estimate(site_address: str):
+    """Estimate delivery hours from 29 Studholme St, Waimate to site address.
+    Uses a simple heuristic based on NZ geography."""
+    doc = await db["pricing_config"].find_one({"_type": "pricing"}, {"_id": 0})
+    config = doc if doc else PricingConfig().model_dump()
+    rate = config.get("delivery_rate_per_hour", 0)
+    ferry_cost = config.get("ferry_crossing_cost", 0)
+
+    needs_ferry = False
+    estimated_hours = 0
+
+    try:
+        addr_lower = site_address.lower()
+        north_island_regions = [
+            "auckland", "hamilton", "wellington", "tauranga", "napier",
+            "palmerston north", "new plymouth", "whangarei", "rotorua",
+            "hastings", "whanganui", "gisborne", "taranaki", "waikato",
+            "bay of plenty", "hawke", "manawatu", "northland", "kapiti",
+            "lower hutt", "upper hutt", "porirua", "masterton", "levin",
+            "taupo", "tokoroa", "thames", "matamata", "te awamutu",
+            "cambridge", "huntly", "pukekohe", "papakura"
+        ]
+        south_island_cities = {
+            "christchurch": 2.5, "timaru": 1.5, "oamaru": 2.0,
+            "dunedin": 3.5, "invercargill": 4.5, "queenstown": 5.0,
+            "wanaka": 5.0, "nelson": 5.5, "blenheim": 5.0,
+            "greymouth": 5.5, "hokitika": 6.0, "ashburton": 2.0,
+            "waimate": 0.5, "kaikoura": 4.0, "rangiora": 2.5,
+            "rolleston": 2.5, "lincoln": 2.5, "geraldine": 1.0,
+            "fairlie": 1.5, "twizel": 2.5, "tekapo": 2.5,
+            "alexandra": 4.5, "cromwell": 5.0, "gore": 4.0,
+            "balclutha": 4.0, "mosgiel": 3.5, "milton": 3.5,
+        }
+
+        for region in north_island_regions:
+            if region in addr_lower:
+                needs_ferry = True
+                estimated_hours = 12
+                break
+
+        if not needs_ferry:
+            for city, hours in south_island_cities.items():
+                if city in addr_lower:
+                    estimated_hours = hours
+                    break
+
+        if estimated_hours == 0 and not needs_ferry:
+            estimated_hours = 3.0
+
+    except Exception:
+        estimated_hours = 3.0
+
+    delivery_cost = round(estimated_hours * rate)
+    ferry_total = ferry_cost if needs_ferry else 0
+    total = delivery_cost + ferry_total
+
+    return {
+        "estimated_hours": estimated_hours,
+        "rate_per_hour": rate,
+        "delivery_cost": delivery_cost,
+        "needs_ferry": needs_ferry,
+        "ferry_cost": ferry_total,
+        "total": total,
+    }
 
 # ============ EMAIL NOTIFICATION ============
 

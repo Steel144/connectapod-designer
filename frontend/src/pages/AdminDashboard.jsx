@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Users, Share2, FileText, Clock, Mail, Phone, MapPin, ExternalLink, ChevronDown, ChevronUp } from "lucide-react";
+import { ArrowLeft, Users, Share2, FileText, Clock, Mail, Phone, MapPin, ExternalLink, ChevronDown, ChevronUp, DollarSign, Save } from "lucide-react";
+import { toast } from "sonner";
 
 const API_BASE = "/api";
 
@@ -53,6 +54,7 @@ export default function AdminDashboard() {
         {[
           { id: "leads", label: "Client Leads", icon: Users },
           { id: "shares", label: "Shared Designs", icon: Share2 },
+          { id: "pricing", label: "Pricing Config", icon: DollarSign },
         ].map(tab => (
           <button
             key={tab.id}
@@ -71,6 +73,7 @@ export default function AdminDashboard() {
       <div className="p-6">
         {activeTab === "leads" && <LeadsTable />}
         {activeTab === "shares" && <SharesTable />}
+        {activeTab === "pricing" && <PricingConfigPanel />}
       </div>
     </div>
   );
@@ -235,6 +238,131 @@ function DetailRow({ icon: Icon, label, value }) {
       <div>
         <p className="text-[10px] text-gray-400 uppercase">{label}</p>
         <p className="text-xs text-gray-700">{value}</p>
+      </div>
+    </div>
+  );
+}
+
+
+function PricingField({ label, value, onChange, suffix = "", prefix = "$" }) {
+  return (
+    <div>
+      <label className="text-xs text-gray-500 font-medium block mb-1">{label}</label>
+      <div className="flex items-center border border-gray-200 bg-white">
+        {prefix && <span className="px-2 text-xs text-gray-400 bg-gray-50 border-r border-gray-200 py-2">{prefix}</span>}
+        <input
+          type="number"
+          value={value}
+          onChange={e => onChange(parseFloat(e.target.value) || 0)}
+          className="flex-1 px-3 py-2 text-sm text-gray-800 outline-none min-w-0"
+          data-testid={`pricing-${label.toLowerCase().replace(/[^a-z0-9]/g, "-")}`}
+        />
+        {suffix && <span className="px-2 text-xs text-gray-400 bg-gray-50 border-l border-gray-200 py-2">{suffix}</span>}
+      </div>
+    </div>
+  );
+}
+
+function PricingConfigPanel() {
+  const qc = useQueryClient();
+  const [form, setForm] = useState(null);
+
+  const { isLoading } = useQuery({
+    queryKey: ["pricingConfig"],
+    queryFn: async () => {
+      const res = await fetch(`${API_BASE}/admin/pricing`);
+      const data = await res.json();
+      setForm(data);
+      return data;
+    },
+  });
+
+  const saveMutation = useMutation({
+    mutationFn: async (data) => {
+      const res = await fetch(`${API_BASE}/admin/pricing`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      return res.json();
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["pricingConfig"] });
+      toast.success("Pricing config saved");
+    },
+  });
+
+  if (isLoading || !form) return <div className="text-center py-12 text-gray-400 animate-pulse">Loading pricing config...</div>;
+
+  const update = (key, val) => setForm(prev => ({ ...prev, [key]: val }));
+
+  return (
+    <div className="max-w-3xl" data-testid="pricing-config-panel">
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h2 className="text-base font-bold text-gray-800">Pricing Configuration</h2>
+          <p className="text-xs text-gray-400">These rates are used to auto-calculate estimates. Changes apply to all new estimates.</p>
+        </div>
+        <button
+          onClick={() => saveMutation.mutate(form)}
+          disabled={saveMutation.isPending}
+          className="flex items-center gap-1.5 px-4 py-2 bg-[#F15A22] text-white text-xs font-semibold hover:bg-[#d94e1a] transition-colors disabled:opacity-50"
+          data-testid="save-pricing-btn"
+        >
+          <Save size={13} />
+          {saveMutation.isPending ? "Saving..." : "Save Changes"}
+        </button>
+      </div>
+
+      {/* Site Prep & Foundations */}
+      <div className="bg-white border border-gray-200 p-5 mb-4">
+        <h3 className="text-sm font-bold text-gray-700 mb-3 flex items-center gap-2">
+          <span className="w-1.5 h-4 bg-[#F15A22] inline-block"></span>
+          Site Prep & Foundations
+        </h3>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <PricingField label="Per Module (flat site)" value={form.site_prep_per_module} onChange={v => update("site_prep_per_module", v)} />
+          <PricingField label="Sloping Site Surcharge" value={form.site_prep_sloping_surcharge} onChange={v => update("site_prep_sloping_surcharge", v)} />
+          <PricingField label="Steep Site Surcharge" value={form.site_prep_steep_surcharge} onChange={v => update("site_prep_steep_surcharge", v)} />
+        </div>
+      </div>
+
+      {/* Delivery */}
+      <div className="bg-white border border-gray-200 p-5 mb-4">
+        <h3 className="text-sm font-bold text-gray-700 mb-1 flex items-center gap-2">
+          <span className="w-1.5 h-4 bg-[#F15A22] inline-block"></span>
+          Delivery
+        </h3>
+        <p className="text-[11px] text-gray-400 mb-3">Cost auto-calculated from 29 Studholme St, Waimate to site address. Ferry added for North Island deliveries.</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <PricingField label="Rate Per Hour" value={form.delivery_rate_per_hour} onChange={v => update("delivery_rate_per_hour", v)} suffix="/hr" />
+          <PricingField label="Ferry Crossing Cost" value={form.ferry_crossing_cost} onChange={v => update("ferry_crossing_cost", v)} />
+        </div>
+      </div>
+
+      {/* Installation */}
+      <div className="bg-white border border-gray-200 p-5 mb-4">
+        <h3 className="text-sm font-bold text-gray-700 mb-3 flex items-center gap-2">
+          <span className="w-1.5 h-4 bg-[#F15A22] inline-block"></span>
+          Installation
+        </h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <PricingField label="Labour Per Module" value={form.install_labour_per_module} onChange={v => update("install_labour_per_module", v)} suffix="/mod" />
+          <PricingField label="Cranage Per Module" value={form.install_cranage_per_module} onChange={v => update("install_cranage_per_module", v)} suffix="/mod" />
+          <PricingField label="Water & Drainage (per house)" value={form.install_water_drainage_per_house} onChange={v => update("install_water_drainage_per_house", v)} />
+          <PricingField label="Electrical Connection (per house)" value={form.install_electrical_per_house} onChange={v => update("install_electrical_per_house", v)} />
+        </div>
+      </div>
+
+      {/* GST */}
+      <div className="bg-white border border-gray-200 p-5 mb-4">
+        <h3 className="text-sm font-bold text-gray-700 mb-3 flex items-center gap-2">
+          <span className="w-1.5 h-4 bg-[#F15A22] inline-block"></span>
+          Tax
+        </h3>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <PricingField label="GST Rate" value={form.gst_rate} onChange={v => update("gst_rate", v)} prefix="" suffix="%" />
+        </div>
       </div>
     </div>
   );
