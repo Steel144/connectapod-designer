@@ -22,6 +22,7 @@ import FloorCatalogue from './pages/Catalogue';
 import AdminDesigns from './pages/AdminDesigns';
 import SharedDesign from './pages/SharedDesign';
 import AdminDashboard from './pages/AdminDashboard';
+import SavedDesigns from './pages/SavedDesigns';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -49,6 +50,7 @@ const AuthenticatedApp = () => {
     <Routes>
       <Route path="/" element={<Landing />} />
       <Route path="/DesignCatalogue" element={<DesignCatalogue />} />
+      <Route path="/SavedDesigns" element={<SavedDesigns />} />
       <Route path="/FloorCatalogue" element={<FloorCatalogue />} />
       <Route path="/AdminDesigns" element={<AdminDesigns />} />
       <Route path="/Home" element={

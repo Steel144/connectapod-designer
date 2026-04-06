@@ -132,29 +132,8 @@ function SavedDesigns({ designs, onLoad, onDelete }) {
   );
 }
 
-function DesignChooserTabs({ designs, starterDesigns, onLoad, onLoadTemplate, onDelete, onClose }) {
-  const [view, setView] = React.useState(null); // null = chooser, "saved"
-
-  if (view === "saved") {
-    return (
-      <div>
-        <div className="flex items-center gap-3 px-4 py-3 border-b border-gray-100">
-          <button onClick={() => setView(null)} className="text-gray-400 hover:text-[#F15A22] transition-colors" data-testid="back-to-chooser">
-            <ChevronLeft size={20} />
-          </button>
-          <div>
-            <h3 className="text-sm font-bold text-gray-900">My Saved Designs</h3>
-            <p className="text-[11px] text-gray-500">{designs.length} saved design{designs.length !== 1 ? "s" : ""}</p>
-          </div>
-        </div>
-        <div className="p-4">
-          <SavedDesigns designs={designs} onLoad={onLoad} onDelete={onDelete} />
-        </div>
-      </div>
-    );
-  }
-
-  // Landing: two options
+function DesignChooserTabs({ designs, starterDesigns, onClose }) {
+  // Landing: two options — both navigate to full-screen pages
   return (
     <div className="p-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
       <Link
@@ -168,15 +147,16 @@ function DesignChooserTabs({ designs, starterDesigns, onLoad, onLoadTemplate, on
         <h3 className="font-bold text-gray-900 text-base mb-1">Starter Designs</h3>
         <p className="text-xs text-gray-500">Browse {starterDesigns.length} pre-built designs to get started quickly</p>
       </Link>
-      <button
+      <Link
+        to="/SavedDesigns"
         data-testid="choose-my-designs"
-        onClick={() => setView("saved")}
-        className="border-2 border-gray-200 hover:border-[#F15A22] rounded-lg p-6 text-left transition-all hover:shadow-md group"
+        onClick={onClose}
+        className="border-2 border-gray-200 hover:border-[#F15A22] rounded-lg p-6 text-left transition-all hover:shadow-md group block"
       >
         <FolderOpen size={28} className="text-[#F15A22] mb-3" />
         <h3 className="font-bold text-gray-900 text-base mb-1">My Saved Designs</h3>
         <p className="text-xs text-gray-500">{designs.length} saved design{designs.length !== 1 ? "s" : ""}</p>
-      </button>
+      </Link>
     </div>
   );
 }
@@ -1980,9 +1960,6 @@ export default function Configurator() {
             <DesignChooserTabs
               designs={designs}
               starterDesigns={starterDesigns}
-              onLoad={handleLoad}
-              onLoadTemplate={handleLoadTemplate}
-              onDelete={(id) => deleteMutation.mutate(id)}
               onClose={() => setShowSaved(false)}
             />
           </div>
