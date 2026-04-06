@@ -168,7 +168,13 @@ export default function PricingAdmin() {
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <PricingField label="GST Rate" value={form.gst_rate} onChange={v => update("gst_rate", v)} prefix="" suffix="%" />
                 <PricingField label="Markup" value={form.markup_percentage} onChange={v => update("markup_percentage", v)} prefix="" suffix="%" />
-                <PricingField label="Margin" value={form.margin_percentage} onChange={v => update("margin_percentage", v)} prefix="" suffix="%" />
+                <div>
+                  <label className="text-xs text-gray-500 font-medium block mb-1">Margin (auto)</label>
+                  <div className="flex items-center border border-gray-100 bg-gray-50 px-3 py-2 text-sm text-gray-600">
+                    {form.markup_percentage > 0 ? (form.markup_percentage / (100 + form.markup_percentage) * 100).toFixed(2) : "0.00"}%
+                  </div>
+                  <p className="text-[10px] text-gray-400 mt-1">Calculated from markup</p>
+                </div>
               </div>
             </div>
           </>

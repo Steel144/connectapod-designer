@@ -133,7 +133,6 @@ class PricingConfig(BaseModel):
     install_electrical_per_house: float = 0
     gst_rate: float = 15
     markup_percentage: float = 0
-    margin_percentage: float = 0
 
 # ============ HELPER FUNCTIONS ============
 

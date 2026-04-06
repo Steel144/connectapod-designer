@@ -484,13 +484,8 @@ export default function ProjectDetailsModal({
       doc.text(`$${cs.subtotalBeforeMarkup.toLocaleString()}`, col2, y + 3, { align: "right" });
       y += 8;
       if (cs.markupAmount > 0) {
-        doc.text(`Markup (${cs.markupPct}%)`, col1 + 2, y + 3);
+        doc.text(`Markup (${cs.markupPct}%) / Margin (${cs.marginPct}%)`, col1 + 2, y + 3);
         doc.text(`$${cs.markupAmount.toLocaleString()}`, col2, y + 3, { align: "right" });
-        y += 8;
-      }
-      if (cs.marginAmount > 0) {
-        doc.text(`Margin (${cs.marginPct}%)`, col1 + 2, y + 3);
-        doc.text(`$${cs.marginAmount.toLocaleString()}`, col2, y + 3, { align: "right" });
         y += 8;
       }
     }
@@ -575,14 +570,13 @@ export default function ProjectDetailsModal({
     const installVal = labourVal + cranageVal + waterVal + electricalVal;
     const subtotalBeforeMarkup = modulesTotal + wallsTotal + sitePrepVal + deliveryVal + installVal;
     const markupPct = pc.markup_percentage || 0;
-    const marginPct = pc.margin_percentage || 0;
     const markupAmount = Math.round(subtotalBeforeMarkup * markupPct / 100);
-    const marginAmount = Math.round(subtotalBeforeMarkup * marginPct / 100);
-    const subtotal = subtotalBeforeMarkup + markupAmount + marginAmount;
+    const marginPct = markupPct > 0 ? parseFloat((markupPct / (100 + markupPct) * 100).toFixed(2)) : 0;
+    const subtotal = subtotalBeforeMarkup + markupAmount;
     const gstRateVal = pc.gst_rate || 15;
     const gstAmount = Math.round(subtotal * gstRateVal / 100);
     const grandTotal = subtotal + gstAmount;
-    return { modulesTotal, wallsTotal, sitePrepBase, slopingSurchargePerMod, slopingSurchargePerHouse, siteSurcharge, sitePrepWater, sitePrepVal, deliveryVal, deliveryHours, needsFerry, ferryCost, labourVal, cranageVal, waterVal, wetModuleCount, electricalVal, installVal, subtotalBeforeMarkup, markupPct, markupAmount, marginPct, marginAmount, subtotal, gstRateVal, gstAmount, grandTotal };
+    return { modulesTotal, wallsTotal, sitePrepBase, slopingSurchargePerMod, slopingSurchargePerHouse, siteSurcharge, sitePrepWater, sitePrepVal, deliveryVal, deliveryHours, needsFerry, ferryCost, labourVal, cranageVal, waterVal, wetModuleCount, electricalVal, installVal, subtotalBeforeMarkup, markupPct, markupAmount, marginPct, subtotal, gstRateVal, gstAmount, grandTotal };
   })();
 
   return (
@@ -734,14 +728,8 @@ export default function ProjectDetailsModal({
                   </div>
                   {costSummary.markupAmount > 0 && (
                     <div className="flex justify-between text-gray-600">
-                      <span>Markup ({costSummary.markupPct}%)</span>
+                      <span>Markup ({costSummary.markupPct}%) / Margin ({costSummary.marginPct}%)</span>
                       <span>${costSummary.markupAmount.toLocaleString()}</span>
-                    </div>
-                  )}
-                  {costSummary.marginAmount > 0 && (
-                    <div className="flex justify-between text-gray-600">
-                      <span>Margin ({costSummary.marginPct}%)</span>
-                      <span>${costSummary.marginAmount.toLocaleString()}</span>
                     </div>
                   )}
                   <div className="border-t border-gray-200 pt-2 flex justify-between text-gray-600">
