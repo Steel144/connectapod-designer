@@ -543,8 +543,8 @@ export default function ProjectDetailsModal({
     const labourVal = (pc.install_labour_per_module || 0) * moduleCount;
     const cranageVal = (pc.install_cranage_per_module || 0) * moduleCount;
     const wetModuleCount = placedModules.filter(m => {
-      const t = (m.type || "").toLowerCase();
-      return t.startsWith("w") || t.startsWith("k") || t.includes("bathroom") || t.includes("kitchen");
+      const label = (m.label || m.name || "").toLowerCase();
+      return label.includes("bathroom") || label.includes("kitchen") || label.includes("laundry");
     }).length;
     const waterVal = (pc.install_water_drainage_per_wetmodule || 0) * wetModuleCount;
     const electricalVal = pc.install_electrical_per_house || 0;
