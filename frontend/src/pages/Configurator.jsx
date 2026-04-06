@@ -126,12 +126,18 @@ function SavedDesigns({ designs, onLoad, onDelete }) {
 }
 
 function DesignChooserTabs({ designs, starterDesigns, onLoad, onLoadTemplate, onDelete }) {
-  return (
-    <div className="p-4 space-y-6">
-      {/* Starter Designs section */}
-      {starterDesigns.length > 0 && (
-        <div>
-          <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3" data-testid="section-starter-designs">STARTER DESIGNS</h3>
+  const [view, setView] = React.useState(null); // null = chooser, "starter" or "saved"
+
+  if (view === "starter") {
+    return (
+      <div className="p-4">
+        <button onClick={() => setView(null)} className="flex items-center gap-1 text-xs text-gray-500 hover:text-[#F15A22] mb-3 transition-colors" data-testid="back-to-chooser">
+          <ChevronLeft size={14} /> Back
+        </button>
+        <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">STARTER DESIGNS</h3>
+        {starterDesigns.length === 0 ? (
+          <div className="text-center py-12 text-gray-400"><p>No starter designs available</p></div>
+        ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {starterDesigns.map((t) => (
               <div key={t.id} className="bg-white border border-gray-200 overflow-hidden hover:shadow-lg transition-all group flex flex-col">
@@ -165,14 +171,44 @@ function DesignChooserTabs({ designs, starterDesigns, onLoad, onLoadTemplate, on
               </div>
             ))}
           </div>
-        </div>
-      )}
+        )}
+      </div>
+    );
+  }
 
-      {/* My Saved Designs section */}
-      <div>
-        <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3" data-testid="section-my-designs">MY SAVED DESIGNS</h3>
+  if (view === "saved") {
+    return (
+      <div className="p-4">
+        <button onClick={() => setView(null)} className="flex items-center gap-1 text-xs text-gray-500 hover:text-[#F15A22] mb-3 transition-colors" data-testid="back-to-chooser">
+          <ChevronLeft size={14} /> Back
+        </button>
+        <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">MY SAVED DESIGNS</h3>
         <SavedDesigns designs={designs} onLoad={onLoad} onDelete={onDelete} />
       </div>
+    );
+  }
+
+  // Landing: two options
+  return (
+    <div className="p-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <button
+        data-testid="choose-starter-designs"
+        onClick={() => setView("starter")}
+        className="border-2 border-gray-200 hover:border-[#F15A22] rounded-lg p-6 text-left transition-all hover:shadow-md group"
+      >
+        <LayoutTemplate size={28} className="text-[#F15A22] mb-3" />
+        <h3 className="font-bold text-gray-900 text-base mb-1">Starter Designs</h3>
+        <p className="text-xs text-gray-500">Browse {starterDesigns.length} pre-built designs to get started quickly</p>
+      </button>
+      <button
+        data-testid="choose-my-designs"
+        onClick={() => setView("saved")}
+        className="border-2 border-gray-200 hover:border-[#F15A22] rounded-lg p-6 text-left transition-all hover:shadow-md group"
+      >
+        <FolderOpen size={28} className="text-[#F15A22] mb-3" />
+        <h3 className="font-bold text-gray-900 text-base mb-1">My Saved Designs</h3>
+        <p className="text-xs text-gray-500">{designs.length} saved design{designs.length !== 1 ? "s" : ""}</p>
+      </button>
     </div>
   );
 }
