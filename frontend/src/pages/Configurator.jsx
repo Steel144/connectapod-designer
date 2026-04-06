@@ -1302,14 +1302,14 @@ export default function Configurator() {
                   style={{
                     background: isDisabled ? "#e5e7eb" : isCurrentActive ? "#d94e1a" : "#F15A22",
                     color: isDisabled ? "#9ca3af" : "white",
-                    paddingLeft: item.prefix ? 12 : 18,
-                    paddingRight: 12,
+                    paddingLeft: idx === 0 ? 12 : 20,
+                    paddingRight: 16,
                     height: 32,
-                    clipPath: idx === arr.length - 1
-                      ? "polygon(0 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 0 100%, 8px 50%)"
-                      : "polygon(0 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 0 100%, 8px 50%)",
-                    marginLeft: idx === 0 ? 0 : -4,
-                    opacity: isDisabled ? 0.5 : isFuture ? 0.7 : 1,
+                    clipPath: idx === 0
+                      ? "polygon(0 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 0 100%)"
+                      : "polygon(0 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 0 100%, 10px 50%)",
+                    marginLeft: idx === 0 ? 0 : -5,
+                    opacity: isDisabled ? 0.5 : isFuture ? 0.75 : 1,
                     cursor: isDisabled ? "default" : "pointer",
                   }}
                 >

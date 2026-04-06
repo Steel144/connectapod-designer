@@ -11,8 +11,15 @@ Complete migration from the proprietary Base44 platform to a FastAPI + MongoDB +
 
 ## What's Been Implemented
 
+### Chevron Step Bar (Completed April 2026)
+- **9-step chevron/arrow toolbar**: STEP 1 CHOOSE YOUR DESIGN → EDIT → ELEVATIONS → SITE PLAN → SAVE → SHARE → PRICE → PRINT → ORDER
+- Orange chevron segments with white-circled numbers, bold uppercase labels
+- First segment has flat left edge, remaining segments have arrow cut-in on left
+- Steps 5-8 activate when modules are placed, ORDER (step 9) is placeholder
+- Active/current step gets darker orange highlight
+- Matches PROCESS.jpg mockup provided by user
+
 ### Guided User Flow (Completed April 2026)
-- **Step Indicator Bar**: 6-step progress bar below toolbar (Select Design → Customise → Elevations → Site Map → Save Details → Share & Print)
 - Steps auto-complete based on user actions, clickable to navigate
 - Persisted in localStorage across sessions
 - **Guided Tooltips**: Context-specific hints on first visit to each section, dismissable with "Got it, don't show again"
@@ -49,11 +56,11 @@ Complete migration from the proprietary Base44 platform to a FastAPI + MongoDB +
 - Mocked via AuthContext.jsx with hardcoded admin password: `admin123`
 
 ## Key Files
-- `/app/frontend/src/components/configurator/StepIndicator.jsx` - 6-step progress bar
+- `/app/frontend/src/pages/Configurator.jsx` - Main configurator with chevron step bar
+- `/app/frontend/src/components/configurator/StepIndicator.jsx` - Legacy step indicator
 - `/app/frontend/src/components/configurator/GuidedTooltip.jsx` - First-time hint tooltips
 - `/app/frontend/src/pages/AdminDashboard.jsx` - Admin leads/shares tracking
 - `/app/frontend/src/pages/SharedDesign.jsx` - Public shared design viewer
-- `/app/frontend/src/pages/Configurator.jsx` - Main configurator
 - `/app/frontend/src/components/configurator/ProjectDetailsModal.jsx` - Save/overwrite modal
 - `/app/frontend/src/components/configurator/CombinedElevations.jsx` - Pavilion elevations
 - `/app/backend/server.py` - Backend API (admin endpoints, email, share)
