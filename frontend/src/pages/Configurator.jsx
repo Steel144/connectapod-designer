@@ -124,6 +124,71 @@ function SavedDesigns({ designs, onLoad, onDelete }) {
   );
 }
 
+function DesignChooserTabs({ designs, starterDesigns, onLoad, onLoadTemplate, onDelete }) {
+  const [tab, setTab] = React.useState(starterDesigns.length > 0 ? "starter" : "saved");
+  return (
+    <div>
+      <div className="flex border-b border-gray-200">
+        <button
+          data-testid="tab-starter-designs"
+          onClick={() => setTab("starter")}
+          className={`flex-1 px-4 py-2.5 text-xs font-semibold tracking-wide transition-all ${tab === "starter" ? "text-[#F15A22] border-b-2 border-[#F15A22]" : "text-gray-400 hover:text-gray-600"}`}
+        >
+          STARTER DESIGNS ({starterDesigns.length})
+        </button>
+        <button
+          data-testid="tab-my-designs"
+          onClick={() => setTab("saved")}
+          className={`flex-1 px-4 py-2.5 text-xs font-semibold tracking-wide transition-all ${tab === "saved" ? "text-[#F15A22] border-b-2 border-[#F15A22]" : "text-gray-400 hover:text-gray-600"}`}
+        >
+          MY DESIGNS ({designs.length})
+        </button>
+      </div>
+      <div className="p-4">
+        {tab === "starter" ? (
+          starterDesigns.length === 0 ? (
+            <div className="text-center py-16 text-gray-400">
+              <p className="font-medium text-gray-500">No starter designs available</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {starterDesigns.map((t) => (
+                <div key={t.id} className="bg-white border border-gray-200 p-5 hover:shadow-md transition-all group">
+                  <h3 className="font-semibold text-gray-800 text-base leading-tight mb-1">{t.name}</h3>
+                  {t.description && <p className="text-xs text-gray-400 mb-3 line-clamp-2">{t.description}</p>}
+                  <div className="grid grid-cols-3 gap-2 mb-4">
+                    <div className="bg-gray-50 border border-gray-100 p-2 text-center">
+                      <p className="text-sm font-bold text-gray-700">{t.moduleCount || 0}</p>
+                      <p className="text-xs text-gray-400">Modules</p>
+                    </div>
+                    <div className="bg-gray-50 border border-gray-100 p-2 text-center">
+                      <p className="text-sm font-bold text-gray-700">{(t.totalSqm || 0).toFixed(0)}</p>
+                      <p className="text-xs text-gray-400">m²</p>
+                    </div>
+                    <div className="bg-gray-50 border border-gray-100 p-2 text-center">
+                      <p className="text-sm font-bold text-gray-700">${((t.estimatedPrice || 0) / 1000).toFixed(0)}k</p>
+                      <p className="text-xs text-gray-400">Est.</p>
+                    </div>
+                  </div>
+                  <button
+                    data-testid={`load-starter-${t.id}`}
+                    onClick={() => onLoadTemplate(t)}
+                    className="w-full h-8 text-xs bg-[#F15A22] hover:bg-[#d94e1a] text-white flex items-center justify-center gap-1.5"
+                  >
+                    Use This Design <ChevronRight size={12} />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )
+        ) : (
+          <SavedDesigns designs={designs} onLoad={onLoad} onDelete={onDelete} />
+        )}
+      </div>
+    </div>
+  );
+}
+
 export default function Configurator() {
   const { user } = useAuth();
   const MAX_HISTORY = 10;
@@ -342,6 +407,30 @@ export default function Configurator() {
     queryKey: ["moduleEntries"],
     queryFn: async () => { try { const r = await base44.entities.ModuleEntry.list(); return Array.isArray(r) ? r : []; } catch { return []; } },
   });
+
+  const { data: designTemplates = [] } = useQuery({
+    queryKey: ["designTemplates"],
+    queryFn: async () => { try { const r = await base44.entities.DesignTemplate.list(); return Array.isArray(r) ? r : []; } catch { return []; } },
+  });
+
+  const starterDesigns = useMemo(() =>
+    designTemplates.map(t => {
+      const payload = t.template_payload || {};
+      const grid = (payload.layout?.grid || []).map(m => {
+        const img = floorPlanImages[m.type] || floorPlanImages[m.type?.toLowerCase()] || m.floorPlanImage || null;
+        return { ...m, floorPlanImage: img };
+      });
+      const tWalls = (payload.layout?.walls || []).map(w => {
+        const wallCode = w.type || w.mpCode || w.label || null;
+        const img = wallCode ? (wallImages[wallCode] || null) : null;
+        return { ...w, elevationImage: img || w.elevationImage || null };
+      });
+      const moduleCount = grid.length;
+      const totalSqm = grid.reduce((sum, m) => sum + (m.sqm || (m.w * m.h * 0.6 * 0.6) || 0), 0);
+      return { ...t, _grid: grid, _walls: tWalls, moduleCount, totalSqm, estimatedPrice: t.price || 0 };
+    }),
+    [designTemplates, floorPlanImages, wallImages]
+  );
 
   const saveMutation = useMutation({
     mutationFn: (data) => base44.entities.HomeDesign.create(data),
@@ -1119,6 +1208,17 @@ export default function Configurator() {
     toast.success(`Loaded "${design.name}"`);
   };
 
+  const handleLoadTemplate = (template) => {
+    const payload = template.template_payload || {};
+    const design = {
+      name: template.name,
+      grid: template._grid || (payload.layout?.grid || []),
+      walls: template._walls || (payload.layout?.walls || []),
+      furniture: payload.layout?.furniture || [],
+    };
+    handleLoad(design);
+  };
+
   const handleModuleImageUpdate = async (moduleId, imageUrl) => {
     const module = placedModules.find(m => m.id === moduleId);
     setPlacedModules((prev) =>
@@ -1872,16 +1972,16 @@ export default function Configurator() {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
-              <h2 className="text-base font-bold text-gray-800">My Saved Designs</h2>
+              <h2 className="text-base font-bold text-gray-800">Choose a Design</h2>
               <button onClick={() => setShowSaved(false)} className="text-gray-400 hover:text-gray-600 text-xl leading-none">&times;</button>
             </div>
-            <div className="p-4">
-              <SavedDesigns
-                designs={designs}
-                onLoad={handleLoad}
-                onDelete={(id) => deleteMutation.mutate(id)}
-              />
-            </div>
+            <DesignChooserTabs
+              designs={designs}
+              starterDesigns={starterDesigns}
+              onLoad={handleLoad}
+              onLoadTemplate={handleLoadTemplate}
+              onDelete={(id) => deleteMutation.mutate(id)}
+            />
           </div>
         </div>
       )}
