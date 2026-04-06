@@ -697,20 +697,20 @@ export default function ProjectDetailsModal({
                   )}
                   {costSummary.slopingSurchargePerHouse > 0 && (
                     <div className="flex justify-between text-gray-600">
-                      <span>{siteType === "sloping" ? "Sloping" : "Steep"} (per house)</span>
+                      <span>{siteType === "sloping" ? "Sloping" : "Steep"} surcharge</span>
                       <span>${costSummary.slopingSurchargePerHouse.toLocaleString()}</span>
                     </div>
                   )}
                   {costSummary.sitePrepWater > 0 && (
                     <div className="flex justify-between text-gray-600">
-                      <span>Water & drainage (per house)</span>
+                      <span>Water & drainage</span>
                       <span>${costSummary.sitePrepWater.toLocaleString()}</span>
                     </div>
                   )}
 
-                  <p className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold mt-3 mb-1">Delivery (return trip per module)</p>
+                  <p className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold mt-3 mb-1">Delivery</p>
                   <div className="flex justify-between text-gray-600">
-                    <span>{moduleCount} mod x {costSummary.deliveryHours}hrs x 2</span>
+                    <span>Transport ({moduleCount} modules)</span>
                     <span>${(costSummary.deliveryVal - costSummary.ferryCost).toLocaleString()}</span>
                   </div>
                   {costSummary.needsFerry && (
@@ -750,9 +750,6 @@ export default function ProjectDetailsModal({
                     <span>Total (incl. GST)</span>
                     <span>${costSummary.grandTotal.toLocaleString()}</span>
                   </div>
-                  {costSummary.markupPct > 0 && (
-                    <p className="text-[10px] text-gray-400 mt-2 italic">Markup {costSummary.markupPct}% (margin {costSummary.marginPct}%) included in all costs above</p>
-                  )}
                 </div>
               )}
             </div>

@@ -16,24 +16,28 @@ export default function AdminDashboard() {
         <div className="bg-white border border-gray-200 shadow-sm p-8 w-full max-w-sm" data-testid="admin-login">
           <h1 className="text-lg font-bold text-gray-800 mb-1">Admin Dashboard</h1>
           <p className="text-xs text-gray-400 mb-6">Enter your admin password to continue.</p>
-          <form autoComplete="off" onSubmit={e => { e.preventDefault(); if (password === "admin123") setAuthed(true); }}>
+          <div>
+          <input type="text" name="fake_user" autoComplete="username" style={{position:"absolute",opacity:0,height:0,width:0,pointerEvents:"none"}} tabIndex={-1} />
           <input
             type="password"
+            name="admin_code"
             value={password}
             onChange={e => setPassword(e.target.value)}
+            onKeyDown={e => { if (e.key === "Enter" && password === "admin123") setAuthed(true); }}
             placeholder="Password"
-            autoComplete="new-password"
+            autoComplete="off"
             className="w-full px-3 py-2.5 border border-gray-200 text-sm mb-3"
             data-testid="admin-password-input"
           />
           <button
-            type="submit"
+            type="button"
+            onClick={() => { if (password === "admin123") setAuthed(true); }}
             className="w-full py-2.5 bg-[#F15A22] text-white text-sm font-medium hover:bg-[#d94e1a] transition-all"
             data-testid="admin-login-btn"
           >
             Sign In
           </button>
-          </form>
+          </div>
         </div>
       </div>
     );
@@ -44,7 +48,7 @@ export default function AdminDashboard() {
       {/* Header */}
       <div className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <Link to="/" className="text-gray-400 hover:text-[#F15A22] transition-colors"><ArrowLeft size={18} /></Link>
+          <Link to="/Configurator" className="text-gray-400 hover:text-[#F15A22] transition-colors"><ArrowLeft size={18} /></Link>
           <h1 className="text-base font-bold text-gray-800">Admin Dashboard</h1>
         </div>
         <div className="flex items-center gap-3">
