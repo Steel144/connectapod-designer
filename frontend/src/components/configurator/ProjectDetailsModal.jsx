@@ -552,7 +552,7 @@ export default function ProjectDetailsModal({
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className={`${isEstimate ? 'max-w-md' : 'max-w-sm'} rounded-none`} aria-describedby="dialog-description">
+      <DialogContent className={`${isEstimate ? 'max-w-3xl' : 'max-w-sm'} rounded-none max-h-[90vh] overflow-y-auto`} aria-describedby="dialog-description">
         <DialogHeader>
           <DialogTitle className="text-base font-bold">
             {isEstimate ? "Generate Estimate PDF" : isPrint ? `Print ${printMode === "plans" ? "Floor Plan" : "Elevations"}` : isSave ? "Save Design" : ""}
@@ -563,135 +563,182 @@ export default function ProjectDetailsModal({
           {isEstimate ? "These details will appear in the estimate." : isPrint ? "These details will appear in the title block." : isSave ? "Enter project and customer details." : ""}
         </p>
 
-        {/* Project details form */}
-        <div className="space-y-3">
-          <div>
-            <Label className="text-xs text-gray-600">Project / Design Name</Label>
-            <Input value={projectName} onChange={e => setProjectName(e.target.value)} placeholder="e.g. Beach House" className="mt-1 rounded-none text-sm h-9" />
-          </div>
-          <div className="grid grid-cols-2 gap-2">
-            <div>
-              <Label className="text-xs text-gray-600">Client First Name</Label>
-              <Input value={clientFirstName} onChange={e => setClientFirstName(e.target.value)} placeholder="e.g. Jane" className="mt-1 rounded-none text-sm h-9" />
-            </div>
-            <div>
-              <Label className="text-xs text-gray-600">Client Family Name</Label>
-              <Input value={clientFamilyName} onChange={e => setClientFamilyName(e.target.value)} placeholder="e.g. Smith" className="mt-1 rounded-none text-sm h-9" />
-            </div>
-          </div>
-          <div>
-            <Label className="text-xs text-gray-600">Client Phone</Label>
-            <Input value={phone} onChange={e => setPhone(e.target.value)} placeholder="e.g. 021 123 4567" className="mt-1 rounded-none text-sm h-9" />
-          </div>
-          <div>
-            <Label className="text-xs text-gray-600">Client Email</Label>
-            <Input value={email} onChange={e => setEmail(e.target.value)} placeholder="e.g. jane@example.com" className="mt-1 rounded-none text-sm h-9" />
-          </div>
-          <div>
-            <Label className="text-xs text-gray-600">Home Address</Label>
-            <AddressAutocomplete value={homeAddress} onChange={setHomeAddress} />
-          </div>
-          <div>
-            <div className="flex items-center justify-between">
-              <Label className="text-xs text-gray-600">Site Address</Label>
-              <button
-                type="button"
-                data-testid="copy-home-address-btn"
-                onClick={() => { if (homeAddress) setSiteAddress(homeAddress); }}
-                className="text-xs text-orange-600 hover:text-orange-700 hover:underline cursor-pointer"
-              >
-                Same as home address
-              </button>
-            </div>
-            <AddressAutocomplete value={siteAddress} onChange={setSiteAddress} />
-          </div>
-
-          {/* Site type selector - only for estimate mode */}
-          {isEstimate && (
-            <div>
-              <Label className="text-xs text-gray-600">Site Type</Label>
-              <select
-                value={siteType}
-                onChange={e => setSiteType(e.target.value)}
-                className="mt-1 w-full px-3 py-2 border border-gray-200 text-sm bg-white"
-                data-testid="site-type-select"
-              >
-                <option value="flat">Flat Site</option>
-                <option value="sloping">Sloping Site (surcharge applies)</option>
-                <option value="steep">Steep Site (surcharge applies)</option>
-              </select>
-            </div>
-          )}
-        </div>
-
-        {/* Cost summary for estimate */}
-        {isEstimate && costSummary && (
-          <div className="bg-gray-50 border border-gray-100 p-4 space-y-1.5 text-sm">
-            <p className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold mb-1">Building</p>
-            <div className="flex justify-between text-gray-600">
-              <span>Modules ({moduleCount})</span>
-              <span>${costSummary.modulesTotal.toLocaleString()}</span>
-            </div>
-            {walls.length > 0 && (
-              <div className="flex justify-between text-gray-600">
-                <span>Wall Panels ({walls.length})</span>
-                <span>${costSummary.wallsTotal.toLocaleString()}</span>
+        {isEstimate ? (
+          <div className="grid grid-cols-2 gap-6">
+            {/* LEFT: Customer details */}
+            <div className="space-y-3">
+              <p className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold">Customer Details</p>
+              <div>
+                <Label className="text-xs text-gray-600">Project / Design Name</Label>
+                <Input value={projectName} onChange={e => setProjectName(e.target.value)} placeholder="e.g. Beach House" className="mt-1 rounded-none text-sm h-9" />
               </div>
-            )}
-
-            <p className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold mt-3 mb-1">Site Prep & Foundations</p>
-            <div className="flex justify-between text-gray-600">
-              <span>{moduleCount} modules x ${(pc.site_prep_per_module || 0).toLocaleString()}</span>
-              <span>${costSummary.sitePrepBase.toLocaleString()}</span>
-            </div>
-            {costSummary.siteSurcharge > 0 && (
-              <div className="flex justify-between text-gray-600">
-                <span>{siteType === "sloping" ? "Sloping" : "Steep"} site surcharge</span>
-                <span>${costSummary.siteSurcharge.toLocaleString()}</span>
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <Label className="text-xs text-gray-600">Client First Name</Label>
+                  <Input value={clientFirstName} onChange={e => setClientFirstName(e.target.value)} placeholder="e.g. Jane" className="mt-1 rounded-none text-sm h-9" />
+                </div>
+                <div>
+                  <Label className="text-xs text-gray-600">Client Family Name</Label>
+                  <Input value={clientFamilyName} onChange={e => setClientFamilyName(e.target.value)} placeholder="e.g. Smith" className="mt-1 rounded-none text-sm h-9" />
+                </div>
               </div>
-            )}
-
-            <p className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold mt-3 mb-1">Delivery</p>
-            <div className="flex justify-between text-gray-600">
-              <span>{costSummary.deliveryHours}hrs x ${(pc.delivery_rate_per_hour || 0).toLocaleString()}/hr</span>
-              <span>${(costSummary.deliveryVal - costSummary.ferryCost).toLocaleString()}</span>
-            </div>
-            {costSummary.needsFerry && (
-              <div className="flex justify-between text-gray-600">
-                <span>Ferry crossing (North Island)</span>
-                <span>${costSummary.ferryCost.toLocaleString()}</span>
+              <div>
+                <Label className="text-xs text-gray-600">Client Phone</Label>
+                <Input value={phone} onChange={e => setPhone(e.target.value)} placeholder="e.g. 021 123 4567" className="mt-1 rounded-none text-sm h-9" />
               </div>
-            )}
+              <div>
+                <Label className="text-xs text-gray-600">Client Email</Label>
+                <Input value={email} onChange={e => setEmail(e.target.value)} placeholder="e.g. jane@example.com" className="mt-1 rounded-none text-sm h-9" />
+              </div>
+              <div>
+                <Label className="text-xs text-gray-600">Home Address</Label>
+                <AddressAutocomplete value={homeAddress} onChange={setHomeAddress} />
+              </div>
+              <div>
+                <div className="flex items-center justify-between">
+                  <Label className="text-xs text-gray-600">Site Address</Label>
+                  <button
+                    type="button"
+                    data-testid="copy-home-address-btn"
+                    onClick={() => { if (homeAddress) setSiteAddress(homeAddress); }}
+                    className="text-xs text-orange-600 hover:text-orange-700 hover:underline cursor-pointer"
+                  >
+                    Same as home address
+                  </button>
+                </div>
+                <AddressAutocomplete value={siteAddress} onChange={setSiteAddress} />
+              </div>
+              <div>
+                <Label className="text-xs text-gray-600">Site Type</Label>
+                <select
+                  value={siteType}
+                  onChange={e => setSiteType(e.target.value)}
+                  className="mt-1 w-full px-3 py-2 border border-gray-200 text-sm bg-white"
+                  data-testid="site-type-select"
+                >
+                  <option value="flat">Flat Site</option>
+                  <option value="sloping">Sloping Site (surcharge applies)</option>
+                  <option value="steep">Steep Site (surcharge applies)</option>
+                </select>
+              </div>
+            </div>
 
-            <p className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold mt-3 mb-1">Installation</p>
-            <div className="flex justify-between text-gray-600">
-              <span>Labour ({moduleCount} modules x ${(pc.install_labour_per_module || 0).toLocaleString()})</span>
-              <span>${costSummary.labourVal.toLocaleString()}</span>
-            </div>
-            <div className="flex justify-between text-gray-600">
-              <span>Cranage ({moduleCount} modules x ${(pc.install_cranage_per_module || 0).toLocaleString()})</span>
-              <span>${costSummary.cranageVal.toLocaleString()}</span>
-            </div>
-            <div className="flex justify-between text-gray-600">
-              <span>Water & drainage connection</span>
-              <span>${costSummary.waterVal.toLocaleString()}</span>
-            </div>
-            <div className="flex justify-between text-gray-600">
-              <span>Electrical connection</span>
-              <span>${costSummary.electricalVal.toLocaleString()}</span>
-            </div>
+            {/* RIGHT: Cost breakdown */}
+            <div>
+              {costSummary && (
+                <div className="bg-gray-50 border border-gray-100 p-4 space-y-1.5 text-sm">
+                  <p className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold mb-1">Building</p>
+                  <div className="flex justify-between text-gray-600">
+                    <span>Modules ({moduleCount})</span>
+                    <span>${costSummary.modulesTotal.toLocaleString()}</span>
+                  </div>
+                  {walls.length > 0 && (
+                    <div className="flex justify-between text-gray-600">
+                      <span>Wall Panels ({walls.length})</span>
+                      <span>${costSummary.wallsTotal.toLocaleString()}</span>
+                    </div>
+                  )}
 
-            <div className="border-t border-gray-200 pt-2 mt-3 flex justify-between text-gray-600">
-              <span>Subtotal (excl. GST)</span>
-              <span>${costSummary.subtotal.toLocaleString()}</span>
+                  <p className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold mt-3 mb-1">Site Prep & Foundations</p>
+                  <div className="flex justify-between text-gray-600">
+                    <span>{moduleCount} mod x ${(pc.site_prep_per_module || 0).toLocaleString()}</span>
+                    <span>${costSummary.sitePrepBase.toLocaleString()}</span>
+                  </div>
+                  {costSummary.siteSurcharge > 0 && (
+                    <div className="flex justify-between text-gray-600">
+                      <span>{siteType === "sloping" ? "Sloping" : "Steep"} surcharge</span>
+                      <span>${costSummary.siteSurcharge.toLocaleString()}</span>
+                    </div>
+                  )}
+
+                  <p className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold mt-3 mb-1">Delivery</p>
+                  <div className="flex justify-between text-gray-600">
+                    <span>{costSummary.deliveryHours}hrs x ${(pc.delivery_rate_per_hour || 0).toLocaleString()}/hr</span>
+                    <span>${(costSummary.deliveryVal - costSummary.ferryCost).toLocaleString()}</span>
+                  </div>
+                  {costSummary.needsFerry && (
+                    <div className="flex justify-between text-gray-600">
+                      <span>Ferry crossing</span>
+                      <span>${costSummary.ferryCost.toLocaleString()}</span>
+                    </div>
+                  )}
+
+                  <p className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold mt-3 mb-1">Installation</p>
+                  <div className="flex justify-between text-gray-600">
+                    <span>Labour ({moduleCount} x ${(pc.install_labour_per_module || 0).toLocaleString()})</span>
+                    <span>${costSummary.labourVal.toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between text-gray-600">
+                    <span>Cranage ({moduleCount} x ${(pc.install_cranage_per_module || 0).toLocaleString()})</span>
+                    <span>${costSummary.cranageVal.toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between text-gray-600">
+                    <span>Water & drainage</span>
+                    <span>${costSummary.waterVal.toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between text-gray-600">
+                    <span>Electrical</span>
+                    <span>${costSummary.electricalVal.toLocaleString()}</span>
+                  </div>
+
+                  <div className="border-t border-gray-200 pt-2 mt-3 flex justify-between text-gray-600">
+                    <span>Subtotal (excl. GST)</span>
+                    <span>${costSummary.subtotal.toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between text-gray-600">
+                    <span>GST ({costSummary.gstRateVal}%)</span>
+                    <span>${costSummary.gstAmount.toLocaleString()}</span>
+                  </div>
+                  <div className="border-t border-gray-200 pt-2 flex justify-between font-bold text-gray-900">
+                    <span>Total (incl. GST)</span>
+                    <span>${costSummary.grandTotal.toLocaleString()}</span>
+                  </div>
+                </div>
+              )}
             </div>
-            <div className="flex justify-between text-gray-600">
-              <span>GST ({costSummary.gstRateVal}%)</span>
-              <span>${costSummary.gstAmount.toLocaleString()}</span>
+          </div>
+        ) : (
+          /* Non-estimate modes: single column form */
+          <div className="space-y-3">
+            <div>
+              <Label className="text-xs text-gray-600">Project / Design Name</Label>
+              <Input value={projectName} onChange={e => setProjectName(e.target.value)} placeholder="e.g. Beach House" className="mt-1 rounded-none text-sm h-9" />
             </div>
-            <div className="border-t border-gray-200 pt-2 flex justify-between font-bold text-gray-900">
-              <span>Total Estimate (incl. GST)</span>
-              <span>${costSummary.grandTotal.toLocaleString()}</span>
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <Label className="text-xs text-gray-600">Client First Name</Label>
+                <Input value={clientFirstName} onChange={e => setClientFirstName(e.target.value)} placeholder="e.g. Jane" className="mt-1 rounded-none text-sm h-9" />
+              </div>
+              <div>
+                <Label className="text-xs text-gray-600">Client Family Name</Label>
+                <Input value={clientFamilyName} onChange={e => setClientFamilyName(e.target.value)} placeholder="e.g. Smith" className="mt-1 rounded-none text-sm h-9" />
+              </div>
+            </div>
+            <div>
+              <Label className="text-xs text-gray-600">Client Phone</Label>
+              <Input value={phone} onChange={e => setPhone(e.target.value)} placeholder="e.g. 021 123 4567" className="mt-1 rounded-none text-sm h-9" />
+            </div>
+            <div>
+              <Label className="text-xs text-gray-600">Client Email</Label>
+              <Input value={email} onChange={e => setEmail(e.target.value)} placeholder="e.g. jane@example.com" className="mt-1 rounded-none text-sm h-9" />
+            </div>
+            <div>
+              <Label className="text-xs text-gray-600">Home Address</Label>
+              <AddressAutocomplete value={homeAddress} onChange={setHomeAddress} />
+            </div>
+            <div>
+              <div className="flex items-center justify-between">
+                <Label className="text-xs text-gray-600">Site Address</Label>
+                <button
+                  type="button"
+                  data-testid="copy-home-address-btn"
+                  onClick={() => { if (homeAddress) setSiteAddress(homeAddress); }}
+                  className="text-xs text-orange-600 hover:text-orange-700 hover:underline cursor-pointer"
+                >
+                  Same as home address
+                </button>
+              </div>
+              <AddressAutocomplete value={siteAddress} onChange={setSiteAddress} />
             </div>
           </div>
         )}
