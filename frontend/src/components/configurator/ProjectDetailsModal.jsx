@@ -165,7 +165,8 @@ export default function ProjectDetailsModal({
   designs = [],
   loadedDesignId = null,
   currentSiteAddress = "",
-  onSiteAddressChange = null
+  onSiteAddressChange = null,
+  isAdmin = false
 }) {
   const [projectName, setProjectName] = useState("");
   const [clientFirstName, setClientFirstName] = useState("");
@@ -425,22 +426,22 @@ export default function ProjectDetailsModal({
     // Grand total
     y += 4;
 
-    // Additional charges section
+    // Additional charges section (markup already baked into all values)
     const additionalItems = [];
     if (cs.sitePrepVal > 0) {
       additionalItems.push({ label: `Site Prep & Foundations (${moduleCount} modules)`, amount: cs.sitePrepBase });
-      if (cs.slopingSurchargePerMod > 0) additionalItems.push({ label: `  ${siteType === "sloping" ? "Sloping" : "Steep"} surcharge (${moduleCount} x $${(siteType === "sloping" ? pc.site_prep_sloping_surcharge_per_module : pc.site_prep_steep_surcharge_per_module || 0).toLocaleString()}/mod)`, amount: cs.slopingSurchargePerMod });
+      if (cs.slopingSurchargePerMod > 0) additionalItems.push({ label: `  ${siteType === "sloping" ? "Sloping" : "Steep"} surcharge (${moduleCount} modules)`, amount: cs.slopingSurchargePerMod });
       if (cs.slopingSurchargePerHouse > 0) additionalItems.push({ label: `  ${siteType === "sloping" ? "Sloping" : "Steep"} surcharge (per house)`, amount: cs.slopingSurchargePerHouse });
       if (cs.sitePrepWater > 0) additionalItems.push({ label: "  Water & drainage (per house)", amount: cs.sitePrepWater });
     }
     if (cs.deliveryVal > 0) {
-      additionalItems.push({ label: `Delivery (${moduleCount} mod x ${cs.deliveryHours}hrs x 2 x $${(pc.delivery_rate_per_hour || 0).toLocaleString()}/hr)`, amount: cs.deliveryVal - cs.ferryCost });
-      if (cs.needsFerry) additionalItems.push({ label: `  Ferry crossing (${moduleCount} x $${(pc.ferry_crossing_cost || 0).toLocaleString()})`, amount: cs.ferryCost });
+      additionalItems.push({ label: `Delivery (${moduleCount} modules, return trip)`, amount: cs.deliveryVal - cs.ferryCost });
+      if (cs.needsFerry) additionalItems.push({ label: `  Ferry crossing (${moduleCount} modules)`, amount: cs.ferryCost });
     }
     if (cs.installVal > 0) {
-      additionalItems.push({ label: `Labour (${moduleCount} modules x $${(pc.install_labour_per_module || 0).toLocaleString()})`, amount: cs.labourVal });
-      additionalItems.push({ label: `Cranage (${moduleCount} modules x $${(pc.install_cranage_per_module || 0).toLocaleString()})`, amount: cs.cranageVal });
-      if (cs.waterVal > 0) additionalItems.push({ label: `Water & drainage (${cs.wetModuleCount} wet modules x $${(pc.install_water_drainage_per_wetmodule || 0).toLocaleString()})`, amount: cs.waterVal });
+      additionalItems.push({ label: `Labour (${moduleCount} modules)`, amount: cs.labourVal });
+      additionalItems.push({ label: `Cranage (${moduleCount} modules)`, amount: cs.cranageVal });
+      if (cs.waterVal > 0) additionalItems.push({ label: `Water & drainage (${cs.wetModuleCount} wet modules)`, amount: cs.waterVal });
       if (cs.electricalVal > 0) additionalItems.push({ label: "Electrical connection", amount: cs.electricalVal });
     }
 
@@ -471,28 +472,15 @@ export default function ProjectDetailsModal({
       y += 4;
     }
 
-    // Subtotal before markup
+    // Subtotal (markup already included in line items)
     doc.setDrawColor(200, 200, 200);
     doc.line(col1, y, col2, y);
     y += 5;
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(8.5);
-    doc.setTextColor(30, 30, 30);
-
-    if (cs.markupAmount > 0 || cs.marginAmount > 0) {
-      doc.text("Subtotal (before markup)", col1 + 2, y + 3);
-      doc.text(`$${cs.subtotalBeforeMarkup.toLocaleString()}`, col2, y + 3, { align: "right" });
-      y += 8;
-      if (cs.markupAmount > 0) {
-        doc.text(`Markup (${cs.markupPct}%) / Margin (${cs.marginPct}%)`, col1 + 2, y + 3);
-        doc.text(`$${cs.markupAmount.toLocaleString()}`, col2, y + 3, { align: "right" });
-        y += 8;
-      }
-    }
 
     // Subtotal
     doc.setFont("helvetica", "bold");
     doc.setFontSize(9);
+    doc.setTextColor(30, 30, 30);
     doc.text("Subtotal (excl. GST)", col1 + 2, y + 3);
     doc.text(`$${cs.subtotal.toLocaleString()}`, col2, y + 3, { align: "right" });
     y += 8;
@@ -547,36 +535,37 @@ export default function ProjectDetailsModal({
   const costSummary = !isEstimate ? null : (() => {
     const modulesTotal = placedModules.reduce((s, m) => s + (m.price || 0), 0);
     const wallsTotal = walls.reduce((s, w) => s + (w.price || 0), 0);
-    const sitePrepBase = (pc.site_prep_per_module || 0) * moduleCount;
-    const slopingSurchargePerMod = siteType === "sloping" ? (pc.site_prep_sloping_surcharge_per_module || 0) * moduleCount :
-                                   siteType === "steep" ? (pc.site_prep_steep_surcharge_per_module || 0) * moduleCount : 0;
-    const slopingSurchargePerHouse = siteType === "sloping" ? (pc.site_prep_sloping_surcharge_per_house || 0) :
-                                     siteType === "steep" ? (pc.site_prep_steep_surcharge_per_house || 0) : 0;
+    const markupPct = pc.markup_percentage || 0;
+    const markupMul = 1 + (markupPct / 100);
+    const sitePrepBase = Math.round((pc.site_prep_per_module || 0) * moduleCount * markupMul);
+    const slopingSurchargePerMod = siteType === "sloping" ? Math.round((pc.site_prep_sloping_surcharge_per_module || 0) * moduleCount * markupMul) :
+                                   siteType === "steep" ? Math.round((pc.site_prep_steep_surcharge_per_module || 0) * moduleCount * markupMul) : 0;
+    const slopingSurchargePerHouse = siteType === "sloping" ? Math.round((pc.site_prep_sloping_surcharge_per_house || 0) * markupMul) :
+                                     siteType === "steep" ? Math.round((pc.site_prep_steep_surcharge_per_house || 0) * markupMul) : 0;
     const siteSurcharge = slopingSurchargePerMod + slopingSurchargePerHouse;
-    const sitePrepWater = pc.site_prep_water_drainage_per_house || 0;
+    const sitePrepWater = Math.round((pc.site_prep_water_drainage_per_house || 0) * markupMul);
     const sitePrepVal = sitePrepBase + siteSurcharge + sitePrepWater;
-    const deliveryVal = deliveryEstimate ? (deliveryEstimate.estimated_hours * 2 * (pc.delivery_rate_per_hour || 0) * moduleCount + (deliveryEstimate.needs_ferry ? (pc.ferry_crossing_cost || 0) * moduleCount : 0)) : 0;
+    const rawDeliveryTransport = deliveryEstimate ? (deliveryEstimate.estimated_hours * 2 * (pc.delivery_rate_per_hour || 0) * moduleCount) : 0;
+    const rawFerryCost = (deliveryEstimate && deliveryEstimate.needs_ferry) ? (pc.ferry_crossing_cost || 0) * moduleCount : 0;
+    const deliveryVal = Math.round((rawDeliveryTransport + rawFerryCost) * markupMul);
     const deliveryHours = deliveryEstimate ? deliveryEstimate.estimated_hours : 0;
     const needsFerry = deliveryEstimate ? deliveryEstimate.needs_ferry : false;
-    const ferryCost = needsFerry ? (pc.ferry_crossing_cost || 0) * moduleCount : 0;
-    const labourVal = (pc.install_labour_per_module || 0) * moduleCount;
-    const cranageVal = (pc.install_cranage_per_module || 0) * moduleCount;
+    const ferryCost = Math.round(rawFerryCost * markupMul);
+    const labourVal = Math.round((pc.install_labour_per_module || 0) * moduleCount * markupMul);
+    const cranageVal = Math.round((pc.install_cranage_per_module || 0) * moduleCount * markupMul);
     const wetModuleCount = placedModules.filter(m => {
       const label = (m.label || m.name || "").toLowerCase();
       return label.includes("bathroom") || label.includes("kitchen") || label.includes("laundry");
     }).length;
-    const waterVal = (pc.install_water_drainage_per_wetmodule || 0) * wetModuleCount;
-    const electricalVal = pc.install_electrical_per_house || 0;
+    const waterVal = Math.round((pc.install_water_drainage_per_wetmodule || 0) * wetModuleCount * markupMul);
+    const electricalVal = Math.round((pc.install_electrical_per_house || 0) * markupMul);
     const installVal = labourVal + cranageVal + waterVal + electricalVal;
-    const subtotalBeforeMarkup = modulesTotal + wallsTotal + sitePrepVal + deliveryVal + installVal;
-    const markupPct = pc.markup_percentage || 0;
-    const markupAmount = Math.round(subtotalBeforeMarkup * markupPct / 100);
+    const subtotal = modulesTotal + wallsTotal + sitePrepVal + deliveryVal + installVal;
     const marginPct = markupPct > 0 ? parseFloat((markupPct / (100 + markupPct) * 100).toFixed(2)) : 0;
-    const subtotal = subtotalBeforeMarkup + markupAmount;
     const gstRateVal = pc.gst_rate || 15;
     const gstAmount = Math.round(subtotal * gstRateVal / 100);
     const grandTotal = subtotal + gstAmount;
-    return { modulesTotal, wallsTotal, sitePrepBase, slopingSurchargePerMod, slopingSurchargePerHouse, siteSurcharge, sitePrepWater, sitePrepVal, deliveryVal, deliveryHours, needsFerry, ferryCost, labourVal, cranageVal, waterVal, wetModuleCount, electricalVal, installVal, subtotalBeforeMarkup, markupPct, markupAmount, marginPct, subtotal, gstRateVal, gstAmount, grandTotal };
+    return { modulesTotal, wallsTotal, sitePrepBase, slopingSurchargePerMod, slopingSurchargePerHouse, siteSurcharge, sitePrepWater, sitePrepVal, deliveryVal, deliveryHours, needsFerry, ferryCost, labourVal, cranageVal, waterVal, wetModuleCount, electricalVal, installVal, markupPct, marginPct, subtotal, gstRateVal, gstAmount, grandTotal };
   })();
 
   return (
@@ -654,7 +643,34 @@ export default function ProjectDetailsModal({
 
             {/* RIGHT: Cost breakdown */}
             <div>
-              {costSummary && (
+              {costSummary && !isAdmin && (
+                <div className="bg-gray-50 border border-gray-100 p-4 space-y-1.5 text-sm">
+                  <p className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold mb-1">Summary</p>
+                  <div className="flex justify-between text-gray-600">
+                    <span>Modules ({moduleCount})</span>
+                    <span>${costSummary.modulesTotal.toLocaleString()}</span>
+                  </div>
+                  {walls.length > 0 && (
+                    <div className="flex justify-between text-gray-600">
+                      <span>Wall Panels ({walls.length})</span>
+                      <span>${costSummary.wallsTotal.toLocaleString()}</span>
+                    </div>
+                  )}
+                  <div className="border-t border-gray-200 pt-2 mt-3 flex justify-between text-gray-600">
+                    <span>Subtotal (excl. GST)</span>
+                    <span>${costSummary.subtotal.toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between text-gray-600">
+                    <span>GST ({costSummary.gstRateVal}%)</span>
+                    <span>${costSummary.gstAmount.toLocaleString()}</span>
+                  </div>
+                  <div className="border-t border-gray-200 pt-2 flex justify-between font-bold text-gray-900">
+                    <span>Total (incl. GST)</span>
+                    <span>${costSummary.grandTotal.toLocaleString()}</span>
+                  </div>
+                </div>
+              )}
+              {costSummary && isAdmin && (
                 <div className="bg-gray-50 border border-gray-100 p-4 space-y-1.5 text-sm">
                   <p className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold mb-1">Building</p>
                   <div className="flex justify-between text-gray-600">
@@ -670,12 +686,12 @@ export default function ProjectDetailsModal({
 
                   <p className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold mt-3 mb-1">Site Prep & Foundations</p>
                   <div className="flex justify-between text-gray-600">
-                    <span>{moduleCount} mod x ${(pc.site_prep_per_module || 0).toLocaleString()}</span>
+                    <span>{moduleCount} modules</span>
                     <span>${costSummary.sitePrepBase.toLocaleString()}</span>
                   </div>
                   {costSummary.slopingSurchargePerMod > 0 && (
                     <div className="flex justify-between text-gray-600">
-                      <span>{siteType === "sloping" ? "Sloping" : "Steep"} ({moduleCount} x ${(siteType === "sloping" ? pc.site_prep_sloping_surcharge_per_module : pc.site_prep_steep_surcharge_per_module || 0).toLocaleString()}/mod)</span>
+                      <span>{siteType === "sloping" ? "Sloping" : "Steep"} ({moduleCount} modules)</span>
                       <span>${costSummary.slopingSurchargePerMod.toLocaleString()}</span>
                     </div>
                   )}
@@ -694,27 +710,27 @@ export default function ProjectDetailsModal({
 
                   <p className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold mt-3 mb-1">Delivery (return trip per module)</p>
                   <div className="flex justify-between text-gray-600">
-                    <span>{moduleCount} mod x {costSummary.deliveryHours}hrs x 2 x ${(pc.delivery_rate_per_hour || 0).toLocaleString()}/hr</span>
+                    <span>{moduleCount} mod x {costSummary.deliveryHours}hrs x 2</span>
                     <span>${(costSummary.deliveryVal - costSummary.ferryCost).toLocaleString()}</span>
                   </div>
                   {costSummary.needsFerry && (
                     <div className="flex justify-between text-gray-600">
-                      <span>Ferry crossing ({moduleCount} x ${(pc.ferry_crossing_cost || 0).toLocaleString()})</span>
+                      <span>Ferry crossing ({moduleCount} modules)</span>
                       <span>${costSummary.ferryCost.toLocaleString()}</span>
                     </div>
                   )}
 
                   <p className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold mt-3 mb-1">Installation</p>
                   <div className="flex justify-between text-gray-600">
-                    <span>Labour ({moduleCount} x ${(pc.install_labour_per_module || 0).toLocaleString()})</span>
+                    <span>Labour ({moduleCount} modules)</span>
                     <span>${costSummary.labourVal.toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between text-gray-600">
-                    <span>Cranage ({moduleCount} x ${(pc.install_cranage_per_module || 0).toLocaleString()})</span>
+                    <span>Cranage ({moduleCount} modules)</span>
                     <span>${costSummary.cranageVal.toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between text-gray-600">
-                    <span>Water & drainage ({costSummary.wetModuleCount} wet x ${(pc.install_water_drainage_per_wetmodule || 0).toLocaleString()})</span>
+                    <span>Water & drainage ({costSummary.wetModuleCount} wet modules)</span>
                     <span>${costSummary.waterVal.toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between text-gray-600">
@@ -723,16 +739,6 @@ export default function ProjectDetailsModal({
                   </div>
 
                   <div className="border-t border-gray-200 pt-2 mt-3 flex justify-between text-gray-600">
-                    <span>Subtotal (before markup)</span>
-                    <span>${costSummary.subtotalBeforeMarkup.toLocaleString()}</span>
-                  </div>
-                  {costSummary.markupAmount > 0 && (
-                    <div className="flex justify-between text-gray-600">
-                      <span>Markup ({costSummary.markupPct}%) / Margin ({costSummary.marginPct}%)</span>
-                      <span>${costSummary.markupAmount.toLocaleString()}</span>
-                    </div>
-                  )}
-                  <div className="border-t border-gray-200 pt-2 flex justify-between text-gray-600">
                     <span>Subtotal (excl. GST)</span>
                     <span>${costSummary.subtotal.toLocaleString()}</span>
                   </div>
@@ -744,6 +750,9 @@ export default function ProjectDetailsModal({
                     <span>Total (incl. GST)</span>
                     <span>${costSummary.grandTotal.toLocaleString()}</span>
                   </div>
+                  {costSummary.markupPct > 0 && (
+                    <p className="text-[10px] text-gray-400 mt-2 italic">Markup {costSummary.markupPct}% (margin {costSummary.marginPct}%) included in all costs above</p>
+                  )}
                 </div>
               )}
             </div>

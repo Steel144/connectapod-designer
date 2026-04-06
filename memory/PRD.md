@@ -13,15 +13,17 @@ Complete migration from the proprietary Base44 platform to a FastAPI + MongoDB +
 
 ### Admin Pricing Configuration (Completed April 2026)
 - **Pricing Config DB** (`pricing_config` collection): Stores admin-editable rates
-- **Admin UI tab**: "Pricing Config" in Admin Dashboard with grouped sections:
-  - Site Prep & Foundations: per-module flat rate, sloping surcharge, steep surcharge
-  - Delivery: rate per hour, ferry crossing cost (auto-detects North Island)
-  - Installation: labour per module, cranage per module, water & drainage per house, electrical per house
-  - GST rate (default 15%)
+- **Admin UI tab**: "Pricing Config" full-page at `/admin/pricing` with grouped sections:
+  - Site Prep & Foundations: per-module flat rate, sloping surcharge (per mod + per house), steep surcharge (per mod + per house), water & drainage per house
+  - Delivery: rate per hour, ferry crossing cost per module (auto-detects North Island)
+  - Installation: labour per module, cranage per module, water & drainage per wet module, electrical per house
+  - Tax: GST rate (default 15%), Markup %, auto-calculated Margin %
+- **Markup baked into line items** (April 2026): Markup % is applied multiplicatively to all site prep, delivery, and installation line items before display. Never shown as a separate line to the customer.
+- **Admin vs Customer view** (April 2026): Admin sees full cost breakdown (site prep, delivery, installation line items + markup note). Non-admin customers see only modules, walls, subtotal, GST, and total — no calculation details.
 - **Auto-calculation API**: `GET /api/pricing/delivery-estimate?site_address=...` calculates driving hours from 29 Studholme St, Waimate to site address, detects North Island for ferry crossing
 - **Estimate modal auto-populates** all charges from admin-set rates, no manual entry needed
 - **Site type selector**: Flat / Sloping / Steep dropdown affects site prep costs
-- **PDF generation** includes full breakdown: modules, walls, site prep, delivery (with ferry), installation line items, subtotal, GST, grand total
+- **PDF generation** includes full breakdown with markup baked in: modules, walls, site prep, delivery (with ferry), installation line items, subtotal, GST, grand total
 
 ### Chevron Step Bar (Completed April 2026)
 - 9-step chevron/arrow toolbar matching PROCESS.jpg mockup

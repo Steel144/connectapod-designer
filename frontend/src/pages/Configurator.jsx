@@ -1995,6 +1995,7 @@ export default function Configurator() {
         printMode={pendingPrintMode}
         currentSiteAddress={siteAddress}
         onSiteAddressChange={setSiteAddress}
+        isAdmin={user?.role === "admin"}
         onConfirm={(details, replace = false) => {
            if (detailsModalMode === 'print') {
              // Combine clientFirstName and clientFamilyName into clientName for print details
