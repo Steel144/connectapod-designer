@@ -432,7 +432,7 @@ export default function ProjectDetailsModal({
       if (cs.siteSurcharge > 0) additionalItems.push({ label: `  ${siteType === "sloping" ? "Sloping" : "Steep"} surcharge (${moduleCount} x $${(siteType === "sloping" ? pc.site_prep_sloping_surcharge : pc.site_prep_steep_surcharge || 0).toLocaleString()})`, amount: cs.siteSurcharge });
     }
     if (cs.deliveryVal > 0) {
-      additionalItems.push({ label: `Delivery (${cs.deliveryHours}hrs x $${(pc.delivery_rate_per_hour || 0).toLocaleString()}/hr)`, amount: cs.deliveryVal - cs.ferryCost });
+      additionalItems.push({ label: `Delivery (${moduleCount} mod x ${cs.deliveryHours}hrs x 2 x $${(pc.delivery_rate_per_hour || 0).toLocaleString()}/hr)`, amount: cs.deliveryVal - cs.ferryCost });
       if (cs.needsFerry) additionalItems.push({ label: "  Ferry crossing (North Island)", amount: cs.ferryCost });
     }
     if (cs.installVal > 0) {
@@ -534,10 +534,10 @@ export default function ProjectDetailsModal({
     const siteSurcharge = siteType === "sloping" ? (pc.site_prep_sloping_surcharge || 0) * moduleCount :
                           siteType === "steep" ? (pc.site_prep_steep_surcharge || 0) * moduleCount : 0;
     const sitePrepVal = sitePrepBase + siteSurcharge;
-    const deliveryVal = deliveryEstimate ? deliveryEstimate.total : 0;
+    const deliveryVal = deliveryEstimate ? (deliveryEstimate.estimated_hours * 2 * (pc.delivery_rate_per_hour || 0) * moduleCount + (deliveryEstimate.needs_ferry ? (pc.ferry_crossing_cost || 0) : 0)) : 0;
     const deliveryHours = deliveryEstimate ? deliveryEstimate.estimated_hours : 0;
     const needsFerry = deliveryEstimate ? deliveryEstimate.needs_ferry : false;
-    const ferryCost = deliveryEstimate ? deliveryEstimate.ferry_cost : 0;
+    const ferryCost = needsFerry ? (pc.ferry_crossing_cost || 0) : 0;
     const labourVal = (pc.install_labour_per_module || 0) * moduleCount;
     const cranageVal = (pc.install_cranage_per_module || 0) * moduleCount;
     const wetModuleCount = placedModules.filter(m => {
@@ -655,9 +655,9 @@ export default function ProjectDetailsModal({
                     </div>
                   )}
 
-                  <p className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold mt-3 mb-1">Delivery</p>
+                  <p className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold mt-3 mb-1">Delivery (return trip per module)</p>
                   <div className="flex justify-between text-gray-600">
-                    <span>{costSummary.deliveryHours}hrs x ${(pc.delivery_rate_per_hour || 0).toLocaleString()}/hr</span>
+                    <span>{moduleCount} mod x {costSummary.deliveryHours}hrs x 2 x ${(pc.delivery_rate_per_hour || 0).toLocaleString()}/hr</span>
                     <span>${(costSummary.deliveryVal - costSummary.ferryCost).toLocaleString()}</span>
                   </div>
                   {costSummary.needsFerry && (
