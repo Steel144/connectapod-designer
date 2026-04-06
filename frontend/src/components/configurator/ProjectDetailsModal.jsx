@@ -563,6 +563,67 @@ export default function ProjectDetailsModal({
           {isEstimate ? "These details will appear in the estimate." : isPrint ? "These details will appear in the title block." : isSave ? "Enter project and customer details." : ""}
         </p>
 
+        {/* Project details form */}
+        <div className="space-y-3">
+          <div>
+            <Label className="text-xs text-gray-600">Project / Design Name</Label>
+            <Input value={projectName} onChange={e => setProjectName(e.target.value)} placeholder="e.g. Beach House" className="mt-1 rounded-none text-sm h-9" />
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            <div>
+              <Label className="text-xs text-gray-600">Client First Name</Label>
+              <Input value={clientFirstName} onChange={e => setClientFirstName(e.target.value)} placeholder="e.g. Jane" className="mt-1 rounded-none text-sm h-9" />
+            </div>
+            <div>
+              <Label className="text-xs text-gray-600">Client Family Name</Label>
+              <Input value={clientFamilyName} onChange={e => setClientFamilyName(e.target.value)} placeholder="e.g. Smith" className="mt-1 rounded-none text-sm h-9" />
+            </div>
+          </div>
+          <div>
+            <Label className="text-xs text-gray-600">Client Phone</Label>
+            <Input value={phone} onChange={e => setPhone(e.target.value)} placeholder="e.g. 021 123 4567" className="mt-1 rounded-none text-sm h-9" />
+          </div>
+          <div>
+            <Label className="text-xs text-gray-600">Client Email</Label>
+            <Input value={email} onChange={e => setEmail(e.target.value)} placeholder="e.g. jane@example.com" className="mt-1 rounded-none text-sm h-9" />
+          </div>
+          <div>
+            <Label className="text-xs text-gray-600">Home Address</Label>
+            <AddressAutocomplete value={homeAddress} onChange={setHomeAddress} />
+          </div>
+          <div>
+            <div className="flex items-center justify-between">
+              <Label className="text-xs text-gray-600">Site Address</Label>
+              <button
+                type="button"
+                data-testid="copy-home-address-btn"
+                onClick={() => { if (homeAddress) setSiteAddress(homeAddress); }}
+                className="text-xs text-orange-600 hover:text-orange-700 hover:underline cursor-pointer"
+              >
+                Same as home address
+              </button>
+            </div>
+            <AddressAutocomplete value={siteAddress} onChange={setSiteAddress} />
+          </div>
+
+          {/* Site type selector - only for estimate mode */}
+          {isEstimate && (
+            <div>
+              <Label className="text-xs text-gray-600">Site Type</Label>
+              <select
+                value={siteType}
+                onChange={e => setSiteType(e.target.value)}
+                className="mt-1 w-full px-3 py-2 border border-gray-200 text-sm bg-white"
+                data-testid="site-type-select"
+              >
+                <option value="flat">Flat Site</option>
+                <option value="sloping">Sloping Site (surcharge applies)</option>
+                <option value="steep">Steep Site (surcharge applies)</option>
+              </select>
+            </div>
+          )}
+        </div>
+
         {/* Cost summary for estimate */}
         {isEstimate && costSummary && (
           <div className="bg-gray-50 border border-gray-100 p-4 space-y-1.5 text-sm">
@@ -634,67 +695,6 @@ export default function ProjectDetailsModal({
             </div>
           </div>
         )}
-
-        {/* Project details form */}
-        <div className="space-y-3">
-          <div>
-            <Label className="text-xs text-gray-600">Project / Design Name</Label>
-            <Input value={projectName} onChange={e => setProjectName(e.target.value)} placeholder="e.g. Beach House" className="mt-1 rounded-none text-sm h-9" />
-          </div>
-          <div className="grid grid-cols-2 gap-2">
-            <div>
-              <Label className="text-xs text-gray-600">Client First Name</Label>
-              <Input value={clientFirstName} onChange={e => setClientFirstName(e.target.value)} placeholder="e.g. Jane" className="mt-1 rounded-none text-sm h-9" />
-            </div>
-            <div>
-              <Label className="text-xs text-gray-600">Client Family Name</Label>
-              <Input value={clientFamilyName} onChange={e => setClientFamilyName(e.target.value)} placeholder="e.g. Smith" className="mt-1 rounded-none text-sm h-9" />
-            </div>
-          </div>
-          <div>
-            <Label className="text-xs text-gray-600">Client Phone</Label>
-            <Input value={phone} onChange={e => setPhone(e.target.value)} placeholder="e.g. 021 123 4567" className="mt-1 rounded-none text-sm h-9" />
-          </div>
-          <div>
-            <Label className="text-xs text-gray-600">Client Email</Label>
-            <Input value={email} onChange={e => setEmail(e.target.value)} placeholder="e.g. jane@example.com" className="mt-1 rounded-none text-sm h-9" />
-          </div>
-          <div>
-            <Label className="text-xs text-gray-600">Home Address</Label>
-            <AddressAutocomplete value={homeAddress} onChange={setHomeAddress} />
-          </div>
-          <div>
-            <div className="flex items-center justify-between">
-              <Label className="text-xs text-gray-600">Site Address</Label>
-              <button
-                type="button"
-                data-testid="copy-home-address-btn"
-                onClick={() => { if (homeAddress) setSiteAddress(homeAddress); }}
-                className="text-xs text-orange-600 hover:text-orange-700 hover:underline cursor-pointer"
-              >
-                Same as home address
-              </button>
-            </div>
-            <AddressAutocomplete value={siteAddress} onChange={setSiteAddress} />
-          </div>
-
-          {/* Site type selector - only for estimate mode */}
-          {isEstimate && (
-            <div>
-              <Label className="text-xs text-gray-600">Site Type</Label>
-              <select
-                value={siteType}
-                onChange={e => setSiteType(e.target.value)}
-                className="mt-1 w-full px-3 py-2 border border-gray-200 text-sm bg-white"
-                data-testid="site-type-select"
-              >
-                <option value="flat">Flat Site</option>
-                <option value="sloping">Sloping Site (surcharge applies)</option>
-                <option value="steep">Steep Site (surcharge applies)</option>
-              </select>
-            </div>
-          )}
-        </div>
 
         {saveAsMode && (
           <div className="border border-[#F15A22]/30 bg-orange-50 p-3 space-y-1.5">
