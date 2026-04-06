@@ -471,13 +471,33 @@ export default function ProjectDetailsModal({
       y += 4;
     }
 
-    // Subtotal
+    // Subtotal before markup
     doc.setDrawColor(200, 200, 200);
     doc.line(col1, y, col2, y);
     y += 5;
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(8.5);
+    doc.setTextColor(30, 30, 30);
+
+    if (cs.markupAmount > 0 || cs.marginAmount > 0) {
+      doc.text("Subtotal (before markup)", col1 + 2, y + 3);
+      doc.text(`$${cs.subtotalBeforeMarkup.toLocaleString()}`, col2, y + 3, { align: "right" });
+      y += 8;
+      if (cs.markupAmount > 0) {
+        doc.text(`Markup (${cs.markupPct}%)`, col1 + 2, y + 3);
+        doc.text(`$${cs.markupAmount.toLocaleString()}`, col2, y + 3, { align: "right" });
+        y += 8;
+      }
+      if (cs.marginAmount > 0) {
+        doc.text(`Margin (${cs.marginPct}%)`, col1 + 2, y + 3);
+        doc.text(`$${cs.marginAmount.toLocaleString()}`, col2, y + 3, { align: "right" });
+        y += 8;
+      }
+    }
+
+    // Subtotal
     doc.setFont("helvetica", "bold");
     doc.setFontSize(9);
-    doc.setTextColor(30, 30, 30);
     doc.text("Subtotal (excl. GST)", col1 + 2, y + 3);
     doc.text(`$${cs.subtotal.toLocaleString()}`, col2, y + 3, { align: "right" });
     y += 8;
@@ -553,11 +573,16 @@ export default function ProjectDetailsModal({
     const waterVal = (pc.install_water_drainage_per_wetmodule || 0) * wetModuleCount;
     const electricalVal = pc.install_electrical_per_house || 0;
     const installVal = labourVal + cranageVal + waterVal + electricalVal;
-    const subtotal = modulesTotal + wallsTotal + sitePrepVal + deliveryVal + installVal;
+    const subtotalBeforeMarkup = modulesTotal + wallsTotal + sitePrepVal + deliveryVal + installVal;
+    const markupPct = pc.markup_percentage || 0;
+    const marginPct = pc.margin_percentage || 0;
+    const markupAmount = Math.round(subtotalBeforeMarkup * markupPct / 100);
+    const marginAmount = Math.round(subtotalBeforeMarkup * marginPct / 100);
+    const subtotal = subtotalBeforeMarkup + markupAmount + marginAmount;
     const gstRateVal = pc.gst_rate || 15;
     const gstAmount = Math.round(subtotal * gstRateVal / 100);
     const grandTotal = subtotal + gstAmount;
-    return { modulesTotal, wallsTotal, sitePrepBase, slopingSurchargePerMod, slopingSurchargePerHouse, siteSurcharge, sitePrepWater, sitePrepVal, deliveryVal, deliveryHours, needsFerry, ferryCost, labourVal, cranageVal, waterVal, wetModuleCount, electricalVal, installVal, subtotal, gstRateVal, gstAmount, grandTotal };
+    return { modulesTotal, wallsTotal, sitePrepBase, slopingSurchargePerMod, slopingSurchargePerHouse, siteSurcharge, sitePrepWater, sitePrepVal, deliveryVal, deliveryHours, needsFerry, ferryCost, labourVal, cranageVal, waterVal, wetModuleCount, electricalVal, installVal, subtotalBeforeMarkup, markupPct, markupAmount, marginPct, marginAmount, subtotal, gstRateVal, gstAmount, grandTotal };
   })();
 
   return (
@@ -704,6 +729,22 @@ export default function ProjectDetailsModal({
                   </div>
 
                   <div className="border-t border-gray-200 pt-2 mt-3 flex justify-between text-gray-600">
+                    <span>Subtotal (before markup)</span>
+                    <span>${costSummary.subtotalBeforeMarkup.toLocaleString()}</span>
+                  </div>
+                  {costSummary.markupAmount > 0 && (
+                    <div className="flex justify-between text-gray-600">
+                      <span>Markup ({costSummary.markupPct}%)</span>
+                      <span>${costSummary.markupAmount.toLocaleString()}</span>
+                    </div>
+                  )}
+                  {costSummary.marginAmount > 0 && (
+                    <div className="flex justify-between text-gray-600">
+                      <span>Margin ({costSummary.marginPct}%)</span>
+                      <span>${costSummary.marginAmount.toLocaleString()}</span>
+                    </div>
+                  )}
+                  <div className="border-t border-gray-200 pt-2 flex justify-between text-gray-600">
                     <span>Subtotal (excl. GST)</span>
                     <span>${costSummary.subtotal.toLocaleString()}</span>
                   </div>

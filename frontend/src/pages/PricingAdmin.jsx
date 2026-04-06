@@ -167,6 +167,8 @@ export default function PricingAdmin() {
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <PricingField label="GST Rate" value={form.gst_rate} onChange={v => update("gst_rate", v)} prefix="" suffix="%" />
+                <PricingField label="Markup" value={form.markup_percentage} onChange={v => update("markup_percentage", v)} prefix="" suffix="%" />
+                <PricingField label="Margin" value={form.margin_percentage} onChange={v => update("margin_percentage", v)} prefix="" suffix="%" />
               </div>
             </div>
           </>
