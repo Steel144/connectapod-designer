@@ -241,13 +241,58 @@ export default function ProjectDetailsModal({
 
     const totalSqm = placedModules.reduce((s, m) => s + (m.sqm || 0), 0);
     const cs = costSummary;
-
     const doc = new jsPDF();
     const pageW = doc.internal.pageSize.getWidth();
-    const margin = 20;
+    const pageH = doc.internal.pageSize.getHeight();
+    const margin = 18;
     const col1 = margin;
     const col2 = pageW - margin;
-    let y = margin;
+    const contentW = pageW - 2 * margin;
+    let y = 0;
+
+    // ── Brand colors ──
+    const brand = { r: 241, g: 90, b: 34 };   // #F15A22
+    const dark = { r: 35, g: 35, b: 35 };
+    const mid = { r: 110, g: 110, b: 110 };
+    const light = { r: 160, g: 160, b: 160 };
+    const rowBg = { r: 250, g: 249, b: 248 };
+
+    // ── Helper: section header bar ──
+    const sectionHeader = (label, extraRight) => {
+      doc.setFillColor(brand.r, brand.g, brand.b);
+      doc.rect(col1, y, contentW, 7, "F");
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(8);
+      doc.setFont("helvetica", "bold");
+      doc.text(label, col1 + 3, y + 5);
+      if (extraRight) doc.text(extraRight, col2 - 2, y + 5, { align: "right" });
+      y += 9;
+    };
+
+    // ── Helper: data row ──
+    const dataRow = (label, value, indent, bold) => {
+      if (rowAltFlag) {
+        doc.setFillColor(rowBg.r, rowBg.g, rowBg.b);
+        doc.rect(col1, y - 1.5, contentW, 7, "F");
+      }
+      rowAltFlag = !rowAltFlag;
+      doc.setTextColor(dark.r, dark.g, dark.b);
+      doc.setFontSize(8);
+      doc.setFont("helvetica", bold ? "bold" : "normal");
+      doc.text(label, col1 + (indent ? 6 : 2), y + 3.5);
+      doc.text(value, col2 - 2, y + 3.5, { align: "right" });
+      y += 7;
+    };
+
+    let rowAltFlag = false;
+
+    // ══════════════════════════════════════
+    // HEADER
+    // ══════════════════════════════════════
+
+    // Top bar
+    doc.setFillColor(brand.r, brand.g, brand.b);
+    doc.rect(0, 0, pageW, 3, "F");
 
     // Logo
     const logoUrl = "https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/1a43e85d2_Connectapod-01.png";
@@ -256,91 +301,90 @@ export default function ProjectDetailsModal({
         const img = new Image();
         img.crossOrigin = "anonymous";
         img.onload = () => {
-          const logoH = 14;
+          const logoH = 12;
           const logoW = (img.naturalWidth / img.naturalHeight) * logoH;
-          doc.addImage(img, "PNG", margin, 8, logoW, logoH);
+          doc.addImage(img, "PNG", col1, 7, logoW, logoH);
           resolve();
         };
         img.onerror = () => resolve();
         img.src = logoUrl;
       });
     } catch {
-      doc.setTextColor(241, 90, 34);
-      doc.setFontSize(13);
+      doc.setTextColor(brand.r, brand.g, brand.b);
+      doc.setFontSize(14);
       doc.setFont("helvetica", "bold");
-      doc.text("connectapod", margin, 18);
+      doc.text("connectapod", col1, 16);
     }
 
-    doc.setDrawColor(241, 90, 34);
-    doc.setLineWidth(0.5);
-    doc.line(0, 30, pageW, 30);
-
-    doc.setTextColor(120, 120, 120);
-    doc.setFontSize(9);
+    // Right-aligned subtitle
+    doc.setTextColor(mid.r, mid.g, mid.b);
+    doc.setFontSize(8);
     doc.setFont("helvetica", "normal");
-    doc.text("Design Studio — Building Estimate", pageW - margin, 22, { align: "right" });
+    doc.text("Building Estimate", col2, 14, { align: "right" });
 
-    y = 36;
+    // Divider
+    doc.setDrawColor(brand.r, brand.g, brand.b);
+    doc.setLineWidth(0.4);
+    doc.line(col1, 22, col2, 22);
 
-    doc.setTextColor(30, 30, 30);
-    doc.setFontSize(20);
+    y = 28;
+
+    // Title + ref
+    doc.setTextColor(dark.r, dark.g, dark.b);
+    doc.setFontSize(18);
     doc.setFont("helvetica", "bold");
     doc.text("ESTIMATE", col1, y);
+
+    const dateStr = new Date().toLocaleDateString("en-NZ", { day: "2-digit", month: "long", year: "numeric" });
+    const refNum = `QT-${Date.now().toString().slice(-6)}`;
+    doc.setFontSize(8);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(mid.r, mid.g, mid.b);
+    doc.text(`${dateStr}  |  Ref: ${refNum}`, col2, y, { align: "right" });
     y += 8;
 
-    doc.setFontSize(9);
-    doc.setFont("helvetica", "normal");
-    doc.setTextColor(120, 120, 120);
-    const dateStr = new Date().toLocaleDateString("en-NZ", { day: "2-digit", month: "long", year: "numeric" });
-    doc.text(`Date: ${dateStr}`, col1, y);
-    doc.text(`Ref: QT-${Date.now().toString().slice(-6)}`, col2, y, { align: "right" });
-    y += 10;
-
-    // Client info
+    // ══════════════════════════════════════
+    // CLIENT INFO BOX
+    // ══════════════════════════════════════
     const fullClientName = `${clientFirstName} ${clientFamilyName}`.trim();
-    if (fullClientName || projectName || siteAddress || phone || email) {
-      const infoLines = [];
-      if (fullClientName) infoLines.push(`Client: ${fullClientName}`);
-      if (phone) infoLines.push(`Phone: ${phone}`);
-      if (email) infoLines.push(`Email: ${email}`);
-      if (siteAddress) infoLines.push(`Site Address: ${siteAddress}`);
-      
-      const boxHeight = 8 + infoLines.length * 5;
-      doc.setFillColor(248, 248, 248);
-      doc.rect(col1, y, pageW - 2 * margin, boxHeight, "F");
-      doc.setTextColor(30, 30, 30);
-      doc.setFontSize(8.5);
-      doc.setFont("helvetica", "normal");
-      
+    const clientLines = [];
+    if (projectName) clientLines.push({ l: "Project", v: projectName });
+    if (fullClientName) clientLines.push({ l: "Client", v: fullClientName });
+    if (phone) clientLines.push({ l: "Phone", v: phone });
+    if (email) clientLines.push({ l: "Email", v: email });
+    if (siteAddress) clientLines.push({ l: "Site", v: siteAddress });
+    if (siteType !== "flat") clientLines.push({ l: "Site Type", v: siteType === "sloping" ? "Sloping" : "Steep" });
+
+    if (clientLines.length > 0) {
+      const boxH = 6 + clientLines.length * 5.5;
+      doc.setFillColor(248, 247, 245);
+      doc.rect(col1, y, contentW, boxH, "F");
+      doc.setDrawColor(230, 228, 225);
+      doc.setLineWidth(0.2);
+      doc.rect(col1, y, contentW, boxH, "S");
+
       let infoY = y + 5;
-      infoLines.forEach(line => {
-        doc.text(line, col1 + 4, infoY);
-        infoY += 5;
-      });
-      
-      if (projectName) {
+      clientLines.forEach(({ l, v }) => {
         doc.setFont("helvetica", "bold");
-        doc.text("Project:", col1 + 4, infoY);
+        doc.setFontSize(7.5);
+        doc.setTextColor(mid.r, mid.g, mid.b);
+        doc.text(l, col1 + 4, infoY);
         doc.setFont("helvetica", "normal");
-        doc.text(projectName, col1 + 25, infoY);
-      }
-      
-      y += boxHeight + 6;
+        doc.setTextColor(dark.r, dark.g, dark.b);
+        doc.setFontSize(8);
+        const splitV = doc.splitTextToSize(v, contentW - 35);
+        doc.text(splitV[0], col1 + 28, infoY);
+        infoY += 5.5;
+      });
+      y += boxH + 5;
     }
 
-    y += 4;
+    y += 2;
 
-    // Modules section
-    doc.setFillColor(241, 90, 34);
-    doc.rect(col1, y, pageW - 2 * margin, 7, "F");
-    doc.setTextColor(255, 255, 255);
-    doc.setFontSize(9);
-    doc.setFont("helvetica", "bold");
-    doc.text("MODULES", col1 + 3, y + 5);
-    doc.text("SQM", pageW - margin - 60, y + 5, { align: "right" });
-    doc.text("UNIT PRICE", pageW - margin - 20, y + 5, { align: "right" });
-    doc.text("TOTAL", col2, y + 5, { align: "right" });
-    y += 10;
+    // ══════════════════════════════════════
+    // MODULES TABLE
+    // ══════════════════════════════════════
+    sectionHeader("MODULES", "TOTAL");
 
     const moduleGroups = {};
     placedModules.forEach(m => {
@@ -349,44 +393,42 @@ export default function ProjectDetailsModal({
       moduleGroups[key].count += 1;
     });
 
-    doc.setTextColor(30, 30, 30);
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(8.5);
-    let rowAlt = false;
+    rowAltFlag = false;
     Object.values(moduleGroups).forEach(g => {
-      if (rowAlt) {
-        doc.setFillColor(252, 252, 252);
-        doc.rect(col1, y - 2, pageW - 2 * margin, 8, "F");
+      const label = g.count > 1 ? `${g.label}  x${g.count}` : g.label;
+      const sqmStr = `${(g.sqm * g.count).toFixed(1)} m\u00B2`;
+      if (rowAltFlag) {
+        doc.setFillColor(rowBg.r, rowBg.g, rowBg.b);
+        doc.rect(col1, y - 1.5, contentW, 7, "F");
       }
-      rowAlt = !rowAlt;
-      const label = g.count > 1 ? `${g.label} ×${g.count}` : g.label;
-      doc.text(label, col1 + 2, y + 4);
-      doc.text(`${(g.sqm * g.count).toFixed(1)} m²`, pageW - margin - 60, y + 4, { align: "right" });
-      doc.text(`$${g.price.toLocaleString()}`, pageW - margin - 20, y + 4, { align: "right" });
-      doc.text(`$${(g.price * g.count).toLocaleString()}`, col2, y + 4, { align: "right" });
-      y += 8;
+      rowAltFlag = !rowAltFlag;
+      doc.setTextColor(dark.r, dark.g, dark.b);
+      doc.setFontSize(8);
+      doc.setFont("helvetica", "normal");
+      doc.text(label, col1 + 2, y + 3.5);
+      doc.setTextColor(mid.r, mid.g, mid.b);
+      doc.text(sqmStr, col1 + 80, y + 3.5);
+      doc.setTextColor(dark.r, dark.g, dark.b);
+      doc.text(`$${(g.price * g.count).toLocaleString()}`, col2 - 2, y + 3.5, { align: "right" });
+      y += 7;
     });
 
-    doc.setDrawColor(200, 200, 200);
+    // Modules subtotal
+    doc.setDrawColor(210, 210, 210);
     doc.line(col1, y, col2, y);
-    y += 5;
+    y += 4;
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(9);
+    doc.setFontSize(8);
+    doc.setTextColor(dark.r, dark.g, dark.b);
     doc.text("Modules Subtotal", col1 + 2, y + 3);
-    doc.text(`$${cs.modulesTotal.toLocaleString()}`, col2, y + 3, { align: "right" });
-    y += 10;
+    doc.text(`$${cs.modulesTotal.toLocaleString()}`, col2 - 2, y + 3, { align: "right" });
+    y += 9;
 
-    // Walls section
+    // ══════════════════════════════════════
+    // WALL PANELS TABLE
+    // ══════════════════════════════════════
     if (walls.length > 0) {
-      doc.setFillColor(241, 90, 34);
-      doc.rect(col1, y, pageW - 2 * margin, 7, "F");
-      doc.setTextColor(255, 255, 255);
-      doc.setFont("helvetica", "bold");
-      doc.setFontSize(9);
-      doc.text("WALL PANELS", col1 + 3, y + 5);
-      doc.text("FACE", pageW - margin - 40, y + 5, { align: "right" });
-      doc.text("TOTAL", col2, y + 5, { align: "right" });
-      y += 10;
+      sectionHeader("WALL PANELS", "TOTAL");
 
       const wallGroups = {};
       walls.forEach(w => {
@@ -395,48 +437,49 @@ export default function ProjectDetailsModal({
         wallGroups[key].count += 1;
       });
 
-      doc.setTextColor(30, 30, 30);
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(8.5);
-      rowAlt = false;
+      rowAltFlag = false;
       Object.values(wallGroups).forEach(g => {
-        if (rowAlt) {
-          doc.setFillColor(252, 252, 252);
-          doc.rect(col1, y - 2, pageW - 2 * margin, 8, "F");
+        const label = g.count > 1 ? `${g.label}  x${g.count}` : g.label;
+        if (rowAltFlag) {
+          doc.setFillColor(rowBg.r, rowBg.g, rowBg.b);
+          doc.rect(col1, y - 1.5, contentW, 7, "F");
         }
-        rowAlt = !rowAlt;
-        const label = g.count > 1 ? `${g.label} ×${g.count}` : g.label;
-        doc.text(label, col1 + 2, y + 4);
-        doc.text(g.face, pageW - margin - 40, y + 4, { align: "right" });
-        doc.text(`$${(g.price * g.count).toLocaleString()}`, col2, y + 4, { align: "right" });
-        y += 8;
+        rowAltFlag = !rowAltFlag;
+        doc.setTextColor(dark.r, dark.g, dark.b);
+        doc.setFontSize(8);
+        doc.setFont("helvetica", "normal");
+        doc.text(label, col1 + 2, y + 3.5);
+        doc.setTextColor(mid.r, mid.g, mid.b);
+        doc.text(g.face, col1 + 80, y + 3.5);
+        doc.setTextColor(dark.r, dark.g, dark.b);
+        doc.text(`$${(g.price * g.count).toLocaleString()}`, col2 - 2, y + 3.5, { align: "right" });
+        y += 7;
       });
 
-      doc.setDrawColor(200, 200, 200);
+      doc.setDrawColor(210, 210, 210);
       doc.line(col1, y, col2, y);
-      y += 5;
+      y += 4;
       doc.setFont("helvetica", "bold");
-      doc.setFontSize(9);
-      doc.setTextColor(30, 30, 30);
+      doc.setFontSize(8);
+      doc.setTextColor(dark.r, dark.g, dark.b);
       doc.text("Wall Panels Subtotal", col1 + 2, y + 3);
-      doc.text(`$${cs.wallsTotal.toLocaleString()}`, col2, y + 3, { align: "right" });
-      y += 12;
+      doc.text(`$${cs.wallsTotal.toLocaleString()}`, col2 - 2, y + 3, { align: "right" });
+      y += 9;
     }
 
-    // Grand total
-    y += 4;
-
-    // Additional charges section (markup already baked into all values)
+    // ══════════════════════════════════════
+    // SITE, DELIVERY & INSTALLATION
+    // ══════════════════════════════════════
     const additionalItems = [];
     if (cs.sitePrepVal > 0) {
       additionalItems.push({ label: `Site Prep & Foundations (${moduleCount} modules)`, amount: cs.sitePrepBase });
-      if (cs.slopingSurchargePerMod > 0) additionalItems.push({ label: `  ${siteType === "sloping" ? "Sloping" : "Steep"} surcharge (${moduleCount} modules)`, amount: cs.slopingSurchargePerMod });
-      if (cs.slopingSurchargePerHouse > 0) additionalItems.push({ label: `  ${siteType === "sloping" ? "Sloping" : "Steep"} surcharge (per house)`, amount: cs.slopingSurchargePerHouse });
-      if (cs.sitePrepWater > 0) additionalItems.push({ label: "  Water & drainage (per house)", amount: cs.sitePrepWater });
+      if (cs.slopingSurchargePerMod > 0) additionalItems.push({ label: `${siteType === "sloping" ? "Sloping" : "Steep"} surcharge (${moduleCount} modules)`, amount: cs.slopingSurchargePerMod, indent: true });
+      if (cs.slopingSurchargePerHouse > 0) additionalItems.push({ label: `${siteType === "sloping" ? "Sloping" : "Steep"} surcharge`, amount: cs.slopingSurchargePerHouse, indent: true });
+      if (cs.sitePrepWater > 0) additionalItems.push({ label: "Water & drainage", amount: cs.sitePrepWater, indent: true });
     }
     if (cs.deliveryVal > 0) {
-      additionalItems.push({ label: `Delivery (${moduleCount} modules, return trip)`, amount: cs.deliveryVal - cs.ferryCost });
-      if (cs.needsFerry) additionalItems.push({ label: `  Ferry crossing (${moduleCount} modules)`, amount: cs.ferryCost });
+      additionalItems.push({ label: `Transport (${moduleCount} modules)`, amount: cs.deliveryVal - cs.ferryCost });
+      if (cs.needsFerry) additionalItems.push({ label: `Ferry crossing (${moduleCount} modules)`, amount: cs.ferryCost, indent: true });
     }
     if (cs.installVal > 0) {
       additionalItems.push({ label: `Labour (${moduleCount} modules)`, amount: cs.labourVal });
@@ -446,80 +489,82 @@ export default function ProjectDetailsModal({
     }
 
     if (additionalItems.length > 0) {
-      doc.setFillColor(241, 90, 34);
-      doc.rect(col1, y, pageW - 2 * margin, 7, "F");
-      doc.setTextColor(255, 255, 255);
-      doc.setFont("helvetica", "bold");
-      doc.setFontSize(9);
-      doc.text("SITE, DELIVERY & INSTALLATION", col1 + 3, y + 5);
-      doc.text("TOTAL", col2, y + 5, { align: "right" });
-      y += 10;
-
-      doc.setTextColor(30, 30, 30);
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(8.5);
-      rowAlt = false;
+      sectionHeader("SITE, DELIVERY & INSTALLATION", "TOTAL");
+      rowAltFlag = false;
       additionalItems.forEach(item => {
-        if (rowAlt) {
-          doc.setFillColor(252, 252, 252);
-          doc.rect(col1, y - 2, pageW - 2 * margin, 8, "F");
-        }
-        rowAlt = !rowAlt;
-        doc.text(item.label, col1 + 2, y + 4);
-        doc.text(`$${item.amount.toLocaleString()}`, col2, y + 4, { align: "right" });
-        y += 8;
+        dataRow(item.label, `$${item.amount.toLocaleString()}`, item.indent);
       });
-      y += 4;
+      y += 2;
     }
 
-    // Subtotal (markup already included in line items)
-    doc.setDrawColor(200, 200, 200);
+    // ══════════════════════════════════════
+    // TOTALS
+    // ══════════════════════════════════════
+    y += 2;
+    doc.setDrawColor(210, 210, 210);
     doc.line(col1, y, col2, y);
     y += 5;
 
-    // Subtotal
+    // Subtotal excl GST
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(9);
-    doc.setTextColor(30, 30, 30);
+    doc.setFontSize(8.5);
+    doc.setTextColor(dark.r, dark.g, dark.b);
     doc.text("Subtotal (excl. GST)", col1 + 2, y + 3);
-    doc.text(`$${cs.subtotal.toLocaleString()}`, col2, y + 3, { align: "right" });
-    y += 8;
+    doc.text(`$${cs.subtotal.toLocaleString()}`, col2 - 2, y + 3, { align: "right" });
+    y += 7;
 
     // GST
     doc.setFont("helvetica", "normal");
-    doc.setFontSize(8.5);
+    doc.setFontSize(8);
+    doc.setTextColor(mid.r, mid.g, mid.b);
     doc.text(`GST (${cs.gstRateVal}%)`, col1 + 2, y + 3);
-    doc.text(`$${cs.gstAmount.toLocaleString()}`, col2, y + 3, { align: "right" });
-    y += 10;
+    doc.text(`$${cs.gstAmount.toLocaleString()}`, col2 - 2, y + 3, { align: "right" });
+    y += 9;
 
-    // Grand total with GST
-    doc.setFillColor(30, 30, 30);
-    doc.rect(col1, y, pageW - 2 * margin, 14, "F");
+    // Grand total bar
+    doc.setFillColor(brand.r, brand.g, brand.b);
+    doc.rect(col1, y, contentW, 13, "F");
     doc.setTextColor(255, 255, 255);
-    doc.setFontSize(11);
+    doc.setFontSize(10);
     doc.setFont("helvetica", "bold");
-    doc.text("TOTAL ESTIMATE (incl. GST)", col1 + 4, y + 9.5);
-    doc.text(`$${cs.grandTotal.toLocaleString()}`, col2 - 2, y + 9.5, { align: "right" });
-    y += 20;
+    doc.text("TOTAL ESTIMATE (incl. GST)", col1 + 4, y + 8.5);
+    doc.text(`$${cs.grandTotal.toLocaleString()}`, col2 - 4, y + 8.5, { align: "right" });
+    y += 19;
 
     // Summary stats
-    doc.setTextColor(30, 30, 30);
-    doc.setFontSize(8.5);
-    doc.setFont("helvetica", "normal");
-    doc.text(`Total Floor Area: ${totalSqm.toFixed(1)} m²  |  Modules: ${placedModules.length}  |  Wall Panels: ${walls.length}`, col1, y);
-    y += 12;
-
-    // Footer
-    doc.setDrawColor(241, 90, 34);
-    doc.setLineWidth(0.5);
-    doc.line(col1, y, col2, y);
-    y += 5;
-    doc.setTextColor(140, 140, 140);
     doc.setFontSize(7.5);
-    doc.text("This quote is indicative only and subject to final confirmation. Site prep, delivery and installation charges are estimates only.", col1, y);
-    y += 5;
-    doc.text(`© ${new Date().getFullYear()} connectapod. All rights reserved.`, col1, y);
-    doc.text("www.connectapod.com", col2, y, { align: "right" });
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(mid.r, mid.g, mid.b);
+    doc.text(`Total Floor Area: ${totalSqm.toFixed(1)} m\u00B2   |   Modules: ${placedModules.length}   |   Wall Panels: ${walls.length}`, col1, y);
+    y += 10;
+
+    // ══════════════════════════════════════
+    // FOOTER — always at bottom of page
+    // ══════════════════════════════════════
+    const footerY = pageH - 22;
+
+    // Disclaimer
+    doc.setFontSize(7);
+    doc.setFont("helvetica", "italic");
+    doc.setTextColor(light.r, light.g, light.b);
+    doc.text("This estimate is indicative only and subject to final confirmation and site inspection to the satisfaction of connectapod.", col1, footerY);
+
+    // Divider
+    doc.setDrawColor(brand.r, brand.g, brand.b);
+    doc.setLineWidth(0.3);
+    doc.line(col1, footerY + 4, col2, footerY + 4);
+
+    // Copyright + website
+    doc.setFontSize(7);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(light.r, light.g, light.b);
+    doc.text(`\u00A9 ${new Date().getFullYear()} connectapod. All rights reserved.`, col1, footerY + 9);
+    doc.setTextColor(brand.r, brand.g, brand.b);
+    doc.text("www.connectapod.com", col2, footerY + 9, { align: "right" });
+
+    // Bottom bar
+    doc.setFillColor(brand.r, brand.g, brand.b);
+    doc.rect(0, pageH - 3, pageW, 3, "F");
 
     const filename = `connectapod-estimate-${projectName ? projectName.replace(/\s+/g, "-").toLowerCase() + "-" : ""}${Date.now().toString().slice(-6)}.pdf`;
     doc.save(filename);
