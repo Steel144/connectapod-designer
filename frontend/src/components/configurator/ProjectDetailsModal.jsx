@@ -812,25 +812,14 @@ export default function ProjectDetailsModal({
             <X size={14} className="mr-1.5" /> Cancel
           </Button>
           {isEstimate ? (
-            <>
-              <Button
-                onClick={handleGenerateEstimate}
-                disabled={generating || generatingProposal || placedModules.length === 0}
-                variant="outline"
-                className="flex-1 rounded-none border-gray-300 text-gray-600 h-9"
-              >
-                <Download size={14} className="mr-1.5" />
-                {generating ? "Generating..." : "Estimate PDF"}
-              </Button>
-              <Button
-                onClick={handleGenerateProposal}
-                disabled={generating || generatingProposal || placedModules.length === 0}
-                className="flex-1 bg-[#F15A22] hover:bg-[#d94e1a] text-white rounded-none h-9"
-              >
-                <BookOpen size={14} className="mr-1.5" />
-                {generatingProposal ? "Generating..." : "Full Proposal"}
-              </Button>
-            </>
+            <Button
+              onClick={handleGenerateEstimate}
+              disabled={generating || placedModules.length === 0}
+              className="flex-1 bg-[#F15A22] hover:bg-[#d94e1a] text-white rounded-none h-9"
+            >
+              <Download size={14} className="mr-1.5" />
+              {generating ? "Generating..." : "Download PDF"}
+            </Button>
           ) : isSave ? (
             <>
               {saveAsMode ? (
