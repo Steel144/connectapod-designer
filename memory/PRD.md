@@ -11,7 +11,20 @@ Complete migration from the proprietary Base44 platform to a FastAPI + MongoDB +
 
 ## What's Been Implemented
 
-### Admin Pricing Configuration (Completed April 2026)
+### Admin Pricing & Estimate System
+- **Estimate PDF**: Quick pricing-only document (modules, walls, site/delivery/install, totals)
+- **Full Proposal PDF** (April 2026): 9-page branded lookbook incorporating all marketing pillars:
+  - Page 1: Cover with hero image, project name, client name
+  - Page 2: Founder's story (condensed)
+  - Page 3: Design specs + module breakdown + floor plan placeholder
+  - Pages 4-5: Full itemised estimate with markup baked into line items
+  - Page 6: "The No Surprises Guarantee" (Budget, Timeline, Trust, Quality, Communication)
+  - Page 7: 8-step process workflow
+  - Page 8: Team, preferred partners, company values
+  - Page 9: CTA — book a discovery session
+  - Every page: branded footer with disclaimer, copyright, www.connectapod.co.nz, page numbers
+- **Markup hidden from customers**: Markup % applied multiplicatively to costs, never shown separately
+- **Admin vs Customer view**: Admin sees full breakdown; non-admin sees only summary + total
 - **Pricing Config DB** (`pricing_config` collection): Stores admin-editable rates
 - **Admin UI tab**: "Pricing Config" full-page at `/admin/pricing` with grouped sections:
   - Site Prep & Foundations: per-module flat rate, sloping surcharge (per mod + per house), steep surcharge (per mod + per house), water & drainage per house

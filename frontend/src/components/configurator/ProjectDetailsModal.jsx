@@ -4,8 +4,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { FileText, Download, Printer, X } from "lucide-react";
+import { FileText, Download, Printer, X, BookOpen } from "lucide-react";
 import { base44 } from "@/api/base44Client";
+import { generateProposal } from "@/utils/generateProposal";
 
 const STORAGE_KEY = "connectapod_print_details";
 
@@ -233,6 +234,23 @@ export default function ProjectDetailsModal({
   const handlePrint = () => {
     const details = handleSaveDetails();
     onConfirm(details);
+  };
+
+  const [generatingProposal, setGeneratingProposal] = useState(false);
+
+  const handleGenerateProposal = async () => {
+    handleSaveDetails();
+    setGeneratingProposal(true);
+    try {
+      await generateProposal({
+        clientFirstName, clientFamilyName, projectName, phone, email,
+        siteAddress, siteType, placedModules, walls, costSummary, pricingConfig: pricingConfig || {}, moduleCount: placedModules.length,
+      });
+    } catch (err) {
+      console.error("Proposal generation error:", err);
+    }
+    setGeneratingProposal(false);
+    onClose();
   };
 
   const handleGenerateEstimate = async () => {
@@ -794,14 +812,25 @@ export default function ProjectDetailsModal({
             <X size={14} className="mr-1.5" /> Cancel
           </Button>
           {isEstimate ? (
-            <Button
-              onClick={handleGenerateEstimate}
-              disabled={generating || placedModules.length === 0}
-              className="flex-1 bg-[#F15A22] hover:bg-[#d94e1a] text-white rounded-none h-9"
-            >
-              <Download size={14} className="mr-1.5" />
-              {generating ? "Generating..." : "Download PDF"}
-            </Button>
+            <>
+              <Button
+                onClick={handleGenerateEstimate}
+                disabled={generating || generatingProposal || placedModules.length === 0}
+                variant="outline"
+                className="flex-1 rounded-none border-gray-300 text-gray-600 h-9"
+              >
+                <Download size={14} className="mr-1.5" />
+                {generating ? "Generating..." : "Estimate PDF"}
+              </Button>
+              <Button
+                onClick={handleGenerateProposal}
+                disabled={generating || generatingProposal || placedModules.length === 0}
+                className="flex-1 bg-[#F15A22] hover:bg-[#d94e1a] text-white rounded-none h-9"
+              >
+                <BookOpen size={14} className="mr-1.5" />
+                {generatingProposal ? "Generating..." : "Full Proposal"}
+              </Button>
+            </>
           ) : isSave ? (
             <>
               {saveAsMode ? (
