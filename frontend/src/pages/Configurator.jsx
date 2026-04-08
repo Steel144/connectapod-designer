@@ -1377,9 +1377,16 @@ export default function Configurator() {
               { step: 5, label: "SAVE", action: () => setDetailsModalMode('save'), isActive: detailsModalMode === "save", disabled: placedModules.length === 0 },
               { step: 6, label: "SHARE", action: handleShare, isActive: shareModalOpen, disabled: placedModules.length === 0 },
               { step: 7, label: "PRICE", action: () => setDetailsModalMode('estimate'), isActive: detailsModalMode === "estimate", disabled: placedModules.length === 0 },
-              { step: 8, label: "PRINT", action: (e) => {
+              { step: 8, label: "PRINT", action: async (e) => {
                 const rect = e.currentTarget.getBoundingClientRect();
                 setPrintMenuPos({ top: rect.bottom + 4, left: rect.left });
+                // Capture site map screenshot if available
+                if (captureMapScreenshotRef.current) {
+                  try {
+                    const dataUrl = await captureMapScreenshotRef.current();
+                    if (dataUrl) setSiteMapScreenshot(dataUrl);
+                  } catch {}
+                }
                 setPrintMenuOpen(prev => !prev);
               }, disabled: placedModules.length === 0, hasPrintMenu: true },
               { step: 9, label: "ORDER", action: () => {}, disabled: true },
@@ -1539,6 +1546,7 @@ export default function Configurator() {
               setCoordinates={setSiteCoordinates}
               onFloorPlanRendered={setSiteMapFloorPlanImage}
               onScreenshotReady={(fn) => { captureMapScreenshotRef.current = fn; }}
+              onScreenshotCaptured={setSiteMapScreenshot}
               saveDetails={(() => {
                 try {
                   return JSON.parse(localStorage.getItem("connectapod_save_details")) || { projectName: '', clientName: '', address: '' };

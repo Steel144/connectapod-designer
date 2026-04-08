@@ -85,7 +85,7 @@ function MapRefCapture({ mapRef }) {
   return null;
 }
 
-export default function SiteMapView({ design, siteAddress, setSiteAddress, coordinates, setCoordinates, saveDetails, setSaveDetails, onFloorPlanRendered, onScreenshotReady }) {
+export default function SiteMapView({ design, siteAddress, setSiteAddress, coordinates, setCoordinates, saveDetails, setSaveDetails, onFloorPlanRendered, onScreenshotReady, onScreenshotCaptured }) {
   const [mapKey, setMapKey] = useState(() => localStorage.getItem('sitemap_mapkey') ?? 'default');
   const [loading, setLoading] = useState(false);
   const [floorPlanOverlay, setFloorPlanOverlay] = useState(null);
@@ -337,6 +337,16 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
   useEffect(() => {
     if (onScreenshotReady) onScreenshotReady(captureMapScreenshot);
   }, [captureMapScreenshot, onScreenshotReady]);
+
+  // Auto-capture screenshot when map is visible so it's available for printing
+  useEffect(() => {
+    if (!mapContainerRef.current) return;
+    const timer = setTimeout(async () => {
+      const dataUrl = await captureMapScreenshot();
+      if (dataUrl && onScreenshotCaptured) onScreenshotCaptured(dataUrl);
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, [coordinates, captureMapScreenshot]);
 
   // Fetch property boundary from LINZ
   const fetchPropertyBoundary = async (lat, lon) => {

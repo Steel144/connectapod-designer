@@ -528,7 +528,7 @@ export default function ProjectDetailsModal({
       <DialogContent className={`${isEstimate ? 'max-w-3xl' : 'max-w-sm'} rounded-none max-h-[90vh] overflow-y-auto`} aria-describedby="dialog-description">
         <DialogHeader>
           <DialogTitle className="text-base font-bold">
-            {isEstimate ? "Generate Estimate PDF" : isPrint ? `Print ${printMode === "plans" ? "Floor Plan" : "Elevations"}` : isSave ? "Save Design" : ""}
+            {isEstimate ? "Generate Estimate PDF" : isPrint ? `Print ${printMode === "plans" ? "Floor Plan" : printMode === "site-plan" ? "Site Plan" : "Elevations"}` : isSave ? "Save Design" : ""}
           </DialogTitle>
         </DialogHeader>
 
