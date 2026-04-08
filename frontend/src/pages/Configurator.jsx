@@ -34,7 +34,7 @@ const useIsMobile = () => {
 import CombinedElevations from "@/components/configurator/CombinedElevations";
 import DesignMiniPreview from "@/components/configurator/DesignMiniPreview";
 import PrintRouter from "@/components/configurator/PrintRouter";
-import PrintMenu from "@/components/configurator/PrintMenu";
+import { createPortal } from "react-dom";
 import ProjectDetailsModal from "@/components/configurator/ProjectDetailsModal";
 import FurniturePanel, { FURNITURE_ITEMS } from "@/components/configurator/FurniturePanel";
 import { ZoomIn, ZoomOut } from "lucide-react";
@@ -234,6 +234,20 @@ export default function Configurator() {
   const [pendingPrintMode, setPendingPrintMode] = useState(null);
   const [printDetails, setPrintDetails] = useState(null);
   const [detailsModalMode, setDetailsModalMode] = useState(null); // 'estimate' or 'print'
+  const [printMenuOpen, setPrintMenuOpen] = useState(false);
+  const [printMenuPos, setPrintMenuPos] = useState({ top: 0, left: 0 });
+  const printMenuRef = useRef(null);
+
+  useEffect(() => {
+    if (!printMenuOpen) return;
+    const handler = (e) => {
+      if (printMenuRef.current && !printMenuRef.current.contains(e.target)) {
+        setPrintMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [printMenuOpen]);
   const [viewMode, setViewMode] = useState("2d");
   const [siteAddress, setSiteAddress] = useState(() => {
     try { return localStorage.getItem('sitemap_address') ?? ''; } catch { return ''; }
@@ -1363,10 +1377,11 @@ export default function Configurator() {
               { step: 5, label: "SAVE", action: () => setDetailsModalMode('save'), isActive: detailsModalMode === "save", disabled: placedModules.length === 0 },
               { step: 6, label: "SHARE", action: handleShare, isActive: shareModalOpen, disabled: placedModules.length === 0 },
               { step: 7, label: "PRICE", action: () => setDetailsModalMode('estimate'), isActive: detailsModalMode === "estimate", disabled: placedModules.length === 0 },
-              { step: 8, label: "PRINT", action: () => {
-                setPendingPrintMode('plans');
-                setDetailsModalMode('print');
-              }, disabled: placedModules.length === 0 },
+              { step: 8, label: "PRINT", action: (e) => {
+                const rect = e.currentTarget.getBoundingClientRect();
+                setPrintMenuPos({ top: rect.bottom + 4, left: rect.left });
+                setPrintMenuOpen(prev => !prev);
+              }, disabled: placedModules.length === 0, hasPrintMenu: true },
               { step: 9, label: "ORDER", action: () => {}, disabled: true },
             ].map((item, idx, arr) => {
               const isDone = completedSteps.includes(item.step) || item.step < currentStep;
@@ -1375,8 +1390,8 @@ export default function Configurator() {
               const isDisabled = item.disabled;
 
               return (
+                <div key={item.step} className="relative" style={{ marginLeft: idx === 0 ? 0 : -5 }}>
                 <button
-                  key={item.step}
                   onClick={!isDisabled ? item.action : undefined}
                   disabled={isDisabled}
                   data-testid={`step-btn-${item.step}`}
@@ -1390,7 +1405,6 @@ export default function Configurator() {
                     clipPath: idx === 0
                       ? "polygon(0 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 0 100%)"
                       : "polygon(0 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 0 100%, 10px 50%)",
-                    marginLeft: idx === 0 ? 0 : -5,
                     opacity: isDisabled ? 0.5 : isFuture ? 0.75 : 1,
                     cursor: isDisabled ? "default" : "pointer",
                   }}
@@ -1401,6 +1415,35 @@ export default function Configurator() {
                   </span>
                   <span className="text-[11px] font-bold tracking-wide whitespace-nowrap">{item.label}</span>
                 </button>
+                {item.hasPrintMenu && printMenuOpen && createPortal(
+                  <div
+                    ref={printMenuRef}
+                    className="fixed w-40 bg-white border border-gray-200 shadow-lg z-[9999]"
+                    style={{ top: `${printMenuPos.top}px`, left: `${printMenuPos.left}px` }}
+                  >
+                    {[
+                      { label: "Floor Plans", value: "plans" },
+                      { label: "Elevations", value: "all-elevations" },
+                      { label: "Site Plan", value: "site-plan" },
+                    ].map(opt => (
+                      <button
+                        key={opt.value}
+                        data-testid={`print-option-${opt.value}`}
+                        onMouseDown={(e) => {
+                          e.preventDefault();
+                          setPendingPrintMode(opt.value);
+                          setDetailsModalMode('print');
+                          setPrintMenuOpen(false);
+                        }}
+                        className="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-50 border-b border-gray-100 last:border-b-0"
+                      >
+                        {opt.label}
+                      </button>
+                    ))}
+                  </div>,
+                  document.body
+                )}
+                </div>
               );
             })}
           </div>
