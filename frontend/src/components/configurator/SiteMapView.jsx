@@ -338,15 +338,28 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
     if (onScreenshotReady) onScreenshotReady(captureMapScreenshot);
   }, [captureMapScreenshot, onScreenshotReady]);
 
-  // Auto-capture screenshot when map is visible so it's available for printing
+  // Auto-capture screenshot when map tiles finish loading
   useEffect(() => {
-    if (!mapContainerRef.current) return;
-    const timer = setTimeout(async () => {
-      const dataUrl = await captureMapScreenshot();
-      if (dataUrl && onScreenshotCaptured) onScreenshotCaptured(dataUrl);
-    }, 2000);
-    return () => clearTimeout(timer);
-  }, [coordinates, captureMapScreenshot]);
+    if (!mapRef.current || !coordinates || !onScreenshotCaptured) return;
+    const map = mapRef.current;
+    let captured = false;
+    const doCapture = async () => {
+      if (captured) return;
+      // Wait for tiles to render into DOM
+      await new Promise(r => setTimeout(r, 1500));
+      if (!mapContainerRef.current) return;
+      try {
+        const dataUrl = await captureMapScreenshot();
+        if (dataUrl) { captured = true; onScreenshotCaptured(dataUrl); }
+      } catch {}
+    };
+    // Capture on initial load and on any view change
+    map.whenReady(() => setTimeout(doCapture, 1000));
+    map.on('moveend', doCapture);
+    // Fallback timer
+    const fallback = setTimeout(doCapture, 5000);
+    return () => { map.off('moveend', doCapture); clearTimeout(fallback); };
+  }, [coordinates, onScreenshotCaptured, captureMapScreenshot]);
 
   // Fetch property boundary from LINZ
   const fetchPropertyBoundary = async (lat, lon) => {
