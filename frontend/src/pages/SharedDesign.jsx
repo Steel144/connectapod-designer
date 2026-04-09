@@ -127,19 +127,16 @@ export default function SharedDesign() {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between" data-testid="shared-design-header">
-        <div className="flex items-center gap-4">
-          <Link to="/Configurator" className="text-gray-400 hover:text-[#F15A22] transition-colors" data-testid="shared-design-back-link">
-            <ArrowLeft size={20} />
-          </Link>
-          <div>
-            <h1 className="text-base font-bold text-gray-800" data-testid="shared-design-name">{design.name}</h1>
-            {design.clientFirstName && (
-              <p className="text-xs text-gray-400">{design.clientFirstName} {design.clientFamilyName}</p>
-            )}
-          </div>
+      <div className="bg-white border-b border-gray-200 px-6 py-4 flex items-center gap-4" data-testid="shared-design-header">
+        <Link to="/Configurator" className="text-gray-400 hover:text-[#F15A22] transition-colors" data-testid="shared-design-back-link">
+          <ArrowLeft size={20} />
+        </Link>
+        <div>
+          <h1 className="text-xl font-bold text-gray-900 tracking-tight" data-testid="shared-design-name">{design.name}</h1>
+          {design.clientFirstName && (
+            <p className="text-sm text-gray-500">{design.clientFirstName} {design.clientFamilyName}</p>
+          )}
         </div>
-        <img src={LOGO_URL} alt="Connectapod" style={{ height: "22px" }} />
       </div>
 
       {/* Tab Bar */}
