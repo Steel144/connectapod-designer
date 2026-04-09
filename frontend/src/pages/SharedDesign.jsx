@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { ZoomIn, ZoomOut, ArrowLeft, Home, Maximize2 } from "lucide-react";
+import { ZoomIn, ZoomOut, Home, Download } from "lucide-react";
+import { jsPDF } from "jspdf";
 import { useElevationGeometry } from "@/hooks/useElevationGeometry";
 import VerticalElevation from "@/components/configurator/VerticalElevation";
 import HorizontalElevation from "@/components/configurator/HorizontalElevation";
@@ -10,10 +11,11 @@ const API_BASE = "/api";
 const CELL_M = 0.6;
 const PX_PER_M = 100;
 const WALL_H_M = 4.2;
+const LOGO_URL = "https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/1a43e85d2_Connectapod-01.png";
 
 export default function SharedDesign() {
   const { shareId } = useParams();
-  const [activeTab, setActiveTab] = useState("floor-plan");
+  const [activeTab, setActiveTab] = useState("title");
   const [zoom, setZoom] = useState(50);
 
   const { data: design, isLoading, error } = useQuery({
@@ -25,7 +27,6 @@ export default function SharedDesign() {
     },
   });
 
-  // Fetch wall images and floor plan images for rendering
   const { data: wallImagesList = [] } = useQuery({
     queryKey: ["wallImages"],
     queryFn: async () => {
@@ -60,7 +61,6 @@ export default function SharedDesign() {
     return map;
   }, [floorPlanImagesList]);
 
-  // Hydrate modules and walls with images
   const placedModules = useMemo(() => {
     if (!design?.grid) return [];
     return design.grid.map(m => ({
@@ -82,7 +82,6 @@ export default function SharedDesign() {
 
   const furniture = design?.furniture || [];
 
-  // Elevation geometry
   const { minX, maxX, allMinY, allMaxY, wElevation, yElevation, zElevation, xElevation } = useElevationGeometry(placedModules, walls);
 
   const scale = zoom / 100;
@@ -119,9 +118,10 @@ export default function SharedDesign() {
   const estimatedPrice = design.estimatedPrice || 0;
 
   const tabs = [
+    { id: "title", label: "Overview" },
     { id: "floor-plan", label: "Floor Plan" },
     { id: "elevations", label: "Elevations" },
-    { id: "summary", label: "Summary" },
+    { id: "summary", label: "Pricing & Summary" },
   ];
 
   return (
@@ -129,7 +129,7 @@ export default function SharedDesign() {
       {/* Header */}
       <div className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between" data-testid="shared-design-header">
         <div className="flex items-center gap-4">
-          <img src="https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/1a43e85d2_Connectapod-01.png" alt="Connectapod" style={{ height: "22px" }} />
+          <img src={LOGO_URL} alt="Connectapod" style={{ height: "22px" }} />
           <div className="h-6 w-px bg-gray-200" />
           <div>
             <h1 className="text-base font-bold text-gray-800" data-testid="shared-design-name">{design.name}</h1>
@@ -163,6 +163,9 @@ export default function SharedDesign() {
 
       {/* Content */}
       <div className="flex-1 overflow-auto">
+        {activeTab === "title" && (
+          <TitlePage design={design} modules={placedModules} walls={walls} totalSqm={totalSqm} estimatedPrice={estimatedPrice} />
+        )}
         {activeTab === "floor-plan" && (
           <FloorPlanView modules={placedModules} walls={walls} furniture={furniture} />
         )}
@@ -194,50 +197,226 @@ export default function SharedDesign() {
   );
 }
 
+/* ── Title / Overview Page ── */
+function TitlePage({ design, modules, walls, totalSqm, estimatedPrice }) {
+  const deckModules = modules.filter(m => {
+    const label = (m.label || m.groupKey || m.type || "").toLowerCase();
+    return label.includes("deck") || label.includes("soffit");
+  });
+  const internalModules = modules.filter(m => {
+    const label = (m.label || m.groupKey || m.type || "").toLowerCase();
+    return !label.includes("deck") && !label.includes("soffit");
+  });
+  const deckSqm = deckModules.reduce((s, m) => s + (m.sqm || 0), 0);
+  const internalSqm = internalModules.reduce((s, m) => s + (m.sqm || 0), 0);
+  const fullClientName = [design.clientFirstName, design.clientFamilyName].filter(Boolean).join(" ");
+  const dateStr = design.created_date ? new Date(design.created_date).toLocaleDateString("en-NZ", { day: "2-digit", month: "long", year: "numeric" }) : new Date().toLocaleDateString("en-NZ", { day: "2-digit", month: "long", year: "numeric" });
+
+  return (
+    <div className="flex items-center justify-center py-12 px-4" data-testid="shared-title-page">
+      <div className="bg-white shadow-lg border border-gray-200 w-full max-w-2xl">
+        {/* Brand header bar */}
+        <div className="bg-[#F15A22] px-8 py-1.5" />
+        <div className="px-8 pt-8 pb-6 flex items-center justify-between border-b border-gray-100">
+          <img src="https://media.base44.com/images/public/69a55c0c222e61cb3fbc417c/1a43e85d2_Connectapod-01.png" alt="Connectapod" style={{ height: "30px" }} />
+          <div className="text-right">
+            <p className="text-[10px] text-[#F15A22] font-semibold">www.connectapod.co.nz</p>
+            <p className="text-[10px] text-gray-400">hello@connectapod.co.nz &middot; 022 396 2657</p>
+          </div>
+        </div>
+
+        {/* Title */}
+        <div className="px-8 py-10 border-b border-gray-100">
+          <p className="text-[10px] text-gray-400 uppercase tracking-widest font-semibold mb-2">Design Proposal</p>
+          <h2 className="text-3xl font-bold text-gray-900 mb-1" data-testid="title-design-name">{design.projectName || design.name}</h2>
+          {fullClientName && <p className="text-sm text-gray-500">Prepared for {fullClientName}</p>}
+          <p className="text-xs text-gray-400 mt-2">{dateStr}</p>
+        </div>
+
+        {/* Key details grid */}
+        <div className="px-8 py-6 grid grid-cols-2 gap-x-8 gap-y-4 border-b border-gray-100">
+          {design.siteAddress && (
+            <div>
+              <p className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold mb-1">Site Address</p>
+              <p className="text-sm text-gray-700" data-testid="title-site-address">{design.siteAddress}</p>
+            </div>
+          )}
+          {fullClientName && (
+            <div>
+              <p className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold mb-1">Client</p>
+              <p className="text-sm text-gray-700">{fullClientName}</p>
+              {design.email && <p className="text-xs text-gray-400">{design.email}</p>}
+              {design.phone && <p className="text-xs text-gray-400">{design.phone}</p>}
+            </div>
+          )}
+          <div>
+            <p className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold mb-1">Modules</p>
+            <p className="text-sm text-gray-700">{modules.length} modules</p>
+          </div>
+          <div>
+            <p className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold mb-1">Wall Panels</p>
+            <p className="text-sm text-gray-700">{walls.length} panels</p>
+          </div>
+          <div>
+            <p className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold mb-1">Internal Floor Area</p>
+            <p className="text-sm text-gray-700">{internalSqm.toFixed(1)} m&sup2;</p>
+          </div>
+          <div>
+            <p className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold mb-1">Deck Area</p>
+            <p className="text-sm text-gray-700">{deckSqm.toFixed(1)} m&sup2;</p>
+          </div>
+          <div>
+            <p className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold mb-1">Total Area</p>
+            <p className="text-sm font-semibold text-gray-900">{totalSqm.toFixed(1)} m&sup2;</p>
+          </div>
+          {estimatedPrice > 0 && (
+            <div>
+              <p className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold mb-1">Building Estimate</p>
+              <p className="text-lg font-bold text-[#F15A22]">${estimatedPrice.toLocaleString()}</p>
+            </div>
+          )}
+        </div>
+
+        {/* Disclaimer */}
+        <div className="px-8 py-4 bg-gray-50">
+          <p className="text-[10px] text-gray-400 leading-relaxed">
+            This document is indicative only and subject to final confirmation and site inspection to the satisfaction of connectapod.
+            &copy; {new Date().getFullYear()} Connectapod Ltd. All rights reserved.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ── Floor Plan View ── */
 function FloorPlanView({ modules, walls, furniture }) {
   if (modules.length === 0) {
     return <div className="flex items-center justify-center h-96 text-gray-400">No modules in this design</div>;
   }
 
-  const minX = Math.min(...modules.map(m => m.x));
-  const maxX = Math.max(...modules.map(m => m.x + m.w));
-  const minY = Math.min(...modules.map(m => m.y));
-  const maxY = Math.max(...modules.map(m => m.y + m.h));
-  const gridW = maxX - minX;
-  const gridH = maxY - minY;
-  const cellSize = Math.min(600 / gridW, 500 / gridH, 40);
+  let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+  modules.forEach(m => {
+    minX = Math.min(minX, m.x); maxX = Math.max(maxX, m.x + m.w);
+    minY = Math.min(minY, m.y); maxY = Math.max(maxY, m.y + m.h);
+  });
+  walls.forEach(w => {
+    minX = Math.min(minX, w.x); maxX = Math.max(maxX, w.x + (w.orientation === "horizontal" ? w.length : w.thickness || 0.5));
+    minY = Math.min(minY, w.y); maxY = Math.max(maxY, w.y + (w.orientation === "vertical" ? w.length : w.thickness || 0.5));
+  });
+  furniture.forEach(f => {
+    const fw = (f.width || 1.4) / CELL_M;
+    const fd = (f.depth || 2.0) / CELL_M;
+    minX = Math.min(minX, f.x - fw / 2); maxX = Math.max(maxX, f.x + fw / 2);
+    minY = Math.min(minY, f.y - fd / 2); maxY = Math.max(maxY, f.y + fd / 2);
+  });
+
+  const pad = 2;
+  const gridW = maxX - minX + pad * 2;
+  const gridH = maxY - minY + pad * 2;
+  const cellSize = Math.min(800 / gridW, 600 / gridH, 50);
+  const svgW = gridW * cellSize;
+  const svgH = gridH * cellSize;
+  const ox = pad;
+  const oy = pad;
 
   return (
-    <div className="p-8 flex justify-center" data-testid="shared-floor-plan">
-      <div className="bg-white shadow-sm border border-gray-200 p-8 inline-block">
-        <div style={{ position: "relative", width: gridW * cellSize, height: gridH * cellSize }}>
-          {modules.map((m, i) => (
-            <div
-              key={m.id || i}
-              style={{
-                position: "absolute",
-                left: (m.x - minX) * cellSize,
-                top: (m.y - minY) * cellSize,
-                width: m.w * cellSize,
-                height: m.h * cellSize,
-                backgroundColor: m.color || "#FDF0EB",
-                border: `2px solid ${m.border || "#F15A22"}`,
-                overflow: "hidden",
-              }}
-            >
-              {m.floorPlanImage && (
-                <img src={m.floorPlanImage} alt="" className="w-full h-full object-fill" style={{ transform: m.flipped ? "scaleX(-1)" : m.rotation === 180 ? "rotate(180deg)" : undefined }} />
-              )}
-              {!m.floorPlanImage && (
-                <div className="w-full h-full flex items-center justify-center">
-                  <span className="text-[8px] text-gray-400 text-center px-1 leading-tight">{m.label || m.type || ""}</span>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
+    <div className="p-8 flex flex-col items-center gap-4" data-testid="shared-floor-plan">
+      <div className="bg-white shadow-sm border border-gray-200 p-4 inline-block overflow-auto">
+        <svg width={svgW} height={svgH} viewBox={`0 0 ${svgW} ${svgH}`} style={{ maxWidth: "100%" }}>
+          {/* Grid */}
+          <defs>
+            <pattern id="shared-grid" width={cellSize} height={cellSize} patternUnits="userSpaceOnUse">
+              <path d={`M ${cellSize} 0 L 0 0 0 ${cellSize}`} fill="none" stroke="#e5e7eb" strokeWidth="0.5" />
+            </pattern>
+          </defs>
+          <rect width={svgW} height={svgH} fill="white" />
+          <rect width={svgW} height={svgH} fill="url(#shared-grid)" />
+
+          {/* Walls */}
+          {walls.map((wall) => {
+            const wallW = wall.orientation === "horizontal" ? wall.length * cellSize : (wall.thickness || 0.5) * cellSize;
+            const wallH = wall.orientation === "vertical" ? wall.length * cellSize : (wall.thickness || 0.5) * cellSize;
+            const wx = (wall.x - minX + ox) * cellSize;
+            const wy = (wall.y - minY + oy) * cellSize;
+            return (
+              <g key={wall.id}>
+                <rect x={wx} y={wy} width={wallW} height={wallH} fill="#4B5563" stroke="#2d3748" strokeWidth="1" />
+                {wall.elevationImage && <image x={wx + 1} y={wy + 1} width={wallW - 2} height={wallH - 2} href={wall.elevationImage} preserveAspectRatio="xMidYMid slice" />}
+              </g>
+            );
+          })}
+
+          {/* Modules */}
+          {modules.map((mod) => {
+            const x = (mod.x - minX + ox) * cellSize;
+            const y = (mod.y - minY + oy) * cellSize;
+            const w = mod.w * cellSize;
+            const h = mod.h * cellSize;
+            const rotation = mod.rotation || 0;
+            const t = [`translate(${x + w / 2}, ${y + h / 2})`, `rotate(${rotation})`, mod.flipped ? "scale(-1, 1)" : "", `translate(${-w / 2}, ${-h / 2})`].filter(Boolean).join(" ");
+            return (
+              <g key={mod.id}>
+                <g transform={t}>
+                  <rect x={0} y={0} width={w} height={h} fill="white" stroke="#111" strokeWidth="2" />
+                  {mod.floorPlanImage && (
+                    <image x={0} y={0} width={w} height={h} href={mod.floorPlanImage} preserveAspectRatio="xMidYMid slice" />
+                  )}
+                  {!mod.floorPlanImage && (
+                    <text x={w / 2} y={h / 2 + 3} textAnchor="middle" fontSize="8" fontWeight="bold" fill="#999">{mod.label || mod.type || ""}</text>
+                  )}
+                </g>
+              </g>
+            );
+          })}
+
+          {/* Furniture */}
+          {furniture.map((f) => {
+            const fw = ((f.width || 1.4) / CELL_M) * cellSize;
+            const fd = ((f.depth || 2.0) / CELL_M) * cellSize;
+            const fx = (f.x - minX + ox) * cellSize;
+            const fy = (f.y - minY + oy) * cellSize;
+            const t = [`translate(${fx + fw / 2}, ${fy + fd / 2})`, `rotate(${f.rotation || 0})`, f.flipped ? "scale(-1, 1)" : "", `translate(${-fw / 2}, ${-fd / 2})`].filter(Boolean).join(" ");
+            return (
+              <g key={f.id} transform={t}>
+                {f.image ? (
+                  <image x={0} y={0} width={fw} height={fd} href={f.image} preserveAspectRatio="xMidYMid meet" />
+                ) : (
+                  <>
+                    <rect x={0} y={0} width={fw} height={fd} fill="#FFE4DB" fillOpacity="0.6" stroke="#F15A22" strokeWidth="0.5" strokeDasharray="2,2" />
+                    <text x={fw / 2} y={fd / 2 + 3} textAnchor="middle" fontSize="7" fill="#F15A22">{f.label || f.type}</text>
+                  </>
+                )}
+              </g>
+            );
+          })}
+
+          {/* Dimension annotations for modules */}
+          {modules.map((mod) => {
+            const x = (mod.x - minX + ox) * cellSize;
+            const y = (mod.y - minY + oy) * cellSize;
+            const w = mod.w * cellSize;
+            const h = mod.h * cellSize;
+            const widthM = (mod.w * CELL_M).toFixed(1);
+            const depthM = (mod.h * CELL_M).toFixed(1);
+            return (
+              <g key={`dim-${mod.id}`}>
+                {/* Width dimension - top */}
+                <line x1={x} y1={y - 6} x2={x + w} y2={y - 6} stroke="#999" strokeWidth="0.6" />
+                <line x1={x} y1={y - 10} x2={x} y2={y - 2} stroke="#999" strokeWidth="0.4" />
+                <line x1={x + w} y1={y - 10} x2={x + w} y2={y - 2} stroke="#999" strokeWidth="0.4" />
+                <text x={x + w / 2} y={y - 8} textAnchor="middle" fontSize="7" fill="#666" fontWeight="500">{widthM}m</text>
+                {/* Depth dimension - left */}
+                <line x1={x - 6} y1={y} x2={x - 6} y2={y + h} stroke="#999" strokeWidth="0.6" />
+                <line x1={x - 10} y1={y} x2={x - 2} y2={y} stroke="#999" strokeWidth="0.4" />
+                <line x1={x - 10} y1={y + h} x2={x - 2} y2={y + h} stroke="#999" strokeWidth="0.4" />
+                <text x={x - 8} y={y + h / 2 + 2} textAnchor="middle" fontSize="7" fill="#666" fontWeight="500" transform={`rotate(-90, ${x - 8}, ${y + h / 2 + 2})`}>{depthM}m</text>
+              </g>
+            );
+          })}
+        </svg>
       </div>
+      <p className="text-[10px] text-gray-400">Scale: 1 cell = {CELL_M}m &middot; Dimensions shown in metres</p>
     </div>
   );
 }
@@ -266,7 +445,6 @@ function ElevationsView({ placedModules, walls, customWalls, zoom, setZoom, scal
       </div>
       <div className="overflow-x-auto pb-8">
         <div style={{ display: "inline-block", minWidth: "max-content" }}>
-          {/* Z & X */}
           <div style={{ display: "inline-block", marginBottom: 40, verticalAlign: "top" }}>
             <div style={{ display: "inline-block", marginRight: 16, verticalAlign: "top" }}>
               <VerticalElevation layers={zElevation} label="Z — West Elevation" color="#f59e0b" totalDepthCells={totalDepthCells} endElevationHPx={endElevationHPx} scale={scale} CELL_M={CELL_M} PX_PER_M={PX_PER_M} WALL_H_M={WALL_H_M} slotOffsets={{ 1: 0, 2: 0, 3: 0 }} labelMap={labelMapZ} />
@@ -275,7 +453,6 @@ function ElevationsView({ placedModules, walls, customWalls, zoom, setZoom, scal
               <VerticalElevation layers={xElevation} label="X — East Elevation" color="#ef4444" totalDepthCells={totalDepthCells} endElevationHPx={endElevationHPx} scale={scale} CELL_M={CELL_M} PX_PER_M={PX_PER_M} WALL_H_M={WALL_H_M} slotOffsets={{ 1: 0, 2: 0, 3: 0 }} labelMap={labelMapX} />
             </div>
           </div>
-          {/* W & Y */}
           <HorizontalElevation layers={wElevation} label="W — North Elevation" color="#22c55e" totalWidthPx={totalWidthPx} wallHPx={wallHPx} scale={scale} CELL_M={CELL_M} PX_PER_M={PX_PER_M} flip={true} />
           <HorizontalElevation layers={yElevation} label="Y — South Elevation" color="#3b82f6" totalWidthPx={totalWidthPx} wallHPx={wallHPx} scale={scale} CELL_M={CELL_M} PX_PER_M={PX_PER_M} />
         </div>
@@ -284,9 +461,8 @@ function ElevationsView({ placedModules, walls, customWalls, zoom, setZoom, scal
   );
 }
 
-/* ── Summary View ── */
+/* ── Summary / Pricing View ── */
 function SummaryView({ design, modules, walls, totalSqm, estimatedPrice }) {
-  // Calculate deck vs internal
   const deckModules = modules.filter(m => {
     const label = (m.label || m.groupKey || m.type || "").toLowerCase();
     return label.includes("deck") || label.includes("soffit");
@@ -298,45 +474,152 @@ function SummaryView({ design, modules, walls, totalSqm, estimatedPrice }) {
   const deckSqm = deckModules.reduce((s, m) => s + (m.sqm || 0), 0);
   const internalSqm = internalModules.reduce((s, m) => s + (m.sqm || 0), 0);
 
-  const rows = [
-    { label: "Modules", value: modules.length },
-    { label: "Walls", value: walls.length },
-    { label: "Internal Floor Area", value: `${internalSqm.toFixed(1)} m²` },
-    { label: "Deck Area", value: `${deckSqm.toFixed(1)} m²` },
-    { label: "Total Area", value: `${totalSqm.toFixed(1)} m²` },
-  ];
+  const modulesTotal = modules.reduce((s, m) => s + (m.price || 0), 0);
+  const wallsTotal = walls.reduce((s, w) => s + (w.price || 0), 0);
+  const buildingSubtotal = modulesTotal + wallsTotal;
+
+  const moduleGroups = {};
+  modules.forEach(mod => {
+    const k = mod.label || mod.type;
+    if (!moduleGroups[k]) moduleGroups[k] = { label: k, sqm: mod.sqm || 0, price: mod.price || 0, count: 0 };
+    moduleGroups[k].count += 1;
+  });
+
+  const wallGroups = {};
+  walls.forEach(w => {
+    const k = w.label || w.type;
+    if (!wallGroups[k]) wallGroups[k] = { label: k, face: w.face || "-", price: w.price || 0, count: 0 };
+    wallGroups[k].count += 1;
+  });
+
+  const fullClientName = [design.clientFirstName, design.clientFamilyName].filter(Boolean).join(" ");
 
   return (
-    <div className="p-8 max-w-xl mx-auto" data-testid="shared-summary">
-      <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wider mb-6">Design Summary</h2>
-      <div className="bg-white border border-gray-200 shadow-sm divide-y divide-gray-100">
-        <div className="px-5 py-4">
-          <h3 className="text-lg font-bold text-gray-900">{design.name}</h3>
-          {design.siteAddress && <p className="text-xs text-gray-400 mt-1">{design.siteAddress}</p>}
+    <div className="p-8 max-w-3xl mx-auto space-y-6" data-testid="shared-summary">
+      {/* Project info banner */}
+      <div className="bg-white border border-gray-200 shadow-sm px-6 py-5">
+        <div className="flex items-start justify-between mb-4">
+          <div>
+            <h2 className="text-lg font-bold text-gray-900" data-testid="summary-design-name">{design.projectName || design.name}</h2>
+            {fullClientName && <p className="text-sm text-gray-500 mt-0.5">{fullClientName}</p>}
+          </div>
+          {estimatedPrice > 0 && (
+            <div className="text-right">
+              <p className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold">Building Estimate</p>
+              <p className="text-xl font-bold text-[#F15A22]">${estimatedPrice.toLocaleString()}</p>
+            </div>
+          )}
         </div>
-        {rows.map(row => (
-          <div key={row.label} className="px-5 py-3 flex items-center justify-between">
-            <span className="text-sm text-gray-600">{row.label}</span>
-            <span className="text-sm font-semibold text-gray-900">{row.value}</span>
-          </div>
-        ))}
-        {estimatedPrice > 0 && (
-          <div className="px-5 py-4 flex items-center justify-between bg-gray-50">
-            <span className="text-sm font-medium text-gray-700">Estimated Price</span>
-            <span className="text-lg font-bold text-[#F15A22]">${(estimatedPrice / 1000).toFixed(0)}k</span>
-          </div>
-        )}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-3 border-t border-gray-100">
+          {design.siteAddress && (
+            <div className="col-span-2">
+              <p className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold">Site Address</p>
+              <p className="text-xs text-gray-700 mt-0.5" data-testid="summary-site-address">{design.siteAddress}</p>
+            </div>
+          )}
+          {design.email && (
+            <div>
+              <p className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold">Email</p>
+              <p className="text-xs text-gray-700 mt-0.5">{design.email}</p>
+            </div>
+          )}
+          {design.phone && (
+            <div>
+              <p className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold">Phone</p>
+              <p className="text-xs text-gray-700 mt-0.5">{design.phone}</p>
+            </div>
+          )}
+        </div>
       </div>
-      {/* Module breakdown */}
-      <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider mt-8 mb-3">Module Breakdown</h3>
-      <div className="bg-white border border-gray-200 shadow-sm divide-y divide-gray-100">
-        {modules.map((m, i) => (
-          <div key={m.id || i} className="px-5 py-2.5 flex items-center justify-between">
-            <span className="text-xs text-gray-700">{m.label || m.type || `Module ${i + 1}`}</span>
-            <span className="text-xs text-gray-500">{(m.sqm || 0).toFixed(1)} m²</span>
+
+      {/* Area Summary */}
+      <div className="bg-white border border-gray-200 shadow-sm">
+        <div className="px-5 py-3 border-b border-gray-100 bg-gray-50">
+          <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Area Summary</p>
+        </div>
+        <div className="divide-y divide-gray-100">
+          <div className="px-5 py-3 flex items-center justify-between">
+            <span className="text-sm text-gray-600">Internal Floor Area</span>
+            <span className="text-sm font-semibold text-gray-900">{internalSqm.toFixed(1)} m&sup2;</span>
           </div>
-        ))}
+          <div className="px-5 py-3 flex items-center justify-between">
+            <span className="text-sm text-gray-600">Deck Area</span>
+            <span className="text-sm font-semibold text-gray-900">{deckSqm.toFixed(1)} m&sup2;</span>
+          </div>
+          <div className="px-5 py-3 flex items-center justify-between bg-gray-50">
+            <span className="text-sm font-medium text-gray-700">Total Area</span>
+            <span className="text-sm font-bold text-gray-900">{totalSqm.toFixed(1)} m&sup2;</span>
+          </div>
+        </div>
       </div>
+
+      {/* Module Breakdown */}
+      <div className="bg-white border border-gray-200 shadow-sm">
+        <div className="px-5 py-3 border-b border-gray-100 bg-gray-50 flex items-center justify-between">
+          <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Modules ({modules.length})</p>
+          <p className="text-xs font-bold text-gray-500">${modulesTotal.toLocaleString()}</p>
+        </div>
+        <div className="divide-y divide-gray-100">
+          {Object.values(moduleGroups).map(g => (
+            <div key={g.label} className="px-5 py-2.5 flex items-center justify-between">
+              <span className="text-xs text-gray-700">{g.count > 1 ? `${g.label} x${g.count}` : g.label}</span>
+              <div className="flex items-center gap-4">
+                <span className="text-xs text-gray-400">{(g.sqm * g.count).toFixed(1)} m&sup2;</span>
+                <span className="text-xs font-medium text-gray-700 w-20 text-right">${(g.price * g.count).toLocaleString()}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Wall Breakdown */}
+      {walls.length > 0 && (
+        <div className="bg-white border border-gray-200 shadow-sm">
+          <div className="px-5 py-3 border-b border-gray-100 bg-gray-50 flex items-center justify-between">
+            <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Wall Panels ({walls.length})</p>
+            <p className="text-xs font-bold text-gray-500">${wallsTotal.toLocaleString()}</p>
+          </div>
+          <div className="divide-y divide-gray-100">
+            {Object.values(wallGroups).map(g => (
+              <div key={g.label} className="px-5 py-2.5 flex items-center justify-between">
+                <span className="text-xs text-gray-700">{g.count > 1 ? `${g.label} x${g.count}` : g.label}</span>
+                <div className="flex items-center gap-4">
+                  <span className="text-xs text-gray-400">{g.face}</span>
+                  <span className="text-xs font-medium text-gray-700 w-20 text-right">${(g.price * g.count).toLocaleString()}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Totals */}
+      <div className="bg-white border border-gray-200 shadow-sm">
+        <div className="px-5 py-3 border-b border-gray-100 bg-gray-50">
+          <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Building Total</p>
+        </div>
+        <div className="divide-y divide-gray-100">
+          <div className="px-5 py-3 flex items-center justify-between">
+            <span className="text-sm text-gray-600">Modules Subtotal</span>
+            <span className="text-sm text-gray-700">${modulesTotal.toLocaleString()}</span>
+          </div>
+          {wallsTotal > 0 && (
+            <div className="px-5 py-3 flex items-center justify-between">
+              <span className="text-sm text-gray-600">Wall Panels Subtotal</span>
+              <span className="text-sm text-gray-700">${wallsTotal.toLocaleString()}</span>
+            </div>
+          )}
+          <div className="px-5 py-4 flex items-center justify-between bg-[#FDF5F0]">
+            <span className="text-sm font-bold text-gray-900">Building Estimate (excl. site costs)</span>
+            <span className="text-lg font-bold text-[#F15A22]">${buildingSubtotal.toLocaleString()}</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Disclaimer */}
+      <p className="text-[10px] text-gray-400 leading-relaxed px-2">
+        This estimate is for the building components only (modules and wall panels). Site preparation, delivery, installation, and GST are not included and will be calculated separately based on site conditions and location. This estimate is indicative only and subject to final confirmation and site inspection to the satisfaction of connectapod. &copy; {new Date().getFullYear()} Connectapod Ltd.
+      </p>
     </div>
   );
 }

@@ -286,6 +286,9 @@ async def create_shared_design(data: Dict[str, Any] = Body(...)):
         "clientFirstName": data.get("clientFirstName", ""),
         "clientFamilyName": data.get("clientFamilyName", ""),
         "siteAddress": data.get("siteAddress", ""),
+        "email": data.get("email", ""),
+        "phone": data.get("phone", ""),
+        "projectName": data.get("projectName", ""),
         "created_date": datetime.utcnow(),
     }
     doc_to_insert = doc.copy()
