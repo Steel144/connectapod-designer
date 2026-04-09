@@ -8,6 +8,7 @@ import DesignSummary from "@/components/configurator/DesignSummary";
 import SaveDesignModal from "@/components/configurator/SaveDesignModal";
 import StepIndicator from "@/components/configurator/StepIndicator";
 import GuidedTooltip from "@/components/configurator/GuidedTooltip";
+import OnboardingTour, { resetTour } from "@/components/configurator/OnboardingTour";
 import SaveAsTemplateModal from "@/components/configurator/SaveAsTemplateModal";
 import { toast } from "sonner";
 import { Link, useLocation } from "react-router-dom";
@@ -1435,6 +1436,9 @@ export default function Configurator() {
                    <span className="flex items-center gap-2"><Eye size={13} /> Show Tooltips</span>
                    {showTooltips && <Check size={12} className="text-[#F15A22]" />}
                  </DropdownMenuItem>
+                 <DropdownMenuItem onClick={() => { resetTour(); window.location.reload(); }} className="flex items-center gap-2 cursor-pointer">
+                   <Play size={13} /> Restart Tour
+                 </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
               {user?.role === "admin" && (
@@ -1492,6 +1496,7 @@ export default function Configurator() {
                   onClick={!isDisabled ? item.action : undefined}
                   disabled={isDisabled}
                   data-testid={`step-btn-${item.step}`}
+                  data-tour={`step-${item.step}`}
                   className="relative flex items-center gap-1.5 shrink-0 transition-all"
                   style={{
                     background: isDisabled ? "#e5e7eb" : isCurrentActive ? "#d94e1a" : "#F15A22",
@@ -1547,13 +1552,20 @@ export default function Configurator() {
         </div>
       )}
 
-      {/* ── GUIDED TOOLTIPS ── */}
-      <GuidedTooltip tipId="select-design" show={currentStep === 1 && placedModules.length === 0} />
-      <GuidedTooltip tipId="customise" show={currentStep === 2 && viewMode === "2d" && !completedSteps.includes(2)} />
-      <GuidedTooltip tipId="elevations" show={viewMode === "elevations" && !completedSteps.includes(3)} />
-      <GuidedTooltip tipId="sitemap" show={viewMode === "sitemap" && !completedSteps.includes(4)} />
-      <GuidedTooltip tipId="save" show={detailsModalMode === "save" && !completedSteps.includes(5)} />
-      <GuidedTooltip tipId="share" show={shareModalOpen && !completedSteps.includes(6)} />
+      {/* ── GUIDED TOOLTIPS (only after tour completed) ── */}
+      {localStorage.getItem("connectapod_tour_completed") && (
+        <>
+          <GuidedTooltip tipId="select-design" show={currentStep === 1 && placedModules.length === 0} />
+          <GuidedTooltip tipId="customise" show={currentStep === 2 && viewMode === "2d" && !completedSteps.includes(2)} />
+          <GuidedTooltip tipId="elevations" show={viewMode === "elevations" && !completedSteps.includes(3)} />
+          <GuidedTooltip tipId="sitemap" show={viewMode === "sitemap" && !completedSteps.includes(4)} />
+          <GuidedTooltip tipId="save" show={detailsModalMode === "save" && !completedSteps.includes(5)} />
+          <GuidedTooltip tipId="share" show={shareModalOpen && !completedSteps.includes(6)} />
+        </>
+      )}
+
+      {/* ── ONBOARDING TOUR ── */}
+      <OnboardingTour />
 
       {/* ── MOBILE TOP BAR ── */}
       {isMobile && (
