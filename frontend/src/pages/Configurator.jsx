@@ -12,7 +12,7 @@ import SaveAsTemplateModal from "@/components/configurator/SaveAsTemplateModal";
 import { toast } from "sonner";
 import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { BookOpen, FolderOpen, Save, Trash2, ChevronLeft, ChevronRight, Undo2, Box, Grid2X2, Image, LayoutTemplate, Menu, X, ChevronUp, ChevronDown, Settings, Eye, EyeOff, Check, Map, Share2, Copy, ExternalLink, Users, Layers, Maximize2, DollarSign, Play } from "lucide-react";
+import { BookOpen, FolderOpen, Save, Trash2, ChevronLeft, ChevronRight, Undo2, Box, Grid2X2, Image, LayoutTemplate, Menu, X, ChevronUp, ChevronDown, Settings, Eye, EyeOff, Check, Map, Share2, Copy, ExternalLink, Users, Layers, Maximize2, DollarSign, Play, Mail, Send } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
@@ -160,6 +160,93 @@ function DesignChooserTabs({ designs, starterDesigns, onClose }) {
     </div>
   );
 }
+
+function ShareModal({ shareUrl, designName, onClose }) {
+  const [emailTo, setEmailTo] = useState("");
+  const [sending, setSending] = useState(false);
+  const [sent, setSent] = useState(false);
+  const printDetails = (() => { try { return JSON.parse(localStorage.getItem("connectapod_print_details")) || {}; } catch { return {}; } })();
+  const senderName = [printDetails.clientFirstName, printDetails.clientFamilyName].filter(Boolean).join(" ") || "A Connectapod user";
+
+  const handleSendEmail = async () => {
+    if (!emailTo.trim() || !emailTo.includes("@")) return;
+    setSending(true);
+    try {
+      const res = await fetch("/api/share/email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ to_email: emailTo.trim(), share_url: shareUrl, design_name: designName, sender_name: senderName }),
+      });
+      if (!res.ok) throw new Error("Failed to send");
+      setSent(true);
+      toast.success(`Design shared with ${emailTo.trim()}`);
+      setTimeout(() => setSent(false), 3000);
+      setEmailTo("");
+    } catch {
+      toast.error("Failed to send email");
+    } finally {
+      setSending(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/40" onClick={onClose}>
+      <div className="bg-white shadow-2xl border border-gray-200 w-full max-w-md mx-4" onClick={e => e.stopPropagation()} data-testid="share-modal">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+          <h2 className="text-sm font-bold text-gray-800 flex items-center gap-2"><Share2 size={15} /> Share Design</h2>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600" data-testid="share-modal-close"><X size={16} /></button>
+        </div>
+        <div className="p-5 space-y-4">
+          <p className="text-xs text-gray-500">Anyone with this link can view this design configuration.</p>
+          <div className="flex items-center gap-2">
+            <input
+              readOnly
+              value={shareUrl}
+              className="flex-1 px-3 py-2.5 text-xs bg-gray-50 border border-gray-200 text-gray-700 font-mono select-all"
+              data-testid="share-url-input"
+              onClick={e => e.target.select()}
+            />
+            <button
+              data-testid="copy-share-url-btn"
+              onClick={() => { navigator.clipboard.writeText(shareUrl).then(() => toast.success("Link copied!")); }}
+              className="px-3 py-2.5 bg-[#F15A22] text-white text-xs font-medium hover:bg-[#d94e1a] transition-all flex items-center gap-1.5 whitespace-nowrap"
+            >
+              <Copy size={13} /> Copy
+            </button>
+          </div>
+          <a href={shareUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-xs text-[#F15A22] hover:underline" data-testid="open-share-link">
+            <ExternalLink size={12} /> Open in new tab
+          </a>
+
+          {/* Email to friend */}
+          <div className="border-t border-gray-100 pt-4">
+            <p className="text-xs font-semibold text-gray-600 flex items-center gap-1.5 mb-2"><Mail size={13} /> Email this design</p>
+            <div className="flex items-center gap-2">
+              <input
+                type="email"
+                value={emailTo}
+                onChange={e => setEmailTo(e.target.value)}
+                onKeyDown={e => { if (e.key === "Enter") handleSendEmail(); }}
+                placeholder="friend@example.com"
+                className="flex-1 px-3 py-2.5 text-xs border border-gray-200 bg-white text-gray-700 placeholder:text-gray-400 focus:outline-none focus:border-[#F15A22]"
+                data-testid="share-email-input"
+              />
+              <button
+                data-testid="share-email-send-btn"
+                onClick={handleSendEmail}
+                disabled={sending || !emailTo.trim() || !emailTo.includes("@")}
+                className="px-3 py-2.5 bg-gray-800 text-white text-xs font-medium hover:bg-gray-700 disabled:opacity-40 transition-all flex items-center gap-1.5 whitespace-nowrap"
+              >
+                <Send size={13} /> {sending ? "Sending..." : sent ? "Sent!" : "Send"}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 
 export default function Configurator() {
   const { user } = useAuth();
@@ -2088,38 +2175,11 @@ export default function Configurator() {
 
       {/* Share Modal */}
       {shareModalOpen && (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/40" onClick={() => setShareModalOpen(false)}>
-          <div className="bg-white shadow-2xl border border-gray-200 w-full max-w-md mx-4" onClick={e => e.stopPropagation()} data-testid="share-modal">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
-              <h2 className="text-sm font-bold text-gray-800 flex items-center gap-2"><Share2 size={15} /> Share Design</h2>
-              <button onClick={() => setShareModalOpen(false)} className="text-gray-400 hover:text-gray-600" data-testid="share-modal-close"><X size={16} /></button>
-            </div>
-            <div className="p-5 space-y-4">
-              <p className="text-xs text-gray-500">Anyone with this link can view this design configuration.</p>
-              <div className="flex items-center gap-2">
-                <input
-                  readOnly
-                  value={shareUrl}
-                  className="flex-1 px-3 py-2.5 text-xs bg-gray-50 border border-gray-200 text-gray-700 font-mono select-all"
-                  data-testid="share-url-input"
-                  onClick={e => e.target.select()}
-                />
-                <button
-                  data-testid="copy-share-url-btn"
-                  onClick={() => {
-                    navigator.clipboard.writeText(shareUrl).then(() => toast.success("Link copied!"));
-                  }}
-                  className="px-3 py-2.5 bg-[#F15A22] text-white text-xs font-medium hover:bg-[#d94e1a] transition-all flex items-center gap-1.5 whitespace-nowrap"
-                >
-                  <Copy size={13} /> Copy
-                </button>
-              </div>
-              <a href={shareUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-xs text-[#F15A22] hover:underline" data-testid="open-share-link">
-                <ExternalLink size={12} /> Open in new tab
-              </a>
-            </div>
-          </div>
-        </div>
+        <ShareModal
+          shareUrl={shareUrl}
+          designName={lastSavedName || "My Design"}
+          onClose={() => setShareModalOpen(false)}
+        />
       )}
 
       {/* Copyright footer */}

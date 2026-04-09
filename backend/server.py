@@ -13,6 +13,7 @@ from pathlib import Path
 from emergentintegrations.llm.chat import LlmChat, UserMessage
 from dotenv import load_dotenv
 import httpx
+import asyncio
 
 load_dotenv()
 
@@ -294,6 +295,50 @@ async def create_shared_design(data: Dict[str, Any] = Body(...)):
     doc_to_insert = doc.copy()
     await db["shared_designs"].insert_one(doc_to_insert)
     return {"share_id": share_id}
+
+@app.post("/api/share/email")
+async def email_shared_design(data: Dict[str, Any] = Body(...)):
+    to_email = data.get("to_email", "").strip()
+    share_url = data.get("share_url", "").strip()
+    design_name = data.get("design_name", "A Connectapod Design")
+    sender_name = data.get("sender_name", "Someone")
+    if not to_email or not share_url:
+        raise HTTPException(status_code=400, detail="to_email and share_url are required")
+    resend_key = os.environ.get("RESEND_API_KEY", "")
+    if not resend_key:
+        raise HTTPException(status_code=500, detail="Email service not configured")
+    try:
+        import resend
+        resend.api_key = resend_key
+        sender = os.environ.get("SENDER_EMAIL", "onboarding@resend.dev")
+        html = f"""
+        <div style="font-family:Arial,sans-serif;max-width:500px;margin:0 auto;">
+          <div style="background:#F15A22;padding:16px 20px;">
+            <h2 style="color:white;margin:0;font-size:16px;">You've been shared a design</h2>
+          </div>
+          <div style="padding:24px 20px;border:1px solid #e5e7eb;border-top:none;">
+            <p style="font-size:14px;color:#333;margin:0 0 16px;">{sender_name} has shared a Connectapod modular building design with you.</p>
+            <p style="font-size:13px;color:#6b7280;margin:0 0 4px;">Design: <strong>{design_name}</strong></p>
+            <div style="margin:20px 0;">
+              <a href="{share_url}" style="display:inline-block;background:#F15A22;color:white;padding:12px 28px;text-decoration:none;font-size:14px;font-weight:600;">View Design</a>
+            </div>
+            <p style="font-size:11px;color:#9ca3af;margin:16px 0 0;word-break:break-all;">{share_url}</p>
+          </div>
+          <p style="font-size:11px;color:#9ca3af;margin-top:12px;">Connectapod &middot; www.connectapod.co.nz</p>
+        </div>
+        """
+        params = {
+            "from": sender,
+            "to": [to_email],
+            "subject": f"{sender_name} shared a Connectapod design with you",
+            "html": html,
+        }
+        await asyncio.to_thread(resend.Emails.send, params)
+        return {"ok": True}
+    except Exception as e:
+        print(f"Share email failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 @app.get("/api/shared/{share_id}")
 async def get_shared_design(share_id: str):
