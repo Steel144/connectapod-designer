@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { ZoomIn, ZoomOut, Home, Download } from "lucide-react";
+import { ZoomIn, ZoomOut, ArrowLeft, Download } from "lucide-react";
 import { jsPDF } from "jspdf";
 import { useElevationGeometry } from "@/hooks/useElevationGeometry";
 import VerticalElevation from "@/components/configurator/VerticalElevation";
@@ -129,8 +129,9 @@ export default function SharedDesign() {
       {/* Header */}
       <div className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between" data-testid="shared-design-header">
         <div className="flex items-center gap-4">
-          <img src={LOGO_URL} alt="Connectapod" style={{ height: "22px" }} />
-          <div className="h-6 w-px bg-gray-200" />
+          <Link to="/Configurator" className="text-gray-400 hover:text-[#F15A22] transition-colors" data-testid="shared-design-back-link">
+            <ArrowLeft size={20} />
+          </Link>
           <div>
             <h1 className="text-base font-bold text-gray-800" data-testid="shared-design-name">{design.name}</h1>
             {design.clientFirstName && (
@@ -138,9 +139,7 @@ export default function SharedDesign() {
             )}
           </div>
         </div>
-        <Link to="/" className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-gray-600 hover:text-[#F15A22] border border-gray-200 hover:border-[#F15A22] transition-all" data-testid="shared-design-home-link">
-          <Home size={13} /> Connectapod
-        </Link>
+        <img src={LOGO_URL} alt="Connectapod" style={{ height: "22px" }} />
       </div>
 
       {/* Tab Bar */}
