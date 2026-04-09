@@ -400,19 +400,9 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
     
     setLoading(true);
     try {
-      // Use Nominatim API directly
+      const API = import.meta.env.VITE_BACKEND_URL || "";
       const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?` +
-        `q=${encodeURIComponent(siteAddress)}` +
-        `&format=json` +
-        `&addressdetails=1` +
-        `&limit=1` +
-        `&countrycodes=nz`,
-        {
-          headers: {
-            'User-Agent': 'Connectapod/1.0'
-          }
-        }
+        `${API}/api/geocode?q=${encodeURIComponent(siteAddress)}&limit=1`
       );
       
       if (response.ok) {
@@ -474,27 +464,16 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
     
     setSuggestionsLoading(true);
     try {
+      const API = import.meta.env.VITE_BACKEND_URL || "";
       const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?` +
-        `q=${encodeURIComponent(query)}` +
-        `&format=json` +
-        `&addressdetails=1` +
-        `&limit=8` +
-        `&countrycodes=nz` +
-        `&accept-language=en`,
-        {
-          headers: {
-            'User-Agent': 'Connectapod/1.0',
-            'Accept-Language': 'en'
-          }
-        }
+        `${API}/api/geocode?q=${encodeURIComponent(query)}&limit=8`
       );
       
       if (response.ok) {
         const data = await response.json();
         setSuggestions(data || []);
       } else {
-        console.error('[SiteMapView] Nominatim error:', response.status);
+        console.error('[SiteMapView] Geocode error:', response.status);
         setSuggestions([]);
       }
     } catch (err) {

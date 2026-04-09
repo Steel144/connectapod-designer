@@ -345,6 +345,33 @@ async def update_pricing(data: PricingConfig):
     result.pop("_type", None)
     return result
 
+
+@app.get("/api/geocode")
+async def geocode_address(q: str, limit: int = 8):
+    """Proxy Nominatim geocoding to avoid browser CORS/rate-limit issues."""
+    if not q or len(q.strip()) < 3:
+        return []
+    try:
+        async with httpx.AsyncClient(timeout=10) as client:
+            resp = await client.get(
+                "https://nominatim.openstreetmap.org/search",
+                params={
+                    "q": q,
+                    "format": "json",
+                    "addressdetails": "1",
+                    "limit": str(limit),
+                    "countrycodes": "nz",
+                    "accept-language": "en",
+                },
+                headers={"User-Agent": "Connectapod/1.0"},
+            )
+            resp.raise_for_status()
+            return resp.json()
+    except Exception as e:
+        print(f"Geocode error: {e}")
+        return []
+
+
 @app.get("/api/pricing/delivery-estimate")
 async def delivery_estimate(site_address: str):
     """Estimate delivery hours from 29 Studholme St, Waimate to site address.
