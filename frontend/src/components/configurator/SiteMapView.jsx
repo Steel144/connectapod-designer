@@ -234,6 +234,11 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [suggestionsLoading, setSuggestionsLoading] = useState(false);
 
+  const [planLocked, setPlanLocked] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('sitemap_planLocked')) ?? false; } catch { return false; }
+  });
+  useEffect(() => { localStorage.setItem('sitemap_planLocked', JSON.stringify(planLocked)); }, [planLocked]);
+
   const isDragging = useRef(false);
   const dragLast = useRef(null);
   const panelDragging = useRef(false);
@@ -515,6 +520,7 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
   };
 
   const handleDragStart = (e) => {
+    if (planLocked) return;
     isDragging.current = true;
     dragLast.current = { x: e.clientX, y: e.clientY };
   };
@@ -573,7 +579,7 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
     <div className="w-full h-screen flex flex-col bg-white">
       <div
         ref={mapContainerRef}
-        className="flex-1 relative overflow-hidden cursor-grab active:cursor-grabbing select-none"
+        className={`flex-1 relative overflow-hidden select-none ${planLocked ? "cursor-default" : "cursor-grab active:cursor-grabbing"}`}
         onMouseDown={handleDragStart}
         onMouseMove={handleDragMove}
         onMouseUp={handleDragEnd}
@@ -801,9 +807,23 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
           <div>
             <label className="text-xs font-semibold text-gray-600 block mb-2">Rotation</label>
             <div className="flex items-center gap-2">
-              <input type="range" min="0" max="360" step="1" value={overlayRotation} onChange={(e) => setOverlayRotation(parseInt(e.target.value))} className="flex-1" style={{ accentColor: '#F15A22' }} />
+              <input type="range" min="0" max="360" step="1" value={overlayRotation} onChange={(e) => { if (!planLocked) setOverlayRotation(parseInt(e.target.value)); }} disabled={planLocked} className="flex-1 disabled:opacity-40" style={{ accentColor: '#F15A22' }} />
               <span className="text-xs text-gray-600 w-8 text-right">{overlayRotation}°</span>
             </div>
+          </div>
+
+          <div>
+            <button
+              onClick={() => setPlanLocked(prev => !prev)}
+              data-testid="plan-lock-btn"
+              className={`w-full flex items-center justify-center gap-2 px-3 py-2 text-xs font-semibold rounded transition-all ${planLocked ? "bg-[#F15A22] text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}
+            >
+              {planLocked ? (
+                <><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Plan Position Locked</>
+              ) : (
+                <><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg> Lock Plan Position</>
+              )}
+            </button>
           </div>
           
           <div className="border-t border-gray-200 pt-3 mt-3">
