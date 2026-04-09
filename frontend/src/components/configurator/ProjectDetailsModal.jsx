@@ -598,34 +598,7 @@ export default function ProjectDetailsModal({
 
             {/* RIGHT: Cost breakdown */}
             <div>
-              {costSummary && !isAdmin && (
-                <div className="bg-gray-50 border border-gray-100 p-4 space-y-1.5 text-sm">
-                  <p className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold mb-1">Summary</p>
-                  <div className="flex justify-between text-gray-600">
-                    <span>Modules ({moduleCount})</span>
-                    <span>${costSummary.modulesTotal.toLocaleString()}</span>
-                  </div>
-                  {walls.length > 0 && (
-                    <div className="flex justify-between text-gray-600">
-                      <span>Wall Panels ({walls.length})</span>
-                      <span>${costSummary.wallsTotal.toLocaleString()}</span>
-                    </div>
-                  )}
-                  <div className="border-t border-gray-200 pt-2 mt-3 flex justify-between text-gray-600">
-                    <span>Subtotal (excl. GST)</span>
-                    <span>${costSummary.subtotal.toLocaleString()}</span>
-                  </div>
-                  <div className="flex justify-between text-gray-600">
-                    <span>GST ({costSummary.gstRateVal}%)</span>
-                    <span>${costSummary.gstAmount.toLocaleString()}</span>
-                  </div>
-                  <div className="border-t border-gray-200 pt-2 flex justify-between font-bold text-gray-900">
-                    <span>Total (incl. GST)</span>
-                    <span>${costSummary.grandTotal.toLocaleString()}</span>
-                  </div>
-                </div>
-              )}
-              {costSummary && isAdmin && (
+              {costSummary && (
                 <div className="bg-gray-50 border border-gray-100 p-4 space-y-1.5 text-sm">
                   <p className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold mb-1">Building</p>
                   <div className="flex justify-between text-gray-600">
