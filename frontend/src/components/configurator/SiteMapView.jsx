@@ -698,7 +698,7 @@ export default function SiteMapView({ design, siteAddress, setSiteAddress, coord
                   </div>
                 )}
               </div>
-              <button onClick={geocodeAddress} disabled={loading} className="px-2 py-1.5 text-sm bg-orange-600 hover:bg-orange-700 text-white rounded transition-all disabled:opacity-50">
+              <button onClick={geocodeAddress} disabled={loading || planLocked} className="px-2 py-1.5 text-sm bg-orange-600 hover:bg-orange-700 text-white rounded transition-all disabled:opacity-50 disabled:cursor-not-allowed">
                 {loading ? <Loader2 className="w-3 h-3 animate-spin" /> : 'Find'}
               </button>
             </div>
