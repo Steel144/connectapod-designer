@@ -1149,7 +1149,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
               onMouseDown={(e) => startDragPlaced(e, mod)}
               onMouseEnter={() => setHoveredModuleId(mod.id)}
               onMouseLeave={() => setHoveredModuleId(null)}
-              className="absolute group cursor-grab active:cursor-grabbing overflow-visible"
+              className="absolute group cursor-grab active:cursor-grabbing"
               style={{
                 left: mod.x * scaledCellW,
                 top: mod.y * scaledCellH,
@@ -1197,33 +1197,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
               <span className="absolute text-[8px] font-bold text-blue-600 pointer-events-none bg-white/80 px-1 rounded" style={{ top: '2px', left: '2px' }}>
                 X:{mod.x} Y:{mod.y}
               </span>
-              {/* Action buttons - rotate, flip, delete - visible on hover/select outside top-right */}
-              <div className={`absolute flex items-center gap-0.5 transition-opacity z-30 ${(isSelected || hoveredModuleId === mod.id) ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} style={{ top: '-20px', right: '0px' }}>
-                <button
-                  onMouseDown={(e) => e.stopPropagation()}
-                  onClick={() => onRotate(mod.id)}
-                  className="flex items-center gap-0.5 px-1.5 py-0.5 bg-gray-800 text-white text-[9px] font-semibold rounded-l shadow-md hover:bg-gray-700 border border-gray-600"
-                  title="Rotate module"
-                >
-                  <RotateCw size={9} /> rotate
-                </button>
-                <button
-                  onMouseDown={(e) => e.stopPropagation()}
-                  onClick={() => onFlip?.(mod.id)}
-                  className="flex items-center gap-0.5 px-1.5 py-0.5 bg-gray-800 text-white text-[9px] font-semibold shadow-md hover:bg-gray-700 border-y border-gray-600"
-                  title="Flip module"
-                >
-                  <FlipHorizontal size={9} /> flip
-                </button>
-                <button
-                  onMouseDown={(e) => e.stopPropagation()}
-                  onClick={() => onRemove(mod.id)}
-                  className="flex items-center gap-0.5 px-1.5 py-0.5 bg-red-600 text-white text-[9px] font-semibold rounded-r shadow-md hover:bg-red-700 border border-red-500"
-                  title="Delete module"
-                >
-                  <X size={9} />
-                </button>
-              </div>
+              {/* Action buttons - rotate, flip, delete - integrated into wall W pill */}
 
               {/* Face labels - fixed screen positions, visibility based on module type */}
                {(() => {
@@ -1261,10 +1235,29 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
 
                 return (
                   <>
-                    {showW && <button title="Select walls on this face" onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); setFaceMenuOpen({ module: mod, face: 'W', x: e.clientX, y: e.clientY }); }} className={`absolute left-1/2 -translate-x-1/2 px-1.5 py-0.5 bg-[#F15A22] text-white text-[9px] font-bold rounded hover:bg-[#d94e1a] transition-colors shadow-md z-20 border border-white/50 ${!isVisibleBtn ? 'opacity-0 pointer-events-none' : ''}`} style={{ top: '-20px' }}><span className="opacity-70 mr-0.5">walls</span>W</button>}
-                    {showX && <button title="Select walls on this face" onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); setFaceMenuOpen({ module: mod, face: 'X', x: e.clientX, y: e.clientY }); }} className={`absolute top-1/2 -translate-y-1/2 px-1.5 py-0.5 bg-[#F15A22] text-white text-[9px] font-bold rounded hover:bg-[#d94e1a] transition-colors shadow-md z-20 border border-white/50 ${!isVisibleBtn ? 'opacity-0 pointer-events-none' : ''}`} style={{ right: '-40px' }}><span className="opacity-70 mr-0.5">walls</span>X</button>}
-                    {showY && <button title="Select walls on this face" onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); setFaceMenuOpen({ module: mod, face: 'Y', x: e.clientX, y: e.clientY }); }} className={`absolute left-1/2 -translate-x-1/2 px-1.5 py-0.5 bg-[#F15A22] text-white text-[9px] font-bold rounded hover:bg-[#d94e1a] transition-colors shadow-md z-20 border border-white/50 ${!isVisibleBtn ? 'opacity-0 pointer-events-none' : ''}`} style={{ bottom: '-20px' }}><span className="opacity-70 mr-0.5">walls</span>Y</button>}
-                    {showZ && <button title="Select walls on this face" onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); setFaceMenuOpen({ module: mod, face: 'Z', x: e.clientX, y: e.clientY }); }} className={`absolute top-1/2 -translate-y-1/2 px-1.5 py-0.5 bg-[#F15A22] text-white text-[9px] font-bold rounded hover:bg-[#d94e1a] transition-colors shadow-md z-20 border border-white/50 ${!isVisibleBtn ? 'opacity-0 pointer-events-none' : ''}`} style={{ left: '-40px' }}><span className="opacity-70 mr-0.5">walls</span>Z</button>}
+                    {/* W face - top edge with rotate/flip/delete integrated */}
+                    {showW && (
+                      <div className={`absolute top-0.5 left-1/2 -translate-x-1/2 flex items-center gap-0 z-[40] transition-opacity ${!isVisibleBtn ? 'opacity-0 pointer-events-none' : ''}`}>
+                        <button title="Select walls on W face" onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); setFaceMenuOpen({ module: mod, face: 'W', x: e.clientX, y: e.clientY }); }} className="px-1.5 py-0.5 bg-[#F15A22] text-white text-[9px] font-bold rounded-l hover:bg-[#d94e1a] transition-colors shadow-md border border-white/30"><span className="opacity-70 mr-0.5">walls</span>W</button>
+                        <button title="Rotate module" onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); onRotate(mod.id); }} className="px-1 py-0.5 bg-gray-800 text-white text-[9px] hover:bg-gray-600 transition-colors shadow-md border-y border-gray-600"><RotateCw size={9} /></button>
+                        <button title="Flip module" onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); onFlip?.(mod.id); }} className="px-1 py-0.5 bg-gray-800 text-white text-[9px] hover:bg-gray-600 transition-colors shadow-md border-y border-gray-600"><FlipHorizontal size={9} /></button>
+                        <button title="Delete module" onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); onRemove(mod.id); }} className="px-1 py-0.5 bg-red-600 text-white text-[9px] rounded-r hover:bg-red-700 transition-colors shadow-md border border-red-500"><X size={9} /></button>
+                      </div>
+                    )}
+                    {/* W face fallback for connection modules (no W face) - show rotate/flip/delete standalone */}
+                    {!showW && (
+                      <div className={`absolute top-0.5 left-1/2 -translate-x-1/2 flex items-center gap-0 z-[40] transition-opacity ${!isVisibleBtn ? 'opacity-0 pointer-events-none' : ''}`}>
+                        <button title="Rotate module" onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); onRotate(mod.id); }} className="px-1 py-0.5 bg-gray-800 text-white text-[9px] rounded-l hover:bg-gray-600 transition-colors shadow-md border border-gray-600"><RotateCw size={9} /></button>
+                        <button title="Flip module" onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); onFlip?.(mod.id); }} className="px-1 py-0.5 bg-gray-800 text-white text-[9px] hover:bg-gray-600 transition-colors shadow-md border-y border-gray-600"><FlipHorizontal size={9} /></button>
+                        <button title="Delete module" onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); onRemove(mod.id); }} className="px-1 py-0.5 bg-red-600 text-white text-[9px] rounded-r hover:bg-red-700 transition-colors shadow-md border border-red-500"><X size={9} /></button>
+                      </div>
+                    )}
+                    {/* X face - right edge */}
+                    {showX && <button title="Select walls on X face" onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); setFaceMenuOpen({ module: mod, face: 'X', x: e.clientX, y: e.clientY }); }} className={`absolute right-0.5 top-1/2 -translate-y-1/2 px-1.5 py-0.5 bg-[#F15A22] text-white text-[9px] font-bold rounded hover:bg-[#d94e1a] transition-colors shadow-md z-[40] border border-white/30 ${!isVisibleBtn ? 'opacity-0 pointer-events-none' : ''}`}><span className="opacity-70 mr-0.5">walls</span>X</button>}
+                    {/* Y face - bottom edge */}
+                    {showY && <button title="Select walls on Y face" onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); setFaceMenuOpen({ module: mod, face: 'Y', x: e.clientX, y: e.clientY }); }} className={`absolute bottom-0.5 left-1/2 -translate-x-1/2 px-1.5 py-0.5 bg-[#F15A22] text-white text-[9px] font-bold rounded hover:bg-[#d94e1a] transition-colors shadow-md z-[40] border border-white/30 ${!isVisibleBtn ? 'opacity-0 pointer-events-none' : ''}`}><span className="opacity-70 mr-0.5">walls</span>Y</button>}
+                    {/* Z face - left edge */}
+                    {showZ && <button title="Select walls on Z face" onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); setFaceMenuOpen({ module: mod, face: 'Z', x: e.clientX, y: e.clientY }); }} className={`absolute left-0.5 top-1/2 -translate-y-1/2 px-1.5 py-0.5 bg-[#F15A22] text-white text-[9px] font-bold rounded hover:bg-[#d94e1a] transition-colors shadow-md z-[40] border border-white/30 ${!isVisibleBtn ? 'opacity-0 pointer-events-none' : ''}`}><span className="opacity-70 mr-0.5">walls</span>Z</button>}
                   </>
                 );
                })()}
