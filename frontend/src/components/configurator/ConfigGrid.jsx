@@ -1197,9 +1197,8 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
               <span className="absolute text-[8px] font-bold text-blue-600 pointer-events-none bg-white/80 px-1 rounded" style={{ top: '2px', left: '2px' }}>
                 X:{mod.x} Y:{mod.y}
               </span>
-              {/* Action buttons - rotate, flip, delete - integrated into wall W pill */}
-
-              {/* Face labels - fixed screen positions, visibility based on module type */}
+              {/* Module actions - rotate, flip, delete - separate labelled bar */}
+              {/* Face wall selectors with individual flip/delete */}
                {(() => {
                  const isConnection = mod.chassis === "C" || isConnectionModule(mod);
                  const isLeftEnd = mod.chassis === "LF" || mod.chassis === "ER";
@@ -1207,16 +1206,12 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                  const rotation = mod.rotation || 0;
                  const isRotated180 = rotation === 180;
 
-                 // Standard: W (top), Y (bottom) | Left end: Z (left) | Right end: X (right) | Connection: Z, X
-                 // When rotated 180°, end walls swap visibility
                  const showW = !isConnection;
                  let showX = isConnection || isRightEnd;
                  let showY = !isConnection;
                  let showZ = (isLeftEnd || isConnection);
 
-                 // For end modules, handle rotation and flip
                  if (isLeftEnd || isRightEnd) {
-                   // First apply flip logic (which face is the end)
                    if (mod.flipped) {
                      showZ = isRightEnd;
                      showX = isLeftEnd;
@@ -1224,40 +1219,63 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                      showZ = isLeftEnd;
                      showX = isRightEnd;
                    }
-                   
-                   // Then apply rotation (swap the faces)
                    if (isRotated180) {
                      [showZ, showX] = [showX, showZ];
                    }
                  }
 
                 const isVisibleBtn = isSelected || hoveredModuleId === mod.id;
+                const WALL_OFFSET = 0.5;
+                const TOLERANCE = 1.5;
+
+                // Find walls on each face of this module
+                const findFaceWalls = (face) => {
+                  return walls.filter(w => {
+                    if (face === 'W' && (w.orientation === 'horizontal' || w.face === 'W')) {
+                      return Math.abs(w.y - (mod.y - WALL_OFFSET)) < TOLERANCE && Math.abs(w.x - mod.x) < TOLERANCE;
+                    }
+                    if (face === 'Y' && (w.orientation === 'horizontal' || w.face === 'Y')) {
+                      return Math.abs(w.y - (mod.y + mod.h)) < TOLERANCE && Math.abs(w.x - mod.x) < TOLERANCE;
+                    }
+                    if (face === 'Z' && (w.orientation === 'vertical' || w.face === 'Z')) {
+                      return Math.abs(w.x - mod.x) < TOLERANCE && Math.abs(w.y - mod.y) < TOLERANCE;
+                    }
+                    if (face === 'X' && (w.orientation === 'vertical' || w.face === 'X')) {
+                      return Math.abs(w.x - (mod.x + mod.w - WALL_OFFSET)) < TOLERANCE && Math.abs(w.y - mod.y) < TOLERANCE;
+                    }
+                    return false;
+                  });
+                };
+
+                const WallPill = ({ face, posClass }) => {
+                  const faceWalls = findFaceWalls(face);
+                  const hasWalls = faceWalls.length > 0;
+                  return (
+                    <div className={`absolute flex items-center gap-0 z-[40] transition-opacity ${posClass} ${!isVisibleBtn ? 'opacity-0 pointer-events-none' : ''}`}>
+                      <button title={`Select walls on ${face} face`} onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); setFaceMenuOpen({ module: mod, face, x: e.clientX, y: e.clientY }); }} className={`px-1.5 py-0.5 text-white text-[9px] font-bold ${hasWalls ? 'rounded-l' : 'rounded'} bg-[#F15A22] hover:bg-[#d94e1a] transition-colors shadow-md border border-white/30`}><span className="opacity-70 mr-0.5">walls</span>{face}</button>
+                      {hasWalls && (
+                        <>
+                          <button title={`Flip wall on ${face}`} onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); faceWalls.forEach(w => onFlipWall && onFlipWall(w.id)); }} className="px-1 py-0.5 bg-gray-800 text-white hover:bg-gray-600 transition-colors shadow-md border-y border-gray-600"><FlipHorizontal size={9} /></button>
+                          <button title={`Remove wall from ${face}`} onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); faceWalls.forEach(w => onRemoveWall && onRemoveWall(w.id)); }} className="px-1 py-0.5 bg-red-600 text-white rounded-r hover:bg-red-700 transition-colors shadow-md border border-red-500"><X size={9} /></button>
+                        </>
+                      )}
+                    </div>
+                  );
+                };
 
                 return (
                   <>
-                    {/* W face - top edge with rotate/flip/delete integrated */}
-                    {showW && (
-                      <div className={`absolute top-0.5 left-1/2 -translate-x-1/2 flex items-center gap-0 z-[40] transition-opacity ${!isVisibleBtn ? 'opacity-0 pointer-events-none' : ''}`}>
-                        <button title="Select walls on W face" onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); setFaceMenuOpen({ module: mod, face: 'W', x: e.clientX, y: e.clientY }); }} className="px-1.5 py-0.5 bg-[#F15A22] text-white text-[9px] font-bold rounded-l hover:bg-[#d94e1a] transition-colors shadow-md border border-white/30"><span className="opacity-70 mr-0.5">walls</span>W</button>
-                        <button title="Rotate module" onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); onRotate(mod.id); }} className="px-1 py-0.5 bg-gray-800 text-white text-[9px] hover:bg-gray-600 transition-colors shadow-md border-y border-gray-600"><RotateCw size={9} /></button>
-                        <button title="Flip module" onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); onFlip?.(mod.id); }} className="px-1 py-0.5 bg-gray-800 text-white text-[9px] hover:bg-gray-600 transition-colors shadow-md border-y border-gray-600"><FlipHorizontal size={9} /></button>
-                        <button title="Delete module" onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); onRemove(mod.id); }} className="px-1 py-0.5 bg-red-600 text-white text-[9px] rounded-r hover:bg-red-700 transition-colors shadow-md border border-red-500"><X size={9} /></button>
-                      </div>
-                    )}
-                    {/* W face fallback for connection modules (no W face) - show rotate/flip/delete standalone */}
-                    {!showW && (
-                      <div className={`absolute top-0.5 left-1/2 -translate-x-1/2 flex items-center gap-0 z-[40] transition-opacity ${!isVisibleBtn ? 'opacity-0 pointer-events-none' : ''}`}>
-                        <button title="Rotate module" onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); onRotate(mod.id); }} className="px-1 py-0.5 bg-gray-800 text-white text-[9px] rounded-l hover:bg-gray-600 transition-colors shadow-md border border-gray-600"><RotateCw size={9} /></button>
-                        <button title="Flip module" onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); onFlip?.(mod.id); }} className="px-1 py-0.5 bg-gray-800 text-white text-[9px] hover:bg-gray-600 transition-colors shadow-md border-y border-gray-600"><FlipHorizontal size={9} /></button>
-                        <button title="Delete module" onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); onRemove(mod.id); }} className="px-1 py-0.5 bg-red-600 text-white text-[9px] rounded-r hover:bg-red-700 transition-colors shadow-md border border-red-500"><X size={9} /></button>
-                      </div>
-                    )}
-                    {/* X face - right edge */}
-                    {showX && <button title="Select walls on X face" onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); setFaceMenuOpen({ module: mod, face: 'X', x: e.clientX, y: e.clientY }); }} className={`absolute right-0.5 top-1/2 -translate-y-1/2 px-1.5 py-0.5 bg-[#F15A22] text-white text-[9px] font-bold rounded hover:bg-[#d94e1a] transition-colors shadow-md z-[40] border border-white/30 ${!isVisibleBtn ? 'opacity-0 pointer-events-none' : ''}`}><span className="opacity-70 mr-0.5">walls</span>X</button>}
-                    {/* Y face - bottom edge */}
-                    {showY && <button title="Select walls on Y face" onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); setFaceMenuOpen({ module: mod, face: 'Y', x: e.clientX, y: e.clientY }); }} className={`absolute bottom-0.5 left-1/2 -translate-x-1/2 px-1.5 py-0.5 bg-[#F15A22] text-white text-[9px] font-bold rounded hover:bg-[#d94e1a] transition-colors shadow-md z-[40] border border-white/30 ${!isVisibleBtn ? 'opacity-0 pointer-events-none' : ''}`}><span className="opacity-70 mr-0.5">walls</span>Y</button>}
-                    {/* Z face - left edge */}
-                    {showZ && <button title="Select walls on Z face" onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); setFaceMenuOpen({ module: mod, face: 'Z', x: e.clientX, y: e.clientY }); }} className={`absolute left-0.5 top-1/2 -translate-y-1/2 px-1.5 py-0.5 bg-[#F15A22] text-white text-[9px] font-bold rounded hover:bg-[#d94e1a] transition-colors shadow-md z-[40] border border-white/30 ${!isVisibleBtn ? 'opacity-0 pointer-events-none' : ''}`}><span className="opacity-70 mr-0.5">walls</span>Z</button>}
+                    {/* Module rotate / flip / delete — top-right corner */}
+                    <div className={`absolute top-0.5 right-0.5 flex items-center gap-0 z-[40] transition-opacity ${!isVisibleBtn ? 'opacity-0 pointer-events-none' : ''}`}>
+                      <button title="Rotate module" onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); onRotate(mod.id); }} className="flex items-center gap-0.5 px-1.5 py-0.5 bg-gray-800 text-white text-[9px] font-semibold rounded-l hover:bg-gray-600 transition-colors shadow-md border border-gray-600"><RotateCw size={9} /> rotate</button>
+                      <button title="Flip module" onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); onFlip?.(mod.id); }} className="flex items-center gap-0.5 px-1.5 py-0.5 bg-gray-800 text-white text-[9px] font-semibold hover:bg-gray-600 transition-colors shadow-md border-y border-gray-600"><FlipHorizontal size={9} /> flip</button>
+                      <button title="Delete module" onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); onRemove(mod.id); }} className="px-1 py-0.5 bg-red-600 text-white text-[9px] rounded-r hover:bg-red-700 transition-colors shadow-md border border-red-500"><X size={9} /></button>
+                    </div>
+                    {/* Wall face pills — each with own flip/delete when walls placed */}
+                    {showW && <WallPill face="W" posClass="top-0.5 left-0.5" />}
+                    {showY && <WallPill face="Y" posClass="bottom-0.5 left-1/2 -translate-x-1/2" />}
+                    {showZ && <WallPill face="Z" posClass="left-0.5 top-1/2 -translate-y-1/2" />}
+                    {showX && <WallPill face="X" posClass="right-0.5 top-1/2 -translate-y-1/2" />}
                   </>
                 );
                })()}
