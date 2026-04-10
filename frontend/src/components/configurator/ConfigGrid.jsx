@@ -1149,7 +1149,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
               onMouseDown={(e) => startDragPlaced(e, mod)}
               onMouseEnter={() => setHoveredModuleId(mod.id)}
               onMouseLeave={() => setHoveredModuleId(null)}
-              className="absolute group cursor-grab active:cursor-grabbing"
+              className="absolute group cursor-grab active:cursor-grabbing overflow-visible"
               style={{
                 left: mod.x * scaledCellW,
                 top: mod.y * scaledCellH,
@@ -1247,11 +1247,11 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                   });
                 };
 
-                const WallPill = ({ face, posClass }) => {
+                const WallPill = ({ face, posStyle, rotate }) => {
                   const faceWalls = findFaceWalls(face);
                   const hasWalls = faceWalls.length > 0;
                   return (
-                    <div className={`absolute flex items-center gap-0 z-[40] transition-opacity ${posClass} ${!isVisibleBtn ? 'opacity-0 pointer-events-none' : ''}`}>
+                    <div className={`absolute flex items-center gap-0 z-[40] transition-opacity ${!isVisibleBtn ? 'opacity-0 pointer-events-none' : ''}`} style={posStyle}>
                       <button title={`Select walls on ${face} face`} onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); setFaceMenuOpen({ module: mod, face, x: e.clientX, y: e.clientY }); }} className={`px-1.5 py-0.5 text-white text-[9px] font-bold ${hasWalls ? 'rounded-l' : 'rounded'} bg-[#F15A22] hover:bg-[#d94e1a] transition-colors shadow-md border border-white/30`}><span className="opacity-70 mr-0.5">walls</span>{face}</button>
                       {hasWalls && (
                         <>
@@ -1263,6 +1263,9 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                   );
                 };
 
+                const modW = mod.w * scaledCellW;
+                const modH = mod.h * scaledCellH;
+
                 return (
                   <>
                     {/* Module rotate / flip / delete — top-right corner */}
@@ -1271,11 +1274,15 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                       <button title="Flip module" onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); onFlip?.(mod.id); }} className="flex items-center gap-0.5 px-1.5 py-0.5 bg-gray-800 text-white text-[9px] font-semibold hover:bg-gray-600 transition-colors shadow-md border-y border-gray-600"><FlipHorizontal size={9} /> flip</button>
                       <button title="Delete module" onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); onRemove(mod.id); }} className="px-1 py-0.5 bg-red-600 text-white text-[9px] rounded-r hover:bg-red-700 transition-colors shadow-md border border-red-500"><X size={9} /></button>
                     </div>
-                    {/* Wall face pills — each with own flip/delete when walls placed */}
-                    {showW && <WallPill face="W" posClass="top-0.5 left-0.5" />}
-                    {showY && <WallPill face="Y" posClass="bottom-0.5 left-1/2 -translate-x-1/2" />}
-                    {showZ && <WallPill face="Z" posClass="left-0.5 top-1/2 -translate-y-1/2" />}
-                    {showX && <WallPill face="X" posClass="right-0.5 top-1/2 -translate-y-1/2" />}
+                    {/* Wall pills — outside and parallel to each wall */}
+                    {/* W (top wall) — horizontal, above module */}
+                    {showW && <WallPill face="W" posStyle={{ bottom: '100%', left: '50%', transform: 'translateX(-50%)', marginBottom: 4 }} />}
+                    {/* Y (bottom wall) — horizontal, below module */}
+                    {showY && <WallPill face="Y" posStyle={{ top: '100%', left: '50%', transform: 'translateX(-50%)', marginTop: 4 }} />}
+                    {/* Z (left wall) — rotated vertical, left of module */}
+                    {showZ && <WallPill face="Z" posStyle={{ right: '100%', top: '50%', transform: 'translateY(-50%) rotate(-90deg)', marginRight: 4, transformOrigin: 'center center' }} />}
+                    {/* X (right wall) — rotated vertical, right of module */}
+                    {showX && <WallPill face="X" posStyle={{ left: '100%', top: '50%', transform: 'translateY(-50%) rotate(90deg)', marginLeft: 4, transformOrigin: 'center center' }} />}
                   </>
                 );
                })()}
