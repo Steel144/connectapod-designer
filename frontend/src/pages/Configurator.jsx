@@ -191,7 +191,7 @@ function ShareModal({ shareUrl, designName, onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/40" onClick={onClose}>
+    <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/40" onClick={onClose}>
       <div className="bg-white shadow-2xl border border-gray-200 w-full max-w-md mx-4" onClick={e => e.stopPropagation()} data-testid="share-modal">
         <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
           <h2 className="text-sm font-bold text-gray-800 flex items-center gap-2"><Share2 size={15} /> Share Design</h2>
