@@ -1516,23 +1516,6 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                    </span>
                  )}
                </div>
-               <button
-                 onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); onFlipWall && onFlipWall(wall.id); }}
-                 className="absolute top-0.5 left-0.5 opacity-0 group-hover:opacity-100 transition-opacity bg-white rounded-full p-0.5 shadow-sm hover:bg-orange-50 z-10"
-                 title="Flip wall"
-               >
-                 <FlipHorizontal size={10} className="text-[#F15A22]" />
-               </button>
-               <button
-                 onMouseDown={(e) => {
-                   e.stopPropagation();
-                   e.preventDefault();
-                   onRemoveWall && onRemoveWall(wall.id);
-                 }}
-                 className="absolute top-0.5 right-0.5 opacity-0 group-hover:opacity-100 transition-opacity bg-white rounded-full p-0.5 shadow-sm hover:bg-red-50 z-10"
-               >
-                 <X size={10} className="text-red-400" />
-               </button>
                {/* Ghost while dragging */}
                {isBeingDragged && (
                  <div
