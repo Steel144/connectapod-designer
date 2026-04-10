@@ -1718,6 +1718,7 @@ export default function Configurator() {
                 onModuleSelect={setSelectedModule}
                 onFaceSelect={setSelectedFace}
                 onPlaceWallOnFace={handlePlaceWallOnFace}
+                onWallHover={setHoveredWall}
                 furniture={furniture}
                 onPlaceFurniture={handlePlaceFurniture}
                 onRemoveFurniture={handleRemoveFurniture}

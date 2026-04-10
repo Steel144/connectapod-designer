@@ -16,7 +16,7 @@ const getPavilion = (moduleY) => {
   return null;
 };
 
-export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, onRotate, onFlip, walls = [], wallTypes = [], onPlaceWall, onRemoveWall, onFlipWall, onMoveWall, onUpdateWall, onWallSelect, onModuleSelect, onFaceSelect, onPlaceWallOnFace, furniture = [], onPlaceFurniture, onRemoveFurniture, onMoveFurniture, onRotateFurniture, hidden = false, customModules = [], floorPlanImages = {}, wallImages = {}, zoom = 100, showLabels = true, showFurniture = true, showPhotoImages = true, showDimensions = true }) {
+export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, onRotate, onFlip, walls = [], wallTypes = [], onPlaceWall, onRemoveWall, onFlipWall, onMoveWall, onUpdateWall, onWallSelect, onModuleSelect, onFaceSelect, onPlaceWallOnFace, onWallHover, furniture = [], onPlaceFurniture, onRemoveFurniture, onMoveFurniture, onRotateFurniture, hidden = false, customModules = [], floorPlanImages = {}, wallImages = {}, zoom = 100, showLabels = true, showFurniture = true, showPhotoImages = true, showDimensions = true }) {
    const gridRef = useRef(null);
    const scrollRef = useRef(null);
 
@@ -1255,8 +1255,14 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                 const WallPill = ({ face, posStyle, rotate }) => {
                   const faceWalls = findFaceWalls(face);
                   const hasWalls = faceWalls.length > 0;
+                  const firstWall = faceWalls[0] || null;
                   return (
-                    <div className={`absolute flex items-center gap-0 z-[40] transition-opacity ${!isVisibleBtn ? 'opacity-0 pointer-events-none' : ''}`} style={posStyle}>
+                    <div
+                      className={`absolute flex items-center gap-0 z-[40] transition-opacity ${!isVisibleBtn ? 'opacity-0 pointer-events-none' : ''}`}
+                      style={posStyle}
+                      onMouseEnter={() => { if (firstWall && onWallHover) onWallHover(firstWall); }}
+                      onMouseLeave={() => { if (onWallHover) onWallHover(null); }}
+                    >
                       <button title={`Select walls on ${face} face`} onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); setFaceMenuOpen({ module: mod, face, x: e.clientX, y: e.clientY }); }} className={`px-1.5 py-0.5 text-white text-[9px] font-bold ${hasWalls ? 'rounded-l' : 'rounded'} bg-[#F15A22] hover:bg-[#d94e1a] transition-colors shadow-md border border-white/30`}><span className="opacity-70 mr-0.5">walls</span>{face}</button>
                       {hasWalls && (
                         <>
