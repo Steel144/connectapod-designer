@@ -1150,6 +1150,7 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
               onMouseEnter={() => setHoveredModuleId(mod.id)}
               onMouseLeave={() => setHoveredModuleId(null)}
               className="absolute group cursor-grab active:cursor-grabbing overflow-visible"
+              title={isSelected ? "" : "Click to select floor plan and edit"}
               style={{
                 left: mod.x * scaledCellW,
                 top: mod.y * scaledCellH,
@@ -1200,12 +1201,6 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
               {/* Blue selection overlay */}
               {isSelected && (
                 <div className="absolute inset-0 bg-blue-500/15 border-2 border-blue-400 pointer-events-none z-[35]" />
-              )}
-              {/* Hover hint — shown when NOT selected */}
-              {!isSelected && hoveredModuleId === mod.id && (
-                <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-[35]">
-                  <span className="px-2 py-1 bg-black/60 text-white text-[8px] font-medium rounded whitespace-nowrap">Click to select &middot; adjust walls &amp; position</span>
-                </div>
               )}
               {/* Module actions - rotate, flip, delete - separate labelled bar */}
               {/* Face wall selectors with individual flip/delete */}
