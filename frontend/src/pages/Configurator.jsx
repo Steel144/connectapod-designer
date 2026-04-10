@@ -1931,16 +1931,6 @@ export default function Configurator() {
                                <option key={wt.type} value={wt.type}>{wt.label}</option>
                              ))}
                            </select>
-                           <button
-                             onClick={() => {
-                               setWalls(prev => prev.map(w => w.id === selectedWall.id ? { ...w, flipped: !w.flipped } : w));
-                               setSelectedWall(prev => prev ? { ...prev, flipped: !prev.flipped } : null);
-                             }}
-                             className="px-2 py-1 text-xs bg-gray-100 border border-gray-200 rounded hover:bg-gray-200 transition-colors"
-                             title="Flip"
-                           >
-                             ↔
-                           </button>
                          </div>
                          <div className="text-xs border-t border-gray-200 pt-2 text-right">
                            <span className="font-semibold text-gray-800">${(selectedWall.price || 0).toLocaleString()}</span>
