@@ -102,23 +102,23 @@ export function TypeTooltip({ type, children }) {
           <TooltipTrigger asChild>
             {children}
           </TooltipTrigger>
-          <TooltipContent side="right" className="w-64">
-            <div className={`p-3 rounded-lg border ${info.color}`}>
+          <TooltipContent side="right" className="w-64 bg-gray-900 border-gray-700 p-0">
+            <div className="p-3">
               <div className="flex items-start gap-2 mb-2">
-                <Info size={14} className="mt-0.5 shrink-0 text-gray-600" />
+                <Info size={14} className="mt-0.5 shrink-0 text-gray-400" />
                 <div className="flex-1">
-                  <p className="text-xs font-semibold text-gray-800">{info.type}</p>
+                  <p className="text-xs font-semibold text-white">{info.type}</p>
                 </div>
                 {isAdmin && (
                   <button
                     onClick={() => setEditModalOpen(true)}
-                    className="shrink-0 ml-1 p-1 hover:bg-gray-200 rounded transition-colors"
+                    className="shrink-0 ml-1 p-1 hover:bg-gray-700 rounded transition-colors"
                   >
-                    <Edit2 size={12} className="text-gray-600" />
+                    <Edit2 size={12} className="text-gray-400" />
                   </button>
                 )}
               </div>
-              <p className="text-xs leading-relaxed text-gray-700">{info.description}</p>
+              <p className="text-xs leading-relaxed text-gray-300">{info.description}</p>
             </div>
           </TooltipContent>
         </Tooltip>
@@ -145,15 +145,15 @@ export default function ModuleTooltip({ item, children }) {
         <TooltipTrigger asChild>
           {children}
         </TooltipTrigger>
-        <TooltipContent side="right" className="w-64">
-          <div className={`p-3 rounded-lg border ${info.color}`}>
+        <TooltipContent side="right" className="w-64 bg-gray-900 border-gray-700 p-0">
+          <div className="p-3">
             <div className="flex items-start gap-2 mb-2">
-              <Info size={14} className="mt-0.5 shrink-0 text-gray-600" />
+              <Info size={14} className="mt-0.5 shrink-0 text-gray-400" />
               <div className="text-xs">
-                <p className="font-semibold text-gray-800">{info.type}</p>
+                <p className="font-semibold text-white">{info.type}</p>
               </div>
             </div>
-            <p className="text-xs leading-relaxed text-gray-700">{info.description}</p>
+            <p className="text-xs leading-relaxed text-gray-300">{info.description}</p>
           </div>
         </TooltipContent>
       </Tooltip>
