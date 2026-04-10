@@ -1197,6 +1197,16 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
               <span className="absolute text-[8px] font-bold text-blue-600 pointer-events-none bg-white/80 px-1 rounded" style={{ top: '2px', left: '2px' }}>
                 X:{mod.x} Y:{mod.y}
               </span>
+              {/* Blue selection overlay */}
+              {isSelected && (
+                <div className="absolute inset-0 bg-blue-500/15 border-2 border-blue-400 pointer-events-none z-[35]" />
+              )}
+              {/* Hover hint — shown when NOT selected */}
+              {!isSelected && hoveredModuleId === mod.id && (
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-[35]">
+                  <span className="px-2 py-1 bg-black/60 text-white text-[8px] font-medium rounded whitespace-nowrap">Click to select &middot; adjust walls &amp; position</span>
+                </div>
+              )}
               {/* Module actions - rotate, flip, delete - separate labelled bar */}
               {/* Face wall selectors with individual flip/delete */}
                {(() => {
@@ -1268,11 +1278,12 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
 
                 return (
                   <>
-                    {/* Module rotate / flip / delete — top-right corner */}
-                    <div className={`absolute top-0.5 right-0.5 flex items-center gap-0 z-[40] transition-opacity ${!isVisibleBtn ? 'opacity-0 pointer-events-none' : ''}`}>
-                      <button title="Rotate module" onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); onRotate(mod.id); }} className="flex items-center gap-0.5 px-1.5 py-0.5 bg-gray-800 text-white text-[9px] font-semibold rounded-l hover:bg-gray-600 transition-colors shadow-md border border-gray-600"><RotateCw size={9} /> rotate</button>
-                      <button title="Flip module" onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); onFlip?.(mod.id); }} className="flex items-center gap-0.5 px-1.5 py-0.5 bg-gray-800 text-white text-[9px] font-semibold hover:bg-gray-600 transition-colors shadow-md border-y border-gray-600"><FlipHorizontal size={9} /> flip</button>
-                      <button title="Delete module" onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); onRemove(mod.id); }} className="px-1 py-0.5 bg-red-600 text-white text-[9px] rounded-r hover:bg-red-700 transition-colors shadow-md border border-red-500"><X size={9} /></button>
+                    {/* Floor Plan rotate / flip / delete — centered on module */}
+                    <div className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center gap-0 z-[40] transition-opacity ${!isVisibleBtn ? 'opacity-0 pointer-events-none' : ''}`}>
+                      <span className="px-1.5 py-0.5 bg-gray-800 text-gray-300 text-[8px] font-semibold uppercase tracking-wider rounded-l border border-gray-600 border-r-0">Floor Plan</span>
+                      <button title="Rotate floor plan" onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); onRotate(mod.id); }} className="flex items-center gap-0.5 px-1.5 py-0.5 bg-gray-800 text-white text-[9px] font-semibold hover:bg-gray-600 transition-colors shadow-md border-y border-gray-600"><RotateCw size={9} /> rotate</button>
+                      <button title="Flip floor plan" onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); onFlip?.(mod.id); }} className="flex items-center gap-0.5 px-1.5 py-0.5 bg-gray-800 text-white text-[9px] font-semibold hover:bg-gray-600 transition-colors shadow-md border-y border-gray-600"><FlipHorizontal size={9} /> flip</button>
+                      <button title="Delete floor plan" onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); onRemove(mod.id); }} className="px-1 py-0.5 bg-red-600 text-white text-[9px] rounded-r hover:bg-red-700 transition-colors shadow-md border border-red-500"><X size={9} /></button>
                     </div>
                     {/* Wall pills — outside and parallel to each wall */}
                     {/* W (top wall) — horizontal, above module */}
