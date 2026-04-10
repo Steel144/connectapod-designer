@@ -1814,21 +1814,26 @@ export default function Configurator() {
                 </div>
                 {!summaryCollapsed && (
                    <div className="p-4 h-[380px] overflow-y-auto">
-                     {hoveredWall ? (
+                     {(() => {
+                       // Always use live wall data (not stale snapshot)
+                       const liveHoveredWall = hoveredWall ? walls.find(w => w.id === hoveredWall.id) || hoveredWall : null;
+                       const liveSelectedWall = selectedWall ? walls.find(w => w.id === selectedWall.id) || selectedWall : null;
+                       if (liveHoveredWall) return (
                        <div className="flex flex-col h-full gap-2">
                          <div>
-                           <p className="text-xs font-semibold text-gray-900 break-words">{hoveredWall.label}</p>
-                           <p className="text-[10px] text-gray-500">{hoveredWall.type}</p>
-                           {hoveredWall.face && <span className="text-[10px] font-bold text-[#F15A22]">Face {hoveredWall.face}</span>}
-                           {hoveredWall.description && <p className="text-[10px] text-gray-500 mt-1">{hoveredWall.description}</p>}
+                           <p className="text-xs font-semibold text-gray-900 break-words">{liveHoveredWall.label}</p>
+                           <p className="text-[10px] text-gray-500">{liveHoveredWall.type}</p>
+                           {liveHoveredWall.face && <span className="text-[10px] font-bold text-[#F15A22]">Face {liveHoveredWall.face}</span>}
+                           {liveHoveredWall.flipped && <span className="text-[10px] text-blue-500 ml-1">(Reflected)</span>}
+                           {liveHoveredWall.description && <p className="text-[10px] text-gray-500 mt-1">{liveHoveredWall.description}</p>}
                          </div>
                          <div className="flex-1 bg-gray-50 rounded overflow-hidden flex items-center justify-center">
-                           {hoveredWall.elevationImage ? (
-                             <img src={hoveredWall.elevationImage} alt={hoveredWall.label} className="w-full h-full object-contain" style={{ transform: hoveredWall.flipped ? 'scaleX(-1)' : undefined }} />
+                           {liveHoveredWall.elevationImage ? (
+                             <img src={liveHoveredWall.elevationImage} alt={liveHoveredWall.label} className="w-full h-full object-contain" style={{ transform: liveHoveredWall.flipped ? 'scaleX(-1)' : undefined }} />
                            ) : (
                              <div className="flex flex-col items-center gap-2 text-gray-400">
                                <div className="w-16 h-24 border-2 border-gray-300 rounded flex items-center justify-center">
-                                 <span className="text-2xl font-bold text-gray-300">{hoveredWall.orientation === "horizontal" ? "━" : "┃"}</span>
+                                 <span className="text-2xl font-bold text-gray-300">{liveHoveredWall.orientation === "horizontal" ? "━" : "┃"}</span>
                                </div>
                                <p className="text-[10px] text-center">No elevation image</p>
                              </div>
@@ -1836,12 +1841,12 @@ export default function Configurator() {
                          </div>
                          <div className="text-xs border-t border-gray-200 pt-2">
                            <div className="flex justify-between">
-                             <span className="text-gray-600">{hoveredWall.width?.toFixed ? hoveredWall.width.toFixed(1) : hoveredWall.width}m wide</span>
-                             <span className="font-semibold text-gray-800">${(hoveredWall.price || 0).toLocaleString()}</span>
+                             <span className="text-gray-600">{liveHoveredWall.width?.toFixed ? liveHoveredWall.width.toFixed(1) : liveHoveredWall.width}m wide</span>
+                             <span className="font-semibold text-gray-800">${(liveHoveredWall.price || 0).toLocaleString()}</span>
                            </div>
                          </div>
                        </div>
-                     ) : selectedModule && selectedFace ? (
+                     ); if (selectedModule && selectedFace) return (
                        // Face selection + wall picker
                        <div className="flex flex-col h-full gap-3">
                          <div>
@@ -1874,7 +1879,7 @@ export default function Configurator() {
                            </div>
                          </div>
                        </div>
-                     ) : selectedModule && selectedModule.floorPlanImage ? (
+                     ); if (selectedModule && selectedModule.floorPlanImage) return (
                        <div className="flex flex-col h-full gap-2">
                          <div>
                            <p className="text-xs font-semibold text-gray-900 break-words">{selectedModule.label}</p>
@@ -1893,20 +1898,21 @@ export default function Configurator() {
                            <span className="font-semibold text-gray-800">${(selectedModule.price || 0).toLocaleString()}</span>
                          </div>
                        </div>
-                     ) : selectedWall ? (
+                     ); if (liveSelectedWall) return (
                        <div className="flex flex-col h-full gap-2">
                          <div>
-                           <p className="text-xs font-semibold text-gray-900 break-words">{selectedWall.label}</p>
-                           <p className="text-[10px] text-gray-500">{selectedWall.type}</p>
-                           {selectedWall.face && <span className="text-[10px] font-bold text-[#F15A22]">Face {selectedWall.face}</span>}
+                           <p className="text-xs font-semibold text-gray-900 break-words">{liveSelectedWall.label}</p>
+                           <p className="text-[10px] text-gray-500">{liveSelectedWall.type}</p>
+                           {liveSelectedWall.face && <span className="text-[10px] font-bold text-[#F15A22]">Face {liveSelectedWall.face}</span>}
+                           {liveSelectedWall.flipped && <span className="text-[10px] text-blue-500 ml-1">(Reflected)</span>}
                          </div>
                          <div className="flex-1 bg-gray-50 rounded overflow-hidden flex items-center justify-center">
-                           {selectedWall.elevationImage ? (
-                             <img src={selectedWall.elevationImage} alt={selectedWall.label} className="w-full h-full object-contain" style={{ transform: selectedWall.flipped ? 'scaleX(-1)' : undefined }} />
+                           {liveSelectedWall.elevationImage ? (
+                             <img src={liveSelectedWall.elevationImage} alt={liveSelectedWall.label} className="w-full h-full object-contain" style={{ transform: liveSelectedWall.flipped ? 'scaleX(-1)' : undefined }} />
                            ) : (
                              <div className="flex flex-col items-center gap-2 text-gray-400">
                                <div className="w-16 h-24 border-2 border-gray-300 rounded flex items-center justify-center">
-                                 <span className="text-2xl font-bold text-gray-300">{selectedWall.face || "W"}</span>
+                                 <span className="text-2xl font-bold text-gray-300">{liveSelectedWall.face || "W"}</span>
                                </div>
                                <p className="text-[10px] text-center">No elevation image</p>
                              </div>
@@ -1914,12 +1920,12 @@ export default function Configurator() {
                          </div>
                          <div className="flex gap-1">
                            <select
-                             value={selectedWall.type || ""}
+                             value={liveSelectedWall.type || ""}
                              onChange={(e) => {
                                const newType = e.target.value;
                                const wallEntry = availableWallTypes.find(w => w.type === newType);
                                setWalls(prev => prev.map(w => 
-                                 w.id === selectedWall.id 
+                                 w.id === liveSelectedWall.id 
                                    ? { ...w, type: newType, label: wallEntry?.label || newType, elevationImage: wallImages[newType] || null, price: wallEntry?.price || 0 }
                                    : w
                                ));
@@ -1933,10 +1939,10 @@ export default function Configurator() {
                            </select>
                          </div>
                          <div className="text-xs border-t border-gray-200 pt-2 text-right">
-                           <span className="font-semibold text-gray-800">${(selectedWall.price || 0).toLocaleString()}</span>
+                           <span className="font-semibold text-gray-800">${(liveSelectedWall.price || 0).toLocaleString()}</span>
                          </div>
                        </div>
-                     ) : (
+                     ); return (
                       <DesignSummary
                         placedModules={placedModules}
                         walls={walls}
@@ -1946,7 +1952,8 @@ export default function Configurator() {
                         isSaving={saveMutation.isPending}
                         onQuote={() => setDetailsModalMode('estimate')}
                       />
-                    )}
+                     );
+                     })()}
                   </div>
                 )}
               </div>
