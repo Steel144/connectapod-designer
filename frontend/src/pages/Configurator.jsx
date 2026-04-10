@@ -1404,14 +1404,14 @@ export default function Configurator() {
               <button onClick={handleUndo} disabled={history.length === 0} title="Undo (Ctrl+Z)" className="flex items-center gap-1.5 px-3 py-1 text-xs text-gray-500 hover:text-[#F15A22] disabled:opacity-30 transition-all">
                 <Undo2 size={13} /> Undo {history.length > 0 && <span className="text-[10px] text-gray-400">({history.length})</span>}
               </button>
-              <div className="flex border border-gray-200 overflow-hidden">
+              <div className="flex border border-gray-200 overflow-hidden" data-tour="zoom-controls">
                 <button onClick={() => viewMode === "elevations" ? setElevationZoom(z => Math.max(25, z - 10)) : setGridZoom(z => Math.max(25, z - 10))} className="px-2 py-1 text-xs text-gray-500 hover:text-[#F15A22]"><ZoomOut size={12} /></button>
                 <button onClick={() => viewMode === "elevations" ? setElevationZoom(100) : setGridZoom(100)} className="px-1.5 py-1 text-[10px] font-semibold text-gray-500 min-w-10 text-center">{viewMode === "elevations" ? elevationZoom : gridZoom}%</button>
                 <button onClick={() => viewMode === "elevations" ? setElevationZoom(z => Math.min(300, z + 10)) : setGridZoom(z => Math.min(300, z + 10))} className="px-2 py-1 text-xs text-gray-500 hover:text-[#F15A22]"><ZoomIn size={12} /></button>
               </div>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className="flex items-center gap-1 px-2.5 py-1 text-xs text-gray-500 hover:text-[#F15A22] transition-all">
+                  <button className="flex items-center gap-1 px-2.5 py-1 text-xs text-gray-500 hover:text-[#F15A22] transition-all" data-tour="settings-btn">
                     <Settings size={12} /> Settings
                   </button>
                 </DropdownMenuTrigger>
@@ -1751,9 +1751,9 @@ export default function Configurator() {
               style={{ maxHeight: 'calc(100vh - 120px)' }}
               onMouseDown={handlePanelMouseDown}
             >
-              <div className="px-4 pt-3 pb-2 border-b border-gray-100 shrink-0 cursor-grab active:cursor-grabbing">
+              <div className="px-4 pt-3 pb-2 border-b border-gray-100 shrink-0 cursor-grab active:cursor-grabbing" data-tour="module-library">
                 <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest">Module Library</p>
-                <p className="text-[11px] text-gray-400 mt-0.5">Expand a category · drag to place</p>
+                <p className="text-[11px] text-gray-400 mt-0.5">Expand a category &middot; drag to place</p>
               </div>
               <div className="flex-1 overflow-y-auto p-3 space-y-2">
                 <ModulePanel

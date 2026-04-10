@@ -1,35 +1,35 @@
 import React, { useState, useEffect } from "react";
-import { X, Lightbulb } from "lucide-react";
+import { X } from "lucide-react";
 
 const TIPS = {
   "select-design": {
-    title: "Start with a Design",
-    message: "Browse the Design Catalogue and select a starter layout. You can customise everything after.",
+    title: "Choose a Starter Design",
+    message: "Browse the Design Catalogue and select a starter layout, or load one of your previously saved designs.",
     position: "bottom",
   },
   "customise": {
     title: "Customise Your Layout",
-    message: "Drag modules from the library on the left to place them on the grid. Click walls to swap cladding styles.",
+    message: "Drag modules from the Module Library on the left to add rooms. Click wall selection letters (W, X, Y, Z) on the floor plan to swap cladding styles.",
     position: "bottom",
   },
   "elevations": {
     title: "Review Elevations",
-    message: "See how your building looks from all sides. Drag walls to rearrange cladding on each face.",
+    message: "See how your building looks from all four sides. Check your window sizes and location.",
     position: "bottom",
   },
   "sitemap": {
     title: "Place on Your Site",
-    message: "Enter your address to see your property boundaries. Position and rotate your building on the map.",
+    message: "Search your address to see your property boundaries. Position and rotate your building, then lock it in place.",
     position: "bottom",
   },
   "save": {
     title: "Save Your Design",
-    message: "Enter your details and save. Your design will be stored and you can return to it anytime.",
+    message: "Enter your details and save. Your design will be stored so you can return to it anytime.",
     position: "top",
   },
   "share": {
-    title: "Share & Get Estimates",
-    message: "Share a link with others, print plans, or request a formal estimate from our team.",
+    title: "Share & Get a Price",
+    message: "Share a link with friends, email your design, print plans, and generate a detailed cost estimate.",
     position: "top",
   },
 };
@@ -47,7 +47,7 @@ function setDismissed(tipId) {
   }
 }
 
-export default function GuidedTooltip({ tipId, show = false, anchorRef = null }) {
+export default function GuidedTooltip({ tipId, show = false }) {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -76,22 +76,17 @@ export default function GuidedTooltip({ tipId, show = false, anchorRef = null })
         top: tip.position === "bottom" ? 90 : undefined,
         left: "50%",
         transform: "translateX(-50%)",
-        maxWidth: 340,
+        maxWidth: 380,
       }}
       data-testid={`tooltip-${tipId}`}
     >
-      <div className="bg-gray-900 text-white shadow-xl border border-gray-700 px-4 py-3 relative" style={{ borderRadius: 2 }}>
-        <button onClick={dismiss} className="absolute top-2 right-2 text-gray-400 hover:text-white" data-testid={`dismiss-tip-${tipId}`}>
+      <div className="bg-gray-900 text-white shadow-2xl px-5 py-4 relative" style={{ borderRadius: 3 }}>
+        <button onClick={dismiss} className="absolute top-2.5 right-2.5 text-gray-500 hover:text-white transition-colors" data-testid={`dismiss-tip-${tipId}`}>
           <X size={14} />
         </button>
-        <div className="flex items-start gap-2.5">
-          <Lightbulb size={16} className="text-amber-400 mt-0.5 flex-shrink-0" />
-          <div>
-            <p className="text-xs font-bold text-white mb-0.5">{tip.title}</p>
-            <p className="text-[11px] text-gray-300 leading-relaxed">{tip.message}</p>
-          </div>
-        </div>
-        <button onClick={dismiss} className="mt-2 text-[10px] text-gray-400 hover:text-amber-400 transition-colors">
+        <p className="text-sm font-bold text-white mb-1">{tip.title}</p>
+        <p className="text-xs text-gray-300 leading-relaxed">{tip.message}</p>
+        <button onClick={dismiss} className="mt-2 text-[10px] text-gray-500 hover:text-gray-300 transition-colors">
           Got it, don't show again
         </button>
       </div>
