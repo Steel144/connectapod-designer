@@ -1276,9 +1276,9 @@ export default function ConfigGrid({ placedModules, onPlace, onRemove, onMove, o
                     </div>
                     {/* Wall pills — outside and parallel to each wall */}
                     {/* W (top wall) — horizontal, above module */}
-                    {showW && <WallPill face="W" posStyle={{ bottom: '100%', left: '50%', transform: 'translateX(-50%)', marginBottom: 4 }} />}
+                    {showW && <WallPill face="W" posStyle={{ bottom: '100%', left: '50%', transform: 'translateX(-50%)', marginBottom: 14 }} />}
                     {/* Y (bottom wall) — horizontal, below module */}
-                    {showY && <WallPill face="Y" posStyle={{ top: '100%', left: '50%', transform: 'translateX(-50%)', marginTop: 4 }} />}
+                    {showY && <WallPill face="Y" posStyle={{ top: '100%', left: '50%', transform: 'translateX(-50%)', marginTop: 14 }} />}
                     {/* Z (left wall) — rotated vertical, left of module */}
                     {showZ && <WallPill face="Z" posStyle={{ right: '100%', top: '50%', transform: 'translateY(-50%) rotate(-90deg)', marginRight: 4, transformOrigin: 'center center' }} />}
                     {/* X (right wall) — rotated vertical, right of module */}
